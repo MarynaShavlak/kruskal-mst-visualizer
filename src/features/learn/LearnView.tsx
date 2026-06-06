@@ -97,7 +97,7 @@ export function LearnView() {
 
       <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)]">
         <TableOfContents toc={toc} />
-        <article className="prose prose-sm max-w-none min-w-0 prose-headings:scroll-mt-20 md:prose-base">
+        <article className="prose prose-sm max-w-none min-w-0 prose-headings:scroll-mt-20 md:prose-base dark:prose-invert">
           <Markdown
             remarkPlugins={[remarkGfm, remarkMath]}
             rehypePlugins={[rehypeKatex]}

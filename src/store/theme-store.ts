@@ -1,25 +1,17 @@
-// Тема застосунку: light / dark / system. Клас .dark вішається на <html>;
+// Тема застосунку: light / dark. Клас .dark вішається на <html>;
 // shadcn-компоненти адаптуються через CSS-змінні автоматично.
 
 import { create } from "zustand"
 
-export type Theme = "light" | "dark" | "system"
+export type Theme = "light" | "dark"
 
 const STORAGE_KEY = "kruskal-theme"
 
-function darkMql(): MediaQueryList | null {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-    return null
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)")
-}
-
 function systemPrefersDark(): boolean {
-  return darkMql()?.matches ?? false
-}
-
-function resolveIsDark(theme: Theme): boolean {
-  return theme === "dark" || (theme === "system" && systemPrefersDark())
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
 }
 
 function applyClass(isDark: boolean): void {
@@ -28,45 +20,40 @@ function applyClass(isDark: boolean): void {
   }
 }
 
+/** Збережений вибір; за відсутності — одноразовий дефолт з системної теми. */
 function readStored(): Theme {
   try {
     const v = localStorage.getItem(STORAGE_KEY)
-    if (v === "light" || v === "dark" || v === "system") return v
+    if (v === "light" || v === "dark") return v
   } catch {
     /* ignore */
   }
-  return "system"
+  return systemPrefersDark() ? "dark" : "light"
 }
 
 interface ThemeState {
   readonly theme: Theme
   readonly isDark: boolean
   setTheme: (theme: Theme) => void
+  toggle: () => void
 }
 
 export const useThemeStore = create<ThemeState>()((set, get) => {
   const initial = readStored()
-  applyClass(resolveIsDark(initial))
-
-  darkMql()?.addEventListener("change", () => {
-    if (get().theme !== "system") return
-    const isDark = systemPrefersDark()
-    applyClass(isDark)
-    set({ isDark })
-  })
+  applyClass(initial === "dark")
 
   return {
     theme: initial,
-    isDark: resolveIsDark(initial),
+    isDark: initial === "dark",
     setTheme: (theme) => {
       try {
         localStorage.setItem(STORAGE_KEY, theme)
       } catch {
         /* ignore */
       }
-      const isDark = resolveIsDark(theme)
-      applyClass(isDark)
-      set({ theme, isDark })
+      applyClass(theme === "dark")
+      set({ theme, isDark: theme === "dark" })
     },
+    toggle: () => get().setTheme(get().theme === "dark" ? "light" : "dark"),
   }
 })
