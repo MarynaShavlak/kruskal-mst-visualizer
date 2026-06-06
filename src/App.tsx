@@ -1,9 +1,20 @@
+import { lazy, Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useHashTab } from "@/hooks/use-hash-tab"
-import { LearnView } from "@/features/learn/LearnView"
-import { EditorView } from "@/features/editor/EditorView"
-import { PlaybackView } from "@/features/playback/PlaybackView"
 import { BenchmarkView } from "@/features/benchmark/BenchmarkView"
+
+// Важкі вкладки вантажимо лінією окремими чанками (React Flow / Shiki / react-markdown+KaTeX).
+const LearnView = lazy(() =>
+  import("@/features/learn/LearnView").then((m) => ({ default: m.LearnView })),
+)
+const EditorView = lazy(() =>
+  import("@/features/editor/EditorView").then((m) => ({ default: m.EditorView })),
+)
+const PlaybackView = lazy(() =>
+  import("@/features/playback/PlaybackView").then((m) => ({
+    default: m.PlaybackView,
+  })),
+)
 
 const TABS = [
   { key: "learn", label: "Навчання", View: LearnView },
@@ -13,6 +24,14 @@ const TABS = [
 ] as const
 
 const TAB_KEYS = TABS.map((t) => t.key)
+
+function TabFallback() {
+  return (
+    <div className="p-10 text-center text-sm text-muted-foreground">
+      Завантаження…
+    </div>
+  )
+}
 
 export default function App() {
   const [tab, selectTab] = useHashTab(TAB_KEYS, "learn")
@@ -41,7 +60,9 @@ export default function App() {
           </TabsList>
           {TABS.map(({ key, View }) => (
             <TabsContent key={key} value={key} className="mt-4">
-              <View />
+              <Suspense fallback={<TabFallback />}>
+                <View />
+              </Suspense>
             </TabsContent>
           ))}
         </Tabs>
