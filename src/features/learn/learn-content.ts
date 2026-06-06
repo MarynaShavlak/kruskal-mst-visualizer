@@ -11,13 +11,16 @@ export interface TocEntry {
   title: string
 }
 
-/** Зміст із пар `<a id="secN"></a>` + наступного `## Заголовок`. */
+/**
+ * Зміст із нумерованих секцій `## N. Заголовок`. Id `secN` збігається з тим,
+ * що компонент <h2> у LearnView вішає на ці заголовки.
+ */
 export function parseToc(md: string): TocEntry[] {
-  const re = /<a id="(sec\d+)">\s*<\/a>\s*\n+##\s+(.+)/g
+  const re = /^##\s+(\d+)\.\s+(.+)$/gm
   const out: TocEntry[] = []
   let m: RegExpExecArray | null
   while ((m = re.exec(md)) !== null) {
-    out.push({ id: m[1], title: m[2].trim() })
+    out.push({ id: `sec${m[1]}`, title: `${m[1]}. ${m[2].trim()}` })
   }
   return out
 }

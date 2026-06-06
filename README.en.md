@@ -41,7 +41,6 @@ The path in a nutshell: we unpack the **greedy idea** of Kruskal, implement it t
 
 ---
 
-<a id="sec1"></a>
 
 ## 1. What a minimum spanning tree is
 
@@ -154,7 +153,6 @@ And if we build a road between cities that are **already in the same component**
 
 So a spanning tree is precisely that set of exactly $n-1$ "useful" edges, each merging two components, with not a single "extra" one that would form a cycle.
 
-<a id="sec2"></a>
 
 ## 2. What a connected component is
 
@@ -215,7 +213,6 @@ Components are exactly what everything revolves around:
 
 That is why in the step-by-step visualization **a vertex's color = its component**: you watch the islets gradually merge into one as edges are added.
 
-<a id="sec3"></a>
 
 ## 3. The idea of Kruskal's algorithm
 
@@ -238,7 +235,6 @@ For more speed there is the **Union-Find** structure.
 
 Below are the 2 implementation variants with explanations.
 
-<a id="sec4"></a>
 
 ## 4. Building and visualizing the graph
 
@@ -269,7 +265,6 @@ Graph built: 7 vertices, 11 edges.
 
 ![Input weighted graph](images/en/graph.png)
 
-<a id="sec5"></a>
 
 ## 5. How the Kruskal implementation via `nx.has_path` works
 
@@ -370,7 +365,6 @@ Running this code on our graph yields an MST of weight **39**. The same decision
 
 **Total weight:** $5 + 5 + 6 + 7 + 7 + 9 = \mathbf{39}$.
 
-<a id="sec6"></a>
 
 ## 6. Step-by-step visualization of the has_path variant (forest)
 
@@ -420,7 +414,6 @@ The only weakness is **speed**. `nx.has_path(forest, u, v)` runs a graph travers
 
 The same question is asked by `DSU.find(u) == DSU.find(v)` — and answered **almost instantly** (amortized $\approx O(1)$). The logic is identical — only the structure that tracks components changes. So the DSU version gives the **same result** but scales incomparably better.
 
-<a id="sec7"></a>
 
 ## 7. The Union-Find data structure (Disjoint Set Union, DSU)
 
@@ -535,7 +528,6 @@ https://github.com/user-attachments/assets/90204cb6-671c-4b31-83ae-76ddf3c7bb8e
 
 
 
-<a id="sec8"></a>
 
 ## 8. Why DSU beats `nx.has_path` in Kruskal
 
@@ -568,7 +560,6 @@ In the DSU version the checks become almost free ($\approx O(E)$), so the time i
 
 `nx.has_path` is a one-liner, with no extra structures, great for tiny graphs and for grasping the idea. But at real sizes the right tool is DSU. Let's check the difference with numbers.
 
-<a id="sec9"></a>
 
 ## 9. Empirical benchmark: DSU vs `nx.has_path`
 
@@ -650,7 +641,6 @@ Correctness: on 5 random graphs both implementations gave the same MST weight �
 
 On tiny graphs there is almost no difference (because of DSU's overhead it can even be a touch slower). On bigger graphs DSU wins dramatically, and the gap grows — exactly as the asymptotics $O(E \log E)$ vs $O(E \cdot (V + E))$ predict.
 
-<a id="sec10"></a>
 
 ## 10. Comparing `nx.has_path` vs DSU on a single step
 
@@ -663,7 +653,6 @@ So it is not just a difference in speed — these are **different structures** a
 
 ![Comparison at step 8: BFS inside has_path on the left, climbing to the root in DSU on the right](images/en/compare_step8.png)
 
-<a id="sec11"></a>
 
 ## 11. How BFS works inside `nx.has_path`
 
@@ -698,7 +687,6 @@ https://github.com/user-attachments/assets/aa6c899e-23c7-44f7-befe-a710f07a54fb
 
 
 
-<a id="sec12"></a>
 
 ## 12. BFS for the "add" case: target unreachable (Step 11, E–G)
 
@@ -724,7 +712,6 @@ https://github.com/user-attachments/assets/d3ff5f8a-d962-40e7-8d3d-d1f6a1296605
 
 
 
-<a id="sec13"></a>
 
 ## 13. Where this DSU structure at step 8 comes from (animation)
 
@@ -777,7 +764,6 @@ On this small graph the difference is modest (5 nodes vs 2 hops). But the cost o
 - In Kruskal, DSU replaces the cycle check: `find(u) == find(v)` instead of a graph traversal.
 - That is why Kruskal on DSU runs in $O(E \log E)$ (the sorting dominates), while the `nx.has_path` variant runs in $O(E \cdot (V+E))$, because it re-walks the forest every time. The empirics confirm it: the speed gap grows with the graph size.
 
-<a id="sec14"></a>
 
 ## 14. Implementing Kruskal's algorithm
 
@@ -874,7 +860,6 @@ Number of edges: 6  (expected |V|-1 = 6)
 Total MST weight: 39
 ```
 
-<a id="sec15"></a>
 
 ## 15. Step-by-step DSU version: "code | graph | DSU structure"
 
@@ -916,7 +901,6 @@ The final minimum spanning tree:
 
 ![Minimum spanning tree](images/en/mst_result.png)
 
-<a id="sec16"></a>
 
 ## 16. All steps in one figure (summary)
 
@@ -952,7 +936,6 @@ def kruskal_logged(G):
 
 ![All steps of Kruskal](images/en/steps_grid.png)
 
-<a id="sec17"></a>
 
 ## 17. Why the algorithm is correct
 
@@ -993,7 +976,6 @@ So the expensive edge B–D (9) was replaced by the cheaper A–D (5) — the ve
 
 ![Exchange argument](images/en/exchange_argument.png)
 
-<a id="sec18"></a>
 
 ## 18. Conclusions
 
