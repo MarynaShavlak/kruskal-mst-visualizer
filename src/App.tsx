@@ -1,9 +1,9 @@
 import { lazy, Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useHashTab } from "@/hooks/use-hash-tab"
-import { BenchmarkView } from "@/features/benchmark/BenchmarkView"
 
-// Важкі вкладки вантажимо лінією окремими чанками (React Flow / Shiki / react-markdown+KaTeX).
+// Важкі вкладки вантажимо лінією окремими чанками
+// (React Flow / Shiki / react-markdown+KaTeX / Recharts+Worker).
 const LearnView = lazy(() =>
   import("@/features/learn/LearnView").then((m) => ({ default: m.LearnView })),
 )
@@ -13,6 +13,11 @@ const EditorView = lazy(() =>
 const PlaybackView = lazy(() =>
   import("@/features/playback/PlaybackView").then((m) => ({
     default: m.PlaybackView,
+  })),
+)
+const BenchmarkView = lazy(() =>
+  import("@/features/benchmark/BenchmarkView").then((m) => ({
+    default: m.BenchmarkView,
   })),
 )
 

@@ -31,6 +31,6 @@ describe("Оболонка App", () => {
     await user.click(screen.getByRole("tab", { name: "Бенчмарк" }))
 
     expect(window.location.hash).toBe("#benchmark")
-    expect(screen.getByText(/Порівняння наївної/)).toBeInTheDocument()
+    expect(await screen.findByText(/DSU проти наївної/)).toBeInTheDocument()
   })
 })
