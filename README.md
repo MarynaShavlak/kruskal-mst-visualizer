@@ -1,5 +1,7 @@
 # Kruskal MST Visualizer
 
+[![Deploy to GitHub Pages](https://github.com/MarynaShavlak/kruskal-mst-visualizer/actions/workflows/deploy.yml/badge.svg)](https://github.com/MarynaShavlak/kruskal-mst-visualizer/actions/workflows/deploy.yml)
+
 Інтерактивний навчальний застосунок про **алгоритм Краскала** (мінімальне остовне дерево, МОД).
 Компаньйон до Python-репозиторію з повним розбором:
 https://github.com/MarynaShavlak/algo-krustal-mst
