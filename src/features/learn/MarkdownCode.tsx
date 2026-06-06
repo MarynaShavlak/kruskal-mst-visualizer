@@ -1,7 +1,9 @@
 import { useShikiHtml } from "@/features/learn/use-shiki-html"
+import { useThemeStore } from "@/store/theme-store"
 
 export function MarkdownCode({ lang, code }: { lang: string; code: string }) {
-  const html = useShikiHtml(code, lang)
+  const isDark = useThemeStore((s) => s.isDark)
+  const html = useShikiHtml(code, lang, isDark)
 
   if (html) {
     return (

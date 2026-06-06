@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { useHashTab } from "@/hooks/use-hash-tab"
 
 // Важкі вкладки вантажимо лінією окремими чанками
@@ -44,13 +45,16 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b">
-        <div className="mx-auto max-w-6xl px-4 py-4">
-          <h1 className="text-xl font-semibold">
-            Візуалізатор алгоритму Краскала
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Інтерактивний розбір мінімального остовного дерева (МОД)
-          </p>
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+          <div>
+            <h1 className="text-xl font-semibold">
+              Візуалізатор алгоритму Краскала
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Інтерактивний розбір мінімального остовного дерева (МОД)
+            </p>
+          </div>
+          <ThemeToggle />
         </div>
       </header>
 

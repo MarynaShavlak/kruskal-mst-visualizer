@@ -2,13 +2,14 @@ import { useEffect, useState } from "react"
 import { createHighlighterCore, type HighlighterCore } from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 import python from "shiki/langs/python.mjs"
+import githubDark from "shiki/themes/github-dark.mjs"
 import githubLight from "shiki/themes/github-light.mjs"
 
 let highlighterPromise: Promise<HighlighterCore> | null = null
 function getHighlighter(): Promise<HighlighterCore> {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighterCore({
-      themes: [githubLight],
+      themes: [githubLight, githubDark],
       langs: [python],
       engine: createJavaScriptRegexEngine({ forgiving: true }),
     })
@@ -17,7 +18,11 @@ function getHighlighter(): Promise<HighlighterCore> {
 }
 
 /** HTML-підсвічування Shiki для python; null поки вантажиться або для інших мов. */
-export function useShikiHtml(code: string, lang: string): string | null {
+export function useShikiHtml(
+  code: string,
+  lang: string,
+  dark: boolean,
+): string | null {
   const [html, setHtml] = useState<string | null>(null)
 
   useEffect(() => {
@@ -29,7 +34,12 @@ export function useShikiHtml(code: string, lang: string): string | null {
     void getHighlighter()
       .then((hl) => {
         if (!cancelled) {
-          setHtml(hl.codeToHtml(code, { lang: "python", theme: "github-light" }))
+          setHtml(
+            hl.codeToHtml(code, {
+              lang: "python",
+              theme: dark ? "github-dark" : "github-light",
+            }),
+          )
         }
       })
       .catch(() => {
@@ -38,7 +48,7 @@ export function useShikiHtml(code: string, lang: string): string | null {
     return () => {
       cancelled = true
     }
-  }, [code, lang])
+  }, [code, lang, dark])
 
   return html
 }

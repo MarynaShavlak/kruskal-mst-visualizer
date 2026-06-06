@@ -54,8 +54,8 @@ function ProofGraph({
             {onEdgeClick && (
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="transparent" strokeWidth={14} />
             )}
-            <rect x={mx - 10} y={my - 9} width={20} height={18} rx={4} fill="#ffffff" opacity={0.9} />
-            <text x={mx} y={my} textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={600} fill="#1f2937">
+            <rect x={mx - 10} y={my - 9} width={20} height={18} rx={4} opacity={0.9} style={{ fill: "var(--card)" }} />
+            <text x={mx} y={my} textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={600} style={{ fill: "var(--foreground)" }}>
               {e.weight}
             </text>
           </g>

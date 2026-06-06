@@ -1,6 +1,7 @@
 import { Panel } from "@/features/playback/Panel"
 import { useShikiLines } from "@/features/playback/use-shiki-lines"
 import { cn } from "@/lib/utils"
+import { useThemeStore } from "@/store/theme-store"
 
 export function CodePanel({
   code,
@@ -13,25 +14,32 @@ export function CodePanel({
   title?: string
   className?: string
 }) {
-  const lines = useShikiLines(code)
+  const isDark = useThemeStore((s) => s.isDark)
+  const result = useShikiLines(code, isDark)
   const active = new Set(activeLines)
 
   return (
     <Panel title={title} className={className} bodyClassName="p-0">
-      <pre className="h-full overflow-auto bg-white p-2 text-[12.5px] leading-[1.6]">
+      <pre
+        className="h-full overflow-auto p-2 text-[12.5px] leading-[1.6]"
+        style={{ background: result?.bg ?? (isDark ? "#0d1117" : "#ffffff") }}
+      >
         <code className="block font-mono">
           {code.map((raw, i) => {
             const ln = i + 1
-            const tokens = lines?.[i]
+            const tokens = result?.lines[i]
             return (
               <div
                 key={ln}
                 className={cn(
                   "flex gap-2 rounded px-1",
-                  active.has(ln) && "bg-amber-200/70",
+                  active.has(ln) && (isDark ? "bg-amber-400/25" : "bg-amber-200/70"),
                 )}
               >
-                <span className="w-5 shrink-0 select-none text-right text-[11px] text-muted-foreground/50">
+                <span
+                  className="w-5 shrink-0 select-none text-right text-[11px]"
+                  style={{ color: result?.fg, opacity: 0.4 }}
+                >
                   {ln}
                 </span>
                 <span className="whitespace-pre">

@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
-// Дрібнозерниста збірка Shiki: лише JS-граматика + одна тема + JS-движок
-// (без WASM і без сотень інших мов у бандлі).
 import { createHighlighterCore, type HighlighterCore } from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 import javascript from "shiki/langs/javascript.mjs"
+import githubDark from "shiki/themes/github-dark.mjs"
 import githubLight from "shiki/themes/github-light.mjs"
 
 export interface CodeToken {
@@ -12,21 +11,30 @@ export interface CodeToken {
   fontStyle?: number
 }
 
+export interface ShikiLines {
+  lines: CodeToken[][]
+  bg: string
+  fg: string
+}
+
 let highlighterPromise: Promise<HighlighterCore> | null = null
 function getHighlighter(): Promise<HighlighterCore> {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighterCore({
-      themes: [githubLight],
+      themes: [githubLight, githubDark],
       langs: [javascript],
-      engine: createJavaScriptRegexEngine(),
+      engine: createJavaScriptRegexEngine({ forgiving: true }),
     })
   }
   return highlighterPromise
 }
 
-/** Токенізує код Shiki у рядки токенів; null поки highlighter вантажиться. */
-export function useShikiLines(code: readonly string[]): CodeToken[][] | null {
-  const [lines, setLines] = useState<CodeToken[][] | null>(null)
+/** Токенізує код Shiki у рядки токенів (тема залежить від `dark`). */
+export function useShikiLines(
+  code: readonly string[],
+  dark: boolean,
+): ShikiLines | null {
+  const [result, setResult] = useState<ShikiLines | null>(null)
   const text = useMemo(() => code.join("\n"), [code])
 
   useEffect(() => {
@@ -34,27 +42,29 @@ export function useShikiLines(code: readonly string[]): CodeToken[][] | null {
     void getHighlighter()
       .then((hl) => {
         if (cancelled) return
-        const { tokens } = hl.codeToTokens(text, {
+        const { tokens, bg, fg } = hl.codeToTokens(text, {
           lang: "javascript",
-          theme: "github-light",
+          theme: dark ? "github-dark" : "github-light",
         })
-        setLines(
-          tokens.map((line) =>
+        setResult({
+          lines: tokens.map((line) =>
             line.map((t) => ({
               content: t.content,
               color: t.color,
               fontStyle: t.fontStyle,
             })),
           ),
-        )
+          bg: bg ?? (dark ? "#0d1117" : "#ffffff"),
+          fg: fg ?? (dark ? "#e6edf3" : "#1f2328"),
+        })
       })
       .catch(() => {
-        if (!cancelled) setLines(null)
+        if (!cancelled) setResult(null)
       })
     return () => {
       cancelled = true
     }
-  }, [text])
+  }, [text, dark])
 
-  return lines
+  return result
 }

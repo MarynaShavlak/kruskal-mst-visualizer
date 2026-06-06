@@ -97,8 +97,8 @@ export function GraphView({
                 initial={false}
                 animate={{ stroke: s.stroke, strokeWidth: s.width, opacity: s.opacity }}
               />
-              <rect x={mx - 11} y={my - 9} width={22} height={18} rx={4} fill="#ffffff" opacity={0.9} />
-              <text x={mx} y={my} textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={600} fill="#1f2937">
+              <rect x={mx - 11} y={my - 9} width={22} height={18} rx={4} opacity={0.9} style={{ fill: "var(--card)" }} />
+              <text x={mx} y={my} textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={600} style={{ fill: "var(--foreground)" }}>
                 {e.weight}
               </text>
             </g>

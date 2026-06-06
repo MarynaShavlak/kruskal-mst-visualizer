@@ -151,7 +151,7 @@ export function DsuForestPanel({
               {n.id}
             </text>
             {n.isRoot && (
-              <text x={n.x + R + 3} y={n.y - R + 2} fontSize={10} fontWeight={500} fill="#0f172a">
+              <text x={n.x + R + 3} y={n.y - R + 2} fontSize={10} fontWeight={500} style={{ fill: "var(--foreground)" }}>
                 rank {n.rank}
               </text>
             )}

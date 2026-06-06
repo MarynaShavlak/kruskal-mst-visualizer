@@ -12,9 +12,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useBenchmark } from "@/features/benchmark/use-benchmark"
+import { useThemeStore } from "@/store/theme-store"
 
 export function BenchmarkView() {
   const { points, running, run } = useBenchmark()
+  const isDark = useThemeStore((s) => s.isDark)
+  const axisColor = isDark ? "#94a3b8" : "#475569"
+  const gridColor = isDark ? "#334155" : "#e2e8f0"
   const started = points.length > 0 || running
 
   return (
@@ -43,18 +47,45 @@ export function BenchmarkView() {
                   data={points}
                   margin={{ top: 12, right: 24, bottom: 18, left: 4 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                   <XAxis
                     dataKey="size"
-                    tick={{ fontSize: 12 }}
-                    label={{ value: "вершини", position: "insideBottom", offset: -10 }}
+                    tick={{ fontSize: 12, fill: axisColor }}
+                    stroke={axisColor}
+                    label={{
+                      value: "вершини",
+                      position: "insideBottom",
+                      offset: -10,
+                      fill: axisColor,
+                    }}
                   />
                   <YAxis
-                    tick={{ fontSize: 12 }}
-                    label={{ value: "мс", angle: -90, position: "insideLeft" }}
+                    tick={{ fontSize: 12, fill: axisColor }}
+                    stroke={axisColor}
+                    label={{
+                      value: "мс",
+                      angle: -90,
+                      position: "insideLeft",
+                      fill: axisColor,
+                    }}
                   />
-                  <Tooltip />
-                  <Legend />
+                  <Tooltip
+                    contentStyle={
+                      isDark
+                        ? {
+                            background: "#1e293b",
+                            border: "1px solid #334155",
+                            color: "#e2e8f0",
+                          }
+                        : undefined
+                    }
+                    labelStyle={isDark ? { color: "#e2e8f0" } : undefined}
+                  />
+                  <Legend
+                    formatter={(value) => (
+                      <span style={{ color: axisColor }}>{value}</span>
+                    )}
+                  />
                   <Line
                     type="monotone"
                     dataKey="hasPathMs"
