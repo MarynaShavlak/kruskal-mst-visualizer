@@ -89,6 +89,71 @@ function FigureCard({
   )
 }
 
+/** Граф із трьома компонентами зв'язності (кожен колір — окрема компонента). */
+function ComponentsExampleWidget() {
+  const COLORS = ["#2563eb", "#16a34a", "#d97706"]
+  const nodes: Record<string, { x: number; y: number; c: number }> = {
+    A: { x: 70, y: 70, c: 0 },
+    B: { x: 195, y: 50, c: 0 },
+    C: { x: 120, y: 180, c: 0 },
+    D: { x: 345, y: 70, c: 1 },
+    E: { x: 455, y: 150, c: 1 },
+    F: { x: 95, y: 320, c: 2 },
+    G: { x: 245, y: 355, c: 2 },
+    H: { x: 385, y: 305, c: 2 },
+  }
+  const edges: [string, string][] = [
+    ["A", "B"],
+    ["B", "C"],
+    ["A", "C"],
+    ["D", "E"],
+    ["F", "G"],
+    ["G", "H"],
+  ]
+  const xs = Object.values(nodes).map((n) => n.x)
+  const ys = Object.values(nodes).map((n) => n.y)
+  const pad = 34
+  const viewBox = `${Math.min(...xs) - pad} ${Math.min(...ys) - pad} ${
+    Math.max(...xs) - Math.min(...xs) + pad * 2
+  } ${Math.max(...ys) - Math.min(...ys) + pad * 2}`
+
+  return (
+    <span className="not-prose my-4 block rounded-lg border bg-card p-2">
+      <svg viewBox={viewBox} className="h-[260px] w-full" preserveAspectRatio="xMidYMid meet">
+        {edges.map(([u, v]) => {
+          const a = nodes[u]
+          const b = nodes[v]
+          return (
+            <line
+              key={`${u}-${v}`}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke={COLORS[a.c]}
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              opacity={0.55}
+            />
+          )
+        })}
+        {Object.entries(nodes).map(([id, n]) => (
+          <g key={id}>
+            <circle cx={n.x} cy={n.y} r={16} fill={COLORS[n.c]} stroke="#ffffff" strokeWidth={2} />
+            <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="central" fontSize={13} fontWeight={600} fill="#ffffff">
+              {id}
+            </text>
+          </g>
+        ))}
+      </svg>
+      <span className="mt-1 block text-center text-xs text-muted-foreground">
+        3 компоненти зв'язності (кожен колір — окрема компонента); has_path = True
+        лише в межах однієї компоненти.
+      </span>
+    </span>
+  )
+}
+
 /** Замінює статичну фігуру markdown живим віджетом або інформативною карткою. */
 export function figureForSrc(src: string | undefined, alt: string | undefined): ReactNode {
   const name = (src ?? "").split("/").pop() ?? ""
@@ -98,6 +163,7 @@ export function figureForSrc(src: string | undefined, alt: string | undefined): 
   if (name === "spanning_tree_example.png" || name === "mst_result.png") {
     return <MiniGraph highlightMst />
   }
+  if (name === "components_example.png") return <ComponentsExampleWidget />
   if (name === "cut_property.png") return <CutPropertyWidget />
   if (name === "exchange_argument.png") return <ExchangeArgumentWidget />
   if (/dsu|has_path|bfs|step|compare|build|steps/.test(name)) {
