@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { REFERENCE_MST_EDGE_IDS } from "@/lib/exampleGraph"
 import { examplePreset } from "@/store/presets"
 import { DsuBuildWidget } from "@/features/learn/DsuBuildWidget"
+import { HasPathStepsWidget } from "@/features/learn/HasPathStepsWidget"
 import {
   CutPropertyWidget,
   ExchangeArgumentWidget,
@@ -302,6 +303,7 @@ export function figureForSrc(src: string | undefined, alt: string | undefined): 
   if (name === "cut_property.png") return <CutPropertyWidget />
   if (name === "exchange_argument.png") return <ExchangeArgumentWidget />
   if (name === "dsu_build.gif") return <DsuBuildWidget />
+  if (name === "has_path_steps.png") return <HasPathStepsWidget />
   if (/dsu|has_path|bfs|step|compare|build|steps/.test(name)) {
     return <FigureCard caption={caption} cta={{ label: "Відкрити плеєр", tab: "playback" }} />
   }
