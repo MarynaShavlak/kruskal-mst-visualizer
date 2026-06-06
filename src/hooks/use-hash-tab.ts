@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 
-/** Повертає «голий» ключ із хеша: "#editor" -> "editor". */
+/**
+ * Повертає ключ вкладки з хеша: "#editor" -> "editor".
+ * Параметри після "?"/"&" відкидаються (напр. "#editor?g=..." -> "editor"),
+ * щоб шаринг графа через URL-хеш співіснував із роутингом вкладок.
+ */
 function readHash(): string {
-  return window.location.hash.replace(/^#/, "")
+  return window.location.hash.replace(/^#/, "").split(/[?&]/)[0]
 }
 
 /**

@@ -7,7 +7,7 @@ import {
   referenceGraph,
   REFERENCE_MST_EDGE_IDS,
   REFERENCE_MST_WEIGHT,
-} from "@/lib/__fixtures__/reference-graph"
+} from "@/lib/exampleGraph"
 
 const sortedIds = (ids: readonly string[]): string[] => [...ids].sort()
 

@@ -5,8 +5,8 @@ import {
   addVertex,
   emptyGraph,
   hasEdge,
+  vertexName,
   type Graph,
-  type Vertex,
 } from "@/lib/graph"
 
 /** PRNG mulberry32 — детермінований за seed. */
@@ -29,11 +29,6 @@ export interface RandomGraphOptions {
   readonly seed?: number
   /** Гарантувати зв'язність (через випадкове кістякове дерево). */
   readonly connected?: boolean
-}
-
-/** Імена вершин: A..Z, далі V27, V28, … */
-export function vertexName(i: number): Vertex {
-  return i < 26 ? String.fromCharCode(65 + i) : `V${i + 1}`
 }
 
 export function randomGraph(options: RandomGraphOptions): Graph {

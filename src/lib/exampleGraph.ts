@@ -1,6 +1,8 @@
 import { buildGraph, type Graph, type Vertex } from "@/lib/graph"
 
-/** Еталон коректності з CLAUDE.md: 7 вершин A–G, 11 ребер. */
+// Канонічний приклад (еталон коректності з CLAUDE.md): 7 вершин A–G, 11 ребер.
+// Використовується і пресетом редактора «приклад», і тестами lib/.
+
 export const REFERENCE_EDGES: ReadonlyArray<readonly [Vertex, Vertex, number]> = [
   ["A", "B", 7],
   ["A", "D", 5],

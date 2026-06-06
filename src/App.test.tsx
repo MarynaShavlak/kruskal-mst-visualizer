@@ -24,13 +24,13 @@ describe("Оболонка App", () => {
     )
   })
 
-  it("клік на «Редактор» оновлює хеш і показує контент редактора", async () => {
+  it("клік на «Бенчмарк» оновлює хеш і показує його контент", async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole("tab", { name: "Редактор" }))
+    await user.click(screen.getByRole("tab", { name: "Бенчмарк" }))
 
-    expect(window.location.hash).toBe("#editor")
-    expect(screen.getByText(/Редактор графа/)).toBeInTheDocument()
+    expect(window.location.hash).toBe("#benchmark")
+    expect(screen.getByText(/Порівняння наївної/)).toBeInTheDocument()
   })
 })

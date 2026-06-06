@@ -111,6 +111,48 @@ export function neighbors(g: Graph, v: Vertex): Vertex[] {
   return res
 }
 
+/** Канонічне ім'я вершини за індексом: A..Z, далі V27, V28, … */
+export function vertexName(i: number): Vertex {
+  return i < 26 ? String.fromCharCode(65 + i) : `V${i + 1}`
+}
+
+/** Перше вільне канонічне ім'я, якого ще немає серед `existing`. */
+export function nextVertexName(existing: readonly Vertex[]): Vertex {
+  const set = new Set(existing)
+  for (let i = 0; ; i++) {
+    const name = vertexName(i)
+    if (!set.has(name)) return name
+  }
+}
+
+/** Видаляє вершину разом з усіма інцидентними ребрами. */
+export function removeVertex(g: Graph, v: Vertex): Graph {
+  return {
+    vertices: g.vertices.filter((x) => x !== v),
+    edges: g.edges.filter((e) => e.u !== v && e.v !== v),
+  }
+}
+
+/** Видаляє ребро за нормалізованим id. */
+export function removeEdge(g: Graph, id: string): Graph {
+  return { vertices: g.vertices, edges: g.edges.filter((e) => e.id !== id) }
+}
+
+/** Оновлює вагу наявного ребра (додатне ціле). Кидає помилку, якщо ребра немає. */
+export function setEdgeWeight(g: Graph, id: string, weight: number): Graph {
+  if (!Number.isInteger(weight) || weight <= 0) {
+    throw new Error(`Вага має бути додатним цілим, отримано: ${weight}`)
+  }
+  let found = false
+  const edges = g.edges.map((e) => {
+    if (e.id !== id) return e
+    found = true
+    return { ...e, weight }
+  })
+  if (!found) throw new Error(`Невідоме ребро: ${id}`)
+  return { vertices: g.vertices, edges }
+}
+
 function assertVertexName(v: Vertex): void {
   if (typeof v !== "string" || v.length === 0) {
     throw new Error(

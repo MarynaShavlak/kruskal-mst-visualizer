@@ -8,10 +8,15 @@ import {
   hasEdge,
   hasVertex,
   neighbors,
+  nextVertexName,
+  removeEdge,
+  removeVertex,
+  setEdgeWeight,
   sortedEdges,
   totalWeight,
+  vertexName,
 } from "@/lib/graph"
-import { referenceGraph } from "@/lib/__fixtures__/reference-graph"
+import { referenceGraph } from "@/lib/exampleGraph"
 
 describe("edgeId", () => {
   it("нормалізує кінці за сортуванням", () => {
@@ -108,5 +113,52 @@ describe("neighbors", () => {
     ])
     expect(neighbors(g, "A").sort()).toEqual(["B", "C"])
     expect(neighbors(g, "B")).toEqual(["A"])
+  })
+})
+
+describe("vertexName / nextVertexName", () => {
+  it("vertexName: A..Z, далі V27", () => {
+    expect(vertexName(0)).toBe("A")
+    expect(vertexName(25)).toBe("Z")
+    expect(vertexName(26)).toBe("V27")
+  })
+
+  it("nextVertexName повертає перше вільне ім'я", () => {
+    expect(nextVertexName([])).toBe("A")
+    expect(nextVertexName(["A", "B", "D"])).toBe("C")
+    expect(nextVertexName(["A", "B", "C"])).toBe("D")
+  })
+})
+
+describe("removeVertex / removeEdge", () => {
+  it("removeVertex прибирає вершину й інцидентні ребра", () => {
+    const g = buildGraph([
+      ["A", "B", 1],
+      ["B", "C", 2],
+      ["A", "C", 3],
+    ])
+    const g2 = removeVertex(g, "B")
+    expect([...g2.vertices].sort()).toEqual(["A", "C"])
+    expect(g2.edges.map((e) => e.id)).toEqual(["A|C"])
+  })
+
+  it("removeEdge прибирає лише ребро", () => {
+    const g = buildGraph([["A", "B", 1]])
+    const g2 = removeEdge(g, "A|B")
+    expect(g2.edges).toHaveLength(0)
+    expect([...g2.vertices].sort()).toEqual(["A", "B"])
+  })
+})
+
+describe("setEdgeWeight", () => {
+  it("оновлює вагу наявного ребра", () => {
+    const g = buildGraph([["A", "B", 1]])
+    expect(setEdgeWeight(g, "A|B", 9).edges[0].weight).toBe(9)
+  })
+
+  it("кидає помилку для невідомого ребра або невалідної ваги", () => {
+    const g = buildGraph([["A", "B", 1]])
+    expect(() => setEdgeWeight(g, "X|Y", 2)).toThrow()
+    expect(() => setEdgeWeight(g, "A|B", 0)).toThrow()
   })
 })
