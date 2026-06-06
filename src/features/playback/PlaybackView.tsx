@@ -1,32 +1,29 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { kruskalDsu } from "@/lib/kruskalDsu"
+import { kruskalHasPath } from "@/lib/kruskalHasPath"
 import { useGraphStore } from "@/store/graph-store"
-import { CodePanel } from "@/features/playback/CodePanel"
-import { DecisionTable } from "@/features/playback/DecisionTable"
+import { CompareView } from "@/features/playback/CompareView"
 import { DsuForestPanel } from "@/features/playback/DsuForestPanel"
-import { GraphView } from "@/features/playback/GraphView"
-import { PlayerControls } from "@/features/playback/PlayerControls"
-import { usePlayer } from "@/features/playback/use-player"
+import { NaiveStatePanel } from "@/features/playback/NaiveStatePanel"
+import { SinglePlayer } from "@/features/playback/SinglePlayer"
+
+type Mode = "dsu" | "hasPath" | "compare"
+
+const MODES: { key: Mode; label: string }[] = [
+  { key: "dsu", label: "DSU" },
+  { key: "hasPath", label: "Наївна (BFS)" },
+  { key: "compare", label: "Порівняння" },
+]
 
 export function PlaybackView() {
   const graph = useGraphStore((s) => s.graph)
   const positions = useGraphStore((s) => s.positions)
+  const [mode, setMode] = useState<Mode>("dsu")
 
-  const { trace, result } = useMemo(() => kruskalDsu(graph), [graph])
-  const player = usePlayer(trace.frames.length, trace)
-  const frame = trace.frames[Math.min(player.index, trace.frames.length - 1)]
-
-  // Перший кадр кожного ребра — для переходу кліком у таблиці рішень.
-  const firstFrameOfEdge = useMemo(() => {
-    const map = new Map<string, number>()
-    trace.frames.forEach((f, i) => {
-      if (f.consideredEdgeId && !map.has(f.consideredEdgeId)) {
-        map.set(f.consideredEdgeId, i)
-      }
-    })
-    return map
-  }, [trace])
+  const dsuRun = useMemo(() => kruskalDsu(graph), [graph])
+  const naiveRun = useMemo(() => kruskalHasPath(graph), [graph])
 
   if (graph.vertices.length === 0) {
     return (
@@ -40,53 +37,54 @@ export function PlaybackView() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PlayerControls player={player} />
-
-      <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
-        <span className="font-medium">
-          Крок {player.index + 1}/{trace.frames.length}.
-        </span>{" "}
-        {frame.caption}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-muted-foreground">Версія алгоритму:</span>
+        {MODES.map((m) => (
+          <Button
+            key={m.key}
+            size="sm"
+            variant={mode === m.key ? "default" : "outline"}
+            onClick={() => setMode(m.key)}
+          >
+            {m.label}
+          </Button>
+        ))}
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
-        <GraphView
+      {mode === "dsu" && (
+        <SinglePlayer
           graph={graph}
           positions={positions}
-          trace={trace}
-          frame={frame}
-          className="min-h-[360px]"
+          run={dsuRun}
+          codeTitle="Код — Краскал на DSU"
+          graphTitle="Граф — множини DSU (кольори компонент)"
+          thirdPanel={(f) => (
+            <DsuForestPanel snapshot={f.dsu} className="min-h-[360px]" />
+          )}
         />
-        <CodePanel code={trace.code} activeLines={frame.lines} className="min-h-[360px]" />
-        <DsuForestPanel snapshot={frame.dsu} className="min-h-[360px]" />
-      </div>
+      )}
 
-      <div className="grid gap-3 lg:grid-cols-3">
-        <DecisionTable
+      {mode === "hasPath" && (
+        <SinglePlayer
           graph={graph}
-          trace={trace}
-          frame={frame}
-          className="lg:col-span-2"
-          onSeekEdge={(id) => {
-            const i = firstFrameOfEdge.get(id)
-            if (i != null) player.dispatch({ type: "seek", index: i })
-          }}
+          positions={positions}
+          run={naiveRun}
+          codeTitle="Код — наївний Краскал (BFS)"
+          graphTitle="Граф — допоміжний ліс + BFS"
+          thirdPanel={(f) => (
+            <NaiveStatePanel frame={f} className="min-h-[360px]" />
+          )}
         />
-        <Card>
-          <CardContent className="space-y-1 py-4 text-sm">
-            <div className="text-muted-foreground">Підсумок (Краскал, DSU)</div>
-            <div className="text-2xl font-semibold tabular-nums">
-              Вага МОД: {result.totalWeight}
-            </div>
-            <div>
-              {result.mstEdgeIds.length} ребер ·{" "}
-              {result.isSpanning
-                ? "остовне дерево"
-                : "остовний ліс (граф незв'язний)"}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      )}
+
+      {mode === "compare" && (
+        <CompareView
+          graph={graph}
+          positions={positions}
+          dsuRun={dsuRun}
+          naiveRun={naiveRun}
+        />
+      )}
     </div>
   )
 }

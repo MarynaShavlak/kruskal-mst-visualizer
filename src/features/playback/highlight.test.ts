@@ -5,6 +5,7 @@ import { referenceGraph } from "@/lib/exampleGraph"
 import {
   colorByRoot,
   componentRoots,
+  decisionFrameIndices,
   edgeStatuses,
 } from "@/features/playback/highlight"
 
@@ -45,5 +46,15 @@ describe("edgeStatuses", () => {
     const st = edgeStatuses(trace, trace.frames[trace.frames.length - 1])
     const accepted = [...st.values()].filter((s) => s === "accepted").length
     expect(accepted).toBe(6)
+  })
+})
+
+describe("decisionFrameIndices", () => {
+  it("кількість рішень однакова в DSU і наївній версіях", () => {
+    const g = referenceGraph()
+    const dsu = decisionFrameIndices(kruskalDsu(g).trace)
+    const naive = decisionFrameIndices(kruskalHasPath(g).trace)
+    expect(dsu.length).toBe(naive.length)
+    expect(dsu.length).toBeGreaterThan(0)
   })
 })

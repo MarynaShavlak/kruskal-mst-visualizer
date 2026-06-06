@@ -21,17 +21,44 @@ const EDGE_STYLE: Record<
   pending: { stroke: "#94a3b8", width: 1.5, opacity: 0.85 },
 }
 
+interface Ring {
+  stroke: string
+  width: number
+  dash?: string
+}
+
+/** Кільце-підсвітка вершини за підкроком кадру (BFS-фронтир або find-підйом). */
+function vertexRing(
+  v: Vertex,
+  sub: Frame["sub"],
+): Ring | null {
+  if (sub.kind === "bfs-visit") {
+    if (sub.at === v) return { stroke: "#d97706", width: 3 }
+    if (sub.frontier.includes(v)) return { stroke: "#d97706", width: 2.5, dash: "3 3" }
+    if (sub.visited.includes(v)) return { stroke: "#2563eb", width: 2 }
+  } else if (sub.kind === "bfs-exhausted") {
+    if (sub.visited.includes(v)) return { stroke: "#2563eb", width: 2 }
+  } else if (sub.kind === "dsu-find") {
+    if (sub.path.includes(v)) return { stroke: "#d97706", width: 3 }
+  } else if (sub.kind === "dsu-compress") {
+    if (sub.changed.includes(v) || sub.root === v) return { stroke: "#0891b2", width: 3 }
+  }
+  return null
+}
+
 export function GraphView({
   graph,
   positions,
   trace,
   frame,
+  title = "Граф (кольори компонент)",
   className,
 }: {
   graph: Graph
   positions: Record<Vertex, XY>
   trace: Trace
   frame: Frame
+  title?: string
   className?: string
 }) {
   const allHavePos = graph.vertices.every((v) => positions[v])
@@ -49,12 +76,8 @@ export function GraphView({
   const viewBox = `${minX} ${minY} ${maxX - minX} ${maxY - minY}`
 
   return (
-    <Panel title="Граф (кольори компонент)" className={className} bodyClassName="p-0">
-      <svg
-        viewBox={viewBox}
-        className="h-full w-full"
-        preserveAspectRatio="xMidYMid meet"
-      >
+    <Panel title={title} className={className} bodyClassName="p-0">
+      <svg viewBox={viewBox} className="h-full w-full" preserveAspectRatio="xMidYMid meet">
         {graph.edges.map((e) => {
           const a = pos[e.u]
           const b = pos[e.v]
@@ -83,8 +106,20 @@ export function GraphView({
         })}
         {graph.vertices.map((v) => {
           const p = pos[v]
+          const ring = vertexRing(v, frame.sub)
           return (
             <g key={v}>
+              {ring && (
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={21}
+                  fill="none"
+                  stroke={ring.stroke}
+                  strokeWidth={ring.width}
+                  strokeDasharray={ring.dash}
+                />
+              )}
               <motion.circle
                 cx={p.x}
                 cy={p.y}

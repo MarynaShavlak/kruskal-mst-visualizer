@@ -63,6 +63,15 @@ export function colorByRoot(roots: Map<Vertex, Vertex>): Map<Vertex, string> {
   return vertexColor
 }
 
+/** Індекси кадрів, де приймається рішення по ребру (accept/reject) — по порядку. */
+export function decisionFrameIndices(trace: Trace): number[] {
+  const out: number[] = []
+  trace.frames.forEach((f, i) => {
+    if (f.decision !== null) out.push(i)
+  })
+  return out
+}
+
 export type EdgeStatus = "accepted" | "current" | "rejected" | "pending"
 
 /** Статус кожного ребра на момент кадру (для панелі графа й таблиці рішень). */
