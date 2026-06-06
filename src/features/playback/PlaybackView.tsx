@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { DEFAULT_DSU_OPTIONS, type DsuOptions } from "@/lib/dsu"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { kruskalHasPath } from "@/lib/kruskalHasPath"
 import { useGraphStore } from "@/store/graph-store"
@@ -21,8 +22,12 @@ export function PlaybackView() {
   const graph = useGraphStore((s) => s.graph)
   const positions = useGraphStore((s) => s.positions)
   const [mode, setMode] = useState<Mode>("dsu")
+  const [dsuOptions, setDsuOptions] = useState<DsuOptions>(DEFAULT_DSU_OPTIONS)
 
-  const dsuRun = useMemo(() => kruskalDsu(graph), [graph])
+  const dsuRun = useMemo(
+    () => kruskalDsu(graph, dsuOptions),
+    [graph, dsuOptions],
+  )
   const naiveRun = useMemo(() => kruskalHasPath(graph), [graph])
 
   if (graph.vertices.length === 0) {
@@ -34,6 +39,45 @@ export function PlaybackView() {
       </Card>
     )
   }
+
+  const dsuOptionsBar = (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border bg-muted/20 px-3 py-2 text-sm">
+      <span className="font-medium">Оптимізації DSU:</span>
+      <label className="flex cursor-pointer items-center gap-1.5">
+        <input
+          type="checkbox"
+          className="accent-primary"
+          checked={dsuOptions.unionByRank}
+          onChange={(e) =>
+            setDsuOptions((o) => ({ ...o, unionByRank: e.target.checked }))
+          }
+        />
+        об'єднання за рангом
+      </label>
+      <label className="flex cursor-pointer items-center gap-1.5">
+        <input
+          type="checkbox"
+          className="accent-primary"
+          checked={dsuOptions.pathCompression}
+          onChange={(e) =>
+            setDsuOptions((o) => ({ ...o, pathCompression: e.target.checked }))
+          }
+        />
+        стиснення шляху
+      </label>
+      {!dsuOptions.unionByRank && !dsuOptions.pathCompression && (
+        <span className="text-amber-700">
+          без оптимізацій дерево вироджується в ланцюг — find стає O(n)
+        </span>
+      )}
+      <span className="ml-auto text-muted-foreground">
+        усього find-кроків:{" "}
+        <b className="tabular-nums text-foreground">
+          {dsuRun.result.dsuStats?.findSteps ?? 0}
+        </b>
+      </span>
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-3">
@@ -58,6 +102,7 @@ export function PlaybackView() {
           run={dsuRun}
           codeTitle="Код — Краскал на DSU"
           graphTitle="Граф — множини DSU (кольори компонент)"
+          headerExtra={dsuOptionsBar}
           thirdPanel={(f) => (
             <DsuForestPanel snapshot={f.dsu} className="min-h-[360px]" />
           )}

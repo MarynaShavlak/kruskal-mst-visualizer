@@ -1,6 +1,7 @@
 // Union-Find (DSU) з union-by-rank + path compression.
-// Методи повертають деталі кроків (шлях підйому, стиснення, обʼєднання),
-// щоб алгоритм міг писати trace, не зазираючи у приватний стан.
+// Оптимізації можна вимикати (для демонстрації виродження в ланцюг).
+// Методи повертають деталі кроків (шлях підйому, стиснення, об'єднання) і
+// рахують операції — щоб алгоритм писав trace й показував живу складність.
 
 import type { Vertex } from "@/lib/graph"
 
@@ -31,12 +32,48 @@ export interface UnionResult {
   readonly rankIncreased: boolean
 }
 
+export interface DsuOptions {
+  readonly unionByRank: boolean
+  readonly pathCompression: boolean
+}
+
+export const DEFAULT_DSU_OPTIONS: DsuOptions = {
+  unionByRank: true,
+  pathCompression: true,
+}
+
+/** Лічильники операцій (для лічильника складності). */
+export interface DsuStats {
+  readonly finds: number
+  readonly findSteps: number
+  readonly unions: number
+  readonly compressions: number
+}
+
 export class DSU {
   private readonly parent = new Map<Vertex, Vertex>()
   private readonly rank = new Map<Vertex, number>()
+  private readonly options: DsuOptions
+  private _finds = 0
+  private _findSteps = 0
+  private _unions = 0
+  private _compressions = 0
 
-  constructor(elements: Iterable<Vertex> = []) {
+  constructor(
+    elements: Iterable<Vertex> = [],
+    options: DsuOptions = DEFAULT_DSU_OPTIONS,
+  ) {
+    this.options = options
     for (const e of elements) this.makeSet(e)
+  }
+
+  get stats(): DsuStats {
+    return {
+      finds: this._finds,
+      findSteps: this._findSteps,
+      unions: this._unions,
+      compressions: this._compressions,
+    }
   }
 
   /** Створює одноелементну множину (ідемпотентно). */
@@ -51,7 +88,7 @@ export class DSU {
     return this.parent.has(x)
   }
 
-  /** Знаходить корінь зі стисненням шляху; повертає деталі для trace. */
+  /** Знаходить корінь (зі стисненням, якщо увімкнено); повертає деталі для trace. */
   find(x: Vertex): FindResult {
     this.assertKnown(x)
     const path: Vertex[] = []
@@ -63,17 +100,23 @@ export class DSU {
     path.push(cur)
     const root = cur
 
+    this._finds++
+    this._findSteps += path.length - 1
+
     const compressed: Vertex[] = []
-    for (const node of path) {
-      if (node !== root && this.parent.get(node) !== root) {
-        this.parent.set(node, root)
-        compressed.push(node)
+    if (this.options.pathCompression) {
+      for (const node of path) {
+        if (node !== root && this.parent.get(node) !== root) {
+          this.parent.set(node, root)
+          compressed.push(node)
+        }
       }
+      this._compressions += compressed.length
     }
     return { root, path, compressed }
   }
 
-  /** Лише корінь (зі стисненням шляху). */
+  /** Лише корінь. */
   findRoot(x: Vertex): Vertex {
     return this.find(x).root
   }
@@ -82,7 +125,7 @@ export class DSU {
     return this.findRoot(x) === this.findRoot(y)
   }
 
-  /** Обʼєднує множини за рангом; повертає деталі для trace. */
+  /** Об'єднує множини (за рангом, якщо увімкнено); повертає деталі для trace. */
   union(x: Vertex, y: Vertex): UnionResult {
     const rootX = this.findRoot(x)
     const rootY = this.findRoot(y)
@@ -96,24 +139,30 @@ export class DSU {
         rankIncreased: false,
       }
     }
-
-    const rankX = this.rank.get(rootX)!
-    const rankY = this.rank.get(rootY)!
+    this._unions++
 
     let root: Vertex
     let attached: Vertex
     let rankIncreased = false
-    if (rankX < rankY) {
-      root = rootY
-      attached = rootX
-    } else if (rankX > rankY) {
-      root = rootX
-      attached = rootY
+    if (this.options.unionByRank) {
+      const rankX = this.rank.get(rootX)!
+      const rankY = this.rank.get(rootY)!
+      if (rankX < rankY) {
+        root = rootY
+        attached = rootX
+      } else if (rankX > rankY) {
+        root = rootX
+        attached = rootY
+      } else {
+        root = rootX
+        attached = rootY
+        this.rank.set(root, rankX + 1)
+        rankIncreased = true
+      }
     } else {
+      // Без рангу: завжди підвішуємо корінь Y під корінь X — можливі довгі ланцюги.
       root = rootX
       attached = rootY
-      this.rank.set(root, rankX + 1)
-      rankIncreased = true
     }
     this.parent.set(attached, root)
     return { merged: true, root, rootX, rootY, attached, rankIncreased }

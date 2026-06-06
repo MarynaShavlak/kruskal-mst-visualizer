@@ -15,6 +15,7 @@ export function SinglePlayer({
   run,
   codeTitle,
   graphTitle,
+  headerExtra,
   thirdPanel,
 }: {
   graph: Graph
@@ -22,6 +23,7 @@ export function SinglePlayer({
   run: KruskalRun
   codeTitle: string
   graphTitle?: string
+  headerExtra?: ReactNode
   thirdPanel: (frame: Frame) => ReactNode
 }) {
   const { trace, result } = run
@@ -40,6 +42,7 @@ export function SinglePlayer({
 
   return (
     <div className="flex flex-col gap-3">
+      {headerExtra}
       <PlayerControls player={player} />
 
       <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
@@ -48,6 +51,23 @@ export function SinglePlayer({
         </span>{" "}
         {frame.caption}
       </div>
+
+      {frame.dsuStats && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
+          <span>
+            <b>find-кроків:</b>{" "}
+            <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
+          </span>
+          <span>
+            <b>об'єднань:</b>{" "}
+            <span className="tabular-nums">{frame.dsuStats.unions}</span>
+          </span>
+          <span>
+            <b>стиснень шляху:</b>{" "}
+            <span className="tabular-nums">{frame.dsuStats.compressions}</span>
+          </span>
+        </div>
+      )}
 
       <div className="grid gap-3 lg:grid-cols-3">
         <GraphView

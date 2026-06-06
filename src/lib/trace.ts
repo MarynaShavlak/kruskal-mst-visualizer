@@ -3,7 +3,7 @@
 // UI лише рухає курсор по них (scrubbing, крок назад) без переобчислення.
 // Формат дворівневий: крок на ребро (edgeIndex/consideredEdgeId) + підкроки (sub).
 
-import type { DsuSnapshot } from "@/lib/dsu"
+import type { DsuSnapshot, DsuStats } from "@/lib/dsu"
 import type { Vertex } from "@/lib/graph"
 
 export type Algo = "dsu" | "hasPath"
@@ -20,6 +20,8 @@ export interface MstResult {
   readonly componentCount: number
   /** Скільки ребер було розглянуто. */
   readonly consideredCount: number
+  /** Підсумкові лічильники DSU (лише для algo="dsu"). */
+  readonly dsuStats?: DsuStats
 }
 
 /** Підкрок кадру. Дискримінант — `kind`; частина спільна, частина — на алгоритм. */
@@ -75,6 +77,8 @@ export interface Frame {
   readonly sub: Sub
   /** Знімок DSU для панелі «ліс вказівників» (лише для algo="dsu"). */
   readonly dsu?: DsuSnapshot
+  /** Лічильники DSU на момент кадру (лише для algo="dsu"). */
+  readonly dsuStats?: DsuStats
 }
 
 export interface Trace {

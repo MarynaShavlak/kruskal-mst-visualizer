@@ -66,3 +66,46 @@ describe("DSU", () => {
     expect(snap.rank).toHaveProperty("A")
   })
 })
+
+describe("DSU опції та лічильники", () => {
+  it("без оптимізацій union будує ланцюг; find не стискає", () => {
+    const dsu = new DSU(["A", "B", "C", "D"], {
+      unionByRank: false,
+      pathCompression: false,
+    })
+    dsu.union("B", "A") // A→B
+    dsu.union("C", "B") // B→C
+    dsu.union("D", "C") // C→D ⇒ ланцюг A→B→C→D
+    const f = dsu.find("A")
+    expect(f.root).toBe("D")
+    expect(f.path).toEqual(["A", "B", "C", "D"])
+    expect(f.compressed).toEqual([])
+    expect(dsu.find("A").path).toEqual(["A", "B", "C", "D"])
+  })
+
+  it("стиснення шляху можна вимкнути окремо (union-by-rank лишається)", () => {
+    const dsu = new DSU(["A", "B", "C", "D"], {
+      unionByRank: true,
+      pathCompression: false,
+    })
+    dsu.union("A", "B")
+    dsu.union("C", "D")
+    dsu.union("A", "C") // глибина 2: D→C→A
+    expect(dsu.find("D").path).toEqual(["D", "C", "A"])
+    expect(dsu.find("D").compressed).toEqual([])
+    expect(dsu.find("D").path).toEqual(["D", "C", "A"])
+  })
+
+  it("лічильники рахують find-кроки та union", () => {
+    const dsu = new DSU(["A", "B", "C"], {
+      unionByRank: false,
+      pathCompression: false,
+    })
+    dsu.union("B", "A")
+    dsu.union("C", "B") // ланцюг A→B→C
+    const before = dsu.stats.findSteps
+    dsu.find("A") // 2 кроки
+    expect(dsu.stats.findSteps - before).toBe(2)
+    expect(dsu.stats.unions).toBe(2)
+  })
+})

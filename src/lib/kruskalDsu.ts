@@ -1,7 +1,7 @@
 // Основний Краскал на DSU (union-by-rank + path compression).
 // Проганяється один раз і пише trace з підкроками: find-підйом, стиснення, union.
 
-import { DSU } from "@/lib/dsu"
+import { DSU, type DsuOptions } from "@/lib/dsu"
 import { sortedEdges, type Edge, type Graph } from "@/lib/graph"
 import {
   TraceBuilder,
@@ -30,9 +30,9 @@ export const KRUSKAL_DSU_CODE: readonly string[] = [
 
 const edgeLabel = (e: Edge): string => `${e.u}–${e.v}`
 
-export function kruskalDsu(graph: Graph): KruskalRun {
+export function kruskalDsu(graph: Graph, options?: DsuOptions): KruskalRun {
   const edges = sortedEdges(graph)
-  const dsu = new DSU(graph.vertices)
+  const dsu = new DSU(graph.vertices, options)
   const tb = new TraceBuilder(
     "dsu",
     KRUSKAL_DSU_CODE,
@@ -62,6 +62,7 @@ export function kruskalDsu(graph: Graph): KruskalRun {
       mstEdgeIds: [...mst],
       sub,
       dsu: dsu.snapshot(),
+      dsuStats: dsu.stats,
     })
 
   emit(
@@ -156,6 +157,7 @@ export function kruskalDsu(graph: Graph): KruskalRun {
     isSpanning: mst.length === need,
     componentCount: dsu.componentCount(),
     consideredCount: considered,
+    dsuStats: dsu.stats,
   }
   return { result, trace: tb.build(result) }
 }
