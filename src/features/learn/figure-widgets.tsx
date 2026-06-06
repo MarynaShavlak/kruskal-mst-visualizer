@@ -2,6 +2,10 @@ import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { REFERENCE_MST_EDGE_IDS } from "@/lib/exampleGraph"
 import { examplePreset } from "@/store/presets"
+import {
+  CutPropertyWidget,
+  ExchangeArgumentWidget,
+} from "@/features/learn/proofs"
 
 /** Живий міні-граф прикладу (опційно з підсвіченою МОД). */
 function MiniGraph({ highlightMst = false }: { highlightMst?: boolean }) {
@@ -94,6 +98,8 @@ export function figureForSrc(src: string | undefined, alt: string | undefined): 
   if (name === "spanning_tree_example.png" || name === "mst_result.png") {
     return <MiniGraph highlightMst />
   }
+  if (name === "cut_property.png") return <CutPropertyWidget />
+  if (name === "exchange_argument.png") return <ExchangeArgumentWidget />
   if (/dsu|has_path|bfs|step|compare|build|steps/.test(name)) {
     return <FigureCard caption={caption} cta={{ label: "Відкрити плеєр", tab: "playback" }} />
   }
