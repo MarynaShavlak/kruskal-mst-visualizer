@@ -1,11 +1,10 @@
-import { useMemo } from "react"
-import { Pause, Play, StepBack, StepForward } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useMemo } from "react"
 import type { DsuSnapshot } from "@/lib/dsu"
 import { referenceGraph } from "@/lib/exampleGraph"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { colorForRoot } from "@/features/playback/highlight"
 import { usePlayer } from "@/features/playback/use-player"
+import { MiniPlayerShell, seekForEdge } from "@/features/learn/step-widgets"
 
 interface FNode {
   id: string
@@ -81,9 +80,17 @@ function layout(snap: DsuSnapshot): {
 }
 
 /** Вбудований міні-плеєр побудови лісу DSU (ранги + вказівники, стиснення). */
-export function DsuBuildWidget() {
+export function DsuBuildWidget({ focusEdge }: { focusEdge?: string }) {
   const { trace } = useMemo(() => kruskalDsu(referenceGraph()), [])
   const player = usePlayer(trace.frames.length, trace)
+
+  useEffect(() => {
+    if (!focusEdge) return
+    const i = seekForEdge(trace, focusEdge, false)
+    if (i >= 0) player.dispatch({ type: "seek", index: i })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trace, focusEdge])
+
   const frame = trace.frames[Math.min(player.index, trace.frames.length - 1)]
   const snap = frame.dsu
   const { nodes, width, height } = snap
@@ -94,42 +101,7 @@ export function DsuBuildWidget() {
   const viewBox = `${-pad} ${-pad} ${width + pad * 2} ${height + pad * 2}`
 
   return (
-    <span className="not-prose my-4 block rounded-lg border bg-card p-3">
-      <span className="mb-2 flex flex-wrap items-center gap-2">
-        <Button
-          size="icon-sm"
-          variant="outline"
-          onClick={() => player.dispatch({ type: "prev" })}
-          disabled={player.index <= 0}
-          title="Крок назад"
-        >
-          <StepBack />
-        </Button>
-        <Button
-          size="icon"
-          onClick={() => player.dispatch({ type: "toggle" })}
-          title={player.isPlaying ? "Пауза" : "Грати"}
-        >
-          {player.isPlaying ? <Pause /> : <Play />}
-        </Button>
-        <Button
-          size="icon-sm"
-          variant="outline"
-          onClick={() => player.dispatch({ type: "next" })}
-          disabled={player.index >= trace.frames.length - 1}
-          title="Крок вперед"
-        >
-          <StepForward />
-        </Button>
-        <span className="text-xs tabular-nums text-muted-foreground">
-          {player.index + 1} / {trace.frames.length}
-        </span>
-      </span>
-
-      <span className="mb-2 block min-h-[2.5em] text-xs text-muted-foreground">
-        {frame.caption}
-      </span>
-
+    <MiniPlayerShell player={player} frameCount={trace.frames.length} caption={frame.caption}>
       <svg viewBox={viewBox} className="h-[240px] w-full" preserveAspectRatio="xMidYMid meet">
         {nodes
           .filter((n) => !n.isRoot)
@@ -167,6 +139,6 @@ export function DsuBuildWidget() {
           </g>
         ))}
       </svg>
-    </span>
+    </MiniPlayerShell>
   )
 }

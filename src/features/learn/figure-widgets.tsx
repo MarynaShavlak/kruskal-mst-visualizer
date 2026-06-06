@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button"
 import { REFERENCE_MST_EDGE_IDS } from "@/lib/exampleGraph"
 import { examplePreset } from "@/store/presets"
 import { DsuBuildWidget } from "@/features/learn/DsuBuildWidget"
-import { HasPathStepsWidget } from "@/features/learn/HasPathStepsWidget"
+import {
+  CompareStepsWidget,
+  GraphStepsWidget,
+} from "@/features/learn/step-widgets"
 import {
   CutPropertyWidget,
   ExchangeArgumentWidget,
@@ -302,11 +305,23 @@ export function figureForSrc(src: string | undefined, alt: string | undefined): 
   if (name === "chain_vs_flat.png") return <ChainVsFlatWidget />
   if (name === "cut_property.png") return <CutPropertyWidget />
   if (name === "exchange_argument.png") return <ExchangeArgumentWidget />
+  // Покрокові міні-плеєри (DSU-ліс, граф наївної/DSU, порівняння).
   if (name === "dsu_build.gif") return <DsuBuildWidget />
-  if (name === "has_path_steps.png") return <HasPathStepsWidget />
-  if (/dsu|has_path|bfs|step|compare|build|steps/.test(name)) {
-    return <FigureCard caption={caption} cta={{ label: "Відкрити плеєр", tab: "playback" }} />
+  if (name === "dsu_step8.png" || name === "dsu_step8_build.gif") {
+    return <DsuBuildWidget focusEdge="B|C" />
   }
+  if (name === "has_path_steps.png") return <GraphStepsWidget algo="hasPath" />
+  if (name === "dsu_steps.png" || name === "steps_grid.png") {
+    return <GraphStepsWidget algo="dsu" />
+  }
+  if (name === "bc_cycle_step8.png" || name === "bfs_found.gif") {
+    return <GraphStepsWidget algo="hasPath" focusEdge="B|C" />
+  }
+  if (name === "bfs_notfound.gif") {
+    return <GraphStepsWidget algo="hasPath" focusEdge="E|G" />
+  }
+  if (name === "compare_step8.png") return <CompareStepsWidget focusEdge="B|C" />
+
   if (name.includes("benchmark")) {
     return <FigureCard caption={caption} cta={{ label: "Відкрити бенчмарк", tab: "benchmark" }} />
   }
