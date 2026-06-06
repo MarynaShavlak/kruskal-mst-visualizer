@@ -41,6 +41,7 @@ import {
 } from "@/features/editor/graph-doc"
 import { VertexNode, type VertexNodeType } from "@/features/editor/VertexNode"
 import { useGraphStore, type GraphDoc } from "@/store/graph-store"
+import { useThemeStore } from "@/store/theme-store"
 
 const nodeTypes: NodeTypes = { vertex: VertexNode }
 
@@ -92,6 +93,7 @@ function EditorCanvas() {
   const loadDoc = useGraphStore((s) => s.loadDoc)
   const toDoc = useGraphStore((s) => s.toDoc)
 
+  const isDark = useThemeStore((s) => s.isDark)
   const { screenToFlowPosition } = useReactFlow()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -293,6 +295,7 @@ function EditorCanvas() {
             connectionMode={ConnectionMode.Loose}
             deleteKeyCode={["Delete", "Backspace"]}
             zoomOnDoubleClick={false}
+            colorMode={isDark ? "dark" : "light"}
             fitView
           >
             <Background />
