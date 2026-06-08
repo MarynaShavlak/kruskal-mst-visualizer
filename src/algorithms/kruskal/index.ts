@@ -1,0 +1,44 @@
+import { lazy } from "react"
+import { Waypoints } from "lucide-react"
+import type { Algorithm } from "@/algorithms/types"
+
+// Важкі екрани вантажимо лінією окремими чанками
+// (React Flow / Shiki / react-markdown+KaTeX / Recharts+Worker).
+const LearnView = lazy(() =>
+  import("@/algorithms/kruskal/learn/LearnView").then((m) => ({
+    default: m.LearnView,
+  })),
+)
+const EditorView = lazy(() =>
+  import("@/algorithms/kruskal/editor/EditorView").then((m) => ({
+    default: m.EditorView,
+  })),
+)
+const PlaybackView = lazy(() =>
+  import("@/algorithms/kruskal/playback/PlaybackView").then((m) => ({
+    default: m.PlaybackView,
+  })),
+)
+const BenchmarkView = lazy(() =>
+  import("@/algorithms/kruskal/benchmark/BenchmarkView").then((m) => ({
+    default: m.BenchmarkView,
+  })),
+)
+
+export const kruskal: Algorithm = {
+  id: "kruskal",
+  name: "Алгоритм Краскала",
+  shortName: "Краскал (МОД)",
+  tagline:
+    "Мінімальне остовне дерево: жадібно додаємо найлегші ребра, відсікаючи цикли через Union-Find.",
+  category: "Графи · Остовні дерева",
+  status: "ready",
+  icon: Waypoints,
+  defaultTab: "learn",
+  tabs: [
+    { key: "learn", label: "Навчання", View: LearnView },
+    { key: "editor", label: "Редактор", View: EditorView },
+    { key: "playback", label: "Алгоритм", View: PlaybackView },
+    { key: "benchmark", label: "Бенчмарк", View: BenchmarkView },
+  ],
+}

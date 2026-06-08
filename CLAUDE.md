@@ -1,9 +1,11 @@
 # Kruskal MST Visualizer
 
-Інтерактивний навчальний застосунок про алгоритм Краскала (мінімальне остовне дерево).
-Компаньйон до Python-репозиторію з повним розбором:
+Інтерактивна платформа для вивчення алгоритмів. Перший і найповніший розділ —
+алгоритм Краскала (мінімальне остовне дерево); наступний (у розробці, заглушка) —
+Флойда–Воршала. Компаньйон до Python-репозиторію з повним розбором:
 https://github.com/MarynaShavlak/algo-krustal-mst
 Мова інтерфейсу та контенту — українська.
+(Назва репозиторію й base-path досі `kruskal-mst-visualizer` — деплой не чіпаємо.)
 
 ## Стек
 - Vite + React + TypeScript (strict), SPA
@@ -18,12 +20,20 @@ https://github.com/MarynaShavlak/algo-krustal-mst
 - Vitest + Testing Library — тести
 
 ## Архітектура
-Алгоритмічне ядро — фреймворк-незалежне, без імпортів React.
+Платформа на кілька алгоритмів. `src/algorithms/registry.ts` — єдине джерело правди
+(каталог, перемикач у шапці й роутер читають його). Дворівневий хеш-роут
+`#<algoId>/<tab>` (порожній хеш → каталог), див. `src/hooks/use-route.ts`; є
+зворотна сумісність зі старими посиланнями `#editor`/`#playback?g=...`.
+Алгоритмічне ядро (`lib/`) — фреймворк-незалежне, без імпортів React.
+Додати алгоритм: нова тека `algorithms/<id>/` з описом `Algorithm` + запис у `registry.ts`.
 src/
+algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки екранів:
+            kruskal/{learn,editor,playback,benchmark}; floyd-warshall/ (заглушка, status="soon")
+features/   home/ (каталог карток), shell/ (AlgorithmShell, AlgorithmSwitcher, ComingSoon)
 lib/        graph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts, trace.ts, randomGraph.ts, theme.ts
-features/   editor/, playback/, learn/, benchmark/
-components/ спільний UI
-store/
+components/ спільний UI (shadcn/ui)
+hooks/      use-route.ts (роутер платформи)
+store/      graph-store, theme-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
 незмінних кадрів (Frame), UI лише рухає курсор по них (scrubbing, крок назад).

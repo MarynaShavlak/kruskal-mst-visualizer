@@ -3,34 +3,53 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import App from "./App"
 
-describe("Оболонка App", () => {
+describe("Оболонка платформи", () => {
   beforeEach(() => {
     window.location.hash = ""
   })
 
-  it("рендерить чотири вкладки", () => {
+  it("за замовчуванням показує каталог алгоритмів", () => {
     render(<App />)
-    expect(screen.getByRole("tab", { name: "Навчання" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Редактор" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Алгоритм" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Бенчмарк" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "Оберіть алгоритм" }),
+    ).toBeInTheDocument()
+    expect(screen.getByText("Краскал (МОД)")).toBeInTheDocument()
+    expect(screen.getByText("Флойд–Воршал")).toBeInTheDocument()
   })
 
-  it("за замовчуванням активна вкладка «Навчання»", () => {
-    render(<App />)
-    expect(screen.getByRole("tab", { name: "Навчання" })).toHaveAttribute(
-      "data-state",
-      "active",
-    )
-  })
-
-  it("клік на «Бенчмарк» оновлює хеш і показує його контент", async () => {
+  it("клік по картці Краскала відкриває вкладки розділу й оновлює хеш", async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole("tab", { name: "Бенчмарк" }))
+    await user.click(screen.getByText("Краскал (МОД)"))
 
-    expect(window.location.hash).toBe("#benchmark")
+    expect(window.location.hash).toBe("#kruskal/learn")
+    for (const name of ["Навчання", "Редактор", "Алгоритм", "Бенчмарк"]) {
+      expect(screen.getByRole("tab", { name })).toBeInTheDocument()
+    }
+  })
+
+  it("розділ-заглушка показує екран «Незабаром»", async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByText("Флойд–Воршал"))
+
+    expect(window.location.hash).toBe("#floyd-warshall")
+    expect(screen.getByText(/У розробці/)).toBeInTheDocument()
+    expect(
+      screen.getByRole("heading", { name: "Алгоритм Флойда–Воршала" }),
+    ).toBeInTheDocument()
+  })
+
+  it("глибоке посилання на вкладку відкриває її напряму", async () => {
+    window.location.hash = "#kruskal/benchmark"
+    render(<App />)
+
+    expect(screen.getByRole("tab", { name: "Бенчмарк" })).toHaveAttribute(
+      "data-state",
+      "active",
+    )
     expect(await screen.findByText(/DSU проти наївної/)).toBeInTheDocument()
   })
 })
