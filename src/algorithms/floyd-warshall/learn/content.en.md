@@ -80,11 +80,35 @@ for k in range(n):                      # "open" the intermediate vertices one b
 
 The outer loop over `k` is exactly the successive "opening" of vertices; the two inner loops scan all pairs `(i, j)`. Hence $O(n^3)$ time and $O(n^2)$ memory.
 
-## 4. Example 1 — graph `A–F` (positive weights)
+## 4. Relaxation: the core operation
+
+**Relaxation** is the name of the single operation the whole algorithm rests on (and Dijkstra and Bellman–Ford too). It is an **attempt to improve the current distance estimate** by routing through an intermediate vertex.
+
+The algorithm always keeps a **current best estimate** $D[i][j]$. Initially it is an overestimate: $0$ to itself, the direct-edge weight if one exists, otherwise $\infty$ (no path known yet). Relaxing the pair $(i, j)$ through $k$ is the check:
+
+$$D[i][j] \;\leftarrow\; \min\Big(D[i][j],\; D[i][k] + D[k][j]\Big)$$
+
+If $D[i][k] + D[k][j] < D[i][j]$, we **relax**: lower the estimate to the new, smaller value. Otherwise we leave it unchanged.
+
+**Where the name comes from.** Picture the estimate as a stretched spring, initially pulled too far ($\infty$). Each successful relaxation lets it contract toward the true shortest-path length. The term comes from optimization, where one "relaxes" (loosens) a constraint. The key point: **the estimate only ever decreases** and converges to the true distance.
+
+**Example.** $D[A][C]$ starts at $\infty$ (there is no direct edge $A \to C$). Check it through $B$:
+
+$$D[A][C] = \min(\infty,\; D[A][B] + D[B][C]) = \min(\infty,\; 3 + 1) = 4$$
+
+We found a shorter route $A \to B \to C$ of length $4$ — the estimate relaxed from $\infty$ down to $4$. That is **one relaxation**.
+
+**Not every check is a relaxation.** If $D[i][k] + D[k][j] \ge D[i][j]$, the estimate stays put: the check happened, but no relaxation did. In graph `A–F`, out of all $6^3 = 216$ checks only **5** succeed.
+
+> **In the "Algorithm" tab.** The *decision* frame (computing `via_k` and testing the condition) is the attempt; the next *update* frame (writing the smaller value, the cell turns green) is a successful relaxation. Only successful relaxations enter the relaxation log; checks with no improvement are labelled "(no change)".
+
+> **Terminology.** Textbooks often use "relax an edge" for the *attempt itself* (regardless of outcome). Here "relaxation" means only a **successful improvement** — which is why the counter shows 5, not all 216 checks.
+
+## 5. Example 1 — graph `A–F` (positive weights)
 
 ### The example graph
 
-We work with a **directed weighted** graph (vertices renamed to `A–F`). It is given by an **adjacency matrix**, where `0` means there is no edge:
+We work with a **directed weighted** graph. It is given by an **adjacency matrix**, where `0` means there is no edge:
 
 | i→j | A | B | C | D | E | F |
 |---|---|---|---|---|---|---|
@@ -339,7 +363,7 @@ Shortest path A → C:  A → B → C   (length = 4)
 
 ![Animation: unfolding path A → D via the nxt matrix](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_abcdef_A_to_D.gif)
 
-## 5. Negative cycles
+## 6. Negative cycles
 
 The algorithm works correctly with negative **edges**, but **not with negative cycles**: if such a cycle exists, there is no "shortest" path (its length can be decreased without bound).
 
@@ -365,7 +389,7 @@ Diagonal of the matrix (vertices A, B, C): [-1, -1, -2]
 Negative cycle detected: True
 ```
 
-## 6. Example 2 — a fully negative cycle (all edges negative)
+## 7. Example 2 — a fully negative cycle (all edges negative)
 
 Consider three vertices `X, Y, Z` where **all** the cycle's edges are negative: `X → Y = −1`, `Y → Z = −1`, `Z → X = −1`. The sum of the cycle weights is `−3 < 0` — this is a **negative cycle**.
 
@@ -395,7 +419,7 @@ The off-diagonal numbers are returned finite too, but they are NOT
 the true shortest distances — for those pairs the real answer is −∞.
 ```
 
-## 7. Example 3 — negative edges (nodes `P, Q, R, S`)
+## 8. Example 3 — negative edges (nodes `P, Q, R, S`)
 
 Floyd–Warshall, unlike Dijkstra, **works correctly with negative weights** (as long as there is no negative cycle). The graph: `P→Q = 4`, `Q→R = −2` (a negative edge), `R→S = 3`, `P→S = 10`. No edge enters `P`, and no edge leaves `S`. Below are the same step-by-step tables as for the `A–F` graph.
 
@@ -506,7 +530,7 @@ Shortest path Q → S:  Q → R → S   (length = 1)
 
 ![Final matrix of shortest distances (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_final_pqrs.png)
 
-## 8. Step-by-step code execution: code ↔ matrix panels
+## 9. Step-by-step code execution: code ↔ matrix panels
 
 The examples above showed the *result* of each step — how the matrix matures. Here is **the code itself in action**: on the left a fragment of the algorithm with its **active lines highlighted**, on the right the state of matrix `D` at exactly that step. **The color of a code line encodes which branch fired:** 🟨 the line is executing now, 🟩 the `if` condition is true → the distance is updated, 🟥 no shorter path → no change.
 
@@ -542,7 +566,7 @@ For the most illustrative step (`k = C`) we unroll **both inner loops**: each st
 
 ![Animation: code ↔ matrix cell by cell (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_xyz_k_Z.gif)
 
-## 9. Complexity and comparison
+## 10. Complexity and comparison
 
 **Time:** $O(n^3)$ — three nested loops over $n$ vertices. **Memory:** $O(n^2)$ for the distance matrix (plus another $O(n^2)$ if we reconstruct paths).
 
@@ -554,7 +578,7 @@ For the most illustrative step (`k = C`) we unroll **both inner loops**: each st
 
 For small/medium dense graphs, the simplicity and the constant memory-access pattern make Floyd–Warshall very convenient.
 
-## 10. Where it is used
+## 11. Where it is used
 
 The algorithm is needed not only in textbook problems — the same "triple loop" underlies several practical applications:
 
@@ -565,7 +589,7 @@ The algorithm is needed not only in textbook problems — the same "triple loop"
 
 What all these problems share is the need for **all pairs** of distances/connections at once, while the graph is small enough for $O(n^3)$ to be acceptable.
 
-## 11. Bonus: a cleaner implementation
+## 12. Bonus: a cleaner implementation
 
 In the classic implementation (with the `0 = no edge` convention) an edge of weight `0` cannot be told apart from a missing one (because of the `if graph[i][j] != 0` condition). It is more robust to specify the matrix with $\infty$ for missing edges right away — then zero-weight edges are supported correctly too. The algorithm itself becomes quite short (see [`floyd_warshall`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
 
@@ -594,7 +618,7 @@ The same graph `A–F`, but now with `∞` instead of `0` for missing edges, giv
    F |   ∞    ∞    ∞    ∞    ∞    0
 ```
 
-## 12. Summary
+## 13. Summary
 
 - `k` is a **vertex** (the transfer node of the current step) that we "open" as an allowed intermediate one; the vertices are opened in turn `A → F`.
 - The formula: $D^{(k)}[i][j] = \min\big(D[i][j],\, D[i][k] + D[k][j]\big)$ — "the old path" versus "the path through the new intermediate vertex".
