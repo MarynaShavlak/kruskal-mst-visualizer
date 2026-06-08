@@ -1,12 +1,25 @@
+import { lazy } from "react"
 import { Grid3x3 } from "lucide-react"
 import type { Algorithm } from "@/algorithms/types"
 
-/**
- * Заглушка наступного алгоритму. Поки status="soon" і немає вкладок —
- * розділ показує екран «Незабаром» зі списком запланованого (`planned`).
- * Коли дійде черга: створити тут теки learn/editor/playback/benchmark,
- * додати `tabs` і змінити `status` на "ready".
- */
+// Розділ Флойда–Воршала будується по фазах. Готові навчання, редактор і плеєр;
+// бенчмарк додається наступною фазою.
+const LearnView = lazy(() =>
+  import("@/algorithms/floyd-warshall/learn/LearnView").then((m) => ({
+    default: m.LearnView,
+  })),
+)
+const EditorView = lazy(() =>
+  import("@/algorithms/floyd-warshall/editor/EditorView").then((m) => ({
+    default: m.EditorView,
+  })),
+)
+const PlaybackView = lazy(() =>
+  import("@/algorithms/floyd-warshall/playback/PlaybackView").then((m) => ({
+    default: m.PlaybackView,
+  })),
+)
+
 export const floydWarshall: Algorithm = {
   id: "floyd-warshall",
   name: "Алгоритм Флойда–Воршала",
@@ -14,14 +27,15 @@ export const floydWarshall: Algorithm = {
   tagline:
     "Найкоротші шляхи між усіма парами вершин: динамічне програмування на матриці відстаней.",
   category: "Графи · Найкоротші шляхи",
-  status: "soon",
+  status: "ready",
   icon: Grid3x3,
   defaultTab: "learn",
-  tabs: [],
+  tabs: [
+    { key: "learn", label: "Навчання", View: LearnView },
+    { key: "editor", label: "Редактор", View: EditorView },
+    { key: "playback", label: "Алгоритм", View: PlaybackView },
+  ],
   planned: [
-    "Навчання — теорія, матриця відстаней, відновлення шляхів, від'ємні цикли",
-    "Редактор — орієнтований зважений граф (зокрема з від'ємними вагами)",
-    "Алгоритм — анімація потрійного циклу й оновлення матриць dist/next",
     "Бенчмарк — кубічна складність проти повторних запусків Дейкстри",
   ],
 }

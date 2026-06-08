@@ -29,17 +29,16 @@ describe("Оболонка платформи", () => {
     }
   })
 
-  it("розділ-заглушка показує екран «Незабаром»", async () => {
+  it("розділ Флойда відкриває навчання й показує вкладки (фази 2–4)", async () => {
     const user = userEvent.setup()
     render(<App />)
 
     await user.click(screen.getByText("Флойд–Воршал"))
 
-    expect(window.location.hash).toBe("#floyd-warshall")
-    expect(screen.getByText(/У розробці/)).toBeInTheDocument()
-    expect(
-      screen.getByRole("heading", { name: "Алгоритм Флойда–Воршала" }),
-    ).toBeInTheDocument()
+    expect(window.location.hash).toBe("#floyd-warshall/learn")
+    for (const name of ["Навчання", "Редактор", "Алгоритм"]) {
+      expect(screen.getByRole("tab", { name })).toBeInTheDocument()
+    }
   })
 
   it("глибоке посилання на вкладку відкриває її напряму", async () => {

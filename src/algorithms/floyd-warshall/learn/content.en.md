@@ -1,0 +1,604 @@
+# Floyd–Warshall Algorithm: a step-by-step walkthrough
+
+**The Floyd–Warshall algorithm** finds the **shortest paths between all pairs of vertices** (all-pairs shortest paths) in a weighted graph. It works with both positive and negative edge weights, but **does not allow negative-weight cycles**.
+
+This is a classic example of **dynamic programming**: the distances between pairs of vertices are gradually refined by adding one "allowed intermediate vertex" at a time.
+
+The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/examples), and the figures live in [`docs/images/en/`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en).
+
+> **About vertex names.** Graph vertices are usually numbered `0–5`. So that their names don't get confused with the loop variable `k`, the vertices here are named with **letters `A–F`** (`A=0, B=1, C=2, D=3, E=4, F=5`).
+
+## 1. Intuition: what `k` is and why the steps
+
+The most important thing to understand: **`k` is a graph vertex, not a separate step counter.** The outer loop walks the vertices one by one, and `k` at each step is **the vertex we have just "allowed" to be used as an intermediate (transfer) point**. So `k = A` does not mean "step zero", but "from now on routes are allowed to pass in transit through vertex A".
+
+### The analogy — transfer airports
+
+Imagine the vertices as **airports** and the edges as **direct flights** with their durations. At first the matrix `D` knows only the *direct* flights. We want to find the shortest time between every pair of airports, allowing transfers.
+
+![Airport map: vertices = airports, edges = direct flights](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_map_abcdef.png)
+
+The algorithm "opens" airports as allowed transfer hubs **one at a time**:
+
+- `k = A`: "from now on you may make a transfer at A". For every pair `(i, j)` we ask: is `(best i→A) + (best A→j)` faster than the current `i→j`? If so — we update.
+- `k = B`: "now you may transfer **also** at B" (already having A). We check all pairs again.
+- … and so on for **every** vertex.
+
+The check for a single pair is exactly a *relaxation*: we compare the **direct flight** with a **transfer through `k`** and keep the shorter option. That is the whole formula `min(direct, via k)`:
+
+![Direct flight vs. a transfer through hub k](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_relaxation.png)
+
+By opening hubs one by one, the routes gradually get shorter: at first a pair may have **no** path at all, then some path appears, and with each new allowed hub it becomes ever shorter:
+
+![Hub airports are opened one by one, and the route gets shorter](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_progressive.png)
+
+▶️ The same in motion — we open hubs one by one, and the route `i → j` shrinks `∞ → 12 → 6`:
+
+![Animation: opening hubs one by one shortens route i → j](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_progressive.gif)
+
+Once all vertices have been opened as transfer points, we have tried every possible route — and `D` is left holding the true shortest distances.
+
+### Why it works step by step
+
+By the time the turn reaches `k`, the values `D[i][k]` and `D[k][j]` already account for transfers through previously opened vertices. So the sum `D[i][k] + D[k][j]` is the best route `i → … → k → … → j` that uses any already-allowed nodes **plus** `k` itself.
+
+**Answer to the common question "what is `k = A`?":** it is a **vertex** (the transfer node of the current step). Formally `k` is a loop variable, but in meaning it holds a *vertex name*. The order in which we open vertices is `A, B, C, …`; that is why "step number" and "vertex" go hand in hand here.
+
+## 2. Core idea (more formally)
+
+Let $D^{(k)}[i][j]$ denote the length of the shortest path from vertex $i$ to vertex $j$, **if only the already-"opened" vertices are allowed as intermediate ones** (the set $\{A, \dots, k\}$).
+
+- $D^{(\text{init})}$ is just the direct edges (no intermediate vertices): zeros on the diagonal, edge weights where they exist, and $\infty$ everywhere else.
+- At each step we "switch on" one more intermediate vertex $k$ and ask: *can we shorten the path for the pair $(i, j)$ by going through $k$?*
+- Once all vertices have been tried, the matrix holds the true shortest distances between all pairs.
+
+**Key observation.** A shortest path that uses the already-opened intermediate vertices either **does not pass through** $k$ at all (then the answer is the same as before $k$ was opened), or **passes through** $k$ exactly once — then it splits into two parts: $i \to k$ and $k \to j$, each of which uses only previously opened vertices.
+
+## 3. The update formula (the recurrence)
+
+Hence the main formula:
+
+$$D^{(k)}[i][j] = \min\Big(D^{(\text{before } k)}[i][j],\; D^{(\text{before } k)}[i][k] + D^{(\text{before } k)}[k][j]\Big)$$
+
+That is: the *old distance* versus *the path through the new intermediate vertex $k$*. We take the smaller one.
+
+**Why the matrix can be updated "in place"** (without a copy)? During the step for $k$, the values $D[i][k]$ and $D[k][j]$ do not change, because any update to them would look like $D[i][k] = \min(D[i][k],\, D[i][k] + D[k][k])$, and $D[k][k] = 0$. So row $k$ and column $k$ are unchanged during "their" step — the result is the same.
+
+*(In the code we still make a copy before each step — only to highlight which cells changed.)*
+
+**This is the entire algorithm** — the formula above literally becomes a triple loop. Here is its heart, from [`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) (the full code — with path reconstruction via `nxt` and the snapshots for the step-by-step pictures — is in [`floyd_warshall/core.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+
+```python
+for k in range(n):                      # "open" the intermediate vertices one by one
+    for i in range(n):                  # for every pair (i, j)…
+        for j in range(n):
+            via_k = dist[i][k] + dist[k][j]
+            if via_k < dist[i][j]:      # is the path i → j shorter through k?
+                dist[i][j] = via_k      # yes — update the shortest distance
+                nxt[i][j] = nxt[i][k]   # and remember that the path goes through k
+```
+
+The outer loop over `k` is exactly the successive "opening" of vertices; the two inner loops scan all pairs `(i, j)`. Hence $O(n^3)$ time and $O(n^2)$ memory.
+
+## 4. Example 1 — graph `A–F` (positive weights)
+
+### The example graph
+
+We work with a **directed weighted** graph (vertices renamed to `A–F`). It is given by an **adjacency matrix**, where `0` means there is no edge:
+
+| i→j | A | B | C | D | E | F |
+|---|---|---|---|---|---|---|
+| **A** | 0 | 3 | 0 | 0 | 0 | 0 |
+| **B** | 0 | 0 | 1 | 0 | 0 | 0 |
+| **C** | 0 | 0 | 0 | 7 | 0 | 2 |
+| **D** | 0 | 0 | 0 | 0 | 0 | 0 |
+| **E** | 0 | 0 | 0 | 2 | 0 | 3 |
+| **F** | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Edges: `A→B (3)`, `B→C (1)`, `C→D (7)`, `C→F (2)`, `E→D (2)`, `E→F (3)`.
+
+![Directed weighted graph A–F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/graph_abcdef.png)
+
+### Step 1. Initializing the distance matrix
+
+We build the starting matrix:
+- `D[i][i] = 0` (the distance from a vertex to itself);
+- `D[i][j] =` the weight of edge $i \to j$, if it exists;
+- `D[i][j] = ∞`, if there is no direct edge.
+
+![Initial distance matrix D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_initial_abcdef.png)
+
+### Steps 2–3. Iterations and updates
+
+The heart of the algorithm is three nested loops. The outer loop over `k` is exactly "open the next intermediate vertex"; the two inner loops iterate over all pairs `(i, j)`:
+
+```python
+for k in range(n):            # k = the current intermediate vertex (A, B, C, ...)
+    for i in range(n):
+        for j in range(n):
+            if dist[i][k] + dist[k][j] < dist[i][j]:
+                dist[i][j] = dist[i][k] + dist[k][j]
+```
+
+In the teaching version ([`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)), after each `k` we save a **snapshot** of the matrix and the **set of changed cells** (to highlight them). We also keep a `nxt` matrix to reconstruct the paths themselves: `nxt[i][j]` is the next vertex on the shortest path from `i` to `j`.
+
+▶️ And here is exactly how the **two inner loops** iterate over all pairs `(i, j)` for a fixed `k` — using the most productive step `k = C`. The orange frame is the current cell, the blue cross marks the pivot row and column `k`, and green is a just-improved distance (a detailed breakdown of these numbers is below):
+
+![Animation: two inner loops sweep all pairs (i, j) for k = C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/sweep_abcdef_k_C.gif)
+
+### Step-by-step walkthrough: the matrix after each intermediate vertex `k`
+
+**Reminder:** `k` is the **vertex** we allow as an intermediate (transfer) point on this step, not a step number.
+
+How to read the visualization:
+- 🟦 **blue frame** — the current intermediate vertex `k` (its row and column give the "pivot" values $D[i][k]$ and $D[k][j]$);
+- 🟩 **green cell** — a distance just improved on this step (the previous value is in parentheses);
+- `∞` — there is no path yet.
+
+**A hint for this graph.** Only an "internal" vertex can be a useful intermediate one — a vertex that *something enters* and *something leaves*. Here that is only **B** and **C**. Vertices **A** and **E** are *sources* (no incoming edges), and **D** and **F** are *sinks* (no outgoing edges), so the steps `k = A, D, E, F` change nothing. All the "work" happens at `k = B` and `k = C`.
+
+**The detailed frame.** Under each step the matrix is shown in an expanded form: the pivot row and column `k` are labeled with arrows (these are the sources of the values `D[i][k]` and `D[k][j]`), and **in every cell that can be updated** the full formula is written vertically: first symbolically `D[i][j] = min( D[i][j], D[i][k]+D[k][j] )`, then with the numbers substituted `= min( … )`, and finally the result `= …` in bold (green if the cell improved).
+
+#### Intermediate vertex `k = A`
+
+This step is **one iteration of the outer loop** `for k` (here `k = 0`, vertex `A`), which performs an update of the whole matrix:
+
+```python
+for k in range(n):                 # k = 0 → intermediate vertex A
+    for i in range(n):             # from (row)
+        for j in range(n):         # to (column)
+            distance[i][j] = min(
+                distance[i][j],                   # the old distance i → j
+                distance[i][k] + distance[k][j]   # the path i → A → j
+            )
+```
+
+`A` is a source (no incoming edges), so it cannot be a transfer point. We expect: **no changes**.
+
+**What does `D[B][A] + D[A][C]` mean?** It is the **cost of a path from B to C that goes through A** (i.e. `B → … → A → … → C`):
+- `D[B][A]` — the shortest known distance **from B to A**;
+- `D[A][C]` — the shortest known distance **from A to C**;
+- the sum — "get from B to A, then from A to C".
+
+**The general idea of a step.** When we "open" vertex `k` (here A), for every pair `(i, j)` we ask: *can it be shorter if we let the route make a transfer at `k`?* The shortest path `i → j` either **does not pass through `k`** (the answer stays the old one, `D[i][j]`), or **passes through it** (splits into `D[i][k] + D[k][j]`). We take the smaller one.
+
+**Why we get ∞ here.** In this graph no edge enters A, so there is no way to reach A from B: `D[B][A] = ∞`. Therefore `D[B][A] + D[A][C] = ∞ + ∞ = ∞` — the route through A does not exist, and `min` keeps the old distance.
+
+```text
+============================================================
+Step: intermediate vertex k = A
+============================================================
+No distance improved on this step.
+  Reason: vertex A has no incoming edges (D[i][A] = ∞).
+```
+
+![Matrix D after opening vertex A](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_A.png)
+
+#### Intermediate vertex `k = B`
+
+`B` is an internal vertex. Through it the route `A → B → C` opens up, so `D[A][C] = 4` appears.
+
+**Why `[A][C]` is the one that improves.** Before this step there was no direct path A→C (`D[A][C] = ∞`). But A can reach B (`D[A][B] = 3`), and B can reach C (`D[B][C] = 1`), so the route `A → B → C` exists and costs `3 + 1 = 4`. Since `4 < ∞`, `min` picks the new path — the cell turns green.
+
+**And here is where the same formula does not work yet** — for `[A][D]` at `k = B`:
+`D[A][D] = min( ∞, D[A][B] + D[B][D] ) = min( ∞, 3 + ∞ ) = ∞`.
+A can reach B, but B cannot reach D yet (`D[B][D] = ∞`, because the only edge out of B goes to C). The route `A → B → D` will appear later — after C is opened.
+
+```text
+============================================================
+Step: intermediate vertex k = B
+============================================================
+Distances improved: 1
+  D[A][C]: ∞ → 4   (since D[A][B] + D[B][C] = 3+1 = 4)
+```
+
+![Matrix D after opening vertex B](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_B.png)
+
+#### Intermediate vertex `k = C`
+
+`C` is the main "hub" of this graph. We expect **4 improvements** at once (including `D[A][D] = 11`).
+
+There are **two ways into it** — `A → C = 4` (which is really `A → B → C`, appearing at step `B`) and `B → C = 1`; and **two edges out of it** — `C → D = 7` and `C → F = 2`. So opening C gives us `2 × 2 = 4` new routes: from `{A, B}` to `{D, F}`. They are all computed by the same formula `min( old, D[i][C] + D[C][j] )`.
+
+**`[A][D] → 11`** — `D[A][C] + D[C][D] = 4 + 7 = 11` (path `A → C → D`, fully `A → B → C → D`).
+**`[B][D] → 8`** — `D[B][C] + D[C][D] = 1 + 7 = 8` (path `B → C → D`).
+**`[A][F] → 6`** — `D[A][C] + D[C][F] = 4 + 2 = 6` (path `A → C → F`, i.e. `A → B → C → F`).
+**`[B][F] → 3`** — `D[B][C] + D[C][F] = 1 + 2 = 3` (path `B → C → F`).
+
+**The key idea.** The numbers `4` (for `A → C`) and `1` (for `B → C`) already contain all the previously allowed transfers. So when C adds its outgoing edges (`+7` to D, `+2` to F), the formula automatically "glues" the new segment onto the already-found shortest beginning — and that is how longer routes are assembled from short pieces. This is the essence of dynamic programming in Floyd–Warshall.
+
+```text
+============================================================
+Step: intermediate vertex k = C
+============================================================
+Distances improved: 4
+  D[A][D]: ∞ → 11   (since D[A][C] + D[C][D] = 4+7 = 11)
+  D[A][F]: ∞ → 6   (since D[A][C] + D[C][F] = 4+2 = 6)
+  D[B][D]: ∞ → 8   (since D[B][C] + D[C][D] = 1+7 = 8)
+  D[B][F]: ∞ → 3   (since D[B][C] + D[C][F] = 1+2 = 3)
+```
+
+![Matrix D after opening vertex C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_C.png)
+
+#### Intermediate vertex `k = D`
+
+`D` is a sink (no outgoing edges). **No changes.**
+
+```text
+============================================================
+Step: intermediate vertex k = D
+============================================================
+No distance improved on this step.
+  Reason: vertex D has no outgoing edges (D[D][j] = ∞).
+```
+
+![Matrix D after opening vertex D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_D.png)
+
+#### Intermediate vertex `k = E`
+
+`E` is a source (no incoming edges). **No changes.**
+
+```text
+============================================================
+Step: intermediate vertex k = E
+============================================================
+No distance improved on this step.
+  Reason: vertex E has no incoming edges (D[i][E] = ∞).
+```
+
+![Matrix D after opening vertex E](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_E.png)
+
+#### Intermediate vertex `k = F`
+
+`F` is a sink. **No changes**: the matrix already stabilized after `k = C`.
+
+```text
+============================================================
+Step: intermediate vertex k = F
+============================================================
+No distance improved on this step.
+  Reason: vertex F has no outgoing edges (D[F][j] = ∞).
+```
+
+![Matrix D after opening vertex F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_F.png)
+
+### The big picture: evolution of the matrix
+
+All snapshots together. You can see that the matrix "matures" already after C is opened, and the remaining steps leave it unchanged.
+
+![Evolution of the distance matrix D (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_abcdef.png)
+
+▶️ The same evolution as an animation — green "flashes" exactly on the step where a distance improved (all the work is on `k = B` and `k = C`):
+
+![Animation: matrix D matures step by step (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_abcdef.gif)
+
+### Result and path reconstruction
+
+After all the iterations, the matrix holds the shortest distances between all pairs. For example, `D[A][D] = 11`. But `D` only tells us **how much** the shortest path costs, not **which way** it goes. To reconstruct the route itself, we keep one more matrix in parallel — `nxt`.
+
+#### The `nxt` matrix: "where to step first"
+
+The idea is simple: `nxt[i][j]` is the **next vertex after `i`** on the shortest path from `i` to `j`. If for every pair we know the "first step", the whole route unfolds by itself: we step into `nxt[i][j]`, end up at a new vertex, and repeat until we reach `j`.
+
+**Initialization.** At first only the direct edges are known, so the first step of the path `i → j` is `j` itself (if the edge exists), otherwise there is no path yet (`None`):
+
+```python
+# nxt[i][j] = j for every known (finite) distance, otherwise None
+nxt = [
+    [j if dist[i][j] != INF else None for j in range(n)]
+    for i in range(n)
+]
+```
+
+**Updating it together with the distance.** Whenever relaxation finds a shorter path `i → j` *through* `k`, the first step of route `i → j` becomes the same as the first step of route `i → k`:
+
+```python
+if dist[i][k] + dist[k][j] < dist[i][j]:
+    dist[i][j] = dist[i][k] + dist[k][j]
+    nxt[i][j] = nxt[i][k]   # the path i → j now starts the same way as i → k
+```
+
+Why `nxt[i][k]` and not `k`? Because the shortest path `i → k` may itself pass through previously opened vertices. We care about the **very first** step of the whole route `i → … → k → … → j`, and that coincides with the first step of its initial segment `i → k`.
+
+#### Unfolding the path
+
+With `nxt` ready, the full route is built by a simple "follow the pointers until you arrive" loop (this is what [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) does):
+
+```python
+def reconstruct_path(nxt, u, v):
+    if nxt[u][v] is None:
+        return None          # there is no path
+    path = [u]
+    while u != v:
+        u = nxt[u][v]        # take the first step toward v...
+        path.append(u)       # ...and keep going until we arrive
+        if len(path) > len(nxt):   # a negative cycle on the route —
+            raise ValueError("the route passes through a negative cycle")  # otherwise we'd loop forever
+    return path
+```
+
+**Example for `A → D`.** We unfold via `nxt`: `A → nxt[A][D] = B`, then `B → nxt[B][D] = C`, then `C → nxt[C][D] = D` — arrived. The resulting path `A → B → C → D` matches `D[A][D] = 11` exactly.
+
+```text
+         A    B    C    D    E    F
+   A |   0    3    4   11    ∞    6
+   B |   ∞    0    1    8    ∞    3
+   C |   ∞    ∞    0    7    ∞    2
+   D |   ∞    ∞    ∞    0    ∞    ∞
+   E |   ∞    ∞    ∞    2    0    3
+   F |   ∞    ∞    ∞    ∞    ∞    0
+
+Shortest path A → D:  A → B → C → D   (length = 11)
+Shortest path A → F:  A → B → C → F   (length = 6)
+Shortest path A → C:  A → B → C   (length = 4)
+```
+
+![Shortest path A → D on the graph](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_abcdef_A_to_D.png)
+
+▶️ How [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) unfolds the route — step by step, "following the `nxt` pointers" (`A → B → C → D`):
+
+![Animation: unfolding path A → D via the nxt matrix](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_abcdef_A_to_D.gif)
+
+## 5. Negative cycles
+
+The algorithm works correctly with negative **edges**, but **not with negative cycles**: if such a cycle exists, there is no "shortest" path (its length can be decreased without bound).
+
+A convenient way to **detect** a negative cycle is to run the algorithm and check the diagonal: if `D[i][i] < 0` for some vertex, then that vertex lies on a reachable negative cycle.
+
+> **What this criterion does not give.** `D[i][i] < 0` signals that a negative cycle *exists* and that vertex `i` reaches it, but it **does not tell which edges** form the cycle. To extract the cycle itself you need a separate pass (for example, tracking predecessors). Here we limit ourselves to the fact of existence — that is enough to understand that the algorithm's result for such a graph is invalid.
+
+```python
+from floyd_warshall import floyd_warshall_steps, has_negative_cycle
+
+# a graph of 3 vertices (A, B, C) with a cycle A → B → C → A of weight 1 + (-1) + (-1) = -1 < 0
+neg = [
+    [0,  1,  0],
+    [0,  0, -1],
+    [-1, 0,  0],
+]
+dist, _, _ = floyd_warshall_steps(neg)
+print(has_negative_cycle(dist))   # → True  (there are negative values on the diagonal)
+```
+
+```text
+Diagonal of the matrix (vertices A, B, C): [-1, -1, -2]
+Negative cycle detected: True
+```
+
+## 6. Example 2 — a fully negative cycle (all edges negative)
+
+Consider three vertices `X, Y, Z` where **all** the cycle's edges are negative: `X → Y = −1`, `Y → Z = −1`, `Z → X = −1`. The sum of the cycle weights is `−3 < 0` — this is a **negative cycle**.
+
+> **Why without step-by-step frames.** Unlike examples 1 and 3, here we deliberately do not show the matrix "after each `k`": for a negative cycle the values `D[i][j]` do not converge to a meaningful answer (the true one is `−∞`), so step-by-step snapshots would only create the illusion of a correct result. Instead we look at the diagonal of the final matrix — that is enough to diagnose the problem.
+
+![A fully negative cycle X → Y → Z → X](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_graph_xyz.png)
+
+▶️ Walking the cycle while accumulating weight: every traversed edge adds `−1`, and the sum falls `0, −1, −2, …` with no floor — you can walk forever:
+
+![Animation: walking the negative cycle X → Y → Z → X while accumulating weight](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_walk_xyz.gif)
+
+**Why there is no shortest path here.** Each full traversal `X → Y → Z → X` adds `−3` to the total weight. So the more times you walk the cycle, the "shorter" (smaller in weight) the path — and so on without end: `−3, −6, −9, … → −∞`. There is no minimum, so the notion of "shortest path" loses its meaning.
+
+![The path weight falls without bound → −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_weight_divergence.png)
+
+▶️ The same as an animation — the weight `−3, −6, −9, …` is added traversal by traversal and heads toward `−∞`:
+
+![Animation: with each traversal of the cycle the path weight heads toward −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_weight_divergence.gif)
+
+**Why the algorithm cannot handle this.** Floyd–Warshall assumes the shortest distances are finite numbers and returns a finite matrix. But for such a graph those numbers are **wrong** (the true answer is `−∞`). The sign of the problem is the diagonal: if `D[i][i] < 0` after the algorithm, then vertex `i` lies on a reachable negative cycle (it "returns to itself" with negative weight).
+
+```text
+Diagonal of matrix D after Floyd–Warshall (vertices X, Y, Z): ['-3', '-3', '-6']
+There is a vertex with D[i][i] < 0  →  negative cycle detected: True
+
+The off-diagonal numbers are returned finite too, but they are NOT
+the true shortest distances — for those pairs the real answer is −∞.
+```
+
+## 7. Example 3 — negative edges (nodes `P, Q, R, S`)
+
+Floyd–Warshall, unlike Dijkstra, **works correctly with negative weights** (as long as there is no negative cycle). The graph: `P→Q = 4`, `Q→R = −2` (a negative edge), `R→S = 3`, `P→S = 10`. No edge enters `P`, and no edge leaves `S`. Below are the same step-by-step tables as for the `A–F` graph.
+
+> **Why a new graph and not A–F with negative edges.** In the A–F graph there is **exactly one route** to every vertex (it is tree-like), so a negative edge there would only change some number — and no "race between routes" would arise. But the whole point of negative weights is precisely that **a longer detour can beat a direct edge**: here the direct `P → S = 10` loses to the path `P → Q → R → S = 5`. For this you need a pair of vertices that has *both* a direct edge *and* an alternative detour — so we take a new small graph, built specifically around this contrast.
+
+![Graph P, Q, R, S with a negative edge Q → R = −2](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/graph_pqrs.png)
+
+![Initial matrix D (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_initial_pqrs.png)
+
+### Step: intermediate vertex `k = P`
+
+The first iteration. No edge enters `P`, so it cannot be an intermediate vertex — **no changes**.
+
+```text
+============================================================
+Step: intermediate vertex k = P
+============================================================
+No distance improved on this step.
+  Reason: vertex P has no incoming edges (D[i][P] = ∞).
+```
+
+![Matrix D after opening vertex P](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_P.png)
+
+### Step: intermediate vertex `k = Q`
+
+Through `Q` the path `P → R` appears:
+`D[P][R] = min( ∞, D[P][Q] + D[Q][R] ) = min( ∞, 4 + (−2) ) = 2`.
+This is where the **negative edge** `Q→R = −2` **works for the first time**: the route `P → Q → R` costs `4 − 2 = 2`.
+
+```text
+============================================================
+Step: intermediate vertex k = Q
+============================================================
+Distances improved: 1
+  D[P][R]: ∞ → 2   (since D[P][Q] + D[Q][R] = 4+(-2) = 2)
+```
+
+![Matrix D after opening vertex Q](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_Q.png)
+
+### Step: intermediate vertex `k = R`
+
+**Two improvements** at once:
+- `D[Q][S] = min( ∞, −2 + 3 ) = 1` — the path `Q → R → S`;
+- `D[P][S] = min( 10, 2 + 3 ) = 5` — the path `P → Q → R → S`.
+
+Most important: **the direct edge `P → S = 10` loses to the longer path of length `5`**, because the latter uses the negative edge. This is exactly why **Dijkstra cannot be used** for graphs with negative weights, while Floyd–Warshall works correctly.
+
+```text
+============================================================
+Step: intermediate vertex k = R
+============================================================
+Distances improved: 2
+  D[P][S]: 10 → 5   (since D[P][R] + D[R][S] = 2+3 = 5)
+  D[Q][S]: ∞ → 1   (since D[Q][R] + D[R][S] = -2+3 = 1)
+```
+
+![Matrix D after opening vertex R](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_R.png)
+
+### Step: intermediate vertex `k = S`
+
+The last iteration. No edge leaves `S` — **no changes**.
+
+```text
+============================================================
+Step: intermediate vertex k = S
+============================================================
+No distance improved on this step.
+  Reason: vertex S has no outgoing edges (D[S][j] = ∞).
+```
+
+![Matrix D after opening vertex S](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_S.png)
+
+### The big picture: evolution of the matrix (negative example)
+
+All snapshots of matrix `D` side by side: the start and the state after opening each vertex `P → S`. Blue marks the pivot row/column `k`, green marks the cells that improved on this step (the previous value is in parentheses).
+
+![Evolution of matrix D (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_pqrs.png)
+
+▶️ The animated evolution — you can clearly see the key moment at `k = R`: `D[P][S]` drops `10 → 5` (the direct edge loses to the path through the negative one):
+
+![Animation: matrix D matures step by step (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_pqrs.gif)
+
+### Result and path reconstruction (negative example)
+
+The final matrix holds the shortest distances between all pairs. Note `P → S`: the route goes `P → Q → R → S` (length 5), even though there is also a direct edge `P → S = 10`.
+
+```text
+         P    Q    R    S
+   P |   0    4    2    5
+   Q |   ∞    0   -2    1
+   R |   ∞    ∞    0    3
+   S |   ∞    ∞    ∞    0
+
+Shortest path P → R:  P → Q → R   (length = 2)
+Shortest path P → S:  P → Q → R → S   (length = 5)
+Shortest path Q → S:  Q → R → S   (length = 1)
+```
+
+![Shortest path P → S on the graph](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_pqrs_P_to_S.png)
+
+▶️ Unfolding the route via `nxt`: the red path `P → Q → R → S` (through the negative edge) beats the direct edge `P → S = 10`, which stays gray:
+
+![Animation: unfolding path P → S via the nxt matrix](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_pqrs_P_to_S.gif)
+
+### The final matrix of shortest distances
+
+`∞` means there is no path. Note `D[P][S] = 5` (not `10`) — that is the effect of the negative edge.
+
+![Final matrix of shortest distances (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_final_pqrs.png)
+
+## 8. Step-by-step code execution: code ↔ matrix panels
+
+The examples above showed the *result* of each step — how the matrix matures. Here is **the code itself in action**: on the left a fragment of the algorithm with its **active lines highlighted**, on the right the state of matrix `D` at exactly that step. **The color of a code line encodes which branch fired:** 🟨 the line is executing now, 🟩 the `if` condition is true → the distance is updated, 🟥 no shorter path → no change.
+
+Both levels of detail are built from a single step journal (`floyd_warshall/walkthrough.py`, the right panel reuses `draw_matrix`); they are generated by [`examples/05_code_walkthrough.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/examples/05_code_walkthrough.py).
+
+### Overview: one step per intermediate vertex `k`
+
+The outer `for k` loop opens the vertices one by one; the right panel is the matrix after each `k` (blue cross = the pivot row/column `k`, green = what improved):
+
+![Code ↔ matrix D: overview by k (graph A–F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_steps_abcdef.png)
+
+### In detail: a step is a single pair `(i, j)`
+
+For the most illustrative step (`k = C`) we unroll **both inner loops**: each step is one `if via_k < dist[i][j]` check. The orange box is the current `(i, j)`; green code lines 8–9 mean the "update" branch fired:
+
+![Code ↔ matrix D cell by cell (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_abcdef_k_C.png)
+
+▶️ The same in motion — the full sweep of every pair `(i, j)`:
+
+![Animation: code ↔ matrix cell by cell (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_abcdef_k_C.gif)
+
+### The same on the negative examples
+
+**Negative edge (`P, Q, R, S`), `k = R`:**
+
+![Code ↔ matrix cell by cell (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_pqrs_k_R.png)
+
+![Animation: code ↔ matrix cell by cell (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_pqrs_k_R.gif)
+
+**Negative cycle (`X, Y, Z`), `k = Z`** — the diagonal `D[i][i]` goes **negative** (the signature of a cycle), so here even the pivot row/column `k` improves:
+
+![Code ↔ matrix cell by cell (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_xyz_k_Z.png)
+
+![Animation: code ↔ matrix cell by cell (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_xyz_k_Z.gif)
+
+## 9. Complexity and comparison
+
+**Time:** $O(n^3)$ — three nested loops over $n$ vertices. **Memory:** $O(n^2)$ for the distance matrix (plus another $O(n^2)$ if we reconstruct paths).
+
+| Problem / algorithm | Complexity | Negative weights | When it's better |
+|---|---|---|---|
+| **Floyd–Warshall** (all pairs) | $O(n^3)$ | yes (no negative cycles) | dense graphs, all pairs needed, simple code |
+| Dijkstra from each vertex | $O(n \cdot (E + n)\log n)$ | **no** | sparse graphs, positive weights only |
+| Bellman–Ford from each vertex | $O(n^2 \cdot E)$ | yes | sparse graphs with negative weights |
+
+For small/medium dense graphs, the simplicity and the constant memory-access pattern make Floyd–Warshall very convenient.
+
+## 10. Where it is used
+
+The algorithm is needed not only in textbook problems — the same "triple loop" underlies several practical applications:
+
+- **Network routing.** Computing shortest paths between all nodes — for example, in link-state protocols or traffic planning, when the graph is small and dense.
+- **Transitive closure of a graph** (Warshall's algorithm). If you replace `min`/`+` with logical `or`/`and`, the same $O(n^3)$ scheme answers the question "is vertex `j` reachable from vertex `i`?" for all pairs.
+- **Reachability and dependency analysis.** Anywhere you need "everyone-to-everyone" connectivity: task dependencies, state reachability, the "precedes" relation in a graph.
+- **Graph metrics.** Through the matrix of all shortest distances you compute, for example, vertex eccentricity, the diameter and the radius of a graph.
+
+What all these problems share is the need for **all pairs** of distances/connections at once, while the graph is small enough for $O(n^3)$ to be acceptable.
+
+## 11. Bonus: a cleaner implementation
+
+In the classic implementation (with the `0 = no edge` convention) an edge of weight `0` cannot be told apart from a missing one (because of the `if graph[i][j] != 0` condition). It is more robust to specify the matrix with $\infty$ for missing edges right away — then zero-weight edges are supported correctly too. The algorithm itself becomes quite short (see [`floyd_warshall`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+
+```python
+def floyd_warshall(adj):
+    '''adj[i][j] = the edge weight or float('inf') if there is no edge; 0 on the diagonal.'''
+    n = len(adj)
+    dist = [row[:] for row in adj]
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    return dist
+```
+
+The same graph `A–F`, but now with `∞` instead of `0` for missing edges, gives the same result:
+
+```text
+         A    B    C    D    E    F
+   A |   0    3    4   11    ∞    6
+   B |   ∞    0    1    8    ∞    3
+   C |   ∞    ∞    0    7    ∞    2
+   D |   ∞    ∞    ∞    0    ∞    ∞
+   E |   ∞    ∞    ∞    2    0    3
+   F |   ∞    ∞    ∞    ∞    ∞    0
+```
+
+## 12. Summary
+
+- `k` is a **vertex** (the transfer node of the current step) that we "open" as an allowed intermediate one; the vertices are opened in turn `A → F`.
+- The formula: $D^{(k)}[i][j] = \min\big(D[i][j],\, D[i][k] + D[k][j]\big)$ — "the old path" versus "the path through the new intermediate vertex".
+- Initialization: zeros on the diagonal, edge weights, the rest $\infty$.
+- Only "internal" intermediate vertices are useful; in our graph all the work happened at `k = B` and `k = C`.
+- Complexity $O(n^3)$ time and $O(n^2)$ memory; negative cycles are forbidden (they can be detected by `D[i][i] < 0`).
+- Routes are reconstructed via the next-vertex matrix `nxt`.
