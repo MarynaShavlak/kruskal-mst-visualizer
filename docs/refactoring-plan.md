@@ -78,7 +78,7 @@ src/store/   create-graph-store.ts (factory)
 **Верифікація:** smoke-тест рендера `PlayerShell` + ручна перевірка обох плеєрів (вкл. режим «Порівняння»).
 **Коміт:** `Рефакторинг: спільний PlayerShell для обох плеєрів`
 
-## Фаза E — фабрика стору (🟡 середній)
+## Фаза E — фабрика стору (🟡 середній) — ✅ ВИКОНАНО
 `store/create-graph-store.ts`: інжектиться graph-модель, `isValidWeight` (Краскал: ціле >0; FW: будь-яке ціле),
 `initialPreset`, `presets`. Публічний API `useGraphStore`/`useDirectedGraphStore` не змінюється.
 Запобіжник — наявні `graph-store.test`, `presets.test`.
@@ -107,6 +107,6 @@ src/store/   create-graph-store.ts (factory)
 | B | CodePanel + learn-content factory + TableOfContents | 🟢 | ✅ ВИКОНАНО |
 | C | спільний LearnView | 🟡 | ✅ ВИКОНАНО |
 | D | PlayerShell | 🟡 | ✅ ВИКОНАНО |
-| E | фабрика стору | 🟡 | TODO |
+| E | фабрика стору | 🟡 | ✅ ВИКОНАНО |
 | F | редактор (частково) | 🟠 | TODO |
 | G | прибирання | 🟢 | TODO |

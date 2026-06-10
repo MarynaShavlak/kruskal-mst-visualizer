@@ -1,7 +1,7 @@
-// Стан орієнтованого графа (Zustand) для Флойда–Воршала. Редактор пише,
-// плеєр читатиме. Граф — модель з lib/directedGraph; позиції вершин —
-// UI-доповнення. На відміну від graph-store Краскала: напрямлені ребра,
-// ваги — цілі (зокрема нульові й від'ємні).
+// Стан орієнтованого графа (Zustand) для Флойда–Воршала. Спільне ядро мутацій —
+// у create-graph-store; тут graph-модель з lib/directedGraph, валідація і пресети.
+// На відміну від graph-store Краскала: напрямлені ребра, ваги — будь-які цілі
+// (зокрема нульові й від'ємні). Редактор пише, плеєр читає.
 
 import { create } from "zustand"
 import {
@@ -9,96 +9,51 @@ import {
   addDirectedVertex,
   emptyDirectedGraph,
   hasDirectedEdge,
-  removeDirectedEdge as removeDirectedEdgeFn,
-  removeDirectedVertex as removeDirectedVertexFn,
-  setDirectedEdgeWeight as setDirectedEdgeWeightFn,
+  removeDirectedEdge,
+  removeDirectedVertex,
+  setDirectedEdgeWeight,
   type DirectedGraph,
-  type Vertex,
 } from "@/lib/directedGraph"
-import { nextVertexName } from "@/lib/graph"
 import {
   abcdefPreset,
   pqrsPreset,
   randomDirectedPreset,
   xyzPreset,
 } from "@/store/directed-presets"
+import {
+  graphCore,
+  type GraphCore,
+  type GraphStoreDoc,
+} from "@/store/create-graph-store"
 
-export interface XY {
-  readonly x: number
-  readonly y: number
-}
-
+export type { XY } from "@/store/create-graph-store"
 /** Документ редактора: орієнтований граф + позиції вершин. */
-export interface DirectedGraphDoc {
-  readonly graph: DirectedGraph
-  readonly positions: Record<Vertex, XY>
-}
+export type DirectedGraphDoc = GraphStoreDoc<DirectedGraph>
 
-interface DirectedGraphState {
-  readonly graph: DirectedGraph
-  readonly positions: Record<Vertex, XY>
-  /** Додає вершину з канонічним ім'ям у позиції (x, y); повертає ім'я. */
-  addVertexAt: (x: number, y: number) => Vertex
-  /** Додає напрямлене ребро from→to; повертає false на петлю/дубль/невалідну вагу. */
-  connect: (from: Vertex, to: Vertex, weight: number) => boolean
-  setEdgeWeight: (id: string, weight: number) => void
-  removeVertex: (v: Vertex) => void
-  removeEdge: (id: string) => void
-  moveVertex: (v: Vertex, x: number, y: number) => void
-  clear: () => void
-  loadDoc: (doc: DirectedGraphDoc) => void
+interface DirectedGraphState extends GraphCore<DirectedGraph> {
   loadExample: () => void
   loadNegativeEdge: () => void
   loadNegativeCycle: () => void
   loadRandom: (seed: number) => void
-  toDoc: () => DirectedGraphDoc
 }
 
-export const useDirectedGraphStore = create<DirectedGraphState>()((set, get) => {
-  const init = abcdefPreset()
-  return {
-    graph: init.graph,
-    positions: init.positions,
-
-    addVertexAt: (x, y) => {
-      const name = nextVertexName(get().graph.vertices)
-      set((s) => ({
-        graph: addDirectedVertex(s.graph, name),
-        positions: { ...s.positions, [name]: { x, y } },
-      }))
-      return name
-    },
-
-    connect: (from, to, weight) => {
-      const g = get().graph
-      if (from === to || hasDirectedEdge(g, from, to) || !Number.isInteger(weight)) {
-        return false
-      }
-      set({ graph: addDirectedEdge(g, from, to, weight) })
-      return true
-    },
-
-    setEdgeWeight: (id, weight) => {
-      if (!Number.isInteger(weight)) return
-      set((s) => ({ graph: setDirectedEdgeWeightFn(s.graph, id, weight) }))
-    },
-
-    removeVertex: (v) =>
-      set((s) => ({
-        graph: removeDirectedVertexFn(s.graph, v),
-        positions: Object.fromEntries(
-          Object.entries(s.positions).filter(([k]) => k !== v),
-        ),
-      })),
-
-    removeEdge: (id) => set((s) => ({ graph: removeDirectedEdgeFn(s.graph, id) })),
-
-    moveVertex: (v, x, y) =>
-      set((s) => ({ positions: { ...s.positions, [v]: { x, y } } })),
-
-    clear: () => set({ graph: emptyDirectedGraph(), positions: {} }),
-
-    loadDoc: (doc) => set({ graph: doc.graph, positions: { ...doc.positions } }),
+export const useDirectedGraphStore = create<DirectedGraphState>()(
+  (set, get) => ({
+    ...graphCore<DirectedGraph>(
+      {
+        emptyGraph: emptyDirectedGraph,
+        addVertex: addDirectedVertex,
+        addEdge: addDirectedEdge,
+        hasEdge: hasDirectedEdge,
+        removeVertex: removeDirectedVertex,
+        removeEdge: removeDirectedEdge,
+        setEdgeWeight: setDirectedEdgeWeight,
+        isValidWeight: (w) => Number.isInteger(w),
+      },
+      abcdefPreset(),
+      set,
+      get,
+    ),
 
     loadExample: () => {
       const d = abcdefPreset()
@@ -119,7 +74,5 @@ export const useDirectedGraphStore = create<DirectedGraphState>()((set, get) => 
       const d = randomDirectedPreset(seed)
       set({ graph: d.graph, positions: d.positions })
     },
-
-    toDoc: () => ({ graph: get().graph, positions: get().positions }),
-  }
-})
+  }),
+)
