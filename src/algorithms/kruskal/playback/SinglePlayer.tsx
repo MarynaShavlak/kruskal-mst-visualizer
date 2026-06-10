@@ -4,10 +4,10 @@ import type { Graph, Vertex } from "@/lib/graph"
 import type { Frame, KruskalRun, MstResult } from "@/lib/trace"
 import type { XY } from "@/store/graph-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
+import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
-import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
-import { usePlayer } from "@/algorithms/shared/playback/use-player"
 
 export function SinglePlayer({
   graph,
@@ -41,66 +41,63 @@ export function SinglePlayer({
   }, [trace])
 
   return (
-    <div className="flex flex-col gap-3">
-      {headerExtra}
-      <PlayerControls player={player} />
-
-      <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
-        <span className="font-medium">
-          Крок {player.index + 1}/{trace.frames.length}.
-        </span>{" "}
-        {frame.caption}
-      </div>
-
-      {frame.dsuStats && (
-        <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-          <span>
-            <b>find-кроків:</b>{" "}
-            <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
-          </span>
-          <span>
-            <b>об'єднань:</b>{" "}
-            <span className="tabular-nums">{frame.dsuStats.unions}</span>
-          </span>
-          <span>
-            <b>стиснень шляху:</b>{" "}
-            <span className="tabular-nums">{frame.dsuStats.compressions}</span>
-          </span>
-        </div>
-      )}
-
-      <div className="grid gap-3 lg:grid-cols-3">
-        <GraphView
-          graph={graph}
-          positions={positions}
-          trace={trace}
-          frame={frame}
-          title={graphTitle}
-          className="min-h-[360px]"
-        />
-        <CodePanel
-          code={trace.code}
-          activeLines={frame.lines}
-          title={codeTitle}
-          className="min-h-[360px]"
-        />
-        {thirdPanel(frame)}
-      </div>
-
-      <div className="grid gap-3 lg:grid-cols-3">
-        <DecisionTable
-          graph={graph}
-          trace={trace}
-          frame={frame}
-          className="lg:col-span-2"
-          onSeekEdge={(id) => {
-            const i = firstFrameOfEdge.get(id)
-            if (i != null) player.dispatch({ type: "seek", index: i })
-          }}
-        />
-        <ResultCard result={result} />
-      </div>
-    </div>
+    <PlayerShell
+      player={player}
+      caption={frame.caption}
+      headerExtra={headerExtra}
+      statsBar={
+        frame.dsuStats && (
+          <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
+            <span>
+              <b>find-кроків:</b>{" "}
+              <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
+            </span>
+            <span>
+              <b>об'єднань:</b>{" "}
+              <span className="tabular-nums">{frame.dsuStats.unions}</span>
+            </span>
+            <span>
+              <b>стиснень шляху:</b>{" "}
+              <span className="tabular-nums">{frame.dsuStats.compressions}</span>
+            </span>
+          </div>
+        )
+      }
+      panels={
+        <>
+          <GraphView
+            graph={graph}
+            positions={positions}
+            trace={trace}
+            frame={frame}
+            title={graphTitle}
+            className="min-h-[360px]"
+          />
+          <CodePanel
+            code={trace.code}
+            activeLines={frame.lines}
+            title={codeTitle}
+            className="min-h-[360px]"
+          />
+          {thirdPanel(frame)}
+        </>
+      }
+      secondRow={
+        <>
+          <DecisionTable
+            graph={graph}
+            trace={trace}
+            frame={frame}
+            className="lg:col-span-2"
+            onSeekEdge={(id) => {
+              const i = firstFrameOfEdge.get(id)
+              if (i != null) player.dispatch({ type: "seek", index: i })
+            }}
+          />
+          <ResultCard result={result} />
+        </>
+      }
+    />
   )
 }
 

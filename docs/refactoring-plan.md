@@ -66,7 +66,7 @@ src/store/   create-graph-store.ts (factory)
 
 **Коміт:** `Рефакторинг: спільний LearnView з інжекцією figureForSrc`
 
-## Фаза D — спільний каркас плеєра `PlayerShell` (🟡 середній; найбільший зиск)
+## Фаза D — спільний каркас плеєра `PlayerShell` (🟡 середній; найбільший зиск) — ✅ ВИКОНАНО
 `shared/playback/PlayerShell.tsx`, generic за `F extends { caption: string }`. Володіє лише
 `usePlayer` + `PlayerControls` + рядком-нарацією; решта — слоти:
 ```
@@ -106,7 +106,7 @@ src/store/   create-graph-store.ts (factory)
 | A | переноси копій | 🟢 | ✅ ВИКОНАНО |
 | B | CodePanel + learn-content factory + TableOfContents | 🟢 | ✅ ВИКОНАНО |
 | C | спільний LearnView | 🟡 | ✅ ВИКОНАНО |
-| D | PlayerShell | 🟡 | TODO |
+| D | PlayerShell | 🟡 | ✅ ВИКОНАНО |
 | E | фабрика стору | 🟡 | TODO |
 | F | редактор (частково) | 🟠 | TODO |
 | G | прибирання | 🟢 | TODO |
