@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 import { Button } from "@/components/ui/button"
 import { LEARN_CONTENT, parseToc, type Lang } from "@/algorithms/kruskal/learn/learn-content"
-import { MarkdownCode } from "@/algorithms/kruskal/learn/MarkdownCode"
+import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
 import { TableOfContents } from "@/algorithms/kruskal/learn/TableOfContents"
 import { figureForSrc } from "@/algorithms/kruskal/learn/figure-widgets"
 

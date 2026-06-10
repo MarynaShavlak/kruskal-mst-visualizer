@@ -6,8 +6,8 @@ import type { XY } from "@/store/graph-store"
 import { CodePanel } from "@/algorithms/kruskal/playback/CodePanel"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
-import { PlayerControls } from "@/algorithms/kruskal/playback/PlayerControls"
-import { usePlayer } from "@/algorithms/kruskal/playback/use-player"
+import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 
 export function SinglePlayer({
   graph,

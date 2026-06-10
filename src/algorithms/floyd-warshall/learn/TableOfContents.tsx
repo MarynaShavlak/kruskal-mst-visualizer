@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import type { TocEntry } from "@/algorithms/floyd-warshall/learn/learn-content"
-import { useScrollSpy } from "@/algorithms/floyd-warshall/learn/use-scroll-spy"
+import { useScrollSpy } from "@/algorithms/shared/learn/use-scroll-spy"
 import { cn } from "@/lib/utils"
 
 export function TableOfContents({ toc }: { toc: TocEntry[] }) {

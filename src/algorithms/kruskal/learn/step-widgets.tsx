@@ -12,7 +12,7 @@ import {
   edgeStatuses,
   type EdgeStatus,
 } from "@/algorithms/kruskal/playback/highlight"
-import { usePlayer, type Player } from "@/algorithms/kruskal/playback/use-player"
+import { usePlayer, type Player } from "@/algorithms/shared/playback/use-player"
 import { examplePreset } from "@/store/presets"
 
 type Positions = Record<Vertex, { x: number; y: number }>

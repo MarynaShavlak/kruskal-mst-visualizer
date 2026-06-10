@@ -11,9 +11,9 @@ import { GraphView } from "@/algorithms/floyd-warshall/playback/GraphView"
 import { relaxationsUpTo } from "@/algorithms/floyd-warshall/playback/highlight"
 import { MatrixPanel } from "@/algorithms/floyd-warshall/playback/MatrixPanel"
 import { PathExplorer } from "@/algorithms/floyd-warshall/playback/PathExplorer"
-import { PlayerControls } from "@/algorithms/floyd-warshall/playback/PlayerControls"
+import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
 import { RelaxationLog } from "@/algorithms/floyd-warshall/playback/RelaxationLog"
-import { usePlayer } from "@/algorithms/floyd-warshall/playback/use-player"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 
 export function PlaybackView() {
   const graph = useDirectedGraphStore((s) => s.graph)

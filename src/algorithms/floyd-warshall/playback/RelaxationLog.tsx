@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react"
-import { Panel } from "@/algorithms/floyd-warshall/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 import type { Relaxation } from "@/algorithms/floyd-warshall/playback/highlight"
 import { INF } from "@/lib/floydWarshall"
 import type { Vertex } from "@/lib/directedGraph"

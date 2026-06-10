@@ -1,5 +1,5 @@
 import type { Frame } from "@/lib/trace"
-import { Panel } from "@/algorithms/kruskal/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 
 export function NaiveStatePanel({
   frame,

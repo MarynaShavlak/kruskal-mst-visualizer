@@ -1,4 +1,4 @@
-import { Panel } from "@/algorithms/floyd-warshall/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 import { cellFormula, cellRole } from "@/algorithms/floyd-warshall/playback/highlight"
 import type { FwFrame } from "@/lib/floydWarshallTrace"
 import { INF } from "@/lib/floydWarshall"

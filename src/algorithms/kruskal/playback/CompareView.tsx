@@ -4,10 +4,10 @@ import type { KruskalRun } from "@/lib/trace"
 import type { XY } from "@/store/graph-store"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
-import { PlayerControls } from "@/algorithms/kruskal/playback/PlayerControls"
+import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
 import { ResultCard } from "@/algorithms/kruskal/playback/SinglePlayer"
 import { decisionFrameIndices } from "@/algorithms/kruskal/playback/highlight"
-import { usePlayer } from "@/algorithms/kruskal/playback/use-player"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 
 export function CompareView({
   graph,

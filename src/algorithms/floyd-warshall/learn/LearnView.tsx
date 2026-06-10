@@ -10,7 +10,7 @@ import {
   parseToc,
   type Lang,
 } from "@/algorithms/floyd-warshall/learn/learn-content"
-import { MarkdownCode } from "@/algorithms/floyd-warshall/learn/MarkdownCode"
+import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
 import { TableOfContents } from "@/algorithms/floyd-warshall/learn/TableOfContents"
 import { figureForSrc } from "@/algorithms/floyd-warshall/learn/figure-widgets"
 

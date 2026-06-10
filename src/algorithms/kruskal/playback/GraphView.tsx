@@ -7,7 +7,7 @@ import {
   edgeStatuses,
   type EdgeStatus,
 } from "@/algorithms/kruskal/playback/highlight"
-import { Panel } from "@/algorithms/kruskal/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 import { circularLayout } from "@/store/presets"
 import type { XY } from "@/store/graph-store"
 

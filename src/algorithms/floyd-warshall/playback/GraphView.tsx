@@ -1,4 +1,4 @@
-import { Panel } from "@/algorithms/floyd-warshall/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 import type { FwFrame } from "@/lib/floydWarshallTrace"
 import {
   directedEdgeId,

@@ -2,7 +2,7 @@ import { ArrowRight, Check, X } from "lucide-react"
 import type { Graph } from "@/lib/graph"
 import type { Frame, Trace } from "@/lib/trace"
 import { edgeStatuses, type EdgeStatus } from "@/algorithms/kruskal/playback/highlight"
-import { Panel } from "@/algorithms/kruskal/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 import { cn } from "@/lib/utils"
 
 export function DecisionTable({

@@ -1,5 +1,5 @@
-import { Panel } from "@/algorithms/kruskal/playback/Panel"
-import { useShikiLines } from "@/algorithms/kruskal/playback/use-shiki-lines"
+import { Panel } from "@/algorithms/shared/playback/Panel"
+import { useShikiLines } from "@/algorithms/shared/playback/use-shiki-lines"
 import { cn } from "@/lib/utils"
 import { useThemeStore } from "@/store/theme-store"
 

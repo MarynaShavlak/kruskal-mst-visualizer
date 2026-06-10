@@ -39,7 +39,7 @@ src/store/   create-graph-store.ts (factory)
 
 ---
 
-## Фаза A — переноси «копія-в-копію» (🟢 ризик мінімальний) — IN PROGRESS
+## Фаза A — переноси «копія-в-копію» (🟢 ризик мінімальний) — ✅ ВИКОНАНО
 
 Файли, що відрізняються лише import-шляхом або 0-diff, переїжджають у `shared/` дослівно.
 
@@ -103,7 +103,7 @@ src/store/   create-graph-store.ts (factory)
 
 | Фаза | Суть | Ризик | Статус |
 |---|---|---|---|
-| A | переноси копій | 🟢 | IN PROGRESS |
+| A | переноси копій | 🟢 | ✅ ВИКОНАНО |
 | B | CodePanel + learn-content factory + TableOfContents | 🟢 | TODO |
 | C | спільний LearnView | 🟡 | TODO |
 | D | PlayerShell | 🟡 | TODO |

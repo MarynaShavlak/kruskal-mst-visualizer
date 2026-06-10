@@ -1,7 +1,7 @@
 import { motion } from "motion/react"
 import type { DsuSnapshot } from "@/lib/dsu"
 import { colorForRoot } from "@/algorithms/kruskal/playback/highlight"
-import { Panel } from "@/algorithms/kruskal/playback/Panel"
+import { Panel } from "@/algorithms/shared/playback/Panel"
 
 interface ForestNode {
   id: string

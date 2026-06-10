@@ -3,7 +3,7 @@ import type { DsuSnapshot } from "@/lib/dsu"
 import { referenceGraph } from "@/lib/exampleGraph"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { colorForRoot } from "@/algorithms/kruskal/playback/highlight"
-import { usePlayer } from "@/algorithms/kruskal/playback/use-player"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { MiniPlayerShell, seekForEdge } from "@/algorithms/kruskal/learn/step-widgets"
 
 interface FNode {

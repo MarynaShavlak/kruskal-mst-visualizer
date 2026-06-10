@@ -13,7 +13,7 @@ import {
   type FwTrace,
 } from "@/lib/floydWarshallTrace"
 import { cellFormula, cellRole } from "@/algorithms/floyd-warshall/playback/highlight"
-import { usePlayer, type Player } from "@/algorithms/floyd-warshall/playback/use-player"
+import { usePlayer, type Player } from "@/algorithms/shared/playback/use-player"
 import {
   abcdefPreset,
   pqrsPreset,
