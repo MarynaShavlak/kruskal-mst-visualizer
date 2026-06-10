@@ -1,8 +1,8 @@
 # Kruskal MST Visualizer
 
 Інтерактивна платформа для вивчення алгоритмів. Перший і найповніший розділ —
-алгоритм Краскала (мінімальне остовне дерево); наступний (у розробці, заглушка) —
-Флойда–Воршала. Компаньйон до Python-репозиторію з повним розбором:
+алгоритм Краскала (мінімальне остовне дерево); другий — Флойда–Воршала
+(навчання/редактор/плеєр готові; бенчмарк — у планах). Компаньйон до Python-репозиторію з повним розбором:
 https://github.com/MarynaShavlak/algo-krustal-mst
 Мова інтерфейсу та контенту — українська.
 (Назва репозиторію й base-path досі `kruskal-mst-visualizer` — деплой не чіпаємо.)
@@ -25,15 +25,23 @@ https://github.com/MarynaShavlak/algo-krustal-mst
 `#<algoId>/<tab>` (порожній хеш → каталог), див. `src/hooks/use-route.ts`; є
 зворотна сумісність зі старими посиланнями `#editor`/`#playback?g=...`.
 Алгоритмічне ядро (`lib/`) — фреймворк-незалежне, без імпортів React.
-Додати алгоритм: нова тека `algorithms/<id>/` з описом `Algorithm` + запис у `registry.ts`.
+Додати алгоритм: нова тека `algorithms/<id>/` з описом `Algorithm` + запис у `registry.ts`;
+екрани складаються зі спільного `algorithms/shared/` (каркаси) + алгоритмо-специфічних панелей.
 src/
-algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки екранів:
-            kruskal/{learn,editor,playback,benchmark}; floyd-warshall/ (заглушка, status="soon")
+algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки екранів
+            kruskal/{learn,editor,playback,benchmark} і floyd-warshall/{learn,editor,playback}
+            (benchmark — у планах);
+  shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
+            player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
+            shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
+            (figureForSrc, панелі/слоти плеєра, graph-модель).
 features/   home/ (каталог карток), shell/ (AlgorithmShell, AlgorithmSwitcher, ComingSoon)
-lib/        graph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts, trace.ts, randomGraph.ts, theme.ts
+lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts, trace.ts,
+            floydWarshall.ts(+Trace), graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
-store/      graph-store, theme-store, toast-store
+store/      create-graph-store (generic-ядро) → graph-store / directed-graph-store;
+            presets / directed-presets; theme-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
 незмінних кадрів (Frame), UI лише рухає курсор по них (scrubbing, крок назад).
@@ -50,6 +58,9 @@ store/      graph-store, theme-store, toast-store
 - Неорієнтований граф: ребро нормалізується як "A|B" (відсортовані кінці),
   без петель і дублів, додатні цілі ваги.
 - React-ідіоматика: компоненти PascalCase, решта файлів kebab-case; одна фіча — одна тека.
+- Спільне між алгоритмами (каркаси плеєра/навчання, серіалізація графа, generic-стор) живе
+  в `algorithms/shared/` і `store/create-graph-store`, а не копіюється між `<id>/` теками;
+  алгоритмо-специфічне інжектиться пропсами/конфігом. Див. `docs/refactoring-plan.md`.
 - lib/ покривається юніт-тестами і не залежить від UI.
 - Не додавай залежності без потреби; кожну нову — познач у відповіді.
 
