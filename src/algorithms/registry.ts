@@ -1,6 +1,7 @@
 import type { Algorithm } from "@/algorithms/types"
 import { kruskal } from "@/algorithms/kruskal"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
+import { heldKarp } from "@/algorithms/held-karp"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -8,7 +9,11 @@ import { floydWarshall } from "@/algorithms/floyd-warshall"
  * 2) додати його в цей масив.
  * Каталог, перемикач у шапці й роутер автоматично його підхоплять.
  */
-export const ALGORITHMS: readonly Algorithm[] = [kruskal, floydWarshall]
+export const ALGORITHMS: readonly Algorithm[] = [
+  kruskal,
+  floydWarshall,
+  heldKarp,
+]
 
 export function getAlgorithm(
   id: string | null | undefined,

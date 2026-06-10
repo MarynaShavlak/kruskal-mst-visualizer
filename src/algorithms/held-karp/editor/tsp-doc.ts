@@ -1,0 +1,83 @@
+// Серіалізація документа редактора TSP (міста + старт):
+//  - JSON для імпорту/експорту;
+//  - компактний base64url для шарингу через URL-хеш (?g=...).
+// Окремий wire-формат (version 1; місто як [name, x, y]) — не graph-doc, бо TSP
+// без ребер. Старт затискається в межі при завантаженні. Чисто, без React.
+
+import type { TspCity } from "@/lib/tsp"
+import type { TspDoc } from "@/store/tsp-store"
+
+interface TspWire {
+  readonly version: 1
+  readonly cities: readonly (readonly [string, number, number])[]
+  readonly start: number
+}
+
+function isWireCity(c: unknown): c is [string, number, number] {
+  return (
+    Array.isArray(c) &&
+    c.length === 3 &&
+    typeof c[0] === "string" &&
+    typeof c[1] === "number" &&
+    typeof c[2] === "number"
+  )
+}
+
+function parseWire(raw: unknown): TspWire {
+  if (typeof raw !== "object" || raw === null) {
+    throw new Error("Документ має бути об'єктом")
+  }
+  const o = raw as Record<string, unknown>
+  if (o.version !== 1) throw new Error("Непідтримувана версія документа")
+  if (!Array.isArray(o.cities) || !o.cities.every(isWireCity)) {
+    throw new Error("Поле cities невалідне")
+  }
+  if (typeof o.start !== "number" || !Number.isInteger(o.start)) {
+    throw new Error("Поле start невалідне")
+  }
+  return o as unknown as TspWire
+}
+
+function toBase64Url(s: string): string {
+  const bytes = new TextEncoder().encode(s)
+  let bin = ""
+  for (const b of bytes) bin += String.fromCharCode(b)
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+}
+
+function fromBase64Url(s: string): string {
+  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
+  return new TextDecoder().decode(bytes)
+}
+
+const docToWire = (doc: TspDoc): TspWire => ({
+  version: 1,
+  cities: doc.cities.map(
+    (c) => [c.name, Math.round(c.x), Math.round(c.y)] as const,
+  ),
+  start: doc.start,
+})
+
+const wireToDoc = (wire: TspWire): TspDoc => {
+  const cities: TspCity[] = wire.cities.map(([name, x, y]) => ({ name, x, y }))
+  const start =
+    cities.length === 0
+      ? 0
+      : Math.min(Math.max(0, wire.start), cities.length - 1)
+  return { cities, start }
+}
+
+export const tspCodec = {
+  toJSON: (doc: TspDoc): string => JSON.stringify(docToWire(doc), null, 2),
+  fromJSON: (json: string): TspDoc => wireToDoc(parseWire(JSON.parse(json))),
+  encodeHash: (doc: TspDoc): string =>
+    toBase64Url(JSON.stringify(docToWire(doc))),
+  decodeHash: (s: string): TspDoc | null => {
+    try {
+      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
+    } catch {
+      return null
+    }
+  },
+}
