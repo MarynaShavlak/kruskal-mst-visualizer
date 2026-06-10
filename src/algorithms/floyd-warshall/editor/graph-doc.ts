@@ -10,10 +10,11 @@ import {
 } from "@/lib/directedGraph"
 import { createGraphDocCodec } from "@/algorithms/shared/editor/graph-doc"
 
-export const { toJSON, fromJSON, encodeHash, decodeHash } =
-  createGraphDocCodec<DirectedGraph>({
-    emptyGraph: emptyDirectedGraph,
-    addVertex: addDirectedVertex,
-    addEdge: addDirectedEdge,
-    edgesToWire: (g) => g.edges.map((e) => [e.from, e.to, e.weight] as const),
-  })
+export const codec = createGraphDocCodec<DirectedGraph>({
+  emptyGraph: emptyDirectedGraph,
+  addVertex: addDirectedVertex,
+  addEdge: addDirectedEdge,
+  edgesToWire: (g) => g.edges.map((e) => [e.from, e.to, e.weight] as const),
+})
+
+export const { toJSON, fromJSON, encodeHash, decodeHash } = codec

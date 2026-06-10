@@ -1,11 +1,5 @@
 import "@xyflow/react/dist/style.css"
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  type ChangeEvent,
-  type MouseEvent,
-} from "react"
+import { useCallback, useEffect, useRef } from "react"
 import {
   Background,
   ConnectionMode,
@@ -13,16 +7,9 @@ import {
   MarkerType,
   ReactFlow,
   ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
   type Connection,
-  type Edge,
-  type EdgeChange,
   type EdgeTypes,
-  type NodeChange,
   type NodeTypes,
-  type OnNodeDrag,
 } from "@xyflow/react"
 import {
   BookOpen,
@@ -41,41 +28,20 @@ import {
   DirectedEdge,
   type DirectedEdgeType,
 } from "@/algorithms/floyd-warshall/editor/DirectedEdge"
-import {
-  DirectedVertexNode,
-  type DirectedVertexNodeType,
-} from "@/algorithms/floyd-warshall/editor/DirectedVertexNode"
-import {
-  decodeHash,
-  encodeHash,
-  fromJSON,
-  toJSON,
-} from "@/algorithms/floyd-warshall/editor/graph-doc"
+import { DirectedVertexNode } from "@/algorithms/floyd-warshall/editor/DirectedVertexNode"
+import { codec } from "@/algorithms/floyd-warshall/editor/graph-doc"
 import {
   useWeightPrompt,
   WeightDialog,
 } from "@/algorithms/floyd-warshall/editor/WeightDialog"
-import {
-  useDirectedGraphStore,
-  type DirectedGraphDoc,
-} from "@/store/directed-graph-store"
+import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
+import { useDirectedGraphStore } from "@/store/directed-graph-store"
 import { useThemeStore } from "@/store/theme-store"
 import { toast } from "@/store/toast-store"
-import { setHash } from "@/hooks/use-route"
+import type { DirectedGraph } from "@/lib/directedGraph"
 
 const nodeTypes: NodeTypes = { vertex: DirectedVertexNode }
 const edgeTypes: EdgeTypes = { directed: DirectedEdge }
-
-// Спільний граф із URL-хеша вантажимо лише раз за сесію сторінки.
-let sharedLoaded = false
-
-function readSharedDoc(): DirectedGraphDoc | null {
-  const hash = window.location.hash.replace(/^#/, "")
-  const q = hash.indexOf("?")
-  if (q < 0) return null
-  const g = new URLSearchParams(hash.slice(q + 1)).get("g")
-  return g ? decodeHash(g) : null
-}
 
 function edgeColor(negative: boolean, isDark: boolean): string {
   if (negative) return "#ef4444"
@@ -108,27 +74,28 @@ function EditorCanvas() {
   const toDoc = useDirectedGraphStore((s) => s.toDoc)
 
   const isDark = useThemeStore((s) => s.isDark)
-  const { screenToFlowPosition } = useReactFlow()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { promptWeight, dialogProps } = useWeightPrompt()
 
-  const [rfNodes, setRfNodes, onNodesChange] =
-    useNodesState<DirectedVertexNodeType>([])
-  const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState<DirectedEdgeType>([])
+  const ctrl = useGraphEditor<DirectedEdgeType, DirectedGraph>({
+    graph,
+    positions,
+    addVertexAt,
+    setEdgeWeight,
+    moveVertex,
+    removeVertex,
+    removeEdge,
+    loadDoc,
+    toDoc,
+    codec,
+    promptWeight,
+    exportFilename: "floyd-warshall-graph.json",
+    routePath: "floyd-warshall/editor",
+  })
+  const { setRfEdges } = ctrl
 
-  // Синхронізація вузлів зі стором при структурних змінах.
-  useEffect(() => {
-    setRfNodes(
-      graph.vertices.map((v) => ({
-        id: v,
-        type: "vertex",
-        position: positions[v] ?? { x: 0, y: 0 },
-        data: { label: v },
-      })),
-    )
-  }, [graph.vertices, positions, setRfNodes])
-
-  // Ребра: напрям, стрілка, вигин для зустрічних пар, колір за знаком ваги/темою.
+  // Синк ребер зі стором: напрям, стрілка, вигин для зустрічних пар, колір за
+  // знаком ваги/темою (специфіка орієнтованого графа).
   useEffect(() => {
     setRfEdges(
       graph.edges.map((e) => {
@@ -155,33 +122,6 @@ function EditorCanvas() {
     )
   }, [graph.edges, isDark, setRfEdges])
 
-  useEffect(() => {
-    if (sharedLoaded) return
-    sharedLoaded = true
-    const doc = readSharedDoc()
-    if (doc) loadDoc(doc)
-  }, [loadDoc])
-
-  const handleNodesChange = useCallback(
-    (changes: NodeChange<DirectedVertexNodeType>[]) => {
-      onNodesChange(changes)
-      for (const ch of changes) {
-        if (ch.type === "remove") removeVertex(ch.id)
-      }
-    },
-    [onNodesChange, removeVertex],
-  )
-
-  const handleEdgesChange = useCallback(
-    (changes: EdgeChange<DirectedEdgeType>[]) => {
-      onEdgesChange(changes)
-      for (const ch of changes) {
-        if (ch.type === "remove") removeEdge(ch.id)
-      }
-    },
-    [onEdgesChange, removeEdge],
-  )
-
   const onConnect = useCallback(
     async (conn: Connection) => {
       if (!conn.source || !conn.target || conn.source === conn.target) return
@@ -196,82 +136,6 @@ function EditorCanvas() {
     },
     [connect, promptWeight],
   )
-
-  const onNodeDragStop = useCallback<OnNodeDrag<DirectedVertexNodeType>>(
-    (_e, node) => {
-      moveVertex(node.id, node.position.x, node.position.y)
-    },
-    [moveVertex],
-  )
-
-  const onEdgeDoubleClick = useCallback(
-    async (_e: MouseEvent, edge: Edge) => {
-      const current =
-        edge.data && typeof edge.data.weight === "number"
-          ? edge.data.weight
-          : undefined
-      const w = await promptWeight(current)
-      if (w !== null) setEdgeWeight(edge.id, w)
-    },
-    [setEdgeWeight, promptWeight],
-  )
-
-  const onPaneDoubleClick = useCallback(
-    (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target.classList.contains("react-flow__pane")) return
-      const pos = screenToFlowPosition({ x: e.clientX, y: e.clientY })
-      addVertexAt(pos.x, pos.y)
-    },
-    [screenToFlowPosition, addVertexAt],
-  )
-
-  const onAddVertex = useCallback(() => {
-    const n = graph.vertices.length
-    addVertexAt(120 + (n % 6) * 90, 120 + Math.floor(n / 6) * 90)
-  }, [graph.vertices.length, addVertexAt])
-
-  const onExport = useCallback(() => {
-    const blob = new Blob([toJSON(toDoc())], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "floyd-warshall-graph.json"
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [toDoc])
-
-  const onImportFile = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      e.target.value = ""
-      if (!file) return
-      file
-        .text()
-        .then((text) => loadDoc(fromJSON(text)))
-        .catch((err: unknown) => {
-          toast({
-            title: "Не вдалося імпортувати",
-            description: err instanceof Error ? err.message : String(err),
-            variant: "destructive",
-          })
-        })
-    },
-    [loadDoc],
-  )
-
-  const onShare = useCallback(() => {
-    const hash = encodeHash(toDoc())
-    const route = `floyd-warshall/editor?g=${hash}`
-    const url = `${window.location.origin}${window.location.pathname}#${route}`
-    setHash(route)
-    void navigator.clipboard?.writeText(url).then(
-      () => {
-        toast({ description: "Посилання скопійовано в буфер обміну." })
-      },
-      () => undefined,
-    )
-  }, [toDoc])
 
   return (
     <div className="flex flex-col gap-3">
@@ -292,7 +156,7 @@ function EditorCanvas() {
         >
           <Shuffle /> Випадковий
         </Button>
-        <Button size="sm" variant="outline" onClick={onAddVertex}>
+        <Button size="sm" variant="outline" onClick={ctrl.onAddVertex}>
           <Plus /> Вершина
         </Button>
         <Button size="sm" variant="outline" onClick={clear}>
@@ -306,10 +170,10 @@ function EditorCanvas() {
         >
           <Upload /> Імпорт
         </Button>
-        <Button size="sm" variant="outline" onClick={onExport}>
+        <Button size="sm" variant="outline" onClick={ctrl.onExport}>
           <Download /> Експорт
         </Button>
-        <Button size="sm" variant="outline" onClick={onShare}>
+        <Button size="sm" variant="outline" onClick={ctrl.onShare}>
           <Share2 /> Поділитися
         </Button>
         <input
@@ -317,25 +181,25 @@ function EditorCanvas() {
           type="file"
           accept="application/json,.json"
           className="hidden"
-          onChange={onImportFile}
+          onChange={ctrl.onImportFile}
         />
       </div>
 
       <div className="flex flex-col gap-3 lg:flex-row">
         <div
           className="h-[600px] flex-1 overflow-hidden rounded-lg border bg-muted/20"
-          onDoubleClick={onPaneDoubleClick}
+          onDoubleClick={ctrl.onPaneDoubleClick}
         >
           <ReactFlow
-            nodes={rfNodes}
-            edges={rfEdges}
+            nodes={ctrl.rfNodes}
+            edges={ctrl.rfEdges}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={handleEdgesChange}
+            onNodesChange={ctrl.onNodesChange}
+            onEdgesChange={ctrl.onEdgesChange}
             onConnect={onConnect}
-            onNodeDragStop={onNodeDragStop}
-            onEdgeDoubleClick={onEdgeDoubleClick}
+            onNodeDragStop={ctrl.onNodeDragStop}
+            onEdgeDoubleClick={ctrl.onEdgeDoubleClick}
             connectionMode={ConnectionMode.Loose}
             deleteKeyCode={["Delete", "Backspace"]}
             zoomOnDoubleClick={false}

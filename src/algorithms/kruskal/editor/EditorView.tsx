@@ -1,26 +1,14 @@
 import "@xyflow/react/dist/style.css"
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  type ChangeEvent,
-  type MouseEvent,
-} from "react"
+import { useCallback, useEffect, useRef } from "react"
 import {
   Background,
   ConnectionMode,
   Controls,
   ReactFlow,
   ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
   type Connection,
   type Edge,
-  type EdgeChange,
-  type NodeChange,
   type NodeTypes,
-  type OnNodeDrag,
 } from "@xyflow/react"
 import {
   BookOpen,
@@ -33,31 +21,15 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ConnectivityPanel } from "@/algorithms/kruskal/editor/ConnectivityPanel"
-import {
-  decodeHash,
-  encodeHash,
-  fromJSON,
-  toJSON,
-} from "@/algorithms/kruskal/editor/graph-doc"
-import { VertexNode, type VertexNodeType } from "@/algorithms/kruskal/editor/VertexNode"
+import { codec } from "@/algorithms/kruskal/editor/graph-doc"
+import { VertexNode } from "@/algorithms/kruskal/editor/VertexNode"
 import { useWeightPrompt, WeightDialog } from "@/algorithms/kruskal/editor/WeightDialog"
-import { useGraphStore, type GraphDoc } from "@/store/graph-store"
+import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
+import { useGraphStore } from "@/store/graph-store"
 import { useThemeStore } from "@/store/theme-store"
-import { toast } from "@/store/toast-store"
-import { setHash } from "@/hooks/use-route"
+import type { Graph } from "@/lib/graph"
 
 const nodeTypes: NodeTypes = { vertex: VertexNode }
-
-// Спільний граф із URL-хеша вантажимо лише раз за сесію сторінки.
-let sharedLoaded = false
-
-function readSharedDoc(): GraphDoc | null {
-  const hash = window.location.hash.replace(/^#/, "")
-  const q = hash.indexOf("?")
-  if (q < 0) return null
-  const g = new URLSearchParams(hash.slice(q + 1)).get("g")
-  return g ? decodeHash(g) : null
-}
 
 export function EditorView() {
   return (
@@ -83,27 +55,27 @@ function EditorCanvas() {
   const toDoc = useGraphStore((s) => s.toDoc)
 
   const isDark = useThemeStore((s) => s.isDark)
-  const { screenToFlowPosition } = useReactFlow()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { promptWeight, dialogProps } = useWeightPrompt()
 
-  const [rfNodes, setRfNodes, onNodesChange] = useNodesState<VertexNodeType>([])
-  const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState<Edge>([])
+  const ctrl = useGraphEditor<Edge, Graph>({
+    graph,
+    positions,
+    addVertexAt,
+    setEdgeWeight,
+    moveVertex,
+    removeVertex,
+    removeEdge,
+    loadDoc,
+    toDoc,
+    codec,
+    promptWeight,
+    exportFilename: "kruskal-graph.json",
+    routePath: "kruskal/editor",
+  })
+  const { setRfEdges } = ctrl
 
-  // Синхронізація вигляду зі стором при структурних змінах
-  // (додавання/видалення/пресети/імпорт). Під час перетягування стор не чіпаємо,
-  // тож цей ефект не заважає драгу — позиція пишеться лише на onNodeDragStop.
-  useEffect(() => {
-    setRfNodes(
-      graph.vertices.map((v) => ({
-        id: v,
-        type: "vertex",
-        position: positions[v] ?? { x: 0, y: 0 },
-        data: { label: v },
-      })),
-    )
-  }, [graph.vertices, positions, setRfNodes])
-
+  // Синк ребер зі стором — прямі лінії з підписом ваги (специфіка Краскала).
   useEffect(() => {
     setRfEdges(
       graph.edges.map((e) => ({
@@ -117,33 +89,6 @@ function EditorCanvas() {
     )
   }, [graph.edges, setRfEdges])
 
-  useEffect(() => {
-    if (sharedLoaded) return
-    sharedLoaded = true
-    const doc = readSharedDoc()
-    if (doc) loadDoc(doc)
-  }, [loadDoc])
-
-  const handleNodesChange = useCallback(
-    (changes: NodeChange<VertexNodeType>[]) => {
-      onNodesChange(changes)
-      for (const ch of changes) {
-        if (ch.type === "remove") removeVertex(ch.id)
-      }
-    },
-    [onNodesChange, removeVertex],
-  )
-
-  const handleEdgesChange = useCallback(
-    (changes: EdgeChange<Edge>[]) => {
-      onEdgesChange(changes)
-      for (const ch of changes) {
-        if (ch.type === "remove") removeEdge(ch.id)
-      }
-    },
-    [onEdgesChange, removeEdge],
-  )
-
   const onConnect = useCallback(
     async (conn: Connection) => {
       if (!conn.source || !conn.target) return
@@ -152,82 +97,6 @@ function EditorCanvas() {
     },
     [connect, promptWeight],
   )
-
-  const onNodeDragStop = useCallback<OnNodeDrag<VertexNodeType>>(
-    (_e, node) => {
-      moveVertex(node.id, node.position.x, node.position.y)
-    },
-    [moveVertex],
-  )
-
-  const onEdgeDoubleClick = useCallback(
-    async (_e: MouseEvent, edge: Edge) => {
-      const current =
-        edge.data && typeof edge.data.weight === "number"
-          ? edge.data.weight
-          : undefined
-      const w = await promptWeight(current)
-      if (w !== null) setEdgeWeight(edge.id, w)
-    },
-    [setEdgeWeight, promptWeight],
-  )
-
-  const onPaneDoubleClick = useCallback(
-    (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target.classList.contains("react-flow__pane")) return
-      const pos = screenToFlowPosition({ x: e.clientX, y: e.clientY })
-      addVertexAt(pos.x, pos.y)
-    },
-    [screenToFlowPosition, addVertexAt],
-  )
-
-  const onAddVertex = useCallback(() => {
-    const n = graph.vertices.length
-    addVertexAt(120 + (n % 6) * 90, 120 + Math.floor(n / 6) * 90)
-  }, [graph.vertices.length, addVertexAt])
-
-  const onExport = useCallback(() => {
-    const blob = new Blob([toJSON(toDoc())], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "kruskal-graph.json"
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [toDoc])
-
-  const onImportFile = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      e.target.value = ""
-      if (!file) return
-      file
-        .text()
-        .then((text) => loadDoc(fromJSON(text)))
-        .catch((err: unknown) => {
-          toast({
-            title: "Не вдалося імпортувати",
-            description: err instanceof Error ? err.message : String(err),
-            variant: "destructive",
-          })
-        })
-    },
-    [loadDoc],
-  )
-
-  const onShare = useCallback(() => {
-    const hash = encodeHash(toDoc())
-    const route = `kruskal/editor?g=${hash}`
-    const url = `${window.location.origin}${window.location.pathname}#${route}`
-    setHash(route)
-    void navigator.clipboard?.writeText(url).then(
-      () => {
-        toast({ description: "Посилання скопійовано в буфер обміну." })
-      },
-      () => undefined,
-    )
-  }, [toDoc])
 
   return (
     <div className="flex flex-col gap-3">
@@ -242,7 +111,7 @@ function EditorCanvas() {
         >
           <Shuffle /> Випадковий
         </Button>
-        <Button size="sm" variant="outline" onClick={onAddVertex}>
+        <Button size="sm" variant="outline" onClick={ctrl.onAddVertex}>
           <Plus /> Вершина
         </Button>
         <Button size="sm" variant="outline" onClick={clear}>
@@ -256,10 +125,10 @@ function EditorCanvas() {
         >
           <Upload /> Імпорт
         </Button>
-        <Button size="sm" variant="outline" onClick={onExport}>
+        <Button size="sm" variant="outline" onClick={ctrl.onExport}>
           <Download /> Експорт
         </Button>
-        <Button size="sm" variant="outline" onClick={onShare}>
+        <Button size="sm" variant="outline" onClick={ctrl.onShare}>
           <Share2 /> Поділитися
         </Button>
         <input
@@ -267,24 +136,24 @@ function EditorCanvas() {
           type="file"
           accept="application/json,.json"
           className="hidden"
-          onChange={onImportFile}
+          onChange={ctrl.onImportFile}
         />
       </div>
 
       <div className="flex flex-col gap-3 lg:flex-row">
         <div
           className="h-[600px] flex-1 overflow-hidden rounded-lg border bg-muted/20"
-          onDoubleClick={onPaneDoubleClick}
+          onDoubleClick={ctrl.onPaneDoubleClick}
         >
           <ReactFlow
-            nodes={rfNodes}
-            edges={rfEdges}
+            nodes={ctrl.rfNodes}
+            edges={ctrl.rfEdges}
             nodeTypes={nodeTypes}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={handleEdgesChange}
+            onNodesChange={ctrl.onNodesChange}
+            onEdgesChange={ctrl.onEdgesChange}
             onConnect={onConnect}
-            onNodeDragStop={onNodeDragStop}
-            onEdgeDoubleClick={onEdgeDoubleClick}
+            onNodeDragStop={ctrl.onNodeDragStop}
+            onEdgeDoubleClick={ctrl.onEdgeDoubleClick}
             connectionMode={ConnectionMode.Loose}
             deleteKeyCode={["Delete", "Backspace"]}
             zoomOnDoubleClick={false}
