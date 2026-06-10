@@ -60,7 +60,7 @@ src/store/   create-graph-store.ts (factory)
 
 **Коміт:** `Рефакторинг: спільні CodePanel і фабрика learn-content`
 
-## Фаза C — спільний `LearnView` (🟡 низько-середній)
+## Фаза C — спільний `LearnView` (🟡 низько-середній) — ✅ ВИКОНАНО
 `shared/learn/LearnView.tsx` з пропсами `{ content: {ua,en}, figureForSrc }`. README-href уніфікувати
 (`README.ua.md | README.md` → UA, `README.en.md` → EN). Кожен алгоритм — тонка обгортка, що інжектить свій `figureForSrc`.
 
@@ -105,7 +105,7 @@ src/store/   create-graph-store.ts (factory)
 |---|---|---|---|
 | A | переноси копій | 🟢 | ✅ ВИКОНАНО |
 | B | CodePanel + learn-content factory + TableOfContents | 🟢 | ✅ ВИКОНАНО |
-| C | спільний LearnView | 🟡 | TODO |
+| C | спільний LearnView | 🟡 | ✅ ВИКОНАНО |
 | D | PlayerShell | 🟡 | TODO |
 | E | фабрика стору | 🟡 | TODO |
 | F | редактор (частково) | 🟠 | TODO |
