@@ -23,7 +23,8 @@ import { tspCodec } from "@/algorithms/held-karp/editor/tsp-doc"
 import type { CityNodeType } from "@/algorithms/held-karp/editor/CityNode"
 import { setHash } from "@/hooks/use-route"
 import { toast } from "@/store/toast-store"
-import { useTspStore } from "@/store/tsp-store"
+import { useTspStore, type TspDoc } from "@/store/tsp-store"
+import type { TspCity } from "@/lib/tsp"
 
 const EXPORT_FILENAME = "held-karp-tsp.json"
 const ROUTE_PATH = "held-karp/editor"
@@ -32,6 +33,10 @@ const ROUTE_PATH = "held-karp/editor"
 const loadedRoutes = new Set<string>()
 
 export interface TspEditorController {
+  /** Поточні міста стору (для діалогу координат). */
+  readonly cities: readonly TspCity[]
+  /** Індекс стартового міста. */
+  readonly start: number
   readonly rfNodes: CityNodeType[]
   readonly onNodesChange: (changes: NodeChange<CityNodeType>[]) => void
   readonly onNodeDragStop: OnNodeDrag<CityNodeType>
@@ -44,6 +49,8 @@ export interface TspEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  /** Застосовує цілий документ (з діалогу координат) і центрує вид. */
+  readonly onApplyDoc: (doc: TspDoc) => void
 }
 
 /**
@@ -212,7 +219,17 @@ export function useTspEditor(): TspEditorController {
     )
   }, [toDoc])
 
+  const onApplyDoc = useCallback(
+    (doc: TspDoc) => {
+      loadDoc(doc)
+      scheduleFit()
+    },
+    [loadDoc, scheduleFit],
+  )
+
   return {
+    cities,
+    start,
     rfNodes,
     onNodesChange: handleNodesChange,
     onNodeDragStop,
@@ -225,5 +242,6 @@ export function useTspEditor(): TspEditorController {
     onExport,
     onImportFile,
     onShare,
+    onApplyDoc,
   }
 }

@@ -1,5 +1,5 @@
 import "@xyflow/react/dist/style.css"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import {
   Background,
   Controls,
@@ -11,6 +11,7 @@ import {
 import {
   BookOpen,
   Download,
+  MapPin,
   Plus,
   Share2,
   Shuffle,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CityNode } from "@/algorithms/held-karp/editor/CityNode"
+import { CoordinatesDialog } from "@/algorithms/held-karp/editor/CoordinatesDialog"
 import { DistanceMatrixPanel } from "@/algorithms/held-karp/editor/DistanceMatrixPanel"
 import { useTspEditor } from "@/algorithms/held-karp/editor/use-tsp-editor"
 import { useThemeStore } from "@/store/theme-store"
@@ -39,6 +41,7 @@ export function EditorView() {
 function EditorCanvas() {
   const isDark = useThemeStore((s) => s.isDark)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [coordsOpen, setCoordsOpen] = useState(false)
   const ctrl = useTspEditor()
 
   return (
@@ -52,6 +55,13 @@ function EditorCanvas() {
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onAddCity}>
           <Plus /> Місто
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setCoordsOpen(true)}
+        >
+          <MapPin /> Координати
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onClear}>
           <Trash2 /> Очистити
@@ -106,9 +116,20 @@ function EditorCanvas() {
       <p className="text-xs text-muted-foreground">
         Подвійний клік по полю — додати місто; перетягни місто — змінити
         координати (зі снапом до сітки); подвійний клік по місту — зробити його
-        стартом; Delete — видалити виділене. Відстані в матриці — евклідові,
-        перераховуються автоматично.
+        стартом; Delete — видалити виділене. Кнопка «Координати» — ввести точні
+        x/y кожного міста вручну. Відстані в матриці — евклідові, перераховуються
+        автоматично.
       </p>
+
+      <CoordinatesDialog
+        open={coordsOpen}
+        initialCities={ctrl.cities}
+        initialStart={ctrl.start}
+        onSettle={(doc) => {
+          setCoordsOpen(false)
+          if (doc) ctrl.onApplyDoc(doc)
+        }}
+      />
     </div>
   )
 }
