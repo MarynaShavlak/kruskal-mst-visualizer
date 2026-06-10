@@ -6,7 +6,7 @@ import {
   type FwResult,
 } from "@/lib/floydWarshallTrace"
 import { useDirectedGraphStore } from "@/store/directed-graph-store"
-import { CodePanel } from "@/algorithms/floyd-warshall/playback/CodePanel"
+import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { GraphView } from "@/algorithms/floyd-warshall/playback/GraphView"
 import { relaxationsUpTo } from "@/algorithms/floyd-warshall/playback/highlight"
 import { MatrixPanel } from "@/algorithms/floyd-warshall/playback/MatrixPanel"
@@ -81,6 +81,7 @@ export function PlaybackView() {
         />
         <CodePanel
           code={trace.code}
+          title="Код (Флойд–Воршал)"
           activeLines={frame.lines}
           contextLines={frame.contextLines}
           className="min-h-[360px]"

@@ -7,7 +7,7 @@ import remarkMath from "remark-math"
 import { Button } from "@/components/ui/button"
 import { LEARN_CONTENT, parseToc, type Lang } from "@/algorithms/kruskal/learn/learn-content"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
-import { TableOfContents } from "@/algorithms/kruskal/learn/TableOfContents"
+import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
 import { figureForSrc } from "@/algorithms/kruskal/learn/figure-widgets"
 
 export function LearnView() {

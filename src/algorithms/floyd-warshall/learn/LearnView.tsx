@@ -11,7 +11,7 @@ import {
   type Lang,
 } from "@/algorithms/floyd-warshall/learn/learn-content"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
-import { TableOfContents } from "@/algorithms/floyd-warshall/learn/TableOfContents"
+import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
 import { figureForSrc } from "@/algorithms/floyd-warshall/learn/figure-widgets"
 
 export function LearnView() {

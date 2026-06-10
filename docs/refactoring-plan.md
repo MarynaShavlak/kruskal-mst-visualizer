@@ -52,7 +52,7 @@ src/store/   create-graph-store.ts (factory)
 **Верифікація:** `tsc -b` + `npm test` (`player`, `highlight`, `learn-content`).
 **Коміт:** `Рефакторинг: спільний шар algorithms/shared — перенос ідентичних плеєр/навчання модулів`
 
-## Фаза B — злиття «надмножина / factory» (🟢 низький)
+## Фаза B — злиття «надмножина / factory» (🟢 низький) — ✅ ВИКОНАНО
 - `CodePanel.tsx` → версія Флойда (надмножина: опційні `contextLines` + проп `title`) у `shared/playback/`.
 - `learn-content.ts` → у `shared/learn/`: `parseToc`, типи `Lang`/`TocEntry`, фабрика `makeLearnContent(uaRaw, enRaw)`.
   У кожного алгоритму лишається 3-рядковий модуль зі своїм raw-markdown.
@@ -104,7 +104,7 @@ src/store/   create-graph-store.ts (factory)
 | Фаза | Суть | Ризик | Статус |
 |---|---|---|---|
 | A | переноси копій | 🟢 | ✅ ВИКОНАНО |
-| B | CodePanel + learn-content factory + TableOfContents | 🟢 | TODO |
+| B | CodePanel + learn-content factory + TableOfContents | 🟢 | ✅ ВИКОНАНО |
 | C | спільний LearnView | 🟡 | TODO |
 | D | PlayerShell | 🟡 | TODO |
 | E | фабрика стору | 🟡 | TODO |

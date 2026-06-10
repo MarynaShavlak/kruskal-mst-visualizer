@@ -7,7 +7,7 @@ export function CodePanel({
   code,
   activeLines,
   contextLines = [],
-  title = "Код (Флойд–Воршал)",
+  title = "Код",
   className,
 }: {
   code: readonly string[]

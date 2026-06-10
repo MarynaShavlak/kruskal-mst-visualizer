@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import type { TocEntry } from "@/algorithms/kruskal/learn/learn-content"
+import type { TocEntry } from "@/algorithms/shared/learn/learn-content"
 import { useScrollSpy } from "@/algorithms/shared/learn/use-scroll-spy"
 import { cn } from "@/lib/utils"
 
