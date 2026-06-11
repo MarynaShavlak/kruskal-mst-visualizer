@@ -27,7 +27,6 @@ const C_PATH = "#10b981"
 const label = (i: number): string => RESULT.names[i] ?? String(i)
 const setLabel = (mask: number): string =>
   `{${subsetMembers(mask, N).map(label).join(", ")}}`
-const pathLabel = (path: readonly number[]): string => path.map(label).join(" → ")
 const cellOf = (subset: number, end: number): HkCell | undefined =>
   RESULT.cells.find((c) => c.subset === subset && c.end === end)
 
@@ -47,6 +46,19 @@ function FigureBox({
 }
 
 // ── 01. Матриця відстаней ─────────────────────────────────────────────────────
+
+/**
+ * Синя теплова шкала (як matplotlib «Blues»): світло-синій = близько, темно-синій
+ * = далеко. Фон — суцільний синій (не змішаний з темою), тож текст контрастний і в
+ * світлій, і в темній темі: на світлих клітинках — темно-синій, на темних — білий.
+ */
+function heatBlue(t: number): { bg: string; fg: string } {
+  const L = 0.95 - t * 0.5 // 0.95 (мала відстань) → 0.45 (велика)
+  return {
+    bg: `oklch(${L.toFixed(3)} 0.13 255)`,
+    fg: L < 0.66 ? "#ffffff" : "oklch(0.40 0.12 255)",
+  }
+}
 
 /** Жива теплова карта матриці відстаней демо-міст (евклідова, симетрична). */
 export function HkDistanceMatrix() {
@@ -82,23 +94,24 @@ export function HkDistanceMatrix() {
                 {nm}
               </span>
               {dist[r].map((v, c) => {
-                const pct = max > 0 ? Math.round((v / max) * 70) : 0
+                if (r === c) {
+                  return (
+                    <span
+                      key={c}
+                      className="border border-border/40 px-2 py-1 text-muted-foreground"
+                    >
+                      0
+                    </span>
+                  )
+                }
+                const { bg, fg } = heatBlue(max > 0 ? v / max : 0)
                 return (
                   <span
                     key={c}
-                    className={cn(
-                      "border border-border/40 px-2 py-1",
-                      r === c && "text-muted-foreground",
-                    )}
-                    style={
-                      r === c
-                        ? undefined
-                        : {
-                            backgroundColor: `color-mix(in oklch, var(--primary) ${pct}%, transparent)`,
-                          }
-                    }
+                    className="border border-white/50 px-2 py-1 font-medium dark:border-black/20"
+                    style={{ backgroundColor: bg, color: fg }}
                   >
-                    {r === c ? "0" : fmt(v)}
+                    {fmt(v)}
                   </span>
                 )
               })}
@@ -158,7 +171,12 @@ export function HkCitiesMap({ tour }: { tour?: readonly number[] }) {
     <FigureBox className="p-2">
       <svg
         viewBox={`0 0 ${VB} ${VB}`}
-        className="h-[300px] w-full"
+        className={cn(
+          "mx-auto block aspect-square w-full",
+          // Граф «усі попарні відстані» — удвічі більший: 10 ребер із підписами
+          // тісняться, тож йому потрібен простір; маршрут-тур лишаємо компактним.
+          tour ? "max-w-[360px]" : "max-w-[600px]",
+        )}
         preserveAspectRatio="xMidYMid meet"
       >
         {pairs.map(([i, j]) => {
@@ -305,17 +323,14 @@ function cellCandidates(cell: HkCell): LevelCand[] {
 }
 
 function CandRow({ c }: { c: LevelCand }) {
+  // Кольори рядка — точно як у README: обраний WIN_G, відкинутий LOSE_R.
   return (
     <span
-      className={cn(
-        "flex items-center gap-1.5 rounded px-1.5 py-0.5 text-[11px] tabular-nums",
-        c.chosen
-          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-          : "text-rose-600/90 dark:text-rose-400/80",
-      )}
+      className="flex items-center gap-1.5 text-[11px] tabular-nums"
+      style={{ color: c.chosen ? WIN_G : LOSE_R }}
     >
       <span className="font-semibold">{label(c.k)}</span>
-      <span className="text-muted-foreground">
+      <span>
         {fmt(c.blockCost)} + {fmt(c.edge)} =
       </span>
       <span className="font-semibold">{fmt(c.total)}</span>
@@ -324,52 +339,369 @@ function CandRow({ c }: { c: LevelCand }) {
   )
 }
 
-function CellCard({ cell }: { cell: HkCell }) {
-  const cands = cellCandidates(cell)
+// ── Міні-карта підзадачі (стиль matplotlib-фігур README) ──────────────────────
+
+// Точна палітра з генератора фігур `src/tsp_held_karp/visualization.py`:
+// кольори вузлів-міст, фонів панелей і ребер беремо 1-в-1.
+const CITY_FILL: Record<string, string> = {
+  A: "#5F5E5A",
+  B: "#854F0B",
+  C: "#0C447C",
+  D: "#3B6D11",
+  E: "#A32D2D",
+}
+const CITY_OFF = "#D3D1C7" // бліде неактивне місто
+const CITY_OFF_LABEL = "#888780"
+const ADDED = "#D85A30" // коралове ребро — крок, що додається (фінальне ребро блока)
+const WIN_G = "#1C7A30" // обраний кандидат min()
+const LOSE_R = "#B3261E" // відкинутий кандидат
+const BASE_TXT = "#2E2E2B"
+
+// Фон/акцент панелі: за кінцевим містом (рівень 2), за підмножиною з 3 міст
+// (рівні 3–4) або за підмножиною-джерелом із 4 міст (рівень 5 і замикання).
+const CITY_BG: Record<string, string> = {
+  B: "#EADCC5",
+  C: "#C8D9F0",
+  D: "#D2E5C2",
+  E: "#F2CECE",
+}
+const SUB3_BG: Record<string, string> = {
+  ABC: "#B9D4F2",
+  ABD: "#B7E3AC",
+  ABE: "#F1E994",
+  ACD: "#F8C089",
+  ACE: "#F4B6C9",
+  ADE: "#D2BCEE",
+}
+const SUB3_FG: Record<string, string> = {
+  ABC: "#245CA6",
+  ABD: "#2C8638",
+  ABE: "#8A7212",
+  ACD: "#C0651A",
+  ACE: "#B83258",
+  ADE: "#6A40A0",
+}
+const SUB4_BG: Record<string, string> = {
+  ABCD: "#A9D6CE",
+  ABCE: "#E2CFA6",
+  ABDE: "#BAC6D4",
+  ACDE: "#D9BAC8",
+}
+const SUB4_FG: Record<string, string> = {
+  ABCD: "#1F8377",
+  ABCE: "#8A6A2E",
+  ABDE: "#455C70",
+  ACDE: "#8A4A68",
+}
+
+/** Канонічний ключ підмножини за відсортованими літерами міст ("ABC"). */
+function subsetKey(mask: number): string {
+  return subsetMembers(mask, N).map(label).join("")
+}
+
+/** Фон і акцент панелі підзадачі — точно за схемою кольорів README. */
+function levelPanelColors(
+  level: number,
+  cell: HkCell,
+): { bg: string; accent: string } {
+  if (level === 2) {
+    const e = label(cell.end)
+    return { bg: CITY_BG[e], accent: CITY_FILL[e] }
+  }
+  if (level === 3) {
+    const k = subsetKey(cell.subset)
+    return { bg: SUB3_BG[k], accent: SUB3_FG[k] }
+  }
+  const k = subsetKey(cell.subset ^ (1 << cell.end)) // підмножина-джерело
+  return level === 4
+    ? { bg: SUB3_BG[k], accent: SUB3_FG[k] }
+    : { bg: SUB4_BG[k], accent: SUB4_FG[k] }
+}
+
+/** Прямий маршрут одним кольором (рівні 2–3): колір = кінцеве місто. */
+function solidEdges(route: readonly number[], color: string): MapEdge[] {
+  const out: MapEdge[] = []
+  for (let i = 0; i + 1 < route.length; i++)
+    out.push({
+      from: route[i],
+      to: route[i + 1],
+      color,
+      label: fmt(RESULT.dist[route[i]][route[i + 1]]),
+    })
+  return out
+}
+
+/** Блок-маршрут (рівні 4–5, замикання): блок у кольорі передостаннього міста +
+ *  коралове фінальне ребро (крок, що додається). */
+function blockEdges(route: readonly number[]): MapEdge[] {
+  const blockColor = CITY_FILL[label(route[route.length - 2])]
+  const out: MapEdge[] = []
+  for (let i = 0; i + 1 < route.length; i++) {
+    const final = i + 2 === route.length
+    out.push({
+      from: route[i],
+      to: route[i + 1],
+      color: final ? ADDED : blockColor,
+      curved: true,
+      label: final ? fmt(RESULT.dist[route[i]][route[i + 1]]) : undefined,
+    })
+  }
+  return out
+}
+
+// Координатна сітка міні-карти (демо-координати міст лежать у [0..5]).
+const M_L = 13
+const M_R = 122
+const M_T = 9
+const M_B = 112
+const M_VB = 128
+const NODE_R = 6
+const AX = [0, 1, 2, 3, 4, 5] as const
+const fx = (x: number): number => M_L + (x / 5) * (M_R - M_L)
+const fy = (y: number): number => M_B - (y / 5) * (M_B - M_T)
+
+/** Трикутник-стрілка в кінці сегмента (зупиняється трохи перед вузлом). */
+function arrowTip(x1: number, y1: number, x2: number, y2: number): string {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const d = Math.hypot(dx, dy) || 1
+  const ux = dx / d
+  const uy = dy / d
+  const tx = x2 - ux * NODE_R
+  const ty = y2 - uy * NODE_R
+  const bx = tx - ux * 6
+  const by = ty - uy * 6
+  const px = -uy * 3.4
+  const py = ux * 3.4
+  return `${tx},${ty} ${bx + px},${by + py} ${bx - px},${by - py}`
+}
+
+interface MapEdge {
+  readonly from: number
+  readonly to: number
+  readonly color: string
+  readonly label?: string
+  readonly curved?: boolean
+}
+
+/** Міні-карта демо-міст: міста у фіксованих кольорах CITY_FILL + напрямлені ребра. */
+function MiniMap({
+  active,
+  edges,
+}: {
+  active: readonly number[]
+  edges: readonly MapEdge[]
+}) {
   return (
-    <span className="block rounded-md border bg-background p-2">
-      <span className="mb-1 flex flex-wrap items-baseline gap-1 text-xs">
-        <span className="rounded bg-muted px-1.5 py-0.5 font-mono font-semibold">
-          {setLabel(cell.subset)}
-        </span>
-        <span className="text-muted-foreground">→ {label(cell.end)}</span>
-        <span className="ml-auto font-semibold tabular-nums text-emerald-700 dark:text-emerald-300">
-          {fmt(cell.cost)}
-        </span>
-      </span>
-      {cell.level === 2 ? (
-        <span className="block text-[11px] text-muted-foreground">
-          пряме ребро {pathLabel(cell.path)}
-        </span>
-      ) : (
-        <span className="flex flex-col gap-0.5">
-          {cands.map((c) => (
-            <CandRow key={c.k} c={c} />
-          ))}
+    <svg viewBox={`0 0 ${M_VB} ${M_VB}`} className="block w-full">
+      {/* Нейтральна сітка (як matplotlib grid alpha 0.25). */}
+      {AX.map((tk) => (
+        <Fragment key={`g-${tk}`}>
+          <line x1={fx(tk)} y1={M_T} x2={fx(tk)} y2={M_B} stroke="#9ca3af" strokeWidth={0.4} opacity={0.35} />
+          <line x1={M_L} y1={fy(tk)} x2={M_R} y2={fy(tk)} stroke="#9ca3af" strokeWidth={0.4} opacity={0.35} />
+          <text x={fx(tk)} y={M_B + 7} textAnchor="middle" fontSize={5} fill="#6b7280">
+            {tk}
+          </text>
+          <text x={M_L - 3} y={fy(tk)} textAnchor="end" dominantBaseline="central" fontSize={5} fill="#6b7280">
+            {tk}
+          </text>
+        </Fragment>
+      ))}
+      {edges.map((e, i) => {
+        const a = CITIES[e.from]
+        const b = CITIES[e.to]
+        const x1 = fx(a.x)
+        const y1 = fy(a.y)
+        const x2 = fx(b.x)
+        const y2 = fy(b.y)
+        const mx = (x1 + x2) / 2
+        const my = (y1 + y2) / 2
+        const dx = x2 - x1
+        const dy = y2 - y1
+        const len = Math.hypot(dx, dy) || 1
+        const nx = -dy / len
+        const ny = dx / len
+        let d: string
+        let fromX = x1
+        let fromY = y1
+        let lx = mx + nx * 6
+        let ly = my + ny * 6
+        if (e.curved) {
+          const off = 0.18 * len
+          const cx = mx + nx * off
+          const cy = my + ny * off
+          d = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`
+          fromX = cx
+          fromY = cy
+          lx = (mx + cx) / 2
+          ly = (my + cy) / 2
+        } else {
+          d = `M ${x1} ${y1} L ${x2} ${y2}`
+        }
+        return (
+          <Fragment key={`e-${i}`}>
+            <path d={d} fill="none" stroke={e.color} strokeWidth={2} strokeLinecap="round" />
+            <polygon points={arrowTip(fromX, fromY, x2, y2)} fill={e.color} />
+            {e.label && (
+              <g>
+                <rect x={lx - 9} y={ly - 5} width={18} height={9} rx={2} opacity={0.92} style={{ fill: "#ffffff" }} />
+                <text x={lx} y={ly} textAnchor="middle" dominantBaseline="central" fontSize={6} fontWeight={700} fill={e.color}>
+                  {e.label}
+                </text>
+              </g>
+            )}
+          </Fragment>
+        )
+      })}
+      {CITIES.map((c, i) => {
+        const on = active.includes(i)
+        return (
+          <g key={c.name}>
+            <circle
+              cx={fx(c.x)}
+              cy={fy(c.y)}
+              r={on ? NODE_R : 3.4}
+              fill={on ? CITY_FILL[c.name] : CITY_OFF}
+              stroke="#ffffff"
+              strokeWidth={on ? 1.4 : 1}
+            />
+            <text
+              x={fx(c.x)}
+              y={fy(c.y)}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={on ? 6.5 : 5}
+              fontWeight={700}
+              fill={on ? "#ffffff" : CITY_OFF_LABEL}
+            >
+              {c.name}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+/** Панель однієї підзадачі: фон/акцент панелі + заголовок, формула, міні-карта. */
+function SubproblemPanel({
+  bg,
+  accent,
+  badge,
+  title,
+  subtitle,
+  active,
+  edges,
+  chosen,
+  children,
+}: {
+  bg: string
+  accent: string
+  badge?: string
+  title: ReactNode
+  subtitle?: ReactNode
+  active: readonly number[]
+  edges: readonly MapEdge[]
+  chosen?: boolean
+  children?: ReactNode
+}) {
+  return (
+    <span
+      className={cn(
+        "relative block overflow-hidden rounded-lg border p-2",
+        chosen && "ring-2 ring-emerald-700/70",
+      )}
+      style={{
+        backgroundColor: bg,
+        borderColor: `color-mix(in oklch, ${accent} 40%, transparent)`,
+      }}
+    >
+      {badge && (
+        <span
+          className="absolute left-1.5 top-1.5 z-10 rounded px-1 py-px text-[9px] font-bold leading-none text-white"
+          style={{ backgroundColor: accent }}
+        >
+          {badge}
         </span>
       )}
+      <span
+        className="mb-0.5 block text-center font-mono text-[11px] font-semibold"
+        style={{ color: accent }}
+      >
+        {title}
+      </span>
+      {subtitle && (
+        <span
+          className="mb-1 block text-center text-[10px] tabular-nums"
+          style={{ color: BASE_TXT }}
+        >
+          {subtitle}
+        </span>
+      )}
+      <MiniMap active={active} edges={edges} />
+      {children}
     </span>
   )
 }
 
-/** Усі комірки dp заданого рівня r (2 — база, 3..n — нарощування). */
+/** Усі комірки dp заданого рівня r як міні-графіки (2 — база, 3..n — нарощування). */
 export function HkLevelTable({ level }: { level: number }) {
   const cells = RESULT.cells.filter((c) => c.level === level)
   const intro: Record<number, string> = {
-    2: "База: найкоротший шлях через дві вершини — це пряме ребро зі старту.",
-    3: "Рівень 3: для кожної підмножини з 3 міст і кожного кінця обираємо найдешевший передостанній блок рівня 2.",
-    4: "Рівень 4: зелене — обраний попередник, рожеве — відкинуті (дорожчі) варіанти min().",
-    5: "Рівень 5 (усі міста): по кілька кандидатів на кожен кінець; найдешевший підставляється в замикання.",
+    2: "База: найкоротший шлях через дві вершини — пряме ребро зі старту. Колір панелі та ребра = кінцеве місто.",
+    3: "Рівень 3: для кожної трійки міст і кінця беремо єдиний передостанній блок рівня 2. Колір панелі = підмножина, колір маршруту = кінцеве місто.",
+    4: "Рівень 4: блок успадковує колір передостаннього міста, коралове ребро — крок, що додається. Зелене = обраний кандидат min(), червоне — відкинутий. Колір панелі = підмножина-джерело.",
+    5: "Рівень 5 (усі міста): аналогічно рівню 4, але підмножина-джерело має 4 міста. Зелене — обраний кандидат, червоне — відкинуті.",
   }
+  const cols = level === 5 ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-4"
   return (
     <FigureBox>
       <span className="mb-2 block text-xs text-muted-foreground">
         {intro[level] ?? `Рівень ${level}.`} Усього {cells.length} підзадач.
       </span>
-      <span className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {cells.map((c) => (
-          <CellCard key={`${c.subset}-${c.end}`} cell={c} />
-        ))}
+      <span className={cn("grid gap-2", cols)}>
+        {cells.map((cell, i) => {
+          const { bg, accent } = levelPanelColors(level, cell)
+          const cands = cellCandidates(cell)
+          // Рівні 2–3 — прямий маршрут у кольорі кінцевого міста; рівні 4–5 —
+          // блок-маршрут (колір передостаннього міста) + коралове фінальне ребро.
+          const edges =
+            level <= 3
+              ? solidEdges(cell.path, CITY_FILL[label(cell.end)])
+              : blockEdges(cell.path)
+          return (
+            <SubproblemPanel
+              key={`${cell.subset}-${cell.end}`}
+              bg={bg}
+              accent={accent}
+              badge={String(i + 1)}
+              title={
+                <>
+                  {setLabel(cell.subset)} → {label(cell.end)}
+                </>
+              }
+              subtitle={
+                level === 2 ? (
+                  <>
+                    {label(START)} → {label(cell.end)} = {fmt(cell.cost)}
+                  </>
+                ) : (
+                  <>min = {fmt(cell.cost)}</>
+                )
+              }
+              active={subsetMembers(cell.subset, N)}
+              edges={edges}
+            >
+              {level >= 3 && (
+                <span className="mt-1 flex flex-col gap-0.5">
+                  {cands.map((cd) => (
+                    <CandRow key={cd.k} c={cd} />
+                  ))}
+                </span>
+              )}
+            </SubproblemPanel>
+          )
+        })}
       </span>
     </FigureBox>
   )
@@ -377,46 +709,41 @@ export function HkLevelTable({ level }: { level: number }) {
 
 // ── 07. Замикання ─────────────────────────────────────────────────────────────
 
-/** Кандидати фази замикання: повний шлях + ребро назад у старт; ✓ — оптимум. */
+/** Замикання як міні-графіки: повний шлях рівня 5 + ребро назад у старт; ✓ — оптимум. */
 export function HkClosingTable() {
   const cands = closingCandidates(RESULT)
+  const full = (1 << N) - 1
   return (
     <FigureBox>
       <span className="mb-2 block text-xs text-muted-foreground">
         Замикання: до кожного шляху через <b>усі</b> міста додаємо ребро назад у
-        старт ({label(START)}) і беремо найкоротший цикл.
+        старт ({label(START)}) і беремо найкоротший цикл. ✓ — оптимальний тур.
       </span>
-      <span className="flex flex-col gap-1.5">
+      <span className="grid gap-2 sm:grid-cols-2">
         {cands.map((c) => {
-          const full = (1 << N) - 1
           const cell = cellOf(full, c.j)
           const chosen = Math.abs(c.total - RESULT.cost) < 1e-9
+          const tour = cell ? [...cell.path, START] : [c.j, START]
+          const k = subsetKey(full ^ (1 << c.j)) // підмножина-джерело з 4 міст
           return (
-            <span
+            <SubproblemPanel
               key={c.j}
-              className={cn(
-                "flex flex-wrap items-center gap-x-2 gap-y-0.5 rounded-md border px-2 py-1.5 text-xs tabular-nums",
-                chosen
-                  ? "border-emerald-500/50 bg-emerald-500/10"
-                  : "border-border",
-              )}
-            >
-              <span className="font-mono">
-                {cell ? pathLabel(cell.path) : label(c.j)} → {label(START)}
-              </span>
-              <span className="ml-auto text-muted-foreground">
-                {fmt(c.blockCost)} + {fmt(c.edge)} =
-              </span>
-              <span
-                className={cn(
-                  "font-semibold",
-                  chosen && "text-emerald-700 dark:text-emerald-300",
-                )}
-              >
-                {fmt(c.total)}
-              </span>
-              {chosen && <Check className="size-3.5 text-emerald-600" />}
-            </span>
+              bg={SUB4_BG[k]}
+              accent={SUB4_FG[k]}
+              badge={chosen ? "✓" : undefined}
+              chosen={chosen}
+              title={<>повний тур через {label(c.j)}</>}
+              subtitle={
+                <>
+                  {fmt(c.blockCost)} + {fmt(c.edge)} ={" "}
+                  <b style={{ color: chosen ? WIN_G : BASE_TXT }}>
+                    {fmt(c.total)}
+                  </b>
+                </>
+              }
+              active={subsetMembers(full, N)}
+              edges={blockEdges(tour)}
+            />
           )
         })}
       </span>
