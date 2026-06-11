@@ -36,4 +36,15 @@ describe("stripReadmeChrome (GitHub-хром README)", () => {
     expect(LEARN_CONTENT.ua).not.toContain("PROJECT.md")
     expect(LEARN_CONTENT.en).not.toContain("PROJECT.md")
   })
+
+  it("прибирає emoji 🌳 з H1 і рядок-бейдж перемикача мови", () => {
+    for (const md of [LEARN_CONTENT.ua, LEARN_CONTENT.en]) {
+      expect(md).not.toContain("🌳")
+      expect(md).not.toContain("🇬🇧")
+      expect(md).not.toContain("🇺🇦")
+    }
+    // Сам H1-заголовок лишається (без emoji).
+    expect(LEARN_CONTENT.ua).toMatch(/^#\s+Алгоритм Краскала/m)
+    expect(LEARN_CONTENT.en).toMatch(/^#\s+Kruskal/m)
+  })
 })

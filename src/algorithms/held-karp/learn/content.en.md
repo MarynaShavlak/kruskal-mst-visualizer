@@ -647,9 +647,7 @@ When `r = 3`, subsets contain **4 cities**, and `prev_subset` points to ready le
 
 *Level 4 — choosing between candidates built from level-3 blocks.*
 
-## 22. Level 4. Explanation of the first cell, orange 5P
-
-## 23. Why `min(8.82, 7.07) = 7.07` and route A → C → D → B
+## 22. Level 4. Explanation of the first cell (orange 5P): why `min(8.82, 7.07) = 7.07` and route A → C → D → B
 
 Consider the cell **`{A, B, C, D} → B`**. It asks:
 
@@ -722,7 +720,7 @@ Here the algorithm takes the ready paths through all cities, adds the return edg
 
 *Closing the route — adding the final edge back to A.*
 
-## 24. Running the final algorithm
+## 23. Running the final algorithm
 
 ```python
 # Run the algorithm
@@ -743,7 +741,7 @@ Optimal route by city indices: [0, 2, 1, 3, 4, 0]
 Optimal route: A -> C -> B -> D -> E -> A
 ```
 
-## 25. Why it is faster than brute force: compute once, reuse many times
+## 24. Why it is faster than brute force: compute once, reuse many times
 
 Brute force treats routes as independent. Even if two routes share the same beginning or the same internal segment, brute force recalculates that segment again.
 
@@ -784,7 +782,7 @@ Summary (n = 5):
 
 *How many times each block is reused, by level.*
 
-## 26. Complexity
+## 25. Complexity
 
 ### Brute force
 
@@ -812,7 +810,7 @@ $$ O(n \cdot 2^n) $$
 
 This is still exponential, but it is much better than factorial growth. For example, for $n = 20$: brute force gives $20! \approx 2.4 \times 10^{18}$ candidate routes, while Held–Karp needs only about $20^2 \cdot 2^{20} \approx 4 \times 10^8$ operations — billions of times less.
 
-## 27. Visual result
+## 26. Visual result
 
 ![Optimal route A → C → B → D → E → A.](images/en/10_optimal_route.png)
 
@@ -822,7 +820,7 @@ This is still exponential, but it is much better than factorial growth. For exam
 
 *Growth of computational work: O(n!) vs O(n²·2ⁿ).*
 
-## 28. Meaning
+## 27. Meaning
 
 The Held–Karp algorithm (1962) was the **first exact TSP algorithm substantially faster than naive enumeration**, and it is still the asymptotically fastest known exact method for the general case. Its value:
 
@@ -836,7 +834,7 @@ This project demonstrates an important algorithmic idea:
 
 Both brute force and Held–Karp find the exact optimal route. The difference is that brute force forgets everything between routes, while Held–Karp remembers subproblem answers and builds larger answers from them.
 
-## 29. Conclusions
+## 28. Conclusions
 
 - The brute-force method is easy to understand and guarantees the optimal route, but its factorial complexity makes it practical only for very small inputs.
 - Held–Karp also gives the exact optimal route, but uses dynamic programming to avoid repeated work.
