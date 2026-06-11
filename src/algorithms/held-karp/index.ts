@@ -2,8 +2,13 @@ import { lazy } from "react"
 import { Route } from "lucide-react"
 import type { Algorithm } from "@/algorithms/types"
 
-// Розділ Хелда–Карпа (задача комівояжера) будується по фазах. Готові редактор і
-// плеєр; навчальна вкладка додається наступною фазою (тоді ж зʼявиться).
+// Розділ Хелда–Карпа (задача комівояжера) будується по фазах. Готові навчальна
+// вкладка, редактор і плеєр.
+const LearnView = lazy(() =>
+  import("@/algorithms/held-karp/learn/LearnView").then((m) => ({
+    default: m.LearnView,
+  })),
+)
 const EditorView = lazy(() =>
   import("@/algorithms/held-karp/editor/EditorView").then((m) => ({
     default: m.EditorView,
@@ -24,10 +29,10 @@ export const heldKarp: Algorithm = {
   category: "Динамічне програмування · Комівояжер",
   status: "ready",
   icon: Route,
-  defaultTab: "editor",
+  defaultTab: "learn",
   tabs: [
+    { key: "learn", label: "Навчання", View: LearnView },
     { key: "editor", label: "Редактор", View: EditorView },
     { key: "playback", label: "Алгоритм", View: PlaybackView },
   ],
-  planned: ["Навчальна вкладка — розбір ДП на бітмасках із живими фігурами"],
 }
