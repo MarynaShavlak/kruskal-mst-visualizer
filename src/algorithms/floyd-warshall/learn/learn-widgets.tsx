@@ -20,7 +20,6 @@ import {
   xyzPreset,
 } from "@/store/directed-presets"
 import type { XY } from "@/store/directed-graph-store"
-import { setHash } from "@/hooks/use-route"
 import { cn } from "@/lib/utils"
 
 export type PresetId = "abcdef" | "pqrs" | "xyz"
@@ -639,26 +638,6 @@ export function NegCycleWeightWidget() {
         <b className="tabular-nums text-destructive">{weight}</b>
         {laps >= 6 && <span className="text-muted-foreground"> → −∞</span>}
       </span>
-    </span>
-  )
-}
-
-/** Запасна картка для статичних фігур без живого віджета (+ опційний перехід). */
-export function FigureCard({
-  caption,
-  cta,
-}: {
-  caption: string
-  cta?: { label: string; route: string }
-}) {
-  return (
-    <span className="not-prose my-4 block rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-      <span className="block text-sm text-muted-foreground">{caption}</span>
-      {cta && (
-        <Button size="sm" variant="outline" className="mt-3" onClick={() => setHash(cta.route)}>
-          {cta.label} →
-        </Button>
-      )}
     </span>
   )
 }

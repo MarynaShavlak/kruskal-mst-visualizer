@@ -7,7 +7,6 @@ import {
 } from "@/algorithms/held-karp/playback/highlight"
 import { buildHeldKarpTrace, type HkCell } from "@/lib/heldKarpTrace"
 import { tspDemoInstance, TSP_DEMO_CITIES } from "@/lib/exampleTsp"
-import { setHash } from "@/hooks/use-route"
 import { cn } from "@/lib/utils"
 
 // Усі віджети працюють на канонічному демо-інстансі A–E (той самий, що в редакторі
@@ -958,30 +957,6 @@ function Swatch({ color, children }: { color: string; children: ReactNode }) {
         style={{ background: color }}
       />
       {children}
-    </span>
-  )
-}
-
-/** Запасна картка для фігур без живого віджета (+ опційний перехід на вкладку). */
-export function FigureCard({
-  caption,
-  cta,
-}: {
-  caption: string
-  cta?: { label: string; route: string }
-}) {
-  return (
-    <span className="not-prose my-4 block rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-      <span className="block text-sm text-muted-foreground">{caption}</span>
-      {cta && (
-        <button
-          type="button"
-          className="mt-3 rounded-lg border bg-background px-3 py-1.5 text-sm font-medium hover:bg-muted"
-          onClick={() => setHash(cta.route)}
-        >
-          {cta.label} →
-        </button>
-      )}
     </span>
   )
 }

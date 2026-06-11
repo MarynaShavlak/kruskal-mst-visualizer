@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import { Button } from "@/components/ui/button"
+import { FigureCard } from "@/algorithms/shared/learn/FigureCard"
 import { REFERENCE_MST_EDGE_IDS } from "@/lib/exampleGraph"
 import { examplePreset } from "@/store/presets"
 import { DsuBuildWidget } from "@/algorithms/kruskal/learn/DsuBuildWidget"
@@ -64,32 +64,6 @@ function MiniGraph({ highlightMst = false }: { highlightMst?: boolean }) {
           )
         })}
       </svg>
-    </span>
-  )
-}
-
-function FigureCard({
-  caption,
-  cta,
-}: {
-  caption: string
-  cta?: { label: string; tab: string }
-}) {
-  return (
-    <span className="not-prose my-4 block rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-      <span className="block text-sm text-muted-foreground">{caption}</span>
-      {cta && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="mt-3"
-          onClick={() => {
-            window.location.hash = cta.tab
-          }}
-        >
-          {cta.label} →
-        </Button>
-      )}
     </span>
   )
 }
@@ -323,7 +297,7 @@ export function figureForSrc(src: string | undefined, alt: string | undefined): 
   if (name === "compare_step8.png") return <CompareStepsWidget focusEdge="B|C" />
 
   if (name.includes("benchmark")) {
-    return <FigureCard caption={caption} cta={{ label: "Відкрити бенчмарк", tab: "benchmark" }} />
+    return <FigureCard caption={caption} cta={{ label: "Відкрити бенчмарк", route: "kruskal/benchmark" }} />
   }
   return <FigureCard caption={caption} />
 }

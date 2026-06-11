@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
+import { FigureCard } from "@/algorithms/shared/learn/FigureCard"
 import {
-  FigureCard,
   FwGraphWidget,
   FwMatrixDerivation,
   FwMatrixSnapshot,
