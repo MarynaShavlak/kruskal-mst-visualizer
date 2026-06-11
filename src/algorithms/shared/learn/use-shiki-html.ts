@@ -1,25 +1,6 @@
 import { useEffect, useState } from "react"
-import {
-  createHighlighterCore,
-  type HighlighterCore,
-  type ShikiTransformer,
-} from "shiki/core"
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
-import python from "shiki/langs/python.mjs"
-import githubDark from "shiki/themes/github-dark.mjs"
-import githubLight from "shiki/themes/github-light.mjs"
-
-let highlighterPromise: Promise<HighlighterCore> | null = null
-function getHighlighter(): Promise<HighlighterCore> {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighterCore({
-      themes: [githubLight, githubDark],
-      langs: [python],
-      engine: createJavaScriptRegexEngine({ forgiving: true }),
-    })
-  }
-  return highlighterPromise
-}
+import type { ShikiTransformer } from "shiki/core"
+import { getHighlighter } from "@/algorithms/shared/shiki"
 
 /** Розбирає специфікацію рядків ("3-5,8") у множину 1-based номерів. */
 export function parseHighlightLines(spec: string | undefined): Set<number> {

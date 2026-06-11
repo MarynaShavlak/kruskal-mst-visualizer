@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { createHighlighterCore, type HighlighterCore } from "shiki/core"
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
-import javascript from "shiki/langs/javascript.mjs"
-import githubDark from "shiki/themes/github-dark.mjs"
-import githubLight from "shiki/themes/github-light.mjs"
+import { getHighlighter } from "@/algorithms/shared/shiki"
 
 export interface CodeToken {
   content: string
@@ -15,18 +11,6 @@ export interface ShikiLines {
   lines: CodeToken[][]
   bg: string
   fg: string
-}
-
-let highlighterPromise: Promise<HighlighterCore> | null = null
-function getHighlighter(): Promise<HighlighterCore> {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighterCore({
-      themes: [githubLight, githubDark],
-      langs: [javascript],
-      engine: createJavaScriptRegexEngine({ forgiving: true }),
-    })
-  }
-  return highlighterPromise
 }
 
 /** Токенізує код Shiki у рядки токенів (тема залежить від `dark`). */
