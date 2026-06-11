@@ -5,7 +5,10 @@ import {
   buildFloydWarshallTrace,
   type FwResult,
 } from "@/lib/floydWarshallTrace"
+import type { Translate } from "@/lib/translate"
+import type { MessageKey } from "@/i18n/messages"
 import { useDirectedGraphStore } from "@/store/directed-graph-store"
+import { useLangStore } from "@/store/lang-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
@@ -19,19 +22,24 @@ import { RelaxationLog } from "@/algorithms/floyd-warshall/playback/RelaxationLo
 export function PlaybackView() {
   const graph = useDirectedGraphStore((s) => s.graph)
   const positions = useDirectedGraphStore((s) => s.positions)
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
+  const tr: Translate = (k, v) => t(k as MessageKey, v)
 
+  // Нарація перебудовується при зміні мови; resetKey плеєра — граф, тож курсор
+  // не скидається при перемиканні UA/EN.
   const { trace, result } = useMemo(
-    () => buildFloydWarshallTrace(graph),
-    [graph],
+    () => buildFloydWarshallTrace(graph, tr),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graph, lang],
   )
-  const player = usePlayer(trace.frames.length, trace)
+  const player = usePlayer(trace.frames.length, graph)
   const index = Math.min(player.index, trace.frames.length - 1)
   const frame = trace.frames[index]
   const relaxations = useMemo(
     () => relaxationsUpTo(trace, index),
     [trace, index],
   )
-  const t = useT()
 
   if (graph.vertices.length === 0) {
     return (

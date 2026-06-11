@@ -4,8 +4,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { DEFAULT_DSU_OPTIONS, type DsuOptions } from "@/lib/dsu"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { kruskalHasPath } from "@/lib/kruskalHasPath"
+import type { Translate } from "@/lib/translate"
 import { useT } from "@/i18n/use-t"
+import type { MessageKey } from "@/i18n/messages"
 import { useGraphStore } from "@/store/graph-store"
+import { useLangStore } from "@/store/lang-store"
 import { CompareView } from "@/algorithms/kruskal/playback/CompareView"
 import { DsuForestPanel } from "@/algorithms/kruskal/playback/DsuForestPanel"
 import { NaiveStatePanel } from "@/algorithms/kruskal/playback/NaiveStatePanel"
@@ -21,14 +24,23 @@ export function PlaybackView() {
   const [mode, setMode] = useState<Mode>("dsu")
   const [dsuOptions, setDsuOptions] = useState<DsuOptions>(DEFAULT_DSU_OPTIONS)
   const t = useT()
+  const lang = useLangStore((s) => s.lang)
+  const tr: Translate = (k, v) => t(k as MessageKey, v)
   const modeLabel = (m: Mode): string =>
     m === "dsu" ? "DSU" : m === "hasPath" ? t("play.modeNaive") : t("play.modeCompare")
 
+  // Trace перебудовується при зміні мови (lang у залежностях) — нарація кадрів
+  // локалізується; resetKey плеєра — граф, тож курсор не скидається.
   const dsuRun = useMemo(
-    () => kruskalDsu(graph, dsuOptions),
-    [graph, dsuOptions],
+    () => kruskalDsu(graph, dsuOptions, tr),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graph, dsuOptions, lang],
   )
-  const naiveRun = useMemo(() => kruskalHasPath(graph), [graph])
+  const naiveRun = useMemo(
+    () => kruskalHasPath(graph, tr),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graph, lang],
+  )
 
   if (graph.vertices.length === 0) {
     return (

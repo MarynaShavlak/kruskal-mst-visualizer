@@ -17,6 +17,7 @@ import {
   type TspInstance,
   type TspTour,
 } from "@/lib/tsp"
+import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
 export const HELD_KARP_CODE: readonly string[] = [
@@ -179,7 +180,10 @@ function maskOf(indices: readonly number[]): number {
  * Проганяє Хелда–Карпа на інстансі задачі й збирає trace для плеєра. Результат
  * (cost/path) збігається з чистим `heldKarp` на тій самій матриці.
  */
-export function buildHeldKarpTrace(instance: TspInstance): HkRun {
+export function buildHeldKarpTrace(
+  instance: TspInstance,
+  t: Translate = identityTranslate,
+): HkRun {
   const names = instance.cities.map((c) => c.name)
   const start = instance.start
   const n = names.length
@@ -218,9 +222,7 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
     bestTour: null,
     lines: [1],
     contextLines: [],
-    caption:
-      "Будуємо таблицю dp[(S, j)] — найкоротший шлях зі старту через підмножину S " +
-      `з кінцем у j. Старт — ${label(start)}.`,
+    caption: t("play.nHkInit", { start: label(start) }),
   })
 
   // --- БАЗА (рівень 2): прямі ребра start → j --------------------------------
@@ -256,7 +258,11 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
       bestTour: null,
       lines: [2, 3],
       contextLines: [],
-      caption: `База: пряме ребро ${label(start)}→${label(j)} = ${num(cell.cost)}. Найдрібніша «цеглинка».`,
+      caption: t("play.nHkBase", {
+        from: label(start),
+        to: label(j),
+        cost: num(cell.cost),
+      }),
     })
   }
 
@@ -275,7 +281,7 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
       bestTour: null,
       lines: [4, 5],
       contextLines: [],
-      caption: `Рівень ${r}: підмножини з ${r} міст (${cellCount} підзадач). Спираємось на готові блоки рівня ${r - 1}.`,
+      caption: t("play.nHkLevelOpen", { r, cells: cellCount, prev: r - 1 }),
     })
 
     for (const combo of combos) {
@@ -323,7 +329,10 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
           bestTour: null,
           lines: [6],
           contextLines: [4, 5],
-          caption: `Рахуємо найкоротший шлях через ${setLabel(subset)} з кінцем у ${label(end)}.`,
+          caption: t("play.nHkCellOpen", {
+            subset: setLabel(subset),
+            end: label(end),
+          }),
         })
 
         candidates.forEach((c, index) => {
@@ -338,10 +347,17 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
             bestTour: null,
             lines: [8, 9],
             contextLines: [7],
-            caption:
-              `Передостаннє ${label(c.k)}: блок (${pathLabel(c.blockPath)}) = ${num(c.blockCost)}` +
-              ` + ребро ${label(c.k)}→${label(end)} ${num(c.edge)} = ${num(c.total)}` +
-              (c.improved ? " — новий найкращий." : " — гірше, відкидаємо."),
+            caption: t("play.nHkCand", {
+              k: label(c.k),
+              path: pathLabel(c.blockPath),
+              blockCost: num(c.blockCost),
+              end: label(end),
+              edge: num(c.edge),
+              total: num(c.total),
+              verdict: c.improved
+                ? t("play.nHkCandBetter")
+                : t("play.nHkCandWorse"),
+            }),
           })
         })
 
@@ -366,7 +382,11 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
           bestTour: null,
           lines: [7],
           contextLines: [5, 6],
-          caption: `Обрано: ${pathLabel(cell.path)} = ${num(cell.cost)} (через ${label(bestK)}).`,
+          caption: t("play.nHkCommit", {
+            path: pathLabel(cell.path),
+            cost: num(cell.cost),
+            bestK: label(bestK),
+          }),
         })
       }
     }
@@ -385,7 +405,7 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
     bestTour: null,
     lines: [10],
     contextLines: [],
-    caption: "Замикаємо маршрут: до кожного шляху через усі міста додаємо ребро назад у старт.",
+    caption: t("play.nHkClosingOpen"),
   })
 
   let bestTour: TspTour | null = null
@@ -408,9 +428,16 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
       bestTour,
       lines: [11, 12],
       contextLines: [10],
-      caption:
-        `Тур через кінець ${label(j)}: ${num(block.cost)} + ребро ${label(j)}→${label(start)} ${num(edge)} = ${num(total)}` +
-        (improved ? " — новий найкоротший тур." : " — довше за поточний."),
+      caption: t("play.nHkClosingCand", {
+        j: label(j),
+        blockCost: num(block.cost),
+        start: label(start),
+        edge: num(edge),
+        total: num(total),
+        verdict: improved
+          ? t("play.nHkTourBetter")
+          : t("play.nHkTourWorse"),
+      }),
     })
   }
 
@@ -426,7 +453,10 @@ export function buildHeldKarpTrace(instance: TspInstance): HkRun {
     bestTour: answer,
     lines: [],
     contextLines: [],
-    caption: `Готово: оптимальний тур ${pathLabel(answer.path)} = ${num(answer.cost)}.`,
+    caption: t("play.nHkDone", {
+      path: pathLabel(answer.path),
+      cost: num(answer.cost),
+    }),
   })
 
   const result: HkResult = {

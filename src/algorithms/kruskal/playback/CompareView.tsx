@@ -29,7 +29,7 @@ export function CompareView({
 
   const t = useT()
   const stepCount = dsuDecisions.length + 1 // 0 = старт, далі по одному ребру
-  const player = usePlayer(stepCount, dsuRun.trace)
+  const player = usePlayer(stepCount, graph) // граф як resetKey (стабільний при зміні мови)
   const step = Math.min(player.index, stepCount - 1)
 
   const dsuIdx = step === 0 ? 0 : (dsuDecisions[step - 1] ?? 0)

@@ -4,6 +4,7 @@
 // лише якщо воно з'єднує різні компоненти.
 
 import { sortedEdges, type Edge, type Graph, type Vertex } from "@/lib/graph"
+import { identityTranslate, type Translate } from "@/lib/translate"
 import {
   TraceBuilder,
   type EdgeDecision,
@@ -39,7 +40,10 @@ export const KRUSKAL_HASPATH_CODE: readonly string[] = [
 
 const edgeLabel = (e: Edge): string => `${e.u}–${e.v}`
 
-export function kruskalHasPath(graph: Graph): KruskalRun {
+export function kruskalHasPath(
+  graph: Graph,
+  t: Translate = identityTranslate,
+): KruskalRun {
   const edges = sortedEdges(graph)
   const tb = new TraceBuilder(
     "hasPath",
@@ -75,9 +79,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
       sub,
     })
 
-  emit([2], "Ініціалізація: допоміжний ліс порожній, МОД порожня.", {
-    kind: "init",
-  })
+  emit([2], t("play.nHpInit"), { kind: "init" })
 
   for (let idx = 0; idx < edges.length; idx++) {
     const e = edges[idx]
@@ -85,7 +87,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
     consideredEdgeId = e.id
     considered++
 
-    emit([3], `Розглядаємо ребро ${edgeLabel(e)} (вага ${e.weight}).`, {
+    emit([3], t("play.nConsider", { edge: edgeLabel(e), w: e.weight }), {
       kind: "consider",
       edgeId: e.id,
     })
@@ -98,7 +100,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
       const v = queue.shift()!
       if (v === e.v) {
         connected = true
-        emit([16], `BFS досяг ${e.v} — шлях у лісі існує.`, {
+        emit([16], t("play.nBfsReached", { v: e.v }), {
           kind: "bfs-visit",
           at: v,
           frontier: [...queue],
@@ -112,7 +114,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
           queue.push(nb)
         }
       }
-      emit([15, 17, 18], `BFS відвідує ${v}; фронтир [${queue.join(", ")}].`, {
+      emit([15, 17, 18], t("play.nBfsVisit", { v, frontier: queue.join(", ") }), {
         kind: "bfs-visit",
         at: v,
         frontier: [...queue],
@@ -120,7 +122,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
       })
     }
     if (!connected) {
-      emit([20], "BFS вичерпав чергу — шляху немає.", {
+      emit([20], t("play.nBfsExhausted"), {
         kind: "bfs-exhausted",
         visited: [...seen],
       })
@@ -129,7 +131,7 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
     if (connected) {
       emit(
         [5],
-        `${e.u} і ${e.v} вже зʼєднані в лісі — цикл, пропускаємо.`,
+        t("play.nHpCycle", { u: e.u, v: e.v }),
         { kind: "reject-cycle", edgeId: e.id },
         "reject",
       )
@@ -142,15 +144,13 @@ export function kruskalHasPath(graph: Graph): KruskalRun {
     adj.get(e.v)!.push(e.u)
     emit(
       [6],
-      `Шляху немає — додаємо ${edgeLabel(e)} до МОД (вага ${weight}).`,
+      t("play.nHpAccept", { edge: edgeLabel(e), w: weight }),
       { kind: "accept", edgeId: e.id },
       "accept",
     )
 
     if (mst.length === need) {
-      emit([7], `Зібрано ${need} ребер — остовне дерево готове.`, {
-        kind: "done",
-      })
+      emit([7], t("play.nDone", { need }), { kind: "done" })
       break
     }
   }

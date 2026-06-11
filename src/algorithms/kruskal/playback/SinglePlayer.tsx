@@ -28,7 +28,9 @@ export function SinglePlayer({
   thirdPanel: (frame: Frame) => ReactNode
 }) {
   const { trace, result } = run
-  const player = usePlayer(trace.frames.length, trace)
+  // resetKey = граф (стабільний при зміні мови) — перебудова trace для іншої
+  // мови не скидає курсор; зміна графа — скидає.
+  const player = usePlayer(trace.frames.length, graph)
   const frame = trace.frames[Math.min(player.index, trace.frames.length - 1)]
   const t = useT()
 

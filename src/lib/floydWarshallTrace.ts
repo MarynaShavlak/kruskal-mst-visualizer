@@ -9,6 +9,7 @@ import {
   type Vertex,
 } from "@/lib/directedGraph"
 import { INF, type NextMatrix, type ReadonlyMatrix } from "@/lib/floydWarshall"
+import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
 export const FLOYD_WARSHALL_CODE: readonly string[] = [
@@ -98,7 +99,10 @@ export interface FwRun {
  * Знімок матриці клонується лише на кадрах із релаксацією — незмінні кадри
  * ділять одне посилання (пам'ять ≈ O(n² · к-сть покращень), а не O(n⁴)).
  */
-export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
+export function buildFloydWarshallTrace(
+  graph: DirectedGraph,
+  t: Translate = identityTranslate,
+): FwRun {
   const { order, dist: initial } = toDistMatrix(graph)
   const n = order.length
   const label = (idx: number): string => order[idx] ?? String(idx)
@@ -126,7 +130,7 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
     improvedThisK: [],
     lines: [],
     contextLines: [],
-    caption: "Стартова матриця D: 0 на діагоналі, ваги прямих ребер, решта — ∞.",
+    caption: t("play.nFwInit"),
     negativeCycle: false,
   })
 
@@ -140,7 +144,7 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
       improvedThisK: [],
       lines: [1],
       contextLines: [],
-      caption: `Відкриваємо проміжну вершину k = ${label(k)}. Маршрутам дозволено транзит через неї.`,
+      caption: t("play.nFwOpenK", { k: label(k) }),
       negativeCycle,
     })
 
@@ -160,7 +164,7 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
           improvedThisK: [...improvedThisK],
           lines: [4, 5],
           contextLines: BODY_CONTEXT,
-          caption: compareCaption(label(i), label(j), label(k), viaK, current, relaxed, fmt),
+          caption: compareCaption(label(i), label(j), label(k), viaK, current, relaxed, fmt, t),
           negativeCycle,
         })
 
@@ -183,7 +187,7 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
           improvedThisK: [...improvedThisK],
           lines: [6, 7],
           contextLines: BODY_CONTEXT,
-          caption: applyCaption(label(i), label(j), viaK, fmt),
+          caption: applyCaption(label(i), label(j), viaK, fmt, t),
           negativeCycle,
         })
       }
@@ -199,8 +203,8 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
       contextLines: [],
       caption:
         improvedThisK.length === 0
-          ? `Вершину ${label(k)} опрацьовано: без змін.`
-          : `Вершину ${label(k)} опрацьовано: покращено ${improvedThisK.length} ${pluralDist(improvedThisK.length)}.`,
+          ? t("play.nFwKDoneNone", { k: label(k) })
+          : t("play.nFwKDoneSome", { k: label(k), n: improvedThisK.length }),
       negativeCycle,
     })
   }
@@ -213,9 +217,7 @@ export function buildFloydWarshallTrace(graph: DirectedGraph): FwRun {
     improvedThisK: [],
     lines: [],
     contextLines: [],
-    caption: negativeCycle
-      ? "Готово, але виявлено від'ємний цикл (D[i][i] < 0) — справжні найкоротші відстані не визначені."
-      : "Готово: знайдено найкоротші відстані між усіма парами вершин.",
+    caption: negativeCycle ? t("play.nFwDoneNeg") : t("play.nFwDone"),
     negativeCycle,
   })
 
@@ -237,14 +239,15 @@ function compareCaption(
   current: number,
   relaxed: boolean,
   fmt: (x: number) => string,
+  t: Translate,
 ): string {
   if (viaK === INF) {
-    return `(${a}→${b}) через ${k}: шлях недосяжний (∞) — без змін.`
+    return t("play.nFwCmpInf", { a, b, k })
   }
   if (relaxed) {
-    return `(${a}→${b}) через ${k}: ${fmt(viaK)} < ${fmt(current)} — є коротший маршрут, оновимо D[${a}][${b}].`
+    return t("play.nFwCmpRelax", { a, b, k, viaK: fmt(viaK), current: fmt(current) })
   }
-  return `(${a}→${b}) через ${k}: ${fmt(viaK)} ≥ ${fmt(current)} — без змін.`
+  return t("play.nFwCmpNoChange", { a, b, k, viaK: fmt(viaK), current: fmt(current) })
 }
 
 /** Нарація кадру оновлення (рядки 6–7): запис коротшої відстані та nxt. */
@@ -253,15 +256,7 @@ function applyCaption(
   b: string,
   viaK: number,
   fmt: (x: number) => string,
+  t: Translate,
 ): string {
-  return `Записуємо D[${a}][${b}] = ${fmt(viaK)} і запам'ятовуємо перший крок маршруту (nxt).`
-}
-
-/** Український відмінок для слова «відстань» за кількістю. */
-function pluralDist(n: number): string {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return "відстань"
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "відстані"
-  return "відстаней"
+  return t("play.nFwApply", { a, b, viaK: fmt(viaK) })
 }

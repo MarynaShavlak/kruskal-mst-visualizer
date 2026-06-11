@@ -259,6 +259,66 @@ const ua = {
   "play.dpEmpty": "Ще порожньо — почнемо з базових ребер зі старту.",
   "play.dpBase": "База · |S|=2",
   "play.dpLevel": "Рівень · |S|={lvl}",
+
+  // — Нарація кроків (Фаза 4, частина 2) —
+  // Спільне (Краскал).
+  "play.nConsider": "Розглядаємо ребро {edge} (вага {w}).",
+  "play.nDone": "Зібрано {need} ребер — остовне дерево готове.",
+  // Краскал — DSU.
+  "play.nDsuInit":
+    "Ініціалізація: кожна вершина — окрема множина (DSU), МОД порожня.",
+  "play.nDsuFind": "find({v}): підйом {path}; корінь {root}.",
+  "play.nDsuCompress": "Стиснення шляху: {nodes} → {root}.",
+  "play.nDsuCycle":
+    "{u} і {v} в одній множині (корінь {root}) — цикл, пропускаємо.",
+  "play.nDsuUnion":
+    "Різні множини — обʼєднуємо {rootX} та {rootY} → корінь {root}{rankNote}.",
+  "play.nDsuRankUp": "; ранг {root}↑",
+  "play.nDsuAccept": "Додаємо {edge} до МОД (вага {w}).",
+  // Краскал — наївний (BFS).
+  "play.nHpInit": "Ініціалізація: допоміжний ліс порожній, МОД порожня.",
+  "play.nBfsReached": "BFS досяг {v} — шлях у лісі існує.",
+  "play.nBfsVisit": "BFS відвідує {v}; фронтир [{frontier}].",
+  "play.nBfsExhausted": "BFS вичерпав чергу — шляху немає.",
+  "play.nHpCycle": "{u} і {v} вже зʼєднані в лісі — цикл, пропускаємо.",
+  "play.nHpAccept": "Шляху немає — додаємо {edge} до МОД (вага {w}).",
+  // Флойд–Воршал.
+  "play.nFwInit":
+    "Стартова матриця D: 0 на діагоналі, ваги прямих ребер, решта — ∞.",
+  "play.nFwOpenK":
+    "Відкриваємо проміжну вершину k = {k}. Маршрутам дозволено транзит через неї.",
+  "play.nFwCmpInf": "({a}→{b}) через {k}: шлях недосяжний (∞) — без змін.",
+  "play.nFwCmpRelax":
+    "({a}→{b}) через {k}: {viaK} < {current} — є коротший маршрут, оновимо D[{a}][{b}].",
+  "play.nFwCmpNoChange": "({a}→{b}) через {k}: {viaK} ≥ {current} — без змін.",
+  "play.nFwApply":
+    "Записуємо D[{a}][{b}] = {viaK} і запам'ятовуємо перший крок маршруту (nxt).",
+  "play.nFwKDoneNone": "Вершину {k} опрацьовано: без змін.",
+  "play.nFwKDoneSome": "Вершину {k} опрацьовано: покращень — {n}.",
+  "play.nFwDoneNeg":
+    "Готово, але виявлено від'ємний цикл (D[i][i] < 0) — справжні найкоротші відстані не визначені.",
+  "play.nFwDone":
+    "Готово: знайдено найкоротші відстані між усіма парами вершин.",
+  // Хелда–Карпа.
+  "play.nHkInit":
+    "Будуємо таблицю dp[(S, j)] — найкоротший шлях зі старту через підмножину S з кінцем у j. Старт — {start}.",
+  "play.nHkBase":
+    "База: пряме ребро {from}→{to} = {cost}. Найдрібніша «цеглинка».",
+  "play.nHkLevelOpen":
+    "Рівень {r}: підмножини з {r} міст ({cells} підзадач). Спираємось на готові блоки рівня {prev}.",
+  "play.nHkCellOpen": "Рахуємо найкоротший шлях через {subset} з кінцем у {end}.",
+  "play.nHkCand":
+    "Передостаннє {k}: блок ({path}) = {blockCost} + ребро {k}→{end} {edge} = {total}{verdict}",
+  "play.nHkCandBetter": " — новий найкращий.",
+  "play.nHkCandWorse": " — гірше, відкидаємо.",
+  "play.nHkCommit": "Обрано: {path} = {cost} (через {bestK}).",
+  "play.nHkClosingOpen":
+    "Замикаємо маршрут: до кожного шляху через усі міста додаємо ребро назад у старт.",
+  "play.nHkClosingCand":
+    "Тур через кінець {j}: {blockCost} + ребро {j}→{start} {edge} = {total}{verdict}",
+  "play.nHkTourBetter": " — новий найкоротший тур.",
+  "play.nHkTourWorse": " — довше за поточний.",
+  "play.nHkDone": "Готово: оптимальний тур {path} = {cost}.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -507,6 +567,63 @@ const en: Record<MessageKey, string> = {
   "play.dpEmpty": "Empty yet — we start from base edges out of the start.",
   "play.dpBase": "Base · |S|=2",
   "play.dpLevel": "Level · |S|={lvl}",
+
+  // — Step narration (Phase 4, part 2) —
+  "play.nConsider": "Considering edge {edge} (weight {w}).",
+  "play.nDone": "Collected {need} edges — the spanning tree is complete.",
+  "play.nDsuInit":
+    "Initialization: each vertex is its own set (DSU), the MST is empty.",
+  "play.nDsuFind": "find({v}): climb {path}; root {root}.",
+  "play.nDsuCompress": "Path compression: {nodes} → {root}.",
+  "play.nDsuCycle":
+    "{u} and {v} are in the same set (root {root}) — a cycle, skip.",
+  "play.nDsuUnion":
+    "Different sets — union {rootX} and {rootY} → root {root}{rankNote}.",
+  "play.nDsuRankUp": "; rank {root}↑",
+  "play.nDsuAccept": "Add {edge} to the MST (weight {w}).",
+  "play.nHpInit":
+    "Initialization: the auxiliary forest is empty, the MST is empty.",
+  "play.nBfsReached": "BFS reached {v} — a path exists in the forest.",
+  "play.nBfsVisit": "BFS visits {v}; frontier [{frontier}].",
+  "play.nBfsExhausted": "BFS exhausted the queue — no path.",
+  "play.nHpCycle":
+    "{u} and {v} are already connected in the forest — a cycle, skip.",
+  "play.nHpAccept": "No path — add {edge} to the MST (weight {w}).",
+  "play.nFwInit":
+    "Initial matrix D: 0 on the diagonal, weights of direct edges, the rest — ∞.",
+  "play.nFwOpenK":
+    "Open intermediate vertex k = {k}. Routes may transit through it.",
+  "play.nFwCmpInf": "({a}→{b}) via {k}: path unreachable (∞) — no change.",
+  "play.nFwCmpRelax":
+    "({a}→{b}) via {k}: {viaK} < {current} — there's a shorter route, update D[{a}][{b}].",
+  "play.nFwCmpNoChange": "({a}→{b}) via {k}: {viaK} ≥ {current} — no change.",
+  "play.nFwApply":
+    "Write D[{a}][{b}] = {viaK} and remember the route's first step (nxt).",
+  "play.nFwKDoneNone": "Vertex {k} processed: no change.",
+  "play.nFwKDoneSome": "Vertex {k} processed: improvements — {n}.",
+  "play.nFwDoneNeg":
+    "Done, but a negative cycle was detected (D[i][i] < 0) — true shortest distances are undefined.",
+  "play.nFwDone":
+    "Done: shortest distances between all pairs of vertices found.",
+  "play.nHkInit":
+    "Building the dp[(S, j)] table — the shortest path from the start through subset S ending at j. Start — {start}.",
+  "play.nHkBase":
+    "Base: direct edge {from}→{to} = {cost}. The smallest building block.",
+  "play.nHkLevelOpen":
+    "Level {r}: subsets of {r} cities ({cells} subproblems). We build on ready blocks of level {prev}.",
+  "play.nHkCellOpen": "Computing the shortest path through {subset} ending at {end}.",
+  "play.nHkCand":
+    "Second-to-last {k}: block ({path}) = {blockCost} + edge {k}→{end} {edge} = {total}{verdict}",
+  "play.nHkCandBetter": " — new best.",
+  "play.nHkCandWorse": " — worse, discard.",
+  "play.nHkCommit": "Chosen: {path} = {cost} (via {bestK}).",
+  "play.nHkClosingOpen":
+    "Closing the route: to each path through all cities we add the edge back to the start.",
+  "play.nHkClosingCand":
+    "Tour via end {j}: {blockCost} + edge {j}→{start} {edge} = {total}{verdict}",
+  "play.nHkTourBetter": " — new shortest tour.",
+  "play.nHkTourWorse": " — longer than the current.",
+  "play.nHkDone": "Done: the optimal tour {path} = {cost}.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
