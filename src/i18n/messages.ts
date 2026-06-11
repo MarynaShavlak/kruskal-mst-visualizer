@@ -622,13 +622,13 @@ const en: Record<MessageKey, string> = {
   "play.nFwDoneNeg":
     "Done, but a negative cycle was detected (D[i][i] < 0) — true shortest distances are undefined.",
   "play.nFwDone":
-    "Done: shortest distances between all pairs of vertices found.",
+    "Done: found the shortest distances between all pairs of vertices.",
   "play.nHkInit":
     "Building the dp[(S, j)] table — the shortest path from the start through subset S ending at j. Start — {start}.",
   "play.nHkBase":
     "Base: direct edge {from}→{to} = {cost}. The smallest building block.",
   "play.nHkLevelOpen":
-    "Level {r}: subsets of {r} cities ({cells} subproblems). We build on ready blocks of level {prev}.",
+    "Level {r}: subsets of {r} cities ({cells} subproblems). We build on completed blocks of level {prev}.",
   "play.nHkCellOpen": "Computing the shortest path through {subset} ending at {end}.",
   "play.nHkCand":
     "Second-to-last {k}: block ({path}) = {blockCost} + edge {k}→{end} {edge} = {total}{verdict}",
