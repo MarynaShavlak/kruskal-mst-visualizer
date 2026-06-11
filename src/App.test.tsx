@@ -51,6 +51,10 @@ describe("Оболонка платформи", () => {
       "data-state",
       "active",
     )
-    expect(await screen.findByText(/DSU проти наївної/)).toBeInTheDocument()
+    // Бенчмарк — лінивий чанк; на холодному старті/під навантаженням набору
+    // дефолтні 1000 мс findBy не вистачає (заголовок статичний, без воркера).
+    expect(
+      await screen.findByText(/DSU проти наївної/, undefined, { timeout: 5000 }),
+    ).toBeInTheDocument()
   })
 })
