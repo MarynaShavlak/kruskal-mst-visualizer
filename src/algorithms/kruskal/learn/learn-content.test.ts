@@ -14,3 +14,17 @@ describe("parseToc", () => {
     expect(toc[0].title).toMatch(/^1\. /)
   })
 })
+
+describe("stripReadmeChrome (GitHub-хром README)", () => {
+  it("прибирає ручний «Зміст»/«Contents» — його заміняє бічний TOC", () => {
+    expect(LEARN_CONTENT.ua).not.toMatch(/^##\s+Зміст\s*$/m)
+    expect(LEARN_CONTENT.en).not.toMatch(/^##\s+Contents\s*$/m)
+    // Вступний абзац після списку має лишитися.
+    expect(LEARN_CONTENT.ua).toContain("Коротко про шлях")
+  })
+
+  it("прибирає блок-цитату з битим посиланням на PROJECT.md", () => {
+    expect(LEARN_CONTENT.ua).not.toContain("PROJECT.md")
+    expect(LEARN_CONTENT.en).not.toContain("PROJECT.md")
+  })
+})
