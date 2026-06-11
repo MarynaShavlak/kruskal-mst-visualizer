@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react"
-import { createHighlighterCore, type HighlighterCore } from "shiki/core"
+import {
+  createHighlighterCore,
+  type HighlighterCore,
+  type ShikiTransformer,
+} from "shiki/core"
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 import python from "shiki/langs/python.mjs"
 import githubDark from "shiki/themes/github-dark.mjs"
@@ -17,11 +21,30 @@ function getHighlighter(): Promise<HighlighterCore> {
   return highlighterPromise
 }
 
-/** HTML-підсвічування Shiki для python; null поки вантажиться або для інших мов. */
+/** Розбирає специфікацію рядків ("3-5,8") у множину 1-based номерів. */
+export function parseHighlightLines(spec: string | undefined): Set<number> {
+  const out = new Set<number>()
+  if (!spec) return out
+  for (const part of spec.split(",")) {
+    const m = /^\s*(\d+)\s*(?:-\s*(\d+)\s*)?$/.exec(part)
+    if (!m) continue
+    const a = Number(m[1])
+    const b = m[2] ? Number(m[2]) : a
+    for (let i = Math.min(a, b); i <= Math.max(a, b); i++) out.add(i)
+  }
+  return out
+}
+
+/**
+ * HTML-підсвічування Shiki для python; null поки вантажиться або для інших мов.
+ * `highlight` — специфікація рядків ("3-5,8") із meta огорожі (```python {3-5}):
+ * відповідні рядки дістають клас `line-hl` (фон малює MarkdownCode).
+ */
 export function useShikiHtml(
   code: string,
   lang: string,
   dark: boolean,
+  highlight?: string,
 ): string | null {
   const [html, setHtml] = useState<string | null>(null)
 
@@ -31,6 +54,17 @@ export function useShikiHtml(
       return
     }
     let cancelled = false
+    const lines = parseHighlightLines(highlight)
+    const transformers: ShikiTransformer[] = lines.size
+      ? [
+          {
+            name: "learn-line-highlight",
+            line(node, line) {
+              if (lines.has(line)) this.addClassToHast(node, "line-hl")
+            },
+          },
+        ]
+      : []
     void getHighlighter()
       .then((hl) => {
         if (!cancelled) {
@@ -38,6 +72,7 @@ export function useShikiHtml(
             hl.codeToHtml(code, {
               lang: "python",
               theme: dark ? "github-dark" : "github-light",
+              transformers,
             }),
           )
         }
@@ -48,7 +83,7 @@ export function useShikiHtml(
     return () => {
       cancelled = true
     }
-  }, [code, lang, dark])
+  }, [code, lang, dark, highlight])
 
   return html
 }

@@ -47,7 +47,7 @@ export function LearnView({
         const line = node?.position?.start.line
         return <h3 id={line != null ? idByLine.get(line) : undefined}>{children}</h3>
       },
-      code: ({ className, children }) => {
+      code: ({ node, className, children }) => {
         const match = /language-(\w+)/.exec(className ?? "")
         if (!match) {
           return (
@@ -56,10 +56,14 @@ export function LearnView({
             </code>
           )
         }
+        // Підсвітка рядків із meta огорожі: ```python {3-5,8}
+        const meta = (node?.data as { meta?: string } | undefined)?.meta
+        const highlight = meta ? /\{([\d,\s-]+)\}/.exec(meta)?.[1] : undefined
         return (
           <MarkdownCode
             lang={match[1]}
             code={String(children).replace(/\n$/, "")}
+            highlight={highlight}
           />
         )
       },

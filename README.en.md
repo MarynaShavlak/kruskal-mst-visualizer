@@ -457,7 +457,7 @@ Together they give an amortized $O(\alpha(n))$ per operation, where $\alpha$ is 
 
 ![Without optimizations a degenerate chain gives find(5) in 4 steps; with path compression the tree is flat — 1 step](images/en/chain_vs_flat.png)
 
-```python
+```python {13-15,22-24}
 class DSU:
     # Disjoint Set Union with union by rank and path compression.
 
