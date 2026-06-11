@@ -12,11 +12,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useBenchmark } from "@/algorithms/kruskal/benchmark/use-benchmark"
+import { useT } from "@/i18n/use-t"
 import { useThemeStore } from "@/store/theme-store"
 
 export function BenchmarkView() {
   const { points, running, run } = useBenchmark()
   const isDark = useThemeStore((s) => s.isDark)
+  const t = useT()
   const axisColor = isDark ? "#94a3b8" : "#475569"
   const gridColor = isDark ? "#334155" : "#e2e8f0"
   const started = points.length > 0 || running
@@ -25,19 +27,22 @@ export function BenchmarkView() {
     <div className="flex flex-col gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Бенчмарк: DSU проти наївної (has-path)</CardTitle>
+          <CardTitle>{t("bench.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm">
           <p className="text-muted-foreground">
-            Обидві реалізації дають однакову МОД, але час росте по-різному: DSU —
-            майже лінійно за розміром графа, наївна (BFS у допоміжному лісі) —
-            значно швидше. Обчислення виконуються у <b>Web Worker</b>, тож
-            інтерфейс не блокується.
+            {t("bench.introPre")}
+            <b>Web Worker</b>
+            {t("bench.introPost")}
           </p>
 
           <Button onClick={() => run()} disabled={running}>
             {started ? <RotateCcw /> : <Play />}
-            {running ? "Рахуємо…" : started ? "Перезапустити" : "Запустити бенчмарк"}
+            {running
+              ? t("bench.running")
+              : started
+                ? t("bench.restart")
+                : t("bench.run")}
           </Button>
 
           <div className="h-[360px] w-full">
@@ -53,7 +58,7 @@ export function BenchmarkView() {
                     tick={{ fontSize: 12, fill: axisColor }}
                     stroke={axisColor}
                     label={{
-                      value: "вершини",
+                      value: t("bench.axisVertices"),
                       position: "insideBottom",
                       offset: -10,
                       fill: axisColor,
@@ -63,7 +68,7 @@ export function BenchmarkView() {
                     tick={{ fontSize: 12, fill: axisColor }}
                     stroke={axisColor}
                     label={{
-                      value: "мс",
+                      value: t("bench.axisMs"),
                       angle: -90,
                       position: "insideLeft",
                       fill: axisColor,
@@ -89,7 +94,7 @@ export function BenchmarkView() {
                   <Line
                     type="monotone"
                     dataKey="hasPathMs"
-                    name="наївна (has-path)"
+                    name={t("bench.lineNaive")}
                     stroke="#dc2626"
                     strokeWidth={2}
                     dot={false}
@@ -108,7 +113,7 @@ export function BenchmarkView() {
               </ResponsiveContainer>
             ) : (
               <div className="flex h-full items-center justify-center rounded-lg border border-dashed text-muted-foreground">
-                Натисніть «Запустити бенчмарк»
+                {t("bench.empty")}
               </div>
             )}
           </div>
@@ -118,11 +123,11 @@ export function BenchmarkView() {
               <table className="w-full text-sm">
                 <thead className="text-xs text-muted-foreground">
                   <tr>
-                    <th className="px-2 py-1 text-left font-medium">Вершини</th>
-                    <th className="px-2 py-1 text-right font-medium">Ребра</th>
-                    <th className="px-2 py-1 text-right font-medium">DSU, мс</th>
-                    <th className="px-2 py-1 text-right font-medium">has-path, мс</th>
-                    <th className="px-2 py-1 text-right font-medium">Прискорення</th>
+                    <th className="px-2 py-1 text-left font-medium">{t("bench.colVertices")}</th>
+                    <th className="px-2 py-1 text-right font-medium">{t("bench.colEdges")}</th>
+                    <th className="px-2 py-1 text-right font-medium">{t("bench.colDsuMs")}</th>
+                    <th className="px-2 py-1 text-right font-medium">{t("bench.colHasPathMs")}</th>
+                    <th className="px-2 py-1 text-right font-medium">{t("bench.colSpeedup")}</th>
                   </tr>
                 </thead>
                 <tbody>

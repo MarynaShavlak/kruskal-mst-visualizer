@@ -319,6 +319,24 @@ const ua = {
   "play.nHkTourBetter": " — новий найкоротший тур.",
   "play.nHkTourWorse": " — довше за поточний.",
   "play.nHkDone": "Готово: оптимальний тур {path} = {cost}.",
+
+  // — Бенчмарк (Фаза 5) —
+  "bench.title": "Бенчмарк: DSU проти наївної (has-path)",
+  "bench.introPre":
+    "Обидві реалізації дають однакову МОД, але час росте по-різному: DSU — майже лінійно за розміром графа, наївна (BFS у допоміжному лісі) — значно швидше. Обчислення виконуються у ",
+  "bench.introPost": ", тож інтерфейс не блокується.",
+  "bench.run": "Запустити бенчмарк",
+  "bench.restart": "Перезапустити",
+  "bench.running": "Рахуємо…",
+  "bench.empty": "Натисніть «Запустити бенчмарк»",
+  "bench.axisVertices": "вершини",
+  "bench.axisMs": "мс",
+  "bench.lineNaive": "наївна (has-path)",
+  "bench.colVertices": "Вершини",
+  "bench.colEdges": "Ребра",
+  "bench.colDsuMs": "DSU, мс",
+  "bench.colHasPathMs": "has-path, мс",
+  "bench.colSpeedup": "Прискорення",
 }
 
 export type MessageKey = keyof typeof ua
@@ -624,6 +642,24 @@ const en: Record<MessageKey, string> = {
   "play.nHkTourBetter": " — new shortest tour.",
   "play.nHkTourWorse": " — longer than the current.",
   "play.nHkDone": "Done: the optimal tour {path} = {cost}.",
+
+  // — Benchmark (Phase 5) —
+  "bench.title": "Benchmark: DSU vs naive (has-path)",
+  "bench.introPre":
+    "Both implementations yield the same MST, but the time grows differently: DSU — almost linearly in graph size, the naive one (BFS in an auxiliary forest) — much faster. Computations run in a ",
+  "bench.introPost": ", so the UI isn't blocked.",
+  "bench.run": "Run benchmark",
+  "bench.restart": "Restart",
+  "bench.running": "Computing…",
+  "bench.empty": "Press “Run benchmark”",
+  "bench.axisVertices": "vertices",
+  "bench.axisMs": "ms",
+  "bench.lineNaive": "naive (has-path)",
+  "bench.colVertices": "Vertices",
+  "bench.colEdges": "Edges",
+  "bench.colDsuMs": "DSU, ms",
+  "bench.colHasPathMs": "has-path, ms",
+  "bench.colSpeedup": "Speedup",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
