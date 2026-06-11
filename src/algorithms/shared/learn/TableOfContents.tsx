@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import type { TocEntry } from "@/algorithms/shared/learn/learn-content"
 import { useScrollSpy } from "@/algorithms/shared/learn/use-scroll-spy"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 /** Посилання змісту: плавний скрол до заголовка + підсвітка активного. */
@@ -34,6 +35,7 @@ function TocLink({
 }
 
 export function TableOfContents({ toc }: { toc: TocEntry[] }) {
+  const t = useT()
   // Плаский список усіх id (H2 + H3) у порядку документа — для scroll-spy.
   const ids = useMemo(
     () => toc.flatMap((s) => [s.id, ...(s.children ?? []).map((c) => c.id)]),
@@ -45,7 +47,7 @@ export function TableOfContents({ toc }: { toc: TocEntry[] }) {
     <nav className="hidden lg:block">
       <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto">
         <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Зміст
+          {t("toc.title")}
         </div>
         <ul className="space-y-0.5 text-sm">
           {toc.map((section) => {

@@ -2,10 +2,13 @@ import { ArrowRight } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ALGORITHMS } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
+import { useLangStore } from "@/store/lang-store"
 import type { AlgorithmStatus } from "@/algorithms/types"
 
 function StatusBadge({ status }: { status: AlgorithmStatus }) {
+  const t = useT()
   const ready = status === "ready"
   return (
     <span
@@ -16,21 +19,20 @@ function StatusBadge({ status }: { status: AlgorithmStatus }) {
           : "bg-amber-500/10 text-amber-700 dark:text-amber-400",
       )}
     >
-      {ready ? "Готово" : "Незабаром"}
+      {ready ? t("common.ready") : t("common.soon")}
     </span>
   )
 }
 
 /** Каталог: картки алгоритмів — головний екран платформи. */
 export function HomeView() {
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold">Оберіть алгоритм</h2>
-        <p className="text-sm text-muted-foreground">
-          Інтерактивні розбори: теорія, редактор графа, покрокове програвання та
-          бенчмарк. Нові алгоритми додаються поступово.
-        </p>
+        <h2 className="text-lg font-semibold">{t("home.heading")}</h2>
+        <p className="text-sm text-muted-foreground">{t("home.intro")}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -60,14 +62,14 @@ export function HomeView() {
                   <StatusBadge status={algo.status} />
                 </div>
                 <CardTitle className="flex items-center gap-1.5">
-                  {algo.shortName}
+                  {algo.shortName[lang]}
                   {ready && (
                     <ArrowRight className="size-4 -translate-x-1 opacity-0 transition-all group-hover/card:translate-x-0 group-hover/card:opacity-100" />
                   )}
                 </CardTitle>
-                <CardDescription>{algo.tagline}</CardDescription>
+                <CardDescription>{algo.tagline[lang]}</CardDescription>
                 <p className="mt-1 text-xs text-muted-foreground/80">
-                  {algo.category}
+                  {algo.category[lang]}
                 </p>
               </CardHeader>
             </Card>

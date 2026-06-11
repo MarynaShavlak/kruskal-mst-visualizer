@@ -22,20 +22,25 @@ const PlaybackView = lazy(() =>
 
 export const floydWarshall: Algorithm = {
   id: "floyd-warshall",
-  name: "Алгоритм Флойда–Воршала",
-  shortName: "Флойд–Воршал",
-  tagline:
-    "Найкоротші шляхи між усіма парами вершин: динамічне програмування на матриці відстаней.",
-  category: "Графи · Найкоротші шляхи",
+  name: { ua: "Алгоритм Флойда–Воршала", en: "Floyd–Warshall Algorithm" },
+  shortName: { ua: "Флойд–Воршал", en: "Floyd–Warshall" },
+  tagline: {
+    ua: "Найкоротші шляхи між усіма парами вершин: динамічне програмування на матриці відстаней.",
+    en: "Shortest paths between all pairs of vertices: dynamic programming on a distance matrix.",
+  },
+  category: { ua: "Графи · Найкоротші шляхи", en: "Graphs · Shortest paths" },
   status: "ready",
   icon: Grid3x3,
   defaultTab: "learn",
   tabs: [
-    { key: "learn", label: "Навчання", View: LearnView },
-    { key: "editor", label: "Редактор", View: EditorView },
-    { key: "playback", label: "Алгоритм", View: PlaybackView },
+    { key: "learn", View: LearnView },
+    { key: "editor", View: EditorView },
+    { key: "playback", View: PlaybackView },
   ],
   planned: [
-    "Бенчмарк — кубічна складність проти повторних запусків Дейкстри",
+    {
+      ua: "Бенчмарк — кубічна складність проти повторних запусків Дейкстри",
+      en: "Benchmark — cubic complexity vs repeated Dijkstra runs",
+    },
   ],
 }

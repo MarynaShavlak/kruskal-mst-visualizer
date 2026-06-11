@@ -27,18 +27,20 @@ const BenchmarkView = lazy(() =>
 
 export const kruskal: Algorithm = {
   id: "kruskal",
-  name: "Алгоритм Краскала",
-  shortName: "Краскал (МОД)",
-  tagline:
-    "Мінімальне остовне дерево: жадібно додаємо найлегші ребра, відсікаючи цикли через Union-Find.",
-  category: "Графи · Остовні дерева",
+  name: { ua: "Алгоритм Краскала", en: "Kruskal's Algorithm" },
+  shortName: { ua: "Краскал (МОД)", en: "Kruskal (MST)" },
+  tagline: {
+    ua: "Мінімальне остовне дерево: жадібно додаємо найлегші ребра, відсікаючи цикли через Union-Find.",
+    en: "Minimum spanning tree: greedily add the lightest edges, cutting cycles via Union-Find.",
+  },
+  category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   status: "ready",
   icon: Waypoints,
   defaultTab: "learn",
   tabs: [
-    { key: "learn", label: "Навчання", View: LearnView },
-    { key: "editor", label: "Редактор", View: EditorView },
-    { key: "playback", label: "Алгоритм", View: PlaybackView },
-    { key: "benchmark", label: "Бенчмарк", View: BenchmarkView },
+    { key: "learn", View: LearnView },
+    { key: "editor", View: EditorView },
+    { key: "playback", View: PlaybackView },
+    { key: "benchmark", View: BenchmarkView },
   ],
 }

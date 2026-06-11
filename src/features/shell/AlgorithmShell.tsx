@@ -2,12 +2,15 @@ import { Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ComingSoon } from "@/features/shell/ComingSoon"
 import { navigateTo } from "@/hooks/use-route"
+import { useT } from "@/i18n/use-t"
+import type { MessageKey } from "@/i18n/messages"
 import type { Algorithm } from "@/algorithms/types"
 
 function TabFallback() {
+  const t = useT()
   return (
     <div className="p-10 text-center text-sm text-muted-foreground">
-      Завантаження…
+      {t("common.loading")}
     </div>
   )
 }
@@ -23,12 +26,14 @@ export function AlgorithmShell({
   algorithm: Algorithm
   tab: string | null
 }) {
+  const t = useT()
+
   if (algorithm.status === "soon" || algorithm.tabs.length === 0) {
     return <ComingSoon algorithm={algorithm} />
   }
 
   const active =
-    tab && algorithm.tabs.some((t) => t.key === tab)
+    tab && algorithm.tabs.some((tb) => tb.key === tab)
       ? tab
       : algorithm.defaultTab
 
@@ -38,16 +43,17 @@ export function AlgorithmShell({
       onValueChange={(value) => navigateTo(algorithm.id, value)}
     >
       <TabsList>
-        {algorithm.tabs.map((t) => (
-          <TabsTrigger key={t.key} value={t.key}>
-            {t.label}
+        {algorithm.tabs.map((tb) => (
+          <TabsTrigger key={tb.key} value={tb.key}>
+            {/* Підписи вкладок спільні для всіх алгоритмів — з i18n за ключем. */}
+            {t(`tab.${tb.key}` as MessageKey)}
           </TabsTrigger>
         ))}
       </TabsList>
-      {algorithm.tabs.map((t) => (
-        <TabsContent key={t.key} value={t.key} className="mt-4">
+      {algorithm.tabs.map((tb) => (
+        <TabsContent key={tb.key} value={tb.key} className="mt-4">
           <Suspense fallback={<TabFallback />}>
-            <t.View />
+            <tb.View />
           </Suspense>
         </TabsContent>
       ))}

@@ -6,10 +6,14 @@ import { AlgorithmSwitcher } from "@/features/shell/AlgorithmSwitcher"
 import { HomeView } from "@/features/home/HomeView"
 import { getAlgorithm } from "@/algorithms/registry"
 import { navigateTo, useRoute } from "@/hooks/use-route"
+import { useT } from "@/i18n/use-t"
+import { useLangStore } from "@/store/lang-store"
 
 export default function App() {
   const route = useRoute()
   const algorithm = getAlgorithm(route.algorithmId) ?? null
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -20,11 +24,9 @@ export default function App() {
             onClick={() => navigateTo(null)}
             className="rounded text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <h1 className="text-xl font-semibold">
-              Алгоритми: інтерактивні розбори
-            </h1>
+            <h1 className="text-xl font-semibold">{t("app.title")}</h1>
             <p className="text-sm text-muted-foreground">
-              {algorithm ? algorithm.name : "Платформа для вивчення алгоритмів"}
+              {algorithm ? algorithm.name[lang] : t("app.subtitle")}
             </p>
           </button>
           <div className="flex items-center gap-2">

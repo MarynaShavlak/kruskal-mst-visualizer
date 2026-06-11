@@ -5,6 +5,7 @@ import rehypeKatex from "rehype-katex"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 import { parseToc, type Lang } from "@/algorithms/shared/learn/learn-content"
+import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
 import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
@@ -24,6 +25,7 @@ export function LearnView({
 }) {
   const lang = useLangStore((s) => s.lang)
   const setLang = useLangStore((s) => s.setLang)
+  const t = useT()
   const md = content[lang]
   const toc = useMemo(() => parseToc(md), [md])
   // Карта «рядок markdown → id заголовка» з того самого parseToc — id у статті
@@ -112,7 +114,7 @@ export function LearnView({
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Навчальний розбір</h2>
+      <h2 className="text-lg font-semibold">{t("learn.heading")}</h2>
 
       <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)]">
         <TableOfContents toc={toc} />

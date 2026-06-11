@@ -22,17 +22,22 @@ const PlaybackView = lazy(() =>
 
 export const heldKarp: Algorithm = {
   id: "held-karp",
-  name: "Алгоритм Хелда–Карпа",
-  shortName: "Хелда–Карпа (TSP)",
-  tagline:
-    "Найкоротший замкнений маршрут комівояжера: динамічне програмування за підмножинами (бітова маска) замість перебору всіх (n−1)! турів.",
-  category: "Динамічне програмування · Комівояжер",
+  name: { ua: "Алгоритм Хелда–Карпа", en: "Held–Karp Algorithm" },
+  shortName: { ua: "Хелда–Карпа (TSP)", en: "Held–Karp (TSP)" },
+  tagline: {
+    ua: "Найкоротший замкнений маршрут комівояжера: динамічне програмування за підмножинами (бітова маска) замість перебору всіх (n−1)! турів.",
+    en: "Shortest closed salesman route: dynamic programming over subsets (bitmask) instead of enumerating all (n−1)! tours.",
+  },
+  category: {
+    ua: "Динамічне програмування · Комівояжер",
+    en: "Dynamic programming · TSP",
+  },
   status: "ready",
   icon: Route,
   defaultTab: "learn",
   tabs: [
-    { key: "learn", label: "Навчання", View: LearnView },
-    { key: "editor", label: "Редактор", View: EditorView },
-    { key: "playback", label: "Алгоритм", View: PlaybackView },
+    { key: "learn", View: LearnView },
+    { key: "editor", View: EditorView },
+    { key: "playback", View: PlaybackView },
   ],
 }

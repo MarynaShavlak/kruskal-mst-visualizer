@@ -10,30 +10,34 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ALGORITHMS } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
+import { useLangStore } from "@/store/lang-store"
 import type { Algorithm } from "@/algorithms/types"
 
 /** Дропдаун у шапці для швидкої зміни активного алгоритму. */
 export function AlgorithmSwitcher({ current }: { current: Algorithm | null }) {
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" aria-label="Обрати алгоритм">
+        <Button variant="outline" size="sm" aria-label={t("switcher.aria")}>
           {current ? (
             <>
               <current.icon className="text-muted-foreground" />
               <span className="max-w-[10rem] truncate">
-                {current.shortName}
+                {current.shortName[lang]}
               </span>
             </>
           ) : (
-            <span>Оберіть алгоритм</span>
+            <span>{t("switcher.placeholder")}</span>
           )}
           <ChevronDown className="text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[15rem]">
-        <DropdownMenuLabel>Алгоритми</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("switcher.label")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {ALGORITHMS.map((algo) => (
           <DropdownMenuItem
@@ -43,10 +47,10 @@ export function AlgorithmSwitcher({ current }: { current: Algorithm | null }) {
             }
           >
             <algo.icon className="text-muted-foreground" />
-            <span className="flex-1 truncate">{algo.shortName}</span>
+            <span className="flex-1 truncate">{algo.shortName[lang]}</span>
             {algo.status === "soon" && (
               <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                скоро
+                {t("common.soonShort")}
               </span>
             )}
             <Check

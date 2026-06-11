@@ -42,8 +42,9 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
             floydWarshall.ts(+Trace), graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
+i18n/       messages.ts (словник chrome UA/EN, парність типізована) + use-t (хук t())
 store/      create-graph-store (generic-ядро) → graph-store / directed-graph-store;
-            presets / directed-presets; theme-store, toast-store
+            presets / directed-presets; theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
 незмінних кадрів (Frame), UI лише рухає курсор по них (scrubbing, крок назад).
