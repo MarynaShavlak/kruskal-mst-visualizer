@@ -3,8 +3,42 @@ import type { TocEntry } from "@/algorithms/shared/learn/learn-content"
 import { useScrollSpy } from "@/algorithms/shared/learn/use-scroll-spy"
 import { cn } from "@/lib/utils"
 
+/** Посилання змісту: плавний скрол до заголовка + підсвітка активного. */
+function TocLink({
+  entry,
+  active,
+  nested = false,
+}: {
+  entry: TocEntry
+  active: boolean
+  nested?: boolean
+}) {
+  return (
+    <a
+      href={`#${entry.id}`}
+      onClick={(e) => {
+        e.preventDefault()
+        document
+          .getElementById(entry.id)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }}
+      className={cn(
+        "block rounded px-2 py-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        nested && "text-[0.8rem]",
+        active && "bg-primary/10 font-medium text-foreground",
+      )}
+    >
+      {entry.title}
+    </a>
+  )
+}
+
 export function TableOfContents({ toc }: { toc: TocEntry[] }) {
-  const ids = useMemo(() => toc.map((t) => t.id), [toc])
+  // Плаский список усіх id (H2 + H3) у порядку документа — для scroll-spy.
+  const ids = useMemo(
+    () => toc.flatMap((s) => [s.id, ...(s.children ?? []).map((c) => c.id)]),
+    [toc],
+  )
   const active = useScrollSpy(ids)
 
   return (
@@ -14,25 +48,27 @@ export function TableOfContents({ toc }: { toc: TocEntry[] }) {
           Зміст
         </div>
         <ul className="space-y-0.5 text-sm">
-          {toc.map((t) => (
-            <li key={t.id}>
-              <a
-                href={`#${t.id}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  document
-                    .getElementById(t.id)
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
-                }}
-                className={cn(
-                  "block rounded px-2 py-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-                  active === t.id && "bg-primary/10 font-medium text-foreground",
+          {toc.map((section) => {
+            const children = section.children ?? []
+            // H3 показуємо лише під активною секцією — інакше зміст довгих
+            // розборів був би надто розлогим.
+            const open =
+              active === section.id || children.some((c) => c.id === active)
+            return (
+              <li key={section.id}>
+                <TocLink entry={section} active={active === section.id} />
+                {open && children.length > 0 && (
+                  <ul className="mt-0.5 ml-3 space-y-0.5 border-l border-border pl-2">
+                    {children.map((child) => (
+                      <li key={child.id}>
+                        <TocLink entry={child} active={active === child.id} nested />
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              >
-                {t.title}
-              </a>
-            </li>
-          ))}
+              </li>
+            )
+          })}
         </ul>
       </div>
     </nav>

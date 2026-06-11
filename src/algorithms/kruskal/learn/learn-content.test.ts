@@ -13,6 +13,15 @@ describe("parseToc", () => {
     expect(toc[17].id).toBe("sec18")
     expect(toc[0].title).toMatch(/^1\. /)
   })
+
+  it("вкладає H3-підрозділи й тримає всі їхні id унікальними", () => {
+    const toc = parseToc(LEARN_CONTENT.ua)
+    // Принаймні якась секція має підрозділи (реальний README їх має десятки).
+    expect(toc.some((s) => (s.children?.length ?? 0) > 0)).toBe(true)
+    const childIds = toc.flatMap((s) => (s.children ?? []).map((c) => c.id))
+    expect(childIds.length).toBeGreaterThan(0)
+    expect(new Set(childIds).size).toBe(childIds.length)
+  })
 })
 
 describe("stripReadmeChrome (GitHub-хром README)", () => {

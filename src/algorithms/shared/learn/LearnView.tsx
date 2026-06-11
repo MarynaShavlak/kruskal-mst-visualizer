@@ -25,14 +25,27 @@ export function LearnView({
   const [lang, setLang] = useState<Lang>("ua")
   const md = content[lang]
   const toc = useMemo(() => parseToc(md), [md])
+  // Карта «рядок markdown → id заголовка» з того самого parseToc — id у статті
+  // збігаються з id у TOC (зокрема для дедуплікованих slug-id H3).
+  const idByLine = useMemo(() => {
+    const map = new Map<number, string>()
+    for (const section of toc) {
+      map.set(section.line, section.id)
+      for (const child of section.children ?? []) map.set(child.line, child.id)
+    }
+    return map
+  }, [toc])
 
   const components: Components = useMemo(
     () => ({
       pre: ({ children }) => <>{children}</>,
-      h2: ({ children }) => {
-        const first = Array.isArray(children) ? children[0] : children
-        const m = typeof first === "string" ? /^(\d+)\.\s/.exec(first) : null
-        return <h2 id={m ? `sec${m[1]}` : undefined}>{children}</h2>
+      h2: ({ node, children }) => {
+        const line = node?.position?.start.line
+        return <h2 id={line != null ? idByLine.get(line) : undefined}>{children}</h2>
+      },
+      h3: ({ node, children }) => {
+        const line = node?.position?.start.line
+        return <h3 id={line != null ? idByLine.get(line) : undefined}>{children}</h3>
       },
       code: ({ className, children }) => {
         const match = /language-(\w+)/.exec(className ?? "")
@@ -89,7 +102,7 @@ export function LearnView({
         )
       },
     }),
-    [figureForSrc],
+    [figureForSrc, idByLine],
   )
 
   return (
