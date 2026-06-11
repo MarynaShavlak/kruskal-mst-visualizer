@@ -1,11 +1,11 @@
 import "katex/dist/katex.min.css"
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, type ReactNode } from "react"
 import Markdown, { type Components } from "react-markdown"
 import rehypeKatex from "rehype-katex"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
-import { Button } from "@/components/ui/button"
 import { parseToc, type Lang } from "@/algorithms/shared/learn/learn-content"
+import { useLangStore } from "@/store/lang-store"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
 import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
 
@@ -22,7 +22,8 @@ export function LearnView({
   content: Record<Lang, string>
   figureForSrc: (src: string | undefined, alt: string | undefined) => ReactNode
 }) {
-  const [lang, setLang] = useState<Lang>("ua")
+  const lang = useLangStore((s) => s.lang)
+  const setLang = useLangStore((s) => s.setLang)
   const md = content[lang]
   const toc = useMemo(() => parseToc(md), [md])
   // Карта «рядок markdown → id заголовка» з того самого parseToc — id у статті
@@ -111,17 +112,7 @@ export function LearnView({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Навчальний розбір</h2>
-        <div className="flex gap-1">
-          <Button size="sm" variant={lang === "ua" ? "default" : "outline"} onClick={() => setLang("ua")}>
-            UA
-          </Button>
-          <Button size="sm" variant={lang === "en" ? "default" : "outline"} onClick={() => setLang("en")}>
-            EN
-          </Button>
-        </div>
-      </div>
+      <h2 className="text-lg font-semibold">Навчальний розбір</h2>
 
       <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)]">
         <TableOfContents toc={toc} />

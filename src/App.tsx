@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster"
+import { LanguageToggle } from "@/components/language-toggle"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AlgorithmShell } from "@/features/shell/AlgorithmShell"
 import { AlgorithmSwitcher } from "@/features/shell/AlgorithmSwitcher"
@@ -28,6 +29,7 @@ export default function App() {
           </button>
           <div className="flex items-center gap-2">
             <AlgorithmSwitcher current={algorithm} />
+            <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>
