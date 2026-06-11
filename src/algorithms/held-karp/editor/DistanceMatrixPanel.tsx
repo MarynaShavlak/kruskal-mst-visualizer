@@ -1,15 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useT } from "@/i18n/use-t"
 import { countOperations, distanceMatrix } from "@/lib/tsp"
 import { countRoutes } from "@/lib/tspBruteForce"
 import { cn } from "@/lib/utils"
 import { useTspStore } from "@/store/tsp-store"
 
-/** Компактний запис великого числа: 1,4 тис. / 2,3 млн / 7,1e12. */
-function fmt(x: number): string {
+/** Суфікси компактного запису великих чисел (локалізовані). */
+interface NumUnits {
+  k: string
+  M: string
+  B: string
+}
+
+/** Компактний запис великого числа: 1.4 тис. / 2.3 млн / 7.1e12. */
+function fmt(x: number, u: NumUnits): string {
   if (x < 1000) return String(x)
-  if (x < 1e6) return `${(x / 1e3).toFixed(1)} тис.`
-  if (x < 1e9) return `${(x / 1e6).toFixed(1)} млн`
-  if (x < 1e12) return `${(x / 1e9).toFixed(1)} млрд`
+  if (x < 1e6) return `${(x / 1e3).toFixed(1)}${u.k}`
+  if (x < 1e9) return `${(x / 1e6).toFixed(1)}${u.M}`
+  if (x < 1e12) return `${(x / 1e9).toFixed(1)}${u.B}`
   return x.toExponential(1)
 }
 
@@ -34,21 +42,23 @@ export function DistanceMatrixPanel({ className }: { className?: string }) {
   const n = cities.length
   const dist = distanceMatrix(cities)
   const level = complexityLevel(n)
+  const t = useT()
+  const units: NumUnits = {
+    k: t("editor.numK"),
+    M: t("editor.numM"),
+    B: t("editor.numB"),
+  }
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>Матриця відстаней</CardTitle>
+        <CardTitle>{t("editor.hkDistTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         {n === 0 ? (
-          <p className="text-muted-foreground">
-            Порожньо — подвійний клік по полю додає місто.
-          </p>
+          <p className="text-muted-foreground">{t("editor.hkDistEmpty")}</p>
         ) : n === 1 ? (
-          <p className="text-muted-foreground">
-            Потрібно щонайменше 2 міста, щоб був маршрут.
-          </p>
+          <p className="text-muted-foreground">{t("editor.hkNeedTwo")}</p>
         ) : (
           <div className="overflow-auto">
             <div
@@ -76,26 +86,27 @@ export function DistanceMatrixPanel({ className }: { className?: string }) {
         )}
 
         <div className="space-y-1.5">
-          <Row label="Міст" value={String(n)} />
-          {n >= 1 && <Row label="Старт" value={cities[start]?.name ?? "—"} />}
+          <Row label={t("editor.hkCities")} value={String(n)} />
+          {n >= 1 && (
+            <Row label={t("editor.hkStart")} value={cities[start]?.name ?? "—"} />
+          )}
           {n >= 2 && (
             <>
-              <Row label="Підзадач ДП (n²·2ⁿ)" value={fmt(countOperations(n))} />
-              <Row label="Турів у переборі ((n−1)!)" value={fmt(countRoutes(n))} />
+              <Row
+                label={t("editor.hkDpSub")}
+                value={fmt(countOperations(n), units)}
+              />
+              <Row
+                label={t("editor.hkBruteTours")}
+                value={fmt(countRoutes(n), units)}
+              />
             </>
           )}
         </div>
 
-        {level === "warn" && (
-          <Note tone="warn">
-            Багато міст: час і пам'ять Хелда–Карпа (O(n·2ⁿ)) помітно зростають.
-          </Note>
-        )}
+        {level === "warn" && <Note tone="warn">{t("editor.hkWarnMany")}</Note>}
         {level === "danger" && (
-          <Note tone="danger">
-            Забагато міст — Хелда–Карпа недоцільно запускати у браузері: пам'ять
-            O(n·2ⁿ) вибухає. Зменште кількість міст.
-          </Note>
+          <Note tone="danger">{t("editor.hkWarnTooMany")}</Note>
         )}
       </CardContent>
     </Card>

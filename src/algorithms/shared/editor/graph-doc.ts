@@ -5,6 +5,7 @@
 // вага]; позиції як [x, y]), тож шаринг-посилання сумісні між алгоритмами.
 // graph-модель інжектиться: як читати ребра й перебудовувати граф з інваріантами.
 
+import { tr } from "@/i18n/use-t"
 import type { GraphLike, GraphStoreDoc, XY } from "@/store/create-graph-store"
 
 /** Як кодек читає й будує конкретну graph-модель. */
@@ -51,24 +52,24 @@ function isXYTuple(p: unknown): p is [number, number] {
 
 function parseWire(raw: unknown): WireDoc {
   if (typeof raw !== "object" || raw === null) {
-    throw new Error("Документ має бути об'єктом")
+    throw new Error(tr("editor.errNotObject"))
   }
   const o = raw as Record<string, unknown>
-  if (o.version !== 1) throw new Error("Непідтримувана версія документа")
+  if (o.version !== 1) throw new Error(tr("editor.errBadVersion"))
   if (
     !Array.isArray(o.vertices) ||
     !o.vertices.every((x) => typeof x === "string")
   ) {
-    throw new Error("Поле vertices невалідне")
+    throw new Error(tr("editor.errBadVertices"))
   }
   if (!Array.isArray(o.edges) || !o.edges.every(isWireEdge)) {
-    throw new Error("Поле edges невалідне")
+    throw new Error(tr("editor.errBadEdges"))
   }
   if (typeof o.positions !== "object" || o.positions === null) {
-    throw new Error("Поле positions невалідне")
+    throw new Error(tr("editor.errBadPositions"))
   }
   for (const p of Object.values(o.positions as Record<string, unknown>)) {
-    if (!isXYTuple(p)) throw new Error("Позиція має бути [x, y]")
+    if (!isXYTuple(p)) throw new Error(tr("editor.errBadPosition"))
   }
   return o as unknown as WireDoc
 }

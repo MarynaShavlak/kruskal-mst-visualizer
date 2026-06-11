@@ -22,6 +22,7 @@ import { toCanvas, toMathSnapped } from "@/algorithms/held-karp/editor/coords"
 import { tspCodec } from "@/algorithms/held-karp/editor/tsp-doc"
 import type { CityNodeType } from "@/algorithms/held-karp/editor/CityNode"
 import { setHash } from "@/hooks/use-route"
+import { tr } from "@/i18n/use-t"
 import { toast } from "@/store/toast-store"
 import { useTspStore, type TspDoc } from "@/store/tsp-store"
 import type { TspCity } from "@/lib/tsp"
@@ -199,7 +200,7 @@ export function useTspEditor(): TspEditorController {
         })
         .catch((err: unknown) => {
           toast({
-            title: "Не вдалося імпортувати",
+            title: tr("editor.importFailed"),
             description: err instanceof Error ? err.message : String(err),
             variant: "destructive",
           })
@@ -214,7 +215,7 @@ export function useTspEditor(): TspEditorController {
     const url = `${window.location.origin}${window.location.pathname}#${route}`
     setHash(route)
     void navigator.clipboard?.writeText(url).then(
-      () => toast({ description: "Посилання скопійовано в буфер обміну." }),
+      () => toast({ description: tr("editor.linkCopied") }),
       () => undefined,
     )
   }, [toDoc])

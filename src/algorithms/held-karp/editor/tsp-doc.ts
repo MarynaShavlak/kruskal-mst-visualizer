@@ -4,6 +4,7 @@
 // Окремий wire-формат (version 1; місто як [name, x, y]) — не graph-doc, бо TSP
 // без ребер. Старт затискається в межі при завантаженні. Чисто, без React.
 
+import { tr } from "@/i18n/use-t"
 import type { TspCity } from "@/lib/tsp"
 import type { TspDoc } from "@/store/tsp-store"
 
@@ -25,15 +26,15 @@ function isWireCity(c: unknown): c is [string, number, number] {
 
 function parseWire(raw: unknown): TspWire {
   if (typeof raw !== "object" || raw === null) {
-    throw new Error("Документ має бути об'єктом")
+    throw new Error(tr("editor.errNotObject"))
   }
   const o = raw as Record<string, unknown>
-  if (o.version !== 1) throw new Error("Непідтримувана версія документа")
+  if (o.version !== 1) throw new Error(tr("editor.errBadVersion"))
   if (!Array.isArray(o.cities) || !o.cities.every(isWireCity)) {
-    throw new Error("Поле cities невалідне")
+    throw new Error(tr("editor.errBadCities"))
   }
   if (typeof o.start !== "number" || !Number.isInteger(o.start)) {
-    throw new Error("Поле start невалідне")
+    throw new Error(tr("editor.errBadStart"))
   }
   return o as unknown as TspWire
 }

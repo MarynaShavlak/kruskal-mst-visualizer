@@ -35,6 +35,7 @@ import {
   WeightDialog,
 } from "@/algorithms/floyd-warshall/editor/WeightDialog"
 import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
+import { tr, useT } from "@/i18n/use-t"
 import { useDirectedGraphStore } from "@/store/directed-graph-store"
 import { useThemeStore } from "@/store/theme-store"
 import { toast } from "@/store/toast-store"
@@ -76,6 +77,7 @@ function EditorCanvas() {
   const isDark = useThemeStore((s) => s.isDark)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { promptWeight, dialogProps } = useWeightPrompt()
+  const t = useT()
 
   const ctrl = useGraphEditor<DirectedEdgeType, DirectedGraph>({
     graph,
@@ -129,7 +131,10 @@ function EditorCanvas() {
       if (w === null) return
       if (!connect(conn.source, conn.target, w)) {
         toast({
-          description: `Ребро ${conn.source}→${conn.target} вже існує.`,
+          description: tr("editor.fwEdgeExists", {
+            from: conn.source,
+            to: conn.target,
+          }),
           variant: "destructive",
         })
       }
@@ -141,26 +146,26 @@ function EditorCanvas() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" onClick={loadExample}>
-          <BookOpen /> Приклад A–F
+          <BookOpen /> {t("editor.fwExample")}
         </Button>
         <Button size="sm" variant="outline" onClick={loadNegativeEdge}>
-          <Minus /> Від'ємне ребро
+          <Minus /> {t("editor.fwNegEdge")}
         </Button>
         <Button size="sm" variant="outline" onClick={loadNegativeCycle}>
-          <Repeat /> Від'ємний цикл
+          <Repeat /> {t("editor.fwNegCycle")}
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => loadRandom(Math.floor(Math.random() * 1e9))}
         >
-          <Shuffle /> Випадковий
+          <Shuffle /> {t("editor.random")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onAddVertex}>
-          <Plus /> Вершина
+          <Plus /> {t("editor.vertex")}
         </Button>
         <Button size="sm" variant="outline" onClick={clear}>
-          <Trash2 /> Очистити
+          <Trash2 /> {t("editor.clear")}
         </Button>
         <div className="mx-1 h-5 w-px bg-border" />
         <Button
@@ -168,13 +173,13 @@ function EditorCanvas() {
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload /> Імпорт
+          <Upload /> {t("editor.import")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onExport}>
-          <Download /> Експорт
+          <Download /> {t("editor.export")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onShare}>
-          <Share2 /> Поділитися
+          <Share2 /> {t("editor.share")}
         </Button>
         <input
           ref={fileInputRef}
@@ -213,11 +218,7 @@ function EditorCanvas() {
         <AdjacencyMatrixPanel className="lg:w-72" />
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Подвійний клік по полю — додати вершину; перетягни від вузла до вузла —
-        напрямлене ребро (із запитом ваги, можна від'ємну); подвійний клік по
-        ребру — змінити вагу; Delete — видалити виділене.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("editor.fwHelp")}</p>
 
       <WeightDialog {...dialogProps} />
     </div>

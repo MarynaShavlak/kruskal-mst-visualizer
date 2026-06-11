@@ -1,4 +1,5 @@
 import { type Node, type NodeProps } from "@xyflow/react"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 export type CityNodeData = { label: string; isStart: boolean }
@@ -10,9 +11,10 @@ export type CityNodeType = Node<CityNodeData, "city">
  * клік по місту робить його стартом).
  */
 export function CityNode({ data, selected }: NodeProps<CityNodeType>) {
+  const t = useT()
   return (
     <div
-      title={data.isStart ? "Стартове місто" : "Подвійний клік — зробити стартом"}
+      title={data.isStart ? t("editor.hkStartCity") : t("editor.hkMakeStartHint")}
       className={cn(
         "flex size-12 select-none items-center justify-center rounded-full border-2 text-base font-semibold shadow-sm transition-colors",
         data.isStart

@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { tr, useT } from "@/i18n/use-t"
 
 interface WeightDialogProps {
   open: boolean
@@ -28,6 +29,7 @@ export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
   const [error, setError] = useState<string | null>(null)
   const [wasOpen, setWasOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const t = useT()
 
   // Скидаємо поле синхронно під час рендера при відкритті (а не в useEffect),
   // щоб onOpenAutoFocus побачив уже правильне значення й виділив його.
@@ -42,7 +44,7 @@ export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
   const submit = useCallback(() => {
     const w = Number.parseInt(value, 10)
     if (!Number.isInteger(w)) {
-      setError("Вага має бути цілим числом (можна 0 або від'ємне).")
+      setError(tr("editor.weightErrAnyInt"))
       return
     }
     onSettle(w)
@@ -65,10 +67,8 @@ export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
         }}
       >
         <DialogHeader>
-          <DialogTitle>Вага ребра</DialogTitle>
-          <DialogDescription>
-            Ціле число — додатне, нульове або від'ємне.
-          </DialogDescription>
+          <DialogTitle>{t("editor.weightTitle")}</DialogTitle>
+          <DialogDescription>{t("editor.weightDescAnyInt")}</DialogDescription>
         </DialogHeader>
 
         <form
@@ -86,7 +86,7 @@ export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
             inputMode="numeric"
             value={value}
             aria-invalid={error != null}
-            aria-label="Вага ребра"
+            aria-label={t("editor.weightTitle")}
             onChange={(e) => {
               setValue(e.target.value)
               if (error) setError(null)
@@ -104,9 +104,9 @@ export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
               variant="outline"
               onClick={() => onSettle(null)}
             >
-              Скасувати
+              {t("common.cancel")}
             </Button>
-            <Button type="submit">Зберегти</Button>
+            <Button type="submit">{t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useT } from "@/i18n/use-t"
 import { toDistMatrix } from "@/lib/directedGraph"
 import { INF, floydWarshall, hasNegativeCycle } from "@/lib/floydWarshall"
 import { cn } from "@/lib/utils"
@@ -14,15 +15,16 @@ export function AdjacencyMatrixPanel({ className }: { className?: string }) {
   const { order, dist } = toDistMatrix(graph)
   const n = order.length
   const negativeCycle = n > 0 && hasNegativeCycle(floydWarshall(dist))
+  const t = useT()
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>Матриця суміжності</CardTitle>
+        <CardTitle>{t("editor.fwMatrixTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         {n === 0 ? (
-          <p className="text-muted-foreground">Граф порожній — додайте вершини.</p>
+          <p className="text-muted-foreground">{t("editor.emptyGraph")}</p>
         ) : (
           <div className="overflow-auto">
             <div
@@ -44,14 +46,13 @@ export function AdjacencyMatrixPanel({ className }: { className?: string }) {
         )}
 
         <div className="space-y-1.5">
-          <Row label="Вершини" value={n} />
-          <Row label="Ребра (напрямлені)" value={graph.edges.length} />
+          <Row label={t("editor.countVertices")} value={n} />
+          <Row label={t("editor.fwEdgesDirected")} value={graph.edges.length} />
         </div>
 
         {negativeCycle && (
           <div className="rounded-md bg-destructive/10 px-2 py-1.5 text-xs text-destructive">
-            Виявлено від'ємний цикл (на діагоналі найкоротших відстаней
-            з'являється від'ємне значення) — найкоротші шляхи не визначені.
+            {t("editor.fwNegCycleWarn")}
           </div>
         )}
       </CardContent>

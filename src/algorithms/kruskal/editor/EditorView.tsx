@@ -25,6 +25,7 @@ import { codec } from "@/algorithms/kruskal/editor/graph-doc"
 import { VertexNode } from "@/algorithms/kruskal/editor/VertexNode"
 import { useWeightPrompt, WeightDialog } from "@/algorithms/kruskal/editor/WeightDialog"
 import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
+import { useT } from "@/i18n/use-t"
 import { useGraphStore } from "@/store/graph-store"
 import { useThemeStore } from "@/store/theme-store"
 import type { Graph } from "@/lib/graph"
@@ -57,6 +58,7 @@ function EditorCanvas() {
   const isDark = useThemeStore((s) => s.isDark)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { promptWeight, dialogProps } = useWeightPrompt()
+  const t = useT()
 
   const ctrl = useGraphEditor<Edge, Graph>({
     graph,
@@ -102,20 +104,20 @@ function EditorCanvas() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" onClick={loadExample}>
-          <BookOpen /> Приклад
+          <BookOpen /> {t("editor.example")}
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => loadRandom(Math.floor(Math.random() * 1e9))}
         >
-          <Shuffle /> Випадковий
+          <Shuffle /> {t("editor.random")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onAddVertex}>
-          <Plus /> Вершина
+          <Plus /> {t("editor.vertex")}
         </Button>
         <Button size="sm" variant="outline" onClick={clear}>
-          <Trash2 /> Очистити
+          <Trash2 /> {t("editor.clear")}
         </Button>
         <div className="mx-1 h-5 w-px bg-border" />
         <Button
@@ -123,13 +125,13 @@ function EditorCanvas() {
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload /> Імпорт
+          <Upload /> {t("editor.import")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onExport}>
-          <Download /> Експорт
+          <Download /> {t("editor.export")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onShare}>
-          <Share2 /> Поділитися
+          <Share2 /> {t("editor.share")}
         </Button>
         <input
           ref={fileInputRef}
@@ -167,11 +169,7 @@ function EditorCanvas() {
         <ConnectivityPanel className="lg:w-72" />
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Подвійний клік по полю — додати вершину; перетягни від вузла до вузла —
-        ребро (із запитом ваги); подвійний клік по ребру — змінити вагу; Delete —
-        видалити виділене.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("editor.kruskalHelp")}</p>
 
       <WeightDialog {...dialogProps} />
     </div>

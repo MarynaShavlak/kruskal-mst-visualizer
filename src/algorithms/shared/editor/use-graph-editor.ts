@@ -27,6 +27,7 @@ import {
   type OnNodeDrag,
 } from "@xyflow/react"
 import { setHash } from "@/hooks/use-route"
+import { tr } from "@/i18n/use-t"
 import type {
   GraphLike,
   GraphStoreDoc,
@@ -213,7 +214,7 @@ export function useGraphEditor<E extends Edge, G extends GraphLike>(
         .then((text) => loadDoc(codec.fromJSON(text)))
         .catch((err: unknown) => {
           toast({
-            title: "Не вдалося імпортувати",
+            title: tr("editor.importFailed"),
             description: err instanceof Error ? err.message : String(err),
             variant: "destructive",
           })
@@ -229,7 +230,7 @@ export function useGraphEditor<E extends Edge, G extends GraphLike>(
     setHash(route)
     void navigator.clipboard?.writeText(url).then(
       () => {
-        toast({ description: "Посилання скопійовано в буфер обміну." })
+        toast({ description: tr("editor.linkCopied") })
       },
       () => undefined,
     )

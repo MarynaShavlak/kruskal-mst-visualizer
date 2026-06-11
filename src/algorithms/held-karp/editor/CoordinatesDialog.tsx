@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { tr, useT } from "@/i18n/use-t"
 import { nextVertexName } from "@/lib/graph"
 import type { TspCity } from "@/lib/tsp"
 import type { TspDoc } from "@/store/tsp-store"
@@ -48,6 +49,7 @@ export function CoordinatesDialog({
   const [startIdx, setStartIdx] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [wasOpen, setWasOpen] = useState(false)
+  const t = useT()
 
   // Засіваємо чернетку синхронно при відкритті (не в useEffect) — щоб поля одразу
   // показали поточні координати, навіть якщо їх змінювали на полотні.
@@ -95,9 +97,7 @@ export function CoordinatesDialog({
     for (const c of cities) {
       const key = `${c.x},${c.y}`
       if (seen.has(key)) {
-        setError(
-          `Дві точки збігаються в (${c.x}, ${c.y}) — координати мають бути різними.`,
-        )
+        setError(tr("editor.hkCoordsDup", { x: c.x, y: c.y }))
         return
       }
       seen.add(key)
@@ -118,11 +118,11 @@ export function CoordinatesDialog({
     >
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Координати міст</DialogTitle>
+          <DialogTitle>{t("editor.hkCoordsTitle")}</DialogTitle>
           <DialogDescription>
-            Цілі математичні координати (як у прикладі{" "}
-            <span className="font-mono">A: (0, 0)</span>). Радіокнопка позначає
-            стартове місто.
+            {t("editor.hkCoordsDescPre")}
+            <span className="font-mono">A: (0, 0)</span>
+            {t("editor.hkCoordsDescPost")}
           </DialogDescription>
         </DialogHeader>
 
@@ -135,10 +135,10 @@ export function CoordinatesDialog({
           }}
         >
           <div className="grid grid-cols-[1.75rem_1fr_1fr_auto_1.75rem] items-center gap-2 px-1 text-xs font-medium text-muted-foreground">
-            <span>№</span>
+            <span>{t("editor.hkColNum")}</span>
             <span>X</span>
             <span>Y</span>
-            <span>старт</span>
+            <span>{t("editor.hkColStart")}</span>
             <span />
           </div>
 
@@ -153,7 +153,7 @@ export function CoordinatesDialog({
                   type="number"
                   step={1}
                   inputMode="numeric"
-                  aria-label={`X міста ${r.name}`}
+                  aria-label={t("editor.hkAriaCityX", { name: r.name })}
                   value={r.x}
                   onChange={(e) => setCell(i, "x", e.target.value)}
                 />
@@ -161,13 +161,13 @@ export function CoordinatesDialog({
                   type="number"
                   step={1}
                   inputMode="numeric"
-                  aria-label={`Y міста ${r.name}`}
+                  aria-label={t("editor.hkAriaCityY", { name: r.name })}
                   value={r.y}
                   onChange={(e) => setCell(i, "y", e.target.value)}
                 />
                 <label
                   className="flex items-center justify-center"
-                  title={`Зробити стартом — ${r.name}`}
+                  title={t("editor.hkMakeStartOf", { name: r.name })}
                 >
                   <input
                     type="radio"
@@ -175,14 +175,14 @@ export function CoordinatesDialog({
                     className="size-4 accent-primary"
                     checked={startIdx === i}
                     onChange={() => setStartIdx(i)}
-                    aria-label={`Старт — ${r.name}`}
+                    aria-label={t("editor.hkStartOf", { name: r.name })}
                   />
                 </label>
                 <Button
                   type="button"
                   size="icon-sm"
                   variant="ghost"
-                  aria-label={`Видалити ${r.name}`}
+                  aria-label={t("editor.hkDeleteOf", { name: r.name })}
                   onClick={() => removeRow(i)}
                 >
                   <Trash2 />
@@ -191,7 +191,7 @@ export function CoordinatesDialog({
             ))}
             {rows.length === 0 && (
               <p className="px-1 py-4 text-center text-sm text-muted-foreground">
-                Ще немає міст — додай перше.
+                {t("editor.hkNoCities")}
               </p>
             )}
           </div>
@@ -203,7 +203,7 @@ export function CoordinatesDialog({
             className="self-start"
             onClick={addRow}
           >
-            <Plus /> Додати місто
+            <Plus /> {t("editor.hkAddCity")}
           </Button>
 
           {error && (
@@ -214,9 +214,9 @@ export function CoordinatesDialog({
 
           <DialogFooter className="mt-2">
             <Button type="button" variant="outline" onClick={() => onSettle(null)}>
-              Скасувати
+              {t("common.cancel")}
             </Button>
-            <Button type="submit">Зберегти</Button>
+            <Button type="submit">{t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

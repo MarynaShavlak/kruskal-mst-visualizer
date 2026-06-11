@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useT } from "@/i18n/use-t"
 import { analyzeGraph } from "@/lib/graphAnalysis"
 import { cn } from "@/lib/utils"
 import { useGraphStore } from "@/store/graph-store"
@@ -6,16 +7,17 @@ import { useGraphStore } from "@/store/graph-store"
 export function ConnectivityPanel({ className }: { className?: string }) {
   const graph = useGraphStore((s) => s.graph)
   const a = analyzeGraph(graph)
+  const t = useT()
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>Зв'язність</CardTitle>
+        <CardTitle>{t("editor.connTitle")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
-        <Row label="Вершини" value={a.vertexCount} />
-        <Row label="Ребра" value={a.edgeCount} />
-        <Row label="Компоненти" value={a.componentCount} />
+        <Row label={t("editor.countVertices")} value={a.vertexCount} />
+        <Row label={t("editor.countEdges")} value={a.edgeCount} />
+        <Row label={t("editor.connComponents")} value={a.componentCount} />
         <div
           className={cn(
             "mt-2 rounded-md px-2 py-1.5 text-xs",
@@ -25,10 +27,10 @@ export function ConnectivityPanel({ className }: { className?: string }) {
           )}
         >
           {a.vertexCount === 0
-            ? "Граф порожній — додайте вершини."
+            ? t("editor.emptyGraph")
             : a.isConnected
-              ? "Граф зв'язний — існує остовне дерево (МОД)."
-              : `Граф незв'язний (${a.componentCount} компонент) — буде остовний ліс.`}
+              ? t("editor.connConnected")
+              : t("editor.connDisconnected", { n: a.componentCount })}
         </div>
       </CardContent>
     </Card>

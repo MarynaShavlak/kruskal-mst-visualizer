@@ -23,6 +23,7 @@ import { CityNode } from "@/algorithms/held-karp/editor/CityNode"
 import { CoordinatesDialog } from "@/algorithms/held-karp/editor/CoordinatesDialog"
 import { DistanceMatrixPanel } from "@/algorithms/held-karp/editor/DistanceMatrixPanel"
 import { useTspEditor } from "@/algorithms/held-karp/editor/use-tsp-editor"
+import { useT } from "@/i18n/use-t"
 import { useThemeStore } from "@/store/theme-store"
 
 const nodeTypes: NodeTypes = { city: CityNode }
@@ -43,28 +44,29 @@ function EditorCanvas() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [coordsOpen, setCoordsOpen] = useState(false)
   const ctrl = useTspEditor()
+  const t = useT()
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" onClick={ctrl.onLoadExample}>
-          <BookOpen /> Приклад A–E
+          <BookOpen /> {t("editor.hkExample")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
-          <Shuffle /> Випадковий
+          <Shuffle /> {t("editor.random")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onAddCity}>
-          <Plus /> Місто
+          <Plus /> {t("editor.hkCity")}
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => setCoordsOpen(true)}
         >
-          <MapPin /> Координати
+          <MapPin /> {t("editor.hkCoords")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onClear}>
-          <Trash2 /> Очистити
+          <Trash2 /> {t("editor.clear")}
         </Button>
         <div className="mx-1 h-5 w-px bg-border" />
         <Button
@@ -72,13 +74,13 @@ function EditorCanvas() {
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload /> Імпорт
+          <Upload /> {t("editor.import")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onExport}>
-          <Download /> Експорт
+          <Download /> {t("editor.export")}
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onShare}>
-          <Share2 /> Поділитися
+          <Share2 /> {t("editor.share")}
         </Button>
         <input
           ref={fileInputRef}
@@ -113,13 +115,7 @@ function EditorCanvas() {
         <DistanceMatrixPanel className="lg:w-80" />
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Подвійний клік по полю — додати місто; перетягни місто — змінити
-        координати (зі снапом до сітки); подвійний клік по місту — зробити його
-        стартом; Delete — видалити виділене. Кнопка «Координати» — ввести точні
-        x/y кожного міста вручну. Відстані в матриці — евклідові, перераховуються
-        автоматично.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("editor.hkHelp")}</p>
 
       <CoordinatesDialog
         open={coordsOpen}
