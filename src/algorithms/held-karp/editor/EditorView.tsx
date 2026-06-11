@@ -23,6 +23,7 @@ import { CityNode } from "@/algorithms/held-karp/editor/CityNode"
 import { CoordinatesDialog } from "@/algorithms/held-karp/editor/CoordinatesDialog"
 import { DistanceMatrixPanel } from "@/algorithms/held-karp/editor/DistanceMatrixPanel"
 import { useTspEditor } from "@/algorithms/held-karp/editor/use-tsp-editor"
+import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
 import { useT } from "@/i18n/use-t"
 import { useThemeStore } from "@/store/theme-store"
 
@@ -115,7 +116,16 @@ function EditorCanvas() {
         <DistanceMatrixPanel className="lg:w-80" />
       </div>
 
-      <p className="text-xs text-muted-foreground">{t("editor.hkHelp")}</p>
+      <EditorHelp
+        items={[
+          { action: t("editor.helpDblCanvas"), desc: t("editor.helpAddCity") },
+          { action: t("editor.helpDragCity"), desc: t("editor.helpChangeCoords") },
+          { action: t("editor.helpDblCity"), desc: t("editor.helpMakeStart") },
+          { action: "Delete", desc: t("editor.helpRemoveSelection") },
+          { action: t("editor.helpCoordsBtn"), desc: t("editor.helpEnterCoords") },
+        ]}
+        note={t("editor.helpHkNote")}
+      />
 
       <CoordinatesDialog
         open={coordsOpen}

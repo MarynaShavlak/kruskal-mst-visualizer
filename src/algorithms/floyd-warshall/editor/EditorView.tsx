@@ -34,6 +34,7 @@ import {
   useWeightPrompt,
   WeightDialog,
 } from "@/algorithms/floyd-warshall/editor/WeightDialog"
+import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
 import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
 import { tr, useT } from "@/i18n/use-t"
 import { useDirectedGraphStore } from "@/store/directed-graph-store"
@@ -218,7 +219,17 @@ function EditorCanvas() {
         <AdjacencyMatrixPanel className="lg:w-72" />
       </div>
 
-      <p className="text-xs text-muted-foreground">{t("editor.fwHelp")}</p>
+      <EditorHelp
+        items={[
+          { action: t("editor.helpDblCanvas"), desc: t("editor.helpAddVertex") },
+          {
+            action: t("editor.helpDragNodes"),
+            desc: t("editor.helpAddDirectedEdge"),
+          },
+          { action: t("editor.helpDblEdge"), desc: t("editor.helpChangeWeight") },
+          { action: "Delete", desc: t("editor.helpRemoveSelection") },
+        ]}
+      />
 
       <WeightDialog {...dialogProps} />
     </div>

@@ -72,8 +72,6 @@ const ua = {
   "editor.connConnected": "Граф зв'язний — існує остовне дерево (МОД).",
   "editor.connDisconnected":
     "Граф незв'язний ({n} компонент) — буде остовний ліс.",
-  "editor.kruskalHelp":
-    "Подвійний клік по полю — додати вершину; перетягни від вузла до вузла — ребро (із запитом ваги); подвійний клік по ребру — змінити вагу; Delete — видалити виділене.",
   // Флойд–Воршал.
   "editor.fwExample": "Приклад A–F",
   "editor.fwNegEdge": "Від'ємне ребро",
@@ -83,14 +81,10 @@ const ua = {
   "editor.fwEdgesDirected": "Ребра (напрямлені)",
   "editor.fwNegCycleWarn":
     "Виявлено від'ємний цикл (на діагоналі найкоротших відстаней з'являється від'ємне значення) — найкоротші шляхи не визначені.",
-  "editor.fwHelp":
-    "Подвійний клік по полю — додати вершину; перетягни від вузла до вузла — напрямлене ребро (із запитом ваги, можна від'ємну); подвійний клік по ребру — змінити вагу; Delete — видалити виділене.",
   // Хелда–Карпа.
   "editor.hkExample": "Приклад A–E",
   "editor.hkCity": "Місто",
   "editor.hkCoords": "Координати",
-  "editor.hkHelp":
-    "Подвійний клік по полю — додати місто; перетягни місто — змінити координати (зі снапом до сітки); подвійний клік по місту — зробити його стартом; Delete — видалити виділене. Кнопка «Координати» — ввести точні x/y кожного міста вручну. Відстані в матриці — евклідові, перераховуються автоматично.",
   "editor.hkStartCity": "Стартове місто",
   "editor.hkMakeStartHint": "Подвійний клік — зробити стартом",
   "editor.hkCoordsTitle": "Координати міст",
@@ -118,6 +112,24 @@ const ua = {
     "Багато міст: час і пам'ять Хелда–Карпа (O(n·2ⁿ)) помітно зростають.",
   "editor.hkWarnTooMany":
     "Забагато міст — Хелда–Карпа недоцільно запускати у браузері: пам'ять O(n·2ⁿ) вибухає. Зменште кількість міст.",
+  // Підказка під редактором — дії (чипи) та їхній ефект.
+  "editor.helpDblCanvas": "Подвійний клік по полю",
+  "editor.helpDragNodes": "Перетягнути між вузлами",
+  "editor.helpDblEdge": "Подвійний клік по ребру",
+  "editor.helpDragCity": "Перетягнути місто",
+  "editor.helpDblCity": "Подвійний клік по місту",
+  "editor.helpCoordsBtn": "Кнопка «Координати»",
+  "editor.helpAddVertex": "додати вершину",
+  "editor.helpAddEdge": "ребро із запитом ваги",
+  "editor.helpAddDirectedEdge": "напрямлене ребро, можна від'ємну вагу",
+  "editor.helpChangeWeight": "змінити вагу",
+  "editor.helpRemoveSelection": "видалити виділене",
+  "editor.helpAddCity": "додати місто",
+  "editor.helpChangeCoords": "змінити координати (снап до сітки)",
+  "editor.helpMakeStart": "зробити стартом",
+  "editor.helpEnterCoords": "ввести точні x/y вручну",
+  "editor.helpHkNote":
+    "Відстані в матриці — евклідові, перераховуються автоматично.",
   "editor.numK": " тис.",
   "editor.numM": " млн",
   "editor.numB": " млрд",
@@ -188,8 +200,6 @@ const en: Record<MessageKey, string> = {
     "The graph is connected — a spanning tree (MST) exists.",
   "editor.connDisconnected":
     "The graph is disconnected ({n} components) — it will be a spanning forest.",
-  "editor.kruskalHelp":
-    "Double-click the canvas to add a vertex; drag from node to node to create an edge (with a weight prompt); double-click an edge to change its weight; Delete to remove the selection.",
   "editor.fwExample": "Example A–F",
   "editor.fwNegEdge": "Negative edge",
   "editor.fwNegCycle": "Negative cycle",
@@ -198,13 +208,9 @@ const en: Record<MessageKey, string> = {
   "editor.fwEdgesDirected": "Edges (directed)",
   "editor.fwNegCycleWarn":
     "A negative cycle was detected (a negative value appears on the diagonal of shortest distances) — shortest paths are undefined.",
-  "editor.fwHelp":
-    "Double-click the canvas to add a vertex; drag from node to node to create a directed edge (with a weight prompt, may be negative); double-click an edge to change its weight; Delete to remove the selection.",
   "editor.hkExample": "Example A–E",
   "editor.hkCity": "City",
   "editor.hkCoords": "Coordinates",
-  "editor.hkHelp":
-    "Double-click the canvas to add a city; drag a city to change its coordinates (snapped to the grid); double-click a city to make it the start; Delete to remove the selection. The “Coordinates” button lets you enter exact x/y for each city manually. Matrix distances are Euclidean and recomputed automatically.",
   "editor.hkStartCity": "Start city",
   "editor.hkMakeStartHint": "Double-click to make it the start",
   "editor.hkCoordsTitle": "City coordinates",
@@ -232,6 +238,23 @@ const en: Record<MessageKey, string> = {
     "Many cities: Held–Karp time and memory (O(n·2ⁿ)) grow noticeably.",
   "editor.hkWarnTooMany":
     "Too many cities — Held–Karp isn't practical in the browser: memory O(n·2ⁿ) blows up. Reduce the number of cities.",
+  "editor.helpDblCanvas": "Double-click the canvas",
+  "editor.helpDragNodes": "Drag between nodes",
+  "editor.helpDblEdge": "Double-click an edge",
+  "editor.helpDragCity": "Drag a city",
+  "editor.helpDblCity": "Double-click a city",
+  "editor.helpCoordsBtn": "“Coordinates” button",
+  "editor.helpAddVertex": "add a vertex",
+  "editor.helpAddEdge": "an edge (with a weight prompt)",
+  "editor.helpAddDirectedEdge": "a directed edge (weight may be negative)",
+  "editor.helpChangeWeight": "change its weight",
+  "editor.helpRemoveSelection": "remove the selection",
+  "editor.helpAddCity": "add a city",
+  "editor.helpChangeCoords": "change coordinates (snapped to the grid)",
+  "editor.helpMakeStart": "make it the start",
+  "editor.helpEnterCoords": "enter exact x/y manually",
+  "editor.helpHkNote":
+    "Matrix distances are Euclidean and recomputed automatically.",
   "editor.numK": "k",
   "editor.numM": "M",
   "editor.numB": "B",

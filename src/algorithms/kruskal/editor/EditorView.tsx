@@ -24,6 +24,7 @@ import { ConnectivityPanel } from "@/algorithms/kruskal/editor/ConnectivityPanel
 import { codec } from "@/algorithms/kruskal/editor/graph-doc"
 import { VertexNode } from "@/algorithms/kruskal/editor/VertexNode"
 import { useWeightPrompt, WeightDialog } from "@/algorithms/kruskal/editor/WeightDialog"
+import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
 import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
 import { useT } from "@/i18n/use-t"
 import { useGraphStore } from "@/store/graph-store"
@@ -169,7 +170,14 @@ function EditorCanvas() {
         <ConnectivityPanel className="lg:w-72" />
       </div>
 
-      <p className="text-xs text-muted-foreground">{t("editor.kruskalHelp")}</p>
+      <EditorHelp
+        items={[
+          { action: t("editor.helpDblCanvas"), desc: t("editor.helpAddVertex") },
+          { action: t("editor.helpDragNodes"), desc: t("editor.helpAddEdge") },
+          { action: t("editor.helpDblEdge"), desc: t("editor.helpChangeWeight") },
+          { action: "Delete", desc: t("editor.helpRemoveSelection") },
+        ]}
+      />
 
       <WeightDialog {...dialogProps} />
     </div>
