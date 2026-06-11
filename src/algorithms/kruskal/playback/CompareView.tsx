@@ -8,6 +8,7 @@ import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
 import { ResultCard } from "@/algorithms/kruskal/playback/SinglePlayer"
 import { decisionFrameIndices } from "@/algorithms/kruskal/playback/highlight"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { useT } from "@/i18n/use-t"
 
 export function CompareView({
   graph,
@@ -26,6 +27,7 @@ export function CompareView({
     [naiveRun],
   )
 
+  const t = useT()
   const stepCount = dsuDecisions.length + 1 // 0 = старт, далі по одному ребру
   const player = usePlayer(stepCount, dsuRun.trace)
   const step = Math.min(player.index, stepCount - 1)
@@ -41,12 +43,15 @@ export function CompareView({
 
       <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
         {step === 0 ? (
-          "Старт: обидві версії починають з порожньої МОД."
+          t("play.cmpStart")
         ) : (
           <>
-            <span className="font-medium">Ребро-крок {step}/{stepCount - 1}.</span>{" "}
-            <b>DSU:</b> {dsuFrame.caption} <span className="text-muted-foreground">·</span>{" "}
-            <b>Наївна:</b> {naiveFrame.caption}
+            <span className="font-medium">
+              {t("play.edgeStep")} {step}/{stepCount - 1}.
+            </span>{" "}
+            <b>DSU:</b> {dsuFrame.caption}{" "}
+            <span className="text-muted-foreground">·</span>{" "}
+            <b>{t("play.cmpNaive")}:</b> {naiveFrame.caption}
           </>
         )}
       </div>
@@ -57,7 +62,7 @@ export function CompareView({
           positions={positions}
           trace={dsuRun.trace}
           frame={dsuFrame}
-          title="DSU — множини (кольори компонент)"
+          title={t("play.cmpGraphDsu")}
           className="min-h-[340px]"
         />
         <GraphView
@@ -65,14 +70,13 @@ export function CompareView({
           positions={positions}
           trace={naiveRun.trace}
           frame={naiveFrame}
-          title="Наївна — ліс (BFS)"
+          title={t("play.cmpGraphNaive")}
           className="min-h-[340px]"
         />
       </div>
 
       <div className="rounded-md border bg-primary/5 px-3 py-2 text-center text-sm">
-        Обидві реалізації приймають ті самі ребра й дають однакову МОД — різниться
-        лише внутрішня механіка: DSU-множини проти BFS у допоміжному лісі.
+        {t("play.cmpNote")}
       </div>
 
       <div className="grid gap-3 lg:grid-cols-3">

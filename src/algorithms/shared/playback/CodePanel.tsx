@@ -1,5 +1,6 @@
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { useShikiLines } from "@/algorithms/shared/playback/use-shiki-lines"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 import { useThemeStore } from "@/store/theme-store"
 
@@ -7,7 +8,7 @@ export function CodePanel({
   code,
   activeLines,
   contextLines = [],
-  title = "Код",
+  title,
   className,
 }: {
   code: readonly string[]
@@ -21,9 +22,10 @@ export function CodePanel({
   const result = useShikiLines(code, isDark)
   const active = new Set(activeLines)
   const context = new Set(contextLines)
+  const t = useT()
 
   return (
-    <Panel title={title} className={className} bodyClassName="p-0">
+    <Panel title={title ?? t("play.code")} className={className} bodyClassName="p-0">
       <pre
         className="h-full overflow-auto p-2 text-[12.5px] leading-[1.6]"
         style={{ background: result?.bg ?? (isDark ? "#0d1117" : "#ffffff") }}

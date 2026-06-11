@@ -1,5 +1,6 @@
 import type { Frame } from "@/lib/trace"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { useT } from "@/i18n/use-t"
 
 export function NaiveStatePanel({
   frame,
@@ -8,6 +9,7 @@ export function NaiveStatePanel({
   frame: Frame
   className?: string
 }) {
+  const t = useT()
   const sub = frame.sub
   const at = sub.kind === "bfs-visit" ? sub.at : null
   const frontier = sub.kind === "bfs-visit" ? sub.frontier : []
@@ -19,15 +21,12 @@ export function NaiveStatePanel({
         : []
 
   return (
-    <Panel title="BFS у допоміжному лісі" className={className}>
+    <Panel title={t("play.naiveTitle")} className={className}>
       <div className="space-y-2 text-sm">
-        <Row label="Поточна вершина" value={at ?? "—"} accent />
-        <Row label="Черга (фронтир)" value={frontier.length ? frontier.join(", ") : "—"} />
-        <Row label="Відвідані" value={visited.length ? visited.join(", ") : "—"} />
-        <p className="pt-1 text-xs text-muted-foreground">
-          Ребро додається лише тоді, коли BFS НЕ знайшов шлях між його кінцями
-          (інакше — цикл).
-        </p>
+        <Row label={t("play.curVertex")} value={at ?? "—"} accent />
+        <Row label={t("play.queue")} value={frontier.length ? frontier.join(", ") : "—"} />
+        <Row label={t("play.visited")} value={visited.length ? visited.join(", ") : "—"} />
+        <p className="pt-1 text-xs text-muted-foreground">{t("play.naiveHint")}</p>
       </div>
     </Panel>
   )

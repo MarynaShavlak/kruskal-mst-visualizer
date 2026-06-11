@@ -7,6 +7,7 @@ import {
   subsetMembers,
 } from "@/algorithms/held-karp/playback/highlight"
 import type { HkFrame, HkResult } from "@/lib/heldKarpTrace"
+import { useT } from "@/i18n/use-t"
 import type { ReadonlyMatrix, TspCity } from "@/lib/tsp"
 
 const VB = 360 // логічний бік viewBox
@@ -38,6 +39,7 @@ export function TourMapPanel({
   frame: HkFrame
   className?: string
 }) {
+  const t = useT()
   const n = cities.length
   const xs = cities.map((c) => c.x)
   const ys = cities.map((c) => c.y)
@@ -68,7 +70,7 @@ export function TourMapPanel({
 
   return (
     <Panel
-      title="Карта міст і маршрут"
+      title={t("play.hkMapTitle")}
       className={className}
       bodyClassName="p-0"
     >
@@ -138,14 +140,14 @@ export function TourMapPanel({
       </svg>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t px-3 py-2 text-[11px] text-muted-foreground">
-        <Dot color={C_START}>старт</Dot>
+        <Dot color={C_START}>{t("play.legStart")}</Dot>
         <Dot color={C_END} ring>
-          кінець j
+          {t("play.legEndJ")}
         </Dot>
-        <Dot color={C_PATH}>маршрут</Dot>
+        <Dot color={C_PATH}>{t("play.legRoute")}</Dot>
         {pathLen != null && (
           <span className="ml-auto tabular-nums">
-            {isCycle ? "цикл" : "шлях"}:{" "}
+            {isCycle ? t("play.cycle") : t("play.path")}:{" "}
             <b className="text-foreground">{fmt(pathLen)}</b>
           </span>
         )}

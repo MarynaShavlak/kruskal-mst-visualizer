@@ -8,6 +8,7 @@ import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
+import { useT } from "@/i18n/use-t"
 
 export function SinglePlayer({
   graph,
@@ -29,6 +30,7 @@ export function SinglePlayer({
   const { trace, result } = run
   const player = usePlayer(trace.frames.length, trace)
   const frame = trace.frames[Math.min(player.index, trace.frames.length - 1)]
+  const t = useT()
 
   const firstFrameOfEdge = useMemo(() => {
     const map = new Map<string, number>()
@@ -49,15 +51,15 @@ export function SinglePlayer({
         frame.dsuStats && (
           <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
             <span>
-              <b>find-кроків:</b>{" "}
+              <b>{t("play.findSteps")}</b>{" "}
               <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
             </span>
             <span>
-              <b>об'єднань:</b>{" "}
+              <b>{t("play.unions")}</b>{" "}
               <span className="tabular-nums">{frame.dsuStats.unions}</span>
             </span>
             <span>
-              <b>стиснень шляху:</b>{" "}
+              <b>{t("play.compressions")}</b>{" "}
               <span className="tabular-nums">{frame.dsuStats.compressions}</span>
             </span>
           </div>
@@ -102,20 +104,22 @@ export function SinglePlayer({
 }
 
 export function ResultCard({ result }: { result: MstResult }) {
+  const t = useT()
   return (
     <Card>
       <CardContent className="space-y-1 py-4 text-sm">
         <div className="text-muted-foreground">
-          Підсумок ({result.algo === "dsu" ? "DSU" : "наївна"})
+          {t("play.summary")} (
+          {result.algo === "dsu" ? "DSU" : t("play.naiveLower")})
         </div>
         <div className="text-2xl font-semibold tabular-nums">
-          Вага МОД: {result.totalWeight}
+          {t("play.mstWeight")} {result.totalWeight}
         </div>
         <div>
-          {result.mstEdgeIds.length} ребер ·{" "}
+          {t("play.edgesCount", { n: result.mstEdgeIds.length })} ·{" "}
           {result.isSpanning
-            ? "остовне дерево"
-            : "остовний ліс (граф незв'язний)"}
+            ? t("play.spanningTree")
+            : t("play.spanningForest")}
         </div>
       </CardContent>
     </Card>

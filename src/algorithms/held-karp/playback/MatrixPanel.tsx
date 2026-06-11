@@ -6,6 +6,7 @@ import {
   subsetMembers,
 } from "@/algorithms/held-karp/playback/highlight"
 import type { HkFrame, HkResult } from "@/lib/heldKarpTrace"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 /**
@@ -23,6 +24,7 @@ export function MatrixPanel({
   frame: HkFrame
   className?: string
 }) {
+  const t = useT()
   const n = result.names.length
   const edge = activeEdge(frame, result.start)
   const edgeSet = edge
@@ -35,7 +37,7 @@ export function MatrixPanel({
 
   return (
     <Panel
-      title="Матриця відстаней"
+      title={t("play.hkMatrixTitle")}
       className={className}
       bodyClassName="overflow-auto p-3"
     >
@@ -77,9 +79,9 @@ export function MatrixPanel({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-        <Swatch className="ring-2 ring-inset ring-amber-500">активне ребро</Swatch>
-        <Swatch className="bg-violet-500/30">старт</Swatch>
-        <Swatch className="ring-2 ring-inset ring-amber-500/40">кінець j</Swatch>
+        <Swatch className="ring-2 ring-inset ring-amber-500">{t("play.legActiveEdge")}</Swatch>
+        <Swatch className="bg-violet-500/30">{t("play.legStart")}</Swatch>
+        <Swatch className="ring-2 ring-inset ring-amber-500/40">{t("play.legEndJ")}</Swatch>
       </div>
     </Panel>
   )

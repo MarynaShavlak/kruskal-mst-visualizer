@@ -1,5 +1,6 @@
 import { Pause, Play, SkipBack, StepBack, StepForward } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useT } from "@/i18n/use-t"
 import type { Player } from "@/algorithms/shared/playback/use-player"
 
 const SPEEDS = [
@@ -11,6 +12,7 @@ const SPEEDS = [
 export function PlayerControls({ player }: { player: Player }) {
   const { index, isPlaying, speedMs, frameCount, dispatch } = player
   const last = frameCount - 1
+  const t = useT()
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -18,7 +20,7 @@ export function PlayerControls({ player }: { player: Player }) {
         size="icon-sm"
         variant="outline"
         onClick={() => dispatch({ type: "reset" })}
-        title="На початок"
+        title={t("play.toStart")}
       >
         <SkipBack />
       </Button>
@@ -27,14 +29,14 @@ export function PlayerControls({ player }: { player: Player }) {
         variant="outline"
         onClick={() => dispatch({ type: "prev" })}
         disabled={index <= 0}
-        title="Крок назад"
+        title={t("play.stepBack")}
       >
         <StepBack />
       </Button>
       <Button
         size="icon"
         onClick={() => dispatch({ type: "toggle" })}
-        title={isPlaying ? "Пауза" : "Грати"}
+        title={isPlaying ? t("play.pause") : t("play.play")}
       >
         {isPlaying ? <Pause /> : <Play />}
       </Button>
@@ -43,7 +45,7 @@ export function PlayerControls({ player }: { player: Player }) {
         variant="outline"
         onClick={() => dispatch({ type: "next" })}
         disabled={index >= last}
-        title="Крок вперед"
+        title={t("play.stepForward")}
       >
         <StepForward />
       </Button>
@@ -55,7 +57,7 @@ export function PlayerControls({ player }: { player: Player }) {
         value={index}
         onChange={(e) => dispatch({ type: "seek", index: Number(e.target.value) })}
         className="mx-2 h-1.5 min-w-[140px] flex-1 cursor-pointer accent-primary"
-        aria-label="Таймлайн"
+        aria-label={t("play.timeline")}
       />
       <span className="tabular-nums text-sm text-muted-foreground">
         {index + 1} / {frameCount}

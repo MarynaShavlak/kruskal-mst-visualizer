@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import type { Relaxation } from "@/algorithms/floyd-warshall/playback/highlight"
+import { useT } from "@/i18n/use-t"
 import { INF } from "@/lib/floydWarshall"
 import type { Vertex } from "@/lib/directedGraph"
 import { cn } from "@/lib/utils"
@@ -23,25 +24,26 @@ export function RelaxationLog({
   className?: string
 }) {
   const lastIdx = relaxations.length - 1
+  const t = useT()
 
   return (
     <Panel
-      title={`Журнал релаксацій (${relaxations.length})`}
+      title={t("play.relaxLog", { n: relaxations.length })}
       className={className}
       bodyClassName="p-0"
     >
       <div className="max-h-[280px] overflow-auto">
         {relaxations.length === 0 ? (
           <p className="px-3 py-4 text-sm text-muted-foreground">
-            Ще немає покращень — почніть програвання.
+            {t("play.relaxEmpty")}
           </p>
         ) : (
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-muted/70 text-xs text-muted-foreground">
               <tr>
-                <th className="px-3 py-1.5 text-left font-medium">через k</th>
-                <th className="px-3 py-1.5 text-left font-medium">шлях</th>
-                <th className="px-3 py-1.5 text-right font-medium">було → стало</th>
+                <th className="px-3 py-1.5 text-left font-medium">{t("play.colViaK")}</th>
+                <th className="px-3 py-1.5 text-left font-medium">{t("play.colPath")}</th>
+                <th className="px-3 py-1.5 text-right font-medium">{t("play.colBeforeAfter")}</th>
               </tr>
             </thead>
             <tbody>

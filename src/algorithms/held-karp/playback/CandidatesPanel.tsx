@@ -7,6 +7,7 @@ import {
   subsetMembers,
 } from "@/algorithms/held-karp/playback/highlight"
 import type { HkFrame, HkResult } from "@/lib/heldKarpTrace"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 type RowState = "chosen" | "active" | "rejected" | "normal"
@@ -26,11 +27,12 @@ export function CandidatesPanel({
   frame: HkFrame
   className?: string
 }) {
+  const t = useT()
   const closing = frame.phase === "closing" || frame.phase === "done"
 
   return (
     <Panel
-      title="Вибір у min()"
+      title={t("play.candTitle")}
       className={className}
       bodyClassName="overflow-auto p-3"
     >
@@ -39,9 +41,7 @@ export function CandidatesPanel({
       ) : frame.candidates.length > 0 ? (
         <CellList result={result} frame={frame} />
       ) : (
-        <p className="text-sm text-muted-foreground">
-          Тут з'явиться розбір min() — коли почнемо рахувати комірку dp.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("play.candEmpty")}</p>
       )}
     </Panel>
   )
@@ -54,6 +54,7 @@ function CellList({
   result: HkResult
   frame: HkFrame
 }): ReactNode {
+  const t = useT()
   const n = result.names.length
   const subsetLbl =
     frame.subset !== null
@@ -81,9 +82,10 @@ function CellList({
             <Row
               key={i}
               chip={result.names[c.k]}
-              chipTitle={`блок ${c.blockPath
-                .map((x) => result.names[x])
-                .join(" → ")} → ${endName}`}
+              chipTitle={t("play.candBlock", {
+                path: c.blockPath.map((x) => result.names[x]).join(" → "),
+                end: endName,
+              })}
               expr={`${fmt(c.blockCost)} + ${fmt(c.edge)}`}
               total={c.total}
               state={state}
@@ -102,6 +104,7 @@ function ClosingList({
   result: HkResult
   frame: HkFrame
 }): ReactNode {
+  const t = useT()
   const startName = result.names[result.start]
   const cands = closingCandidates(result)
   const activeJ =
@@ -113,9 +116,7 @@ function ClosingList({
 
   return (
     <>
-      <Formula>
-        тур = min( dp[усі, j] + dist[j→{startName}] )
-      </Formula>
+      <Formula>{t("play.candClosingFormula", { start: startName })}</Formula>
       <ul className="mt-2 space-y-1">
         {cands.map((c) => {
           const state: RowState =
@@ -124,7 +125,10 @@ function ClosingList({
             <Row
               key={c.j}
               chip={result.names[c.j]}
-              chipTitle={`кінець ${result.names[c.j]} → ${startName}`}
+              chipTitle={t("play.candEnd", {
+                j: result.names[c.j],
+                start: startName,
+              })}
               expr={`${fmt(c.blockCost)} + ${fmt(c.edge)}`}
               total={c.total}
               state={state}

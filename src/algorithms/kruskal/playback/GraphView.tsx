@@ -8,6 +8,7 @@ import {
   type EdgeStatus,
 } from "@/algorithms/kruskal/playback/highlight"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { useT } from "@/i18n/use-t"
 import { circularLayout } from "@/store/presets"
 import type { XY } from "@/store/graph-store"
 
@@ -51,7 +52,7 @@ export function GraphView({
   positions,
   trace,
   frame,
-  title = "Граф (кольори компонент)",
+  title,
   className,
 }: {
   graph: Graph
@@ -61,6 +62,7 @@ export function GraphView({
   title?: string
   className?: string
 }) {
+  const t = useT()
   const allHavePos = graph.vertices.every((v) => positions[v])
   const pos = allHavePos ? positions : circularLayout(graph.vertices)
   const colors = colorByRoot(componentRoots(graph, frame))
@@ -76,7 +78,7 @@ export function GraphView({
   const viewBox = `${minX} ${minY} ${maxX - minX} ${maxY - minY}`
 
   return (
-    <Panel title={title} className={className} bodyClassName="p-0">
+    <Panel title={title ?? t("play.graphCompon")} className={className} bodyClassName="p-0">
       <svg viewBox={viewBox} className="h-full w-full" preserveAspectRatio="xMidYMid meet">
         {graph.edges.map((e) => {
           const a = pos[e.u]

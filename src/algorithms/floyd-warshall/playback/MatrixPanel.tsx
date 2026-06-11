@@ -1,6 +1,7 @@
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { cellFormula, cellRole } from "@/algorithms/floyd-warshall/playback/highlight"
 import type { FwFrame } from "@/lib/floydWarshallTrace"
+import { useT } from "@/i18n/use-t"
 import { INF } from "@/lib/floydWarshall"
 import type { Vertex } from "@/lib/directedGraph"
 import { cn } from "@/lib/utils"
@@ -22,10 +23,11 @@ export function MatrixPanel({
   const n = order.length
   const matrix = frame.matrix
   const k = frame.k
+  const t = useT()
 
   return (
     <Panel
-      title="Матриця відстаней D"
+      title={t("play.matrixD")}
       className={className}
       bodyClassName="overflow-auto p-3"
     >
@@ -65,6 +67,7 @@ function FormulaBox({
   order: readonly Vertex[]
 }) {
   const f = cellFormula(frame, order)
+  const t = useT()
 
   if (!f) {
     return (
@@ -92,7 +95,7 @@ function FormulaBox({
           {f.result}
         </span>
         {!f.improved && (
-          <span className="ml-1 text-muted-foreground">(без змін)</span>
+          <span className="ml-1 text-muted-foreground">{t("play.fwNoChange")}</span>
         )}
       </div>
     </div>
@@ -191,12 +194,13 @@ function Cell({
 }
 
 function Legend() {
+  const t = useT()
   return (
     <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
       <Swatch className="ring-2 ring-inset ring-amber-500">D[i][j]</Swatch>
-      <Swatch className="bg-sky-400/40">доданки</Swatch>
-      <Swatch className="bg-emerald-400/35">покращено</Swatch>
-      <Swatch className="bg-indigo-500/20">рядок/стовпець k</Swatch>
+      <Swatch className="bg-sky-400/40">{t("play.legSummands")}</Swatch>
+      <Swatch className="bg-emerald-400/35">{t("play.legImproved")}</Swatch>
+      <Swatch className="bg-indigo-500/20">{t("play.legRowColK")}</Swatch>
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { useDirectedGraphStore } from "@/store/directed-graph-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { useT } from "@/i18n/use-t"
 import { GraphView } from "@/algorithms/floyd-warshall/playback/GraphView"
 import { relaxationsUpTo } from "@/algorithms/floyd-warshall/playback/highlight"
 import { MatrixPanel } from "@/algorithms/floyd-warshall/playback/MatrixPanel"
@@ -30,12 +31,13 @@ export function PlaybackView() {
     () => relaxationsUpTo(trace, index),
     [trace, index],
   )
+  const t = useT()
 
   if (graph.vertices.length === 0) {
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Граф порожній — створіть його у вкладці «Редактор».
+          {t("play.emptyGraph")}
         </CardContent>
       </Card>
     )
@@ -50,21 +52,22 @@ export function PlaybackView() {
       captionBadge={
         frame.negativeCycle && (
           <span className="ml-2 inline-flex items-center gap-1 rounded bg-destructive/10 px-1.5 py-0.5 text-xs font-medium text-destructive">
-            <AlertTriangle className="size-3.5" /> від'ємний цикл
+            <AlertTriangle className="size-3.5" /> {t("play.negCycle")}
           </span>
         )
       }
       statsBar={
         <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
           <span>
-            <b>проміжна k:</b> <span className="tabular-nums">{kLabel}</span>
+            <b>{t("play.intermediateK")}</b>{" "}
+            <span className="tabular-nums">{kLabel}</span>
           </span>
           <span>
-            <b>релаксацій усього:</b>{" "}
+            <b>{t("play.relaxTotal")}</b>{" "}
             <span className="tabular-nums">{relaxations.length}</span>
           </span>
           <span>
-            <b>покращено на цьому k:</b>{" "}
+            <b>{t("play.improvedThisK")}</b>{" "}
             <span className="tabular-nums">{frame.improvedThisK.length}</span>
           </span>
         </div>
@@ -78,7 +81,7 @@ export function PlaybackView() {
           />
           <CodePanel
             code={trace.code}
-            title="Код (Флойд–Воршал)"
+            title={t("play.codeFw")}
             activeLines={frame.lines}
             contextLines={frame.contextLines}
             className="min-h-[360px]"
@@ -111,21 +114,23 @@ export function PlaybackView() {
 }
 
 function ResultCard({ result }: { result: FwResult }) {
+  const t = useT()
   return (
     <Card>
       <CardContent className="space-y-1 py-4 text-sm">
-        <div className="text-muted-foreground">Підсумок</div>
+        <div className="text-muted-foreground">{t("play.summary")}</div>
         {result.hasNegativeCycle ? (
           <div className="flex items-center gap-1.5 text-lg font-semibold text-destructive">
-            <AlertTriangle className="size-5" /> Від'ємний цикл
+            <AlertTriangle className="size-5" /> {t("play.fwNegCycleCap")}
           </div>
         ) : (
-          <div className="text-lg font-semibold">
-            Найкоротші відстані між усіма парами знайдено
-          </div>
+          <div className="text-lg font-semibold">{t("play.fwAllPairs")}</div>
         )}
         <div>
-          {result.order.length} вершин · {result.improvedCount} релаксацій
+          {t("play.fwResultStats", {
+            n: result.order.length,
+            m: result.improvedCount,
+          })}
         </div>
       </CardContent>
     </Card>

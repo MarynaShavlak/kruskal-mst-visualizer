@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useT } from "@/i18n/use-t"
 import { INF, reconstructPath } from "@/lib/floydWarshall"
 import type { FwResult } from "@/lib/floydWarshallTrace"
 
@@ -22,23 +23,24 @@ export function PathExplorer({
 
   const u = Math.min(from, n - 1)
   const v = Math.min(to, n - 1)
+  const t = useT()
 
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>Відновлення шляху</CardTitle>
+        <CardTitle>{t("play.pathReconstruct")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         {result.hasNegativeCycle ? (
           <p className="rounded-md bg-destructive/10 px-2 py-1.5 text-xs text-destructive">
-            Граф містить від'ємний цикл — найкоротші шляхи не визначені.
+            {t("play.fwNegCycleUndefined")}
           </p>
         ) : (
           <>
             <div className="flex items-center gap-2">
-              <VertexSelect value={u} order={order} onChange={setFrom} label="звідки" />
+              <VertexSelect value={u} order={order} onChange={setFrom} label={t("play.from")} />
               <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
-              <VertexSelect value={v} order={order} onChange={setTo} label="куди" />
+              <VertexSelect value={v} order={order} onChange={setTo} label={t("play.to")} />
             </div>
             <PathResult result={result} u={u} v={v} />
           </>
@@ -85,6 +87,7 @@ function PathResult({
   v: number
 }) {
   const dist = result.dist[u][v]
+  const t = useT()
   let path: number[] | null = null
   try {
     path = reconstructPath(result.nxt, u, v)
@@ -95,7 +98,7 @@ function PathResult({
   if (dist === INF || path === null) {
     return (
       <p className="text-muted-foreground">
-        Шляху {result.order[u]} → {result.order[v]} немає (∞).
+        {t("play.noPath", { u: result.order[u], v: result.order[v] })}
       </p>
     )
   }
@@ -113,11 +116,11 @@ function PathResult({
         ))}
       </div>
       <div className="text-muted-foreground">
-        Довжина шляху:{" "}
+        {t("play.pathLength")}{" "}
         <b className="tabular-nums text-foreground">{dist}</b>
         {" · "}
         {path.length - 1}{" "}
-        {path.length - 1 === 1 ? "ребро" : "ребер"}
+        {path.length - 1 === 1 ? t("play.edgeSingular") : t("play.edgesPlural")}
       </div>
     </div>
   )

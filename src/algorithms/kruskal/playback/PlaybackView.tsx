@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { DEFAULT_DSU_OPTIONS, type DsuOptions } from "@/lib/dsu"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { kruskalHasPath } from "@/lib/kruskalHasPath"
+import { useT } from "@/i18n/use-t"
 import { useGraphStore } from "@/store/graph-store"
 import { CompareView } from "@/algorithms/kruskal/playback/CompareView"
 import { DsuForestPanel } from "@/algorithms/kruskal/playback/DsuForestPanel"
@@ -12,17 +13,16 @@ import { SinglePlayer } from "@/algorithms/kruskal/playback/SinglePlayer"
 
 type Mode = "dsu" | "hasPath" | "compare"
 
-const MODES: { key: Mode; label: string }[] = [
-  { key: "dsu", label: "DSU" },
-  { key: "hasPath", label: "Наївна (BFS)" },
-  { key: "compare", label: "Порівняння" },
-]
+const MODE_KEYS: Mode[] = ["dsu", "hasPath", "compare"]
 
 export function PlaybackView() {
   const graph = useGraphStore((s) => s.graph)
   const positions = useGraphStore((s) => s.positions)
   const [mode, setMode] = useState<Mode>("dsu")
   const [dsuOptions, setDsuOptions] = useState<DsuOptions>(DEFAULT_DSU_OPTIONS)
+  const t = useT()
+  const modeLabel = (m: Mode): string =>
+    m === "dsu" ? "DSU" : m === "hasPath" ? t("play.modeNaive") : t("play.modeCompare")
 
   const dsuRun = useMemo(
     () => kruskalDsu(graph, dsuOptions),
@@ -34,7 +34,7 @@ export function PlaybackView() {
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Граф порожній — створіть його у вкладці «Редактор».
+          {t("play.emptyGraph")}
         </CardContent>
       </Card>
     )
@@ -42,7 +42,7 @@ export function PlaybackView() {
 
   const dsuOptionsBar = (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border bg-muted/20 px-3 py-2 text-sm">
-      <span className="font-medium">Оптимізації DSU:</span>
+      <span className="font-medium">{t("play.dsuOpts")}</span>
       <label className="flex cursor-pointer items-center gap-1.5">
         <input
           type="checkbox"
@@ -52,7 +52,7 @@ export function PlaybackView() {
             setDsuOptions((o) => ({ ...o, unionByRank: e.target.checked }))
           }
         />
-        об'єднання за рангом
+        {t("play.unionByRank")}
       </label>
       <label className="flex cursor-pointer items-center gap-1.5">
         <input
@@ -63,15 +63,13 @@ export function PlaybackView() {
             setDsuOptions((o) => ({ ...o, pathCompression: e.target.checked }))
           }
         />
-        стиснення шляху
+        {t("play.pathCompression")}
       </label>
       {!dsuOptions.unionByRank && !dsuOptions.pathCompression && (
-        <span className="text-amber-700">
-          без оптимізацій дерево вироджується в ланцюг — find стає O(n)
-        </span>
+        <span className="text-amber-700">{t("play.noOptWarn")}</span>
       )}
       <span className="ml-auto text-muted-foreground">
-        усього find-кроків:{" "}
+        {t("play.totalFindSteps")}{" "}
         <b className="tabular-nums text-foreground">
           {dsuRun.result.dsuStats?.findSteps ?? 0}
         </b>
@@ -82,15 +80,17 @@ export function PlaybackView() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-muted-foreground">Версія алгоритму:</span>
-        {MODES.map((m) => (
+        <span className="text-sm text-muted-foreground">
+          {t("play.algoVersion")}
+        </span>
+        {MODE_KEYS.map((m) => (
           <Button
-            key={m.key}
+            key={m}
             size="sm"
-            variant={mode === m.key ? "default" : "outline"}
-            onClick={() => setMode(m.key)}
+            variant={mode === m ? "default" : "outline"}
+            onClick={() => setMode(m)}
           >
-            {m.label}
+            {modeLabel(m)}
           </Button>
         ))}
       </div>
@@ -100,8 +100,8 @@ export function PlaybackView() {
           graph={graph}
           positions={positions}
           run={dsuRun}
-          codeTitle="Код — Краскал на DSU"
-          graphTitle="Граф — множини DSU (кольори компонент)"
+          codeTitle={t("play.codeDsu")}
+          graphTitle={t("play.graphDsu")}
           headerExtra={dsuOptionsBar}
           thirdPanel={(f) => (
             <DsuForestPanel snapshot={f.dsu} className="min-h-[360px]" />
@@ -114,8 +114,8 @@ export function PlaybackView() {
           graph={graph}
           positions={positions}
           run={naiveRun}
-          codeTitle="Код — наївний Краскал (BFS)"
-          graphTitle="Граф — допоміжний ліс + BFS"
+          codeTitle={t("play.codeNaive")}
+          graphTitle={t("play.graphNaive")}
           thirdPanel={(f) => (
             <NaiveStatePanel frame={f} className="min-h-[360px]" />
           )}

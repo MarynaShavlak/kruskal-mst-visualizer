@@ -3,6 +3,7 @@ import type { Graph } from "@/lib/graph"
 import type { Frame, Trace } from "@/lib/trace"
 import { edgeStatuses, type EdgeStatus } from "@/algorithms/kruskal/playback/highlight"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 export function DecisionTable({
@@ -20,16 +21,17 @@ export function DecisionTable({
 }) {
   const byId = new Map(graph.edges.map((e) => [e.id, e]))
   const statuses = edgeStatuses(trace, frame)
+  const t = useT()
 
   return (
-    <Panel title="Таблиця рішень" className={className} bodyClassName="p-0">
+    <Panel title={t("play.decisionTable")} className={className} bodyClassName="p-0">
       <div className="max-h-[280px] overflow-auto">
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-muted/70 text-xs text-muted-foreground">
             <tr>
-              <th className="px-3 py-1.5 text-left font-medium">Ребро</th>
-              <th className="px-2 py-1.5 text-right font-medium">Вага</th>
-              <th className="px-3 py-1.5 text-left font-medium">Рішення</th>
+              <th className="px-3 py-1.5 text-left font-medium">{t("play.colEdge")}</th>
+              <th className="px-2 py-1.5 text-right font-medium">{t("play.colWeight")}</th>
+              <th className="px-3 py-1.5 text-left font-medium">{t("play.colDecision")}</th>
             </tr>
           </thead>
           <tbody>
@@ -66,23 +68,24 @@ export function DecisionTable({
 }
 
 function StatusBadge({ status }: { status: EdgeStatus }) {
+  const t = useT()
   switch (status) {
     case "accepted":
       return (
         <span className="inline-flex items-center gap-1 text-green-700">
-          <Check className="size-3.5" /> у МОД
+          <Check className="size-3.5" /> {t("play.stInMst")}
         </span>
       )
     case "rejected":
       return (
         <span className="inline-flex items-center gap-1 text-red-600">
-          <X className="size-3.5" /> цикл
+          <X className="size-3.5" /> {t("play.stCycle")}
         </span>
       )
     case "current":
       return (
         <span className="inline-flex items-center gap-1 text-amber-700">
-          <ArrowRight className="size-3.5" /> розгляд
+          <ArrowRight className="size-3.5" /> {t("play.stConsider")}
         </span>
       )
     default:

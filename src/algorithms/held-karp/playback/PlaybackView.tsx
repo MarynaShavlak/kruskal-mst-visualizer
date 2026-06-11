@@ -14,6 +14,8 @@ import { CandidatesPanel } from "@/algorithms/held-karp/playback/CandidatesPanel
 import { DpTablePanel } from "@/algorithms/held-karp/playback/DpTablePanel"
 import { MatrixPanel } from "@/algorithms/held-karp/playback/MatrixPanel"
 import { TourMapPanel } from "@/algorithms/held-karp/playback/TourMapPanel"
+import { useT } from "@/i18n/use-t"
+import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
 // Кожен кадр зберігається в пам'яті, тож обмежуємо інстанс плеєра. n=11 → ~10 тис.
@@ -37,14 +39,15 @@ export function PlaybackView() {
     () => (run ? cellCommitFrames(run.trace.frames) : []),
     [run],
   )
+  const t = useT()
 
   if (!run || !frames) {
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
           {n < 2
-            ? "Замало міст для маршруту — додайте принаймні два у вкладці «Редактор»."
-            : `Для покрокового плеєра підтримано до ${MAX_CITIES} міст (інакше забагато кадрів). Зараз — ${n}. Зменшіть кількість у редакторі.`}
+            ? t("play.hkTooFew")
+            : t("play.hkTooMany", { max: MAX_CITIES, n })}
         </CardContent>
       </Card>
     )
@@ -53,7 +56,7 @@ export function PlaybackView() {
   const index = Math.min(player.index, frames.length - 1)
   const frame = frames[index]
   const result = run.result
-  const badge = phaseBadge(frame)
+  const badge = phaseBadge(frame, t)
 
   return (
     <PlayerShell
@@ -80,7 +83,7 @@ export function PlaybackView() {
           />
           <CodePanel
             code={run.trace.code}
-            title="Код (Хелда–Карпа)"
+            title={t("play.codeHk")}
             activeLines={frame.lines}
             contextLines={frame.contextLines}
             className="min-h-[360px]"
@@ -112,6 +115,7 @@ export function PlaybackView() {
 }
 
 function StatsBar({ frame, result }: { frame: HkFrame; result: HkResult }) {
+  const t = useT()
   const subsetLbl =
     frame.subset !== null
       ? `{${subsetMembers(frame.subset, result.names.length)
@@ -121,20 +125,20 @@ function StatsBar({ frame, result }: { frame: HkFrame; result: HkResult }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
       <span>
-        <b>рівень |S|:</b>{" "}
+        <b>{t("play.hkLevel")}</b>{" "}
         <span className="tabular-nums">{frame.level ?? "—"}</span>
       </span>
       <span>
-        <b>підмножина S:</b> <span className="font-mono">{subsetLbl}</span>
+        <b>{t("play.hkSubset")}</b> <span className="font-mono">{subsetLbl}</span>
       </span>
       <span>
-        <b>комірок dp:</b>{" "}
+        <b>{t("play.hkDpCells")}</b>{" "}
         <span className="tabular-nums">
           {frame.committedCount}/{result.cells.length}
         </span>
       </span>
       <span>
-        <b>найкоротший тур:</b>{" "}
+        <b>{t("play.hkShortestTour")}</b>{" "}
         <span className="tabular-nums">
           {frame.bestTour ? fmt(frame.bestTour.cost) : "—"}
         </span>
@@ -144,41 +148,49 @@ function StatsBar({ frame, result }: { frame: HkFrame; result: HkResult }) {
 }
 
 function ResultCard({ result, done }: { result: HkResult; done: boolean }) {
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
   const tour = result.path.map((i) => result.names[i]).join(" → ")
+  const ops = result.operations.toLocaleString(lang === "ua" ? "uk-UA" : "en-US")
   return (
     <Card className={done ? "border-emerald-500/50" : undefined}>
       <CardContent className="space-y-1 py-4 text-sm">
-        <div className="text-muted-foreground">Оптимальний тур</div>
+        <div className="text-muted-foreground">{t("play.hkOptimalTour")}</div>
         <div className="text-2xl font-semibold tabular-nums">
           {fmt(result.cost)}
         </div>
         <div className="font-mono text-[12px]">{tour}</div>
         <div className="text-muted-foreground">
-          {result.names.length} міст · {result.cells.length} підзадач ·{" "}
-          ≈{result.operations.toLocaleString("uk-UA")} операцій
+          {t("play.hkResultStats", {
+            n: result.names.length,
+            m: result.cells.length,
+            ops,
+          })}
         </div>
       </CardContent>
     </Card>
   )
 }
 
-function phaseBadge(frame: HkFrame): { text: string; cls: string } {
+type TFn = ReturnType<typeof useT>
+
+function phaseBadge(frame: HkFrame, t: TFn): { text: string; cls: string } {
   switch (frame.phase) {
     case "base":
-      return { text: "база", cls: "bg-muted text-muted-foreground" }
+      return { text: t("play.hkPhaseBase"), cls: "bg-muted text-muted-foreground" }
     case "build":
       return {
-        text: `нарощування · |S|=${frame.level ?? "?"}`,
+        text: t("play.hkPhaseBuild", { lvl: frame.level ?? "?" }),
         cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
       }
     case "closing":
       return {
-        text: "замикання",
+        text: t("play.hkPhaseClosing"),
         cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
       }
     case "done":
       return {
-        text: "готово",
+        text: t("play.hkPhaseDone"),
         cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
       }
   }

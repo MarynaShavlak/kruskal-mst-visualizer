@@ -2,6 +2,7 @@ import { motion } from "motion/react"
 import type { DsuSnapshot } from "@/lib/dsu"
 import { colorForRoot } from "@/algorithms/kruskal/playback/highlight"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { useT } from "@/i18n/use-t"
 
 interface ForestNode {
   id: string
@@ -86,11 +87,12 @@ export function DsuForestPanel({
   snapshot?: DsuSnapshot
   className?: string
 }) {
+  const t = useT()
   if (!snapshot) {
     return (
-      <Panel title="Ліс DSU" className={className}>
+      <Panel title={t("play.dsuForest")} className={className}>
         <p className="text-sm text-muted-foreground">
-          Доступно лише для DSU-версії алгоритму.
+          {t("play.dsuForestOnly")}
         </p>
       </Panel>
     )
@@ -103,7 +105,7 @@ export function DsuForestPanel({
 
   return (
     <Panel
-      title="Ліс DSU (ранги, вказівники)"
+      title={t("play.dsuForestTitle")}
       className={className}
       bodyClassName="p-0"
     >
@@ -152,7 +154,7 @@ export function DsuForestPanel({
             </text>
             {n.isRoot && (
               <text x={n.x + R + 3} y={n.y - R + 2} fontSize={10} fontWeight={500} style={{ fill: "var(--foreground)" }}>
-                rank {n.rank}
+                {t("play.rank")} {n.rank}
               </text>
             )}
           </g>

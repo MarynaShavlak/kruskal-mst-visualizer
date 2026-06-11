@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { fmt, subsetMembers } from "@/algorithms/held-karp/playback/highlight"
 import type { HkFrame, HkResult } from "@/lib/heldKarpTrace"
+import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
 /**
@@ -23,6 +24,7 @@ export function DpTablePanel({
   onSeek: (frameIndex: number) => void
   className?: string
 }) {
+  const t = useT()
   const names = result.names
   const total = result.cells.length
   const committed = frame.committedCount
@@ -58,17 +60,15 @@ export function DpTablePanel({
 
   return (
     <Panel
-      title="Таблиця dp[(S, j)]"
+      title={t("play.dpTitle")}
       className={className}
       bodyClassName="overflow-auto p-2"
     >
       <div className="mb-1 px-1 text-[11px] text-muted-foreground tabular-nums">
-        готово {committed}/{total} комірок
+        {t("play.dpProgress", { n: committed, total })}
       </div>
       {rows.length === 0 ? (
-        <p className="px-1 text-sm text-muted-foreground">
-          Ще порожньо — почнемо з базових ребер зі старту.
-        </p>
+        <p className="px-1 text-sm text-muted-foreground">{t("play.dpEmpty")}</p>
       ) : (
         <ul className="space-y-0.5">
           {rows.map((cell, k) => {
@@ -82,7 +82,9 @@ export function DpTablePanel({
               <li key={k}>
                 {header !== null && (
                   <div className="px-1 pb-0.5 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    {header === 2 ? "База · |S|=2" : `Рівень · |S|=${header}`}
+                    {header === 2
+                      ? t("play.dpBase")
+                      : t("play.dpLevel", { lvl: header })}
                   </div>
                 )}
                 <button

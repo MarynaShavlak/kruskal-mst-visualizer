@@ -1,5 +1,6 @@
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import type { FwFrame } from "@/lib/floydWarshallTrace"
+import { useT } from "@/i18n/use-t"
 import {
   directedEdgeId,
   type DirectedGraph,
@@ -33,6 +34,7 @@ export function GraphView({
   order: readonly Vertex[]
   className?: string
 }) {
+  const t = useT()
   const allHavePos = graph.vertices.every((v) => positions[v])
   const pos = allHavePos ? positions : circularLayout(graph.vertices)
 
@@ -53,7 +55,7 @@ export function GraphView({
     graph.edges.some((e) => e.id === directedEdgeId(from, to))
 
   return (
-    <Panel title="Граф (орієнтований)" className={className} bodyClassName="p-0">
+    <Panel title={t("play.graphDirected")} className={className} bodyClassName="p-0">
       <svg
         viewBox={viewBox}
         className="h-full w-full"
@@ -166,9 +168,9 @@ export function GraphView({
       </svg>
 
       <div className="flex flex-wrap gap-x-3 gap-y-1 border-t px-3 py-2 text-[11px] text-muted-foreground">
-        <Dot color={C_I}>i — звідки</Dot>
-        <Dot color={C_K}>k — проміжна</Dot>
-        <Dot color={C_J}>j — куди</Dot>
+        <Dot color={C_I}>{t("play.legIFrom")}</Dot>
+        <Dot color={C_K}>{t("play.legKInter")}</Dot>
+        <Dot color={C_J}>{t("play.legJTo")}</Dot>
       </div>
     </Panel>
   )
