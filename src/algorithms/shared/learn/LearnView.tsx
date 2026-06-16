@@ -42,6 +42,15 @@ export function LearnView({
   const components: Components = useMemo(
     () => ({
       pre: ({ children }) => <>{children}</>,
+      // Фігуру-зображення react-markdown загортає в <p>, але живі віджети —
+      // блокові (svg/таблиці/панелі плеєра). Розгортаємо такий абзац, щоб не
+      // вкладати блок у <p> (інакше браузер «рве» розмітку → DOM-warning).
+      p: ({ node, children }) => {
+        const hasFigure = node?.children?.some(
+          (c) => c.type === "element" && c.tagName === "img",
+        )
+        return hasFigure ? <>{children}</> : <p>{children}</p>
+      },
       h2: ({ node, children }) => {
         const line = node?.position?.start.line
         return <h2 id={line != null ? idByLine.get(line) : undefined}>{children}</h2>

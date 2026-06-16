@@ -1,6 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from "react"
-import { Pause, Play, StepBack, StepForward } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useMemo } from "react"
 import type { Graph, Vertex } from "@/lib/graph"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { kruskalHasPath } from "@/lib/kruskalHasPath"
@@ -12,7 +10,8 @@ import {
   edgeStatuses,
   type EdgeStatus,
 } from "@/algorithms/kruskal/playback/highlight"
-import { usePlayer, type Player } from "@/algorithms/shared/playback/use-player"
+import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { examplePreset } from "@/store/presets"
 
 type Positions = Record<Vertex, { x: number; y: number }>
@@ -59,58 +58,6 @@ export function seekForEdge(trace: Trace, edgeId: string, preferBfs: boolean): n
     if (trace.frames[i].consideredEdgeId === edgeId) return i
   }
   return -1
-}
-
-/** Спільна оболонка міні-плеєра: контролери крок/грати + нарація. */
-export function MiniPlayerShell({
-  player,
-  frameCount,
-  caption,
-  children,
-}: {
-  player: Player
-  frameCount: number
-  caption: string
-  children: ReactNode
-}) {
-  return (
-    <span className="not-prose my-4 block rounded-lg border bg-card p-3">
-      <span className="mb-2 flex flex-wrap items-center gap-2">
-        <Button
-          size="icon-sm"
-          variant="outline"
-          onClick={() => player.dispatch({ type: "prev" })}
-          disabled={player.index <= 0}
-          title="Крок назад"
-        >
-          <StepBack />
-        </Button>
-        <Button
-          size="icon"
-          onClick={() => player.dispatch({ type: "toggle" })}
-          title={player.isPlaying ? "Пауза" : "Грати"}
-        >
-          {player.isPlaying ? <Pause /> : <Play />}
-        </Button>
-        <Button
-          size="icon-sm"
-          variant="outline"
-          onClick={() => player.dispatch({ type: "next" })}
-          disabled={player.index >= frameCount - 1}
-          title="Крок вперед"
-        >
-          <StepForward />
-        </Button>
-        <span className="text-xs tabular-nums text-muted-foreground">
-          {player.index + 1} / {frameCount}
-        </span>
-      </span>
-      <span className="mb-2 block min-h-[2.5em] text-xs text-muted-foreground">
-        {caption}
-      </span>
-      {children}
-    </span>
-  )
 }
 
 /** Span-граф для одного кадру: кольори компонент, статуси ребер, опц. BFS. */

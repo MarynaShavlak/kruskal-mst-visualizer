@@ -4,7 +4,8 @@ import { referenceGraph } from "@/lib/exampleGraph"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { colorForRoot } from "@/algorithms/kruskal/playback/highlight"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
-import { MiniPlayerShell, seekForEdge } from "@/algorithms/kruskal/learn/step-widgets"
+import { seekForEdge } from "@/algorithms/kruskal/learn/step-widgets"
+import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
 
 interface FNode {
   id: string
