@@ -1,11 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useT } from "@/i18n/use-t"
 import { analyzeGraph } from "@/lib/graphAnalysis"
+import type { Graph } from "@/lib/graph"
 import { cn } from "@/lib/utils"
-import { useGraphStore } from "@/store/graph-store"
 
-export function ConnectivityPanel({ className }: { className?: string }) {
-  const graph = useGraphStore((s) => s.graph)
+/**
+ * Панель зв'язності неорієнтованого графа: вершини / ребра / компоненти + статус
+ * (зв'язний → є остовне дерево; інакше — буде ліс). Граф інжектиться пропсом, тож
+ * панель не прив'язана до конкретного стору (спільна для Краскала і Прима).
+ */
+export function ConnectivityPanel({
+  graph,
+  className,
+}: {
+  graph: Graph
+  className?: string
+}) {
   const a = analyzeGraph(graph)
   const t = useT()
 

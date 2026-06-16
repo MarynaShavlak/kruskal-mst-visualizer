@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 export type VertexNodeData = { label: string }
 export type VertexNodeType = Node<VertexNodeData, "vertex">
 
-/** Кругла вершина графа з ручками для з'єднання. */
+/** Кругла вершина неорієнтованого графа з ручками для з'єднання. */
 export function VertexNode({ data, selected }: NodeProps<VertexNodeType>) {
   return (
     <div

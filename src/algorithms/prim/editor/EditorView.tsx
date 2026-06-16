@@ -20,14 +20,14 @@ import {
   Upload,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { codec } from "@/algorithms/kruskal/editor/graph-doc"
+import { codec } from "@/algorithms/prim/editor/graph-doc"
 import { ConnectivityPanel } from "@/algorithms/shared/editor/ConnectivityPanel"
 import { VertexNode } from "@/algorithms/shared/editor/VertexNode"
 import { useWeightPrompt, WeightDialog } from "@/algorithms/shared/editor/WeightDialog"
 import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
 import { useGraphEditor } from "@/algorithms/shared/editor/use-graph-editor"
 import { useT } from "@/i18n/use-t"
-import { useGraphStore } from "@/store/graph-store"
+import { usePrimGraphStore } from "@/store/prim-graph-store"
 import { useThemeStore } from "@/store/theme-store"
 import type { Graph } from "@/lib/graph"
 
@@ -42,19 +42,19 @@ export function EditorView() {
 }
 
 function EditorCanvas() {
-  const graph = useGraphStore((s) => s.graph)
-  const positions = useGraphStore((s) => s.positions)
-  const addVertexAt = useGraphStore((s) => s.addVertexAt)
-  const connect = useGraphStore((s) => s.connect)
-  const setEdgeWeight = useGraphStore((s) => s.setEdgeWeight)
-  const moveVertex = useGraphStore((s) => s.moveVertex)
-  const removeVertex = useGraphStore((s) => s.removeVertex)
-  const removeEdge = useGraphStore((s) => s.removeEdge)
-  const clear = useGraphStore((s) => s.clear)
-  const loadExample = useGraphStore((s) => s.loadExample)
-  const loadRandom = useGraphStore((s) => s.loadRandom)
-  const loadDoc = useGraphStore((s) => s.loadDoc)
-  const toDoc = useGraphStore((s) => s.toDoc)
+  const graph = usePrimGraphStore((s) => s.graph)
+  const positions = usePrimGraphStore((s) => s.positions)
+  const addVertexAt = usePrimGraphStore((s) => s.addVertexAt)
+  const connect = usePrimGraphStore((s) => s.connect)
+  const setEdgeWeight = usePrimGraphStore((s) => s.setEdgeWeight)
+  const moveVertex = usePrimGraphStore((s) => s.moveVertex)
+  const removeVertex = usePrimGraphStore((s) => s.removeVertex)
+  const removeEdge = usePrimGraphStore((s) => s.removeEdge)
+  const clear = usePrimGraphStore((s) => s.clear)
+  const loadExample = usePrimGraphStore((s) => s.loadExample)
+  const loadRandom = usePrimGraphStore((s) => s.loadRandom)
+  const loadDoc = usePrimGraphStore((s) => s.loadDoc)
+  const toDoc = usePrimGraphStore((s) => s.toDoc)
 
   const isDark = useThemeStore((s) => s.isDark)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -73,12 +73,12 @@ function EditorCanvas() {
     toDoc,
     codec,
     promptWeight,
-    exportFilename: "kruskal-graph.json",
-    routePath: "kruskal/editor",
+    exportFilename: "prim-graph.json",
+    routePath: "prim/editor",
   })
   const { setRfEdges } = ctrl
 
-  // Синк ребер зі стором — прямі лінії з підписом ваги (специфіка Краскала).
+  // Синк ребер зі стором — прямі лінії з підписом ваги (неорієнтований граф).
   useEffect(() => {
     setRfEdges(
       graph.edges.map((e) => ({

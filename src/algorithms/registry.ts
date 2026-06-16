@@ -1,5 +1,6 @@
 import type { Algorithm } from "@/algorithms/types"
 import { kruskal } from "@/algorithms/kruskal"
+import { prim } from "@/algorithms/prim"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { heldKarp } from "@/algorithms/held-karp"
 
@@ -11,6 +12,7 @@ import { heldKarp } from "@/algorithms/held-karp"
  */
 export const ALGORITHMS: readonly Algorithm[] = [
   kruskal,
+  prim,
   floydWarshall,
   heldKarp,
 ]

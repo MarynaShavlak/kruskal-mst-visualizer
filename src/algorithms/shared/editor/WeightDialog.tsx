@@ -22,7 +22,8 @@ interface WeightDialogProps {
 
 /**
  * Модальне вікно для введення ваги ребра — заміна нативному window.prompt.
- * Валідація (додатне ціле) показується інлайн, без другого діалогу.
+ * Валідація (додатне ціле) показується інлайн, без другого діалогу. Спільне для
+ * редакторів неорієнтованих графів із додатними вагами (Краскал, Прим).
  */
 export function WeightDialog({ open, initial, onSettle }: WeightDialogProps) {
   const [value, setValue] = useState("")
