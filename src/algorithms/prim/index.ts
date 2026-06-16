@@ -2,10 +2,15 @@ import { lazy } from "react"
 import { Sprout } from "lucide-react"
 import type { Algorithm } from "@/algorithms/types"
 
-// Розділ Прима будується по фазах. Готовий редактор; плеєр і навчання — далі.
+// Розділ Прима будується по фазах. Готові редактор і плеєр; навчання — далі.
 const EditorView = lazy(() =>
   import("@/algorithms/prim/editor/EditorView").then((m) => ({
     default: m.EditorView,
+  })),
+)
+const PlaybackView = lazy(() =>
+  import("@/algorithms/prim/playback/PlaybackView").then((m) => ({
+    default: m.PlaybackView,
   })),
 )
 
@@ -20,16 +25,15 @@ export const prim: Algorithm = {
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   status: "ready",
   icon: Sprout,
-  defaultTab: "editor",
-  tabs: [{ key: "editor", View: EditorView }],
+  defaultTab: "playback",
+  tabs: [
+    { key: "editor", View: EditorView },
+    { key: "playback", View: PlaybackView },
+  ],
   planned: [
     {
-      ua: "Плеєр — черга з пріоритетами та «ліниве видалення» крок за кроком",
-      en: "Player — priority queue and lazy deletion, step by step",
-    },
-    {
-      ua: "Навчання — властивість розрізу, Прим проти Краскала",
-      en: "Learn — the cut property, Prim vs Kruskal",
+      ua: "Навчання — властивість розрізу, ліниве видалення, Прим проти Краскала",
+      en: "Learn — the cut property, lazy deletion, Prim vs Kruskal",
     },
   ],
 }

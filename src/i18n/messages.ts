@@ -320,6 +320,39 @@ const ua = {
   "play.nHkTourWorse": " — довше за поточний.",
   "play.nHkDone": "Готово: оптимальний тур {path} = {cost}.",
 
+  // — Плеєр Прима —
+  "play.primCode": "Код — Прим (лінива черга)",
+  "play.primGraph": "Граф — дерево, що росте",
+  "play.primQueue": "Черга з пріоритетами",
+  "play.primQueueEmpty": "Черга порожня.",
+  "play.primPopped": "Знято:",
+  "play.primAccepted": "прийнято",
+  "play.primStaleTag": "застаріле",
+  "play.primChecking": "перевіряємо…",
+  "play.primMstEdges": "Ребра МОД (у порядку додавання)",
+  "play.primNoEdgesYet": "Ще жодного ребра — почніть програвання.",
+  "play.primEdgesShort": "ребер",
+  "play.primTreeSize": "дерево:",
+  "play.primQueueSize": "у черзі:",
+  "play.primPoppedCount": "знято з черги:",
+  "play.primStaleCount": "застарілих ребер:",
+  // Нарація Прима.
+  "play.nPrimEmpty": "Граф порожній — створіть його у вкладці «Редактор».",
+  "play.nPrimInit":
+    "Старт із вершини {start}. Дерево росте з неї; у чергу кладемо всі її ребра: {pushed}.",
+  "play.nPrimPop":
+    "Знімаємо з черги найдешевше ребро {edge}. Перевіряємо: чи {to} уже в дереві?",
+  "play.nPrimAccept":
+    "{to} ще зовні → приймаємо {edge} (вага {w}). У дереві {count}/{need} ребер, вага {total}. Нові кандидати в чергу: {pushed}.",
+  "play.nPrimAcceptNoPush":
+    "{to} ще зовні → приймаємо {edge} (вага {w}). У дереві {count}/{need} ребер, вага {total}. Нових ребер немає — усі сусіди {to} вже в дереві.",
+  "play.nPrimSkip":
+    "{to} уже в дереві → ребро {edge} застаріле. Ліниве видалення: мовчки пропускаємо.",
+  "play.nPrimDone":
+    "Готово: у дереві всі {n} вершин, {need} ребер, вага МОД {total}.",
+  "play.nPrimDoneDisc":
+    "Черга порожня, але в дереві лише {reached} із {n} вершин — граф незв'язний. Прим охопив тільки компоненту старту (вага {total}).",
+
   // — Бенчмарк (Фаза 5) —
   "bench.title": "Бенчмарк: DSU проти наївної (has-path)",
   "bench.introPre":
@@ -642,6 +675,39 @@ const en: Record<MessageKey, string> = {
   "play.nHkTourBetter": " — new shortest tour.",
   "play.nHkTourWorse": " — longer than the current.",
   "play.nHkDone": "Done: the optimal tour {path} = {cost}.",
+
+  // — Prim player —
+  "play.primCode": "Code — Prim (lazy queue)",
+  "play.primGraph": "Graph — the growing tree",
+  "play.primQueue": "Priority queue",
+  "play.primQueueEmpty": "The queue is empty.",
+  "play.primPopped": "Popped:",
+  "play.primAccepted": "accepted",
+  "play.primStaleTag": "stale",
+  "play.primChecking": "checking…",
+  "play.primMstEdges": "MST edges (in order of addition)",
+  "play.primNoEdgesYet": "No edges yet — start the playback.",
+  "play.primEdgesShort": "edges",
+  "play.primTreeSize": "tree:",
+  "play.primQueueSize": "in queue:",
+  "play.primPoppedCount": "popped:",
+  "play.primStaleCount": "stale edges:",
+  // Prim narration.
+  "play.nPrimEmpty": "The graph is empty — create one on the “Editor” tab.",
+  "play.nPrimInit":
+    "Start from vertex {start}. The tree grows from it; we push all its edges onto the queue: {pushed}.",
+  "play.nPrimPop":
+    "Pop the cheapest edge {edge} off the queue. Check: is {to} already in the tree?",
+  "play.nPrimAccept":
+    "{to} is still outside → accept {edge} (weight {w}). Tree has {count}/{need} edges, weight {total}. New candidates onto the queue: {pushed}.",
+  "play.nPrimAcceptNoPush":
+    "{to} is still outside → accept {edge} (weight {w}). Tree has {count}/{need} edges, weight {total}. No new edges — all neighbours of {to} are already in the tree.",
+  "play.nPrimSkip":
+    "{to} is already in the tree → edge {edge} is stale. Lazy deletion: skip it silently.",
+  "play.nPrimDone":
+    "Done: the tree spans all {n} vertices, {need} edges, MST weight {total}.",
+  "play.nPrimDoneDisc":
+    "The queue is empty but only {reached} of {n} vertices are in the tree — the graph is disconnected. Prim covered only the start component (weight {total}).",
 
   // — Benchmark (Phase 5) —
   "bench.title": "Benchmark: DSU vs naive (has-path)",
