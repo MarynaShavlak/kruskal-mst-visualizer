@@ -3,7 +3,6 @@
 // місткість — частка суми ваг (щоб задача була нетривіальною: вміщається не все).
 // Детерміновано за seed: однаковий seed — однаковий інстанс. Чисто, без React.
 
-import { vertexName } from "@/lib/graph"
 import { mulberry32 } from "@/lib/randomGraph"
 import type { KnapsackInstance, KnapsackItem } from "@/lib/knapsack"
 
@@ -38,7 +37,7 @@ export function randomKnapsack(options: RandomKnapsackOptions): KnapsackInstance
     const weight = 1 + Math.floor(rand() * maxWeight)
     const value = Math.floor(rand() * (maxValue + 1))
     totalWeight += weight
-    items.push({ name: vertexName(i), weight, value })
+    items.push({ name: `П${i + 1}`, weight, value })
   }
   const capacity =
     count === 0 ? 0 : Math.max(maxWeight, Math.round(totalWeight * capacityRatio))
