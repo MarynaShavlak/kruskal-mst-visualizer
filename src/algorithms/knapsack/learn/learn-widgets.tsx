@@ -6,7 +6,11 @@ import {
   type KnapsackInstance,
 } from "@/lib/knapsack"
 import { buildBruteTrace } from "@/lib/knapsackAltTrace"
-import { backtrackPath } from "@/algorithms/knapsack/playback/highlight"
+import {
+  backtrackPath,
+  cellSources,
+  dpLinear,
+} from "@/algorithms/knapsack/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -272,6 +276,133 @@ export function BacktrackFigure({
         {t("play.knapChosenSet")}:{" "}
         <b className="font-mono">{`{${chosen.map((i) => names[i]).join(", ")}}`}</b>
       </span>
+    </Figure>
+  )
+}
+
+// — Крупний план клітинки K[i][w] -------------------------------------------
+
+export function CellFormulaFigure({
+  instance,
+  i,
+  w,
+  caption,
+}: {
+  instance: KnapsackInstance
+  i: number
+  w: number
+  caption?: string
+}) {
+  const t = useT()
+  const { weights, values, names } = arrays(instance)
+  const W = instance.capacity
+  const n = weights.length
+  const cols = W + 1
+  const table = knapsackDpTable(weights, values, W)
+  const target = dpLinear(i, w, cols)
+
+  const wt = i >= 1 ? weights[i - 1] : 0
+  const val = i >= 1 ? values[i - 1] : 0
+  const isBase = i === 0 || w === 0
+  const fits = !isBase && wt <= w
+  const skip = isBase ? null : table[i - 1][w]
+  const take = fits ? val + table[i - 1][w - wt] : null
+  const value = table[i][w]
+  const takeWins = fits && (take as number) > (skip as number)
+  const src = cellSources(i, w, weights)
+
+  const isSrc = (ri: number, rw: number): "take" | "skip" | null => {
+    if (src.take && src.take[0] === ri && src.take[1] === rw) return "take"
+    if (src.skip && src.skip[0] === ri && src.skip[1] === rw) return "skip"
+    return null
+  }
+
+  return (
+    <Figure caption={caption}>
+      <table className="border-collapse text-[11px] tabular-nums">
+        <thead>
+          <tr>
+            <th className="px-1.5 py-0.5 text-muted-foreground">i\w</th>
+            {Array.from({ length: cols }, (_, c) => (
+              <th
+                key={c}
+                className={cn(
+                  "min-w-[1.75rem] px-1 py-0.5 text-center font-normal text-muted-foreground",
+                  c === w && "text-foreground font-semibold",
+                )}
+              >
+                {c}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.map((row, ri) => (
+            <tr key={ri}>
+              <th
+                className={cn(
+                  "whitespace-nowrap px-1.5 py-0.5 text-left font-normal text-muted-foreground",
+                  ri === i && "text-foreground font-semibold",
+                )}
+              >
+                {ri === 0 ? "∅" : `${ri} ${names[ri - 1] ?? ""}`}
+              </th>
+              {row.map((cellVal, rw) => {
+                const shown = dpLinear(ri, rw, cols) <= target
+                const active = ri === i && rw === w
+                const source = isSrc(ri, rw)
+                return (
+                  <td
+                    key={rw}
+                    className={cn(
+                      "min-w-[1.75rem] border border-border/40 px-1 py-0.5 text-center",
+                      !shown && "text-transparent",
+                      active && "bg-amber-400/20 font-semibold ring-2 ring-amber-500/70",
+                      source === "skip" && "bg-sky-500/20 ring-2 ring-sky-500/60",
+                      source === "take" && "bg-emerald-500/20 ring-2 ring-emerald-500/60",
+                    )}
+                  >
+                    {shown ? cellVal : "·"}
+                  </td>
+                )
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <span className="mt-2 block font-mono text-xs">
+        <span className="text-muted-foreground">{`K[${i}][${w}] = `}</span>
+        {isBase ? (
+          <span>0 · {t("learn.knapCellBase")}</span>
+        ) : !fits ? (
+          <span>
+            <span className="text-sky-700 dark:text-sky-300">
+              {t("learn.knapCellSkip")} K[{i - 1}][{w}] = {skip}
+            </span>{" "}
+            <span className="text-muted-foreground">
+              ({wt} &gt; {w} — {t("learn.knapCellNofit")})
+            </span>
+          </span>
+        ) : (
+          <span>
+            max(
+            <span className={cn("text-emerald-700 dark:text-emerald-300", takeWins && "font-bold")}>
+              {t("learn.knapCellTake")} {val}+{table[i - 1][w - wt]}={take}
+            </span>
+            ,{" "}
+            <span className={cn("text-sky-700 dark:text-sky-300", !takeWins && "font-bold")}>
+              {t("learn.knapCellSkip")} {skip}
+            </span>
+            ) = <b className="text-foreground">{value}</b>
+          </span>
+        )}
+      </span>
+      {i === n && w === W && (
+        <span className="mt-1 block text-xs text-rose-600 dark:text-rose-400">
+          {t("play.knapOptimum")}: {value}
+        </span>
+      )}
     </Figure>
   )
 }

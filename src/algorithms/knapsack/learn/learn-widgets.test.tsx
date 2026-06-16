@@ -5,6 +5,7 @@ import {
   DpTableFigure,
   SubsetsFigure,
   ItemsFigure,
+  CellFormulaFigure,
 } from "@/algorithms/knapsack/learn/learn-widgets"
 import { KNAPSACK_SMALL, KNAPSACK_CLASSIC } from "@/lib/exampleKnapsack"
 
@@ -32,5 +33,21 @@ describe("навчальні віджети рюкзака (обчислюють
     const text = container.textContent ?? ""
     expect(text).toContain("160")
     expect(text).toContain("220")
+  })
+
+  it("CellFormulaFigure K[3][3]: «влазить, але не беремо» (12 проти 16)", () => {
+    const { container } = render(
+      <CellFormulaFigure instance={KNAPSACK_SMALL} i={3} w={3} />,
+    )
+    const text = container.textContent ?? ""
+    expect(text).toContain("12") // взяти
+    expect(text).toContain("16") // не брати (перемагає)
+  })
+
+  it("CellFormulaFigure K[3][4]: клітинка-відповідь 18", () => {
+    const { container } = render(
+      <CellFormulaFigure instance={KNAPSACK_SMALL} i={3} w={4} />,
+    )
+    expect(container.textContent).toContain("18")
   })
 })

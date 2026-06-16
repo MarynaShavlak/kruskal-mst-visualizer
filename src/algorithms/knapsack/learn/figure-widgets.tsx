@@ -4,6 +4,7 @@ import { tr } from "@/i18n/use-t"
 import { KNAPSACK_SMALL, KNAPSACK_CLASSIC } from "@/lib/exampleKnapsack"
 import {
   BacktrackFigure,
+  CellFormulaFigure,
   ComplexityFigure,
   DpTableFigure,
   GreedyFigure,
@@ -24,6 +25,19 @@ export function figureForSrc(
   const base = (src ?? "").split("/").pop() ?? ""
   const stem = base.replace(/\.(png|gif|mp4)$/i, "")
   const caption = alt ?? ""
+
+  // Крупні плани окремих клітинок: dp_cell_small_i{N}_w{M} → жива формула переходу.
+  const cell = /^dp_cell_small_i(\d+)_w(\d+)$/.exec(stem)
+  if (cell) {
+    return (
+      <CellFormulaFigure
+        instance={KNAPSACK_SMALL}
+        i={Number(cell[1])}
+        w={Number(cell[2])}
+        caption={caption}
+      />
+    )
+  }
 
   switch (stem) {
     case "items_small":

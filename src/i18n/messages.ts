@@ -29,6 +29,11 @@ const ua = {
 
   "learn.heading": "Навчальний розбір",
   "toc.title": "Зміст",
+  // Крупний план клітинки ДП (навчальний віджет).
+  "learn.knapCellTake": "взяти",
+  "learn.knapCellSkip": "не брати",
+  "learn.knapCellBase": "база",
+  "learn.knapCellNofit": "не вміщається",
 
   "tab.learn": "Навчання",
   "tab.editor": "Редактор",
@@ -511,6 +516,11 @@ const en: Record<MessageKey, string> = {
 
   "learn.heading": "Learning walkthrough",
   "toc.title": "Contents",
+  // DP cell close-up (learn widget).
+  "learn.knapCellTake": "take",
+  "learn.knapCellSkip": "skip",
+  "learn.knapCellBase": "base",
+  "learn.knapCellNofit": "doesn't fit",
 
   "tab.learn": "Learn",
   "tab.editor": "Editor",
