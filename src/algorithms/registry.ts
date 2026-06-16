@@ -3,6 +3,7 @@ import { kruskal } from "@/algorithms/kruskal"
 import { prim } from "@/algorithms/prim"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { heldKarp } from "@/algorithms/held-karp"
+import { knapsack } from "@/algorithms/knapsack"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -15,6 +16,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   prim,
   floydWarshall,
   heldKarp,
+  knapsack,
 ]
 
 export function getAlgorithm(
