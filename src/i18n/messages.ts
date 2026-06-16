@@ -34,6 +34,9 @@ const ua = {
   "learn.knapCellSkip": "не брати",
   "learn.knapCellBase": "база",
   "learn.knapCellNofit": "не вміщається",
+  "learn.knapTreeLegend":
+    "Ліва гілка — взяти предмет (+вартість), права — не брати; число у вузлі — найкраща вартість підзадачі; ★ — оптимальний шлях.",
+  "learn.knapTreeTooBig": "Дерево завелике для показу ({n} предметів).",
 
   "tab.learn": "Навчання",
   "tab.editor": "Редактор",
@@ -521,6 +524,9 @@ const en: Record<MessageKey, string> = {
   "learn.knapCellSkip": "skip",
   "learn.knapCellBase": "base",
   "learn.knapCellNofit": "doesn't fit",
+  "learn.knapTreeLegend":
+    "Left branch — take the item (+value), right — skip it; the number in a node is the subproblem's best value; ★ — the optimal path.",
+  "learn.knapTreeTooBig": "The tree is too large to display ({n} items).",
 
   "tab.learn": "Learn",
   "tab.editor": "Editor",

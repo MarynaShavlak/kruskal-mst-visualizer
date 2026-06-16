@@ -9,6 +9,7 @@ import {
   DpTableFigure,
   GreedyFigure,
   ItemsFigure,
+  RecursionTreeFigure,
   SubsetsFigure,
 } from "@/algorithms/knapsack/learn/learn-widgets"
 
@@ -48,6 +49,8 @@ export function figureForSrc(
       return <SubsetsFigure instance={KNAPSACK_CLASSIC} caption={caption} />
     case "growth_2n":
       return <ComplexityFigure caption={caption} />
+    case "tree_classic":
+      return <RecursionTreeFigure instance={KNAPSACK_CLASSIC} caption={caption} />
     case "dp_initial_small":
       return <DpTableFigure instance={KNAPSACK_SMALL} rows={0} caption={caption} />
     case "dp_row_small_1":

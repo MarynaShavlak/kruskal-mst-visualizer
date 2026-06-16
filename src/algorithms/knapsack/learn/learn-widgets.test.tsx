@@ -6,6 +6,7 @@ import {
   SubsetsFigure,
   ItemsFigure,
   CellFormulaFigure,
+  RecursionTreeFigure,
 } from "@/algorithms/knapsack/learn/learn-widgets"
 import { KNAPSACK_SMALL, KNAPSACK_CLASSIC } from "@/lib/exampleKnapsack"
 
@@ -49,5 +50,17 @@ describe("навчальні віджети рюкзака (обчислюють
       <CellFormulaFigure instance={KNAPSACK_SMALL} i={3} w={4} />,
     )
     expect(container.textContent).toContain("18")
+  })
+
+  it("RecursionTreeFigure (класичний): корінь 220, вузли 160/100/60", () => {
+    const { container } = render(
+      <RecursionTreeFigure instance={KNAPSACK_CLASSIC} />,
+    )
+    const text = container.textContent ?? ""
+    expect(text).toContain("220") // корінь / оптимум
+    expect(text).toContain("160") // не брати П3
+    expect(text).toContain("100") // взяти П3 → knapSack(20,2)
+    expect(text).toContain("60") // листки knapSack(W,1)
+    expect(text).toContain("kS(50,3)") // корінь
   })
 })

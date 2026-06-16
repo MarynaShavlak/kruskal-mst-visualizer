@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import { Check, Crown } from "lucide-react"
 import {
   knapsackDpTable,
+  knapsackRecursive,
   greedySteps,
   type KnapsackInstance,
 } from "@/lib/knapsack"
@@ -465,6 +466,250 @@ export function GreedyFigure({
           {t("play.knapGreedyLoses", { gap })}
         </span>
       )}
+    </Figure>
+  )
+}
+
+// — Дерево рекурсії повного перебору -----------------------------------------
+
+// Останній рівень (n=1) згортаємо в листки зі значенням knapSack(W, 1) — так
+// само, як у README: «листки — підзадачі з одним П1». Гілки: ліворуч «взяти»,
+// праворуч «не брати»; вартість набирається на гілках «взяти».
+const TREE_LEAF_LEVEL = 1
+
+interface TreeNode {
+  W: number
+  n: number
+  value: number
+  /** Індекс предмета, чию долю вирішує вузол (для branch/nofit), інакше null. */
+  item: number | null
+  kind: "branch" | "nofit" | "leaf"
+  isBase: boolean
+  take: TreeNode | null
+  skip: TreeNode | null
+  /** Гілка-переможець (для branch). */
+  best: "take" | "skip" | null
+  onPath: boolean
+  x: number
+  depth: number
+}
+
+function buildRecursionTree(
+  weights: readonly number[],
+  values: readonly number[],
+  W: number,
+  n: number,
+  depth: number,
+): TreeNode {
+  const value = knapsackRecursive(W, weights, values, n)
+  const base = n === 0 || W === 0
+  const node: TreeNode = {
+    W, n, value, item: null, kind: "leaf", isBase: base,
+    take: null, skip: null, best: null, onPath: false, x: 0, depth,
+  }
+  if (base || n <= TREE_LEAF_LEVEL) return node // листок (база або згорнутий рівень)
+
+  const item = n - 1
+  node.item = item
+  if (weights[item] > W) {
+    node.kind = "nofit"
+    node.skip = buildRecursionTree(weights, values, W, n - 1, depth + 1)
+    return node
+  }
+  node.kind = "branch"
+  node.take = buildRecursionTree(weights, values, W - weights[item], n - 1, depth + 1)
+  node.skip = buildRecursionTree(weights, values, W, n - 1, depth + 1)
+  const takeTotal = values[item] + node.take.value
+  node.best = takeTotal > node.skip.value ? "take" : "skip"
+  return node
+}
+
+function markTreePath(node: TreeNode): void {
+  node.onPath = true
+  if (node.kind === "branch") markTreePath(node.best === "take" ? node.take! : node.skip!)
+  else if (node.kind === "nofit") markTreePath(node.skip!)
+}
+
+/** Геометрія: листки отримують послідовні x-слоти, внутрішні вузли — середину дітей. */
+function layoutTree(node: TreeNode, counter: { x: number }): void {
+  const kids = [node.take, node.skip].filter((c): c is TreeNode => c !== null)
+  if (kids.length === 0) {
+    node.x = counter.x++
+    return
+  }
+  kids.forEach((c) => layoutTree(c, counter))
+  node.x = (kids[0].x + kids[kids.length - 1].x) / 2
+}
+
+function flattenTree(node: TreeNode, out: TreeNode[]): void {
+  out.push(node)
+  if (node.take) flattenTree(node.take, out)
+  if (node.skip) flattenTree(node.skip, out)
+}
+
+const TREE_BOX_W = 96
+const TREE_BOX_H = 46
+const TREE_COL = 120
+const TREE_ROW = 104
+const TREE_MARGIN_L = 48
+const TREE_MARGIN_T = 16
+
+export function RecursionTreeFigure({
+  instance,
+  caption,
+}: {
+  instance: KnapsackInstance
+  caption?: string
+}) {
+  const t = useT()
+  const { weights, values, names } = arrays(instance)
+  const W = instance.capacity
+  const N = weights.length
+
+  const root = buildRecursionTree(weights, values, W, N, 0)
+  markTreePath(root)
+  layoutTree(root, { x: 0 })
+  const nodes: TreeNode[] = []
+  flattenTree(root, nodes)
+
+  const leafCount = nodes.filter((nd) => !nd.take && !nd.skip).length
+  const maxDepth = Math.max(...nodes.map((nd) => nd.depth))
+
+  // Безпека: дуже широке дерево (велике N) не показуємо покроково.
+  if (leafCount > 40) {
+    return (
+      <Figure caption={caption}>
+        <span className="block text-sm text-muted-foreground">
+          {t("learn.knapTreeTooBig", { n: N })}
+        </span>
+      </Figure>
+    )
+  }
+
+  const cx = (nd: TreeNode) => TREE_MARGIN_L + (nd.x + 0.5) * TREE_COL
+  const top = (nd: TreeNode) => TREE_MARGIN_T + nd.depth * TREE_ROW
+  const width = TREE_MARGIN_L + leafCount * TREE_COL + 12
+  const height = TREE_MARGIN_T + maxDepth * TREE_ROW + TREE_BOX_H + 12
+
+  interface Edge {
+    x1: number; y1: number; x2: number; y2: number
+    onPath: boolean; label: string; kind: "take" | "skip" | "nofit"
+  }
+  const edges: Edge[] = []
+  for (const nd of nodes) {
+    const addEdge = (child: TreeNode, kind: "take" | "skip" | "nofit") => {
+      edges.push({
+        x1: cx(nd), y1: top(nd) + TREE_BOX_H,
+        x2: cx(child), y2: top(child),
+        onPath: nd.onPath && child.onPath,
+        kind,
+        label:
+          kind === "take"
+            ? `${t("learn.knapCellTake")} ${names[nd.item!]} +${values[nd.item!]}`
+            : kind === "nofit"
+              ? t("learn.knapCellNofit")
+              : t("learn.knapCellSkip"),
+      })
+    }
+    if (nd.kind === "branch") {
+      addEdge(nd.take!, "take")
+      addEdge(nd.skip!, "skip")
+    } else if (nd.kind === "nofit") {
+      addEdge(nd.skip!, "nofit")
+    }
+  }
+
+  return (
+    <Figure caption={caption}>
+      <div className="relative" style={{ width, height }}>
+        <svg className="absolute inset-0" width={width} height={height}>
+          {edges.map((e, k) => (
+            <line
+              key={k}
+              x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2}
+              className={cn(
+                e.onPath
+                  ? "stroke-emerald-500"
+                  : e.kind === "take"
+                    ? "stroke-emerald-500/40"
+                    : "stroke-muted-foreground/30",
+              )}
+              strokeWidth={e.onPath ? 2.5 : 1.5}
+              strokeDasharray={e.kind === "nofit" ? "4 3" : undefined}
+            />
+          ))}
+        </svg>
+
+        {/* Підписи рівнів зліва */}
+        {Array.from({ length: maxDepth + 1 }, (_, d) => (
+          <div
+            key={`lvl-${d}`}
+            className="absolute text-[10px] font-medium text-muted-foreground"
+            style={{ left: 0, top: TREE_MARGIN_T + d * TREE_ROW + TREE_BOX_H / 2 - 6, width: TREE_MARGIN_L - 6 }}
+          >
+            {d < N ? names[N - 1 - d] : t("learn.knapCellBase")}
+          </div>
+        ))}
+
+        {/* Підписи ребер */}
+        {edges.map((e, k) => (
+          <div
+            key={`el-${k}`}
+            className={cn(
+              "absolute -translate-x-1/2 whitespace-nowrap rounded bg-card px-1 text-[10px]",
+              e.kind === "take"
+                ? "text-emerald-700 dark:text-emerald-300"
+                : "text-muted-foreground",
+            )}
+            style={{ left: e.x1 + (e.x2 - e.x1) * 0.5, top: e.y1 + (e.y2 - e.y1) * 0.42 - 8 }}
+          >
+            {e.label}
+          </div>
+        ))}
+
+        {/* Вузли */}
+        {nodes.map((nd, k) => {
+          const isLeaf = !nd.take && !nd.skip
+          return (
+            <div
+              key={`n-${k}`}
+              className={cn(
+                "absolute flex flex-col items-center justify-center rounded-md border text-center",
+                nd.onPath
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-border bg-card",
+              )}
+              style={{
+                left: cx(nd) - TREE_BOX_W / 2,
+                top: top(nd),
+                width: TREE_BOX_W,
+                height: TREE_BOX_H,
+              }}
+            >
+              <span className="font-mono text-[10px] text-muted-foreground">
+                kS({nd.W},{nd.n})
+              </span>
+              <span className="text-base font-semibold tabular-nums leading-none">
+                {nd.value}
+              </span>
+              {nd.isBase && (
+                <span className="text-[9px] text-muted-foreground">
+                  {t("learn.knapCellBase")}: W=0
+                </span>
+              )}
+              {nd.onPath && nd === root && (
+                <span className="absolute -right-1 -top-2 text-amber-500">★</span>
+              )}
+              {isLeaf && nd.onPath && !nd.isBase && (
+                <span className="absolute -right-1 -top-2 text-amber-500">★</span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      <span className="mt-2 block text-xs text-muted-foreground">
+        {t("learn.knapTreeLegend")}
+      </span>
     </Figure>
   )
 }
