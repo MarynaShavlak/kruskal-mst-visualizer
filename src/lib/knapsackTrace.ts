@@ -206,6 +206,7 @@ export function buildKnapsackTrace(
           lines = [6, 7]
           caption = t("play.nKnTake", {
             i,
+            prev: i - 1,
             w,
             name: item(i - 1),
             val: values[i - 1],
@@ -303,6 +304,7 @@ export function buildKnapsackTrace(
       caption: taken
         ? t("play.nKnBtTake", {
             i,
+            prev: i - 1,
             w,
             value,
             above,
@@ -310,7 +312,7 @@ export function buildKnapsackTrace(
             wt: weights[i - 1],
             colAfter,
           })
-        : t("play.nKnBtSkip", { i, w, value, above, name: item(i - 1) }),
+        : t("play.nKnBtSkip", { i, prev: i - 1, w, value, above, name: item(i - 1) }),
     })
     w = colAfter
   }

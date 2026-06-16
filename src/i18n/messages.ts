@@ -349,6 +349,90 @@ const ua = {
   "play.nHkTourWorse": " — довше за поточний.",
   "play.nHkDone": "Готово: оптимальний тур {path} = {cost}.",
 
+  // — Рюкзак (плеєр + нарація) —
+  "play.knapMethod": "Метод:",
+  "play.knapModeDp": "Динамічне програмування",
+  "play.knapModeGreedy": "Жадібний",
+  "play.knapModeBrute": "Повний перебір",
+  "play.knapEmpty": "Немає предметів — додайте їх у вкладці «Редактор».",
+  "play.knapDpTooBig":
+    "Таблиця ДП завелика для покрокового плеєра (понад {max} клітинок). Зменшіть місткість або кількість предметів у редакторі.",
+  "play.knapBruteTooBig":
+    "Забагато підмножин (2ⁿ) для покрокового перебору. Зменшіть кількість предметів у редакторі.",
+  "play.codeKnapDp": "Код — ДП (таблиця K[i][w])",
+  "play.codeKnapGreedy": "Код — жадібний метод",
+  "play.codeKnapBrute": "Код — повний перебір",
+  "play.knapStatFilled": "клітинок:",
+  "play.knapStatItems": "предметів:",
+  "play.knapStatCapacity": "місткість:",
+  "play.knapStatChecked": "перевірено:",
+  "play.knapStatBest": "найкраща:",
+  "play.knapPhaseFill": "заповнення",
+  "play.knapPhaseBacktrack": "відновлення",
+  "play.knapPhaseDone": "готово",
+  "play.knapOptimum": "Оптимальна вартість",
+  "play.knapChosenSet": "Обраний набір",
+  "play.knapSetWeight": "сумарна вага {w} ≤ {cap}",
+  "play.knapGreedyValue": "Жадібний результат",
+  "play.knapVsOptimal": "Оптимум (ДП): {optimal}",
+  "play.knapGreedyLoses":
+    "Жадібний програв оптимуму на {gap} — для задачі 0/1 він не гарантує найкращого набору.",
+  "play.knapGreedyMatches": "Тут жадібний збігся з оптимумом (щастить не завжди).",
+  "play.knapBest": "Найкраща підмножина",
+  "play.knapChecked": "перевірено {n} = 2ⁿ підмножин",
+  "play.knapDpTitle": "Таблиця K[i][w]",
+  "play.knapDpProgress": "заповнено {n}/{total} клітинок",
+  "play.knapItemsTitle": "Предмети (W = {w})",
+  "play.knapGreedyTitle": "Жадібний: за питомою цінністю",
+  "play.knapFilled": "{used}/{cap} зайнято",
+  "play.knapValue": "вартість {v}",
+  "play.knapColStatus": "статус",
+  "play.knapTaken": "взято",
+  "play.knapSkipped": "пропущено",
+  "play.knapPending": "попереду",
+  "play.knapSubsetsTitle": "Підмножини (повний перебір)",
+  "play.knapSubsetsProgress": "перевірено {n}/{total}",
+  "play.knapColSubset": "Підмножина",
+  "play.knapColFits": "влазить",
+  // Нарація рюкзака — ДП.
+  "play.nKnInit":
+    "Будуємо таблицю K[i][w]: максимальна вартість для перших i предметів і місткості w. Рюкзак вміщає {w}, предметів {n}.",
+  "play.nKnRowBase": "Базовий рядок i=0: без жодного предмета вартість скрізь 0.",
+  "play.nKnRowOpen":
+    "Рядок i={i}: тепер дозволено предмет {name} (вага {wt}, вартість {val}).",
+  "play.nKnBase": "K[{i}][{w}] — база (немає предметів або місткість 0) → 0.",
+  "play.nKnTake":
+    "K[{i}][{w}]: {name} вміщається. Взяти: {val}+K[{prev}][{rem}] = {take}; не брати: {skip}. {take} > {skip} → беремо, K={value}.",
+  "play.nKnSkip":
+    "K[{i}][{w}]: {name} вміщається, але взяти {take} ≤ не брати {skip} → не беремо, K={value}.",
+  "play.nKnNofit":
+    "K[{i}][{w}]: {name} (вага {wt}) не вміщається у {w} → беремо значення зверху, K={value}.",
+  "play.nKnFillDone":
+    "Таблицю заповнено. Відповідь у правому нижньому куті: K[{n}][{w}] = {best}.",
+  "play.nKnBtOpen": "Відновлюємо набір зворотним проходом з K[{n}][{w}] = {best}.",
+  "play.nKnBtTake":
+    "K[{i}][{w}]={value} ≠ K[{prev}][{w}]={above} → предмет {name} був узятий. Звільняємо вагу {wt}: w→{colAfter}.",
+  "play.nKnBtSkip":
+    "K[{i}][{w}]={value} = K[{prev}][{w}]={above} → предмет {name} не брали; w без змін.",
+  "play.nKnDone": "Готово. Оптимум {best}; набір {{set}} (сумарна вага {weight}).",
+  // Нарація рюкзака — жадібний.
+  "play.nKnGreedyInit":
+    "Сортуємо предмети за питомою цінністю (спадно) і беремо, поки вміщається. Рюкзак вміщає {w}.",
+  "play.nKnGreedyTake":
+    "{name} (цінність/вага {ratio}): вага {wt} ≤ вільні {free} → беремо. Вартість +{val} = {total}.",
+  "play.nKnGreedySkip":
+    "{name} (цінність/вага {ratio}): вага {wt} > вільні {free} → пропускаємо.",
+  "play.nKnGreedyDone": "Жадібний підсумок: {total}. Оптимум {optimal}{gapNote}.",
+  "play.nKnGreedyGap": " — програш {gap}",
+  // Нарація рюкзака — повний перебір.
+  "play.nKnBruteInit":
+    "Перебираємо всі {count} підмножин предметів; лідер — найцінніша з тих, що влазять.",
+  "play.nKnBruteSubset": "{set}: вага {w}, вартість {v} — {verdict}",
+  "play.nKnBruteNofit": "не влазить.",
+  "play.nKnBruteLeader": "новий лідер {v}.",
+  "play.nKnBruteWorse": "не краще за лідера.",
+  "play.nKnBruteDone": "Перевірено {count} підмножин. Найкраща: {set} = {best}.",
+
   // — Плеєр Прима —
   "play.primCode": "Код — Прим (лінива черга)",
   "play.primGraph": "Граф — дерево, що росте",
@@ -733,6 +817,90 @@ const en: Record<MessageKey, string> = {
   "play.nHkTourBetter": " — new shortest tour.",
   "play.nHkTourWorse": " — longer than the current.",
   "play.nHkDone": "Done: the optimal tour {path} = {cost}.",
+
+  // — Knapsack (player + narration) —
+  "play.knapMethod": "Method:",
+  "play.knapModeDp": "Dynamic programming",
+  "play.knapModeGreedy": "Greedy",
+  "play.knapModeBrute": "Brute force",
+  "play.knapEmpty": "No items — add them in the “Editor” tab.",
+  "play.knapDpTooBig":
+    "The DP table is too large for the step player (over {max} cells). Reduce the capacity or item count in the editor.",
+  "play.knapBruteTooBig":
+    "Too many subsets (2ⁿ) for step-by-step brute force. Reduce the item count in the editor.",
+  "play.codeKnapDp": "Code — DP (table K[i][w])",
+  "play.codeKnapGreedy": "Code — greedy method",
+  "play.codeKnapBrute": "Code — brute force",
+  "play.knapStatFilled": "cells:",
+  "play.knapStatItems": "items:",
+  "play.knapStatCapacity": "capacity:",
+  "play.knapStatChecked": "checked:",
+  "play.knapStatBest": "best:",
+  "play.knapPhaseFill": "filling",
+  "play.knapPhaseBacktrack": "backtrack",
+  "play.knapPhaseDone": "done",
+  "play.knapOptimum": "Optimal value",
+  "play.knapChosenSet": "Chosen set",
+  "play.knapSetWeight": "total weight {w} ≤ {cap}",
+  "play.knapGreedyValue": "Greedy result",
+  "play.knapVsOptimal": "Optimum (DP): {optimal}",
+  "play.knapGreedyLoses":
+    "Greedy fell short of the optimum by {gap} — for the 0/1 problem it doesn't guarantee the best set.",
+  "play.knapGreedyMatches": "Here greedy matched the optimum (it doesn't always).",
+  "play.knapBest": "Best subset",
+  "play.knapChecked": "checked {n} = 2ⁿ subsets",
+  "play.knapDpTitle": "Table K[i][w]",
+  "play.knapDpProgress": "filled {n}/{total} cells",
+  "play.knapItemsTitle": "Items (W = {w})",
+  "play.knapGreedyTitle": "Greedy: by value/weight",
+  "play.knapFilled": "{used}/{cap} used",
+  "play.knapValue": "value {v}",
+  "play.knapColStatus": "status",
+  "play.knapTaken": "taken",
+  "play.knapSkipped": "skipped",
+  "play.knapPending": "ahead",
+  "play.knapSubsetsTitle": "Subsets (brute force)",
+  "play.knapSubsetsProgress": "checked {n}/{total}",
+  "play.knapColSubset": "Subset",
+  "play.knapColFits": "fits",
+  // Knapsack narration — DP.
+  "play.nKnInit":
+    "Building the table K[i][w]: the maximum value for the first i items and capacity w. The knapsack holds {w}, items {n}.",
+  "play.nKnRowBase": "Base row i=0: with no items the value is 0 everywhere.",
+  "play.nKnRowOpen":
+    "Row i={i}: item {name} is now allowed (weight {wt}, value {val}).",
+  "play.nKnBase": "K[{i}][{w}] — base (no items or zero capacity) → 0.",
+  "play.nKnTake":
+    "K[{i}][{w}]: {name} fits. Take: {val}+K[{prev}][{rem}] = {take}; skip: {skip}. {take} > {skip} → take it, K={value}.",
+  "play.nKnSkip":
+    "K[{i}][{w}]: {name} fits, but take {take} ≤ skip {skip} → don't take it, K={value}.",
+  "play.nKnNofit":
+    "K[{i}][{w}]: {name} (weight {wt}) doesn't fit in {w} → take the value above, K={value}.",
+  "play.nKnFillDone":
+    "Table filled. The answer is in the bottom-right corner: K[{n}][{w}] = {best}.",
+  "play.nKnBtOpen": "Reconstructing the set by backtracking from K[{n}][{w}] = {best}.",
+  "play.nKnBtTake":
+    "K[{i}][{w}]={value} ≠ K[{prev}][{w}]={above} → item {name} was taken. Free its weight {wt}: w→{colAfter}.",
+  "play.nKnBtSkip":
+    "K[{i}][{w}]={value} = K[{prev}][{w}]={above} → item {name} wasn't taken; w unchanged.",
+  "play.nKnDone": "Done. Optimum {best}; set {{set}} (total weight {weight}).",
+  // Knapsack narration — greedy.
+  "play.nKnGreedyInit":
+    "Sort items by value/weight (descending) and take while they fit. The knapsack holds {w}.",
+  "play.nKnGreedyTake":
+    "{name} (value/weight {ratio}): weight {wt} ≤ free {free} → take it. Value +{val} = {total}.",
+  "play.nKnGreedySkip":
+    "{name} (value/weight {ratio}): weight {wt} > free {free} → skip it.",
+  "play.nKnGreedyDone": "Greedy total: {total}. Optimum {optimal}{gapNote}.",
+  "play.nKnGreedyGap": " — short by {gap}",
+  // Knapsack narration — brute force.
+  "play.nKnBruteInit":
+    "Enumerating all {count} subsets of items; the leader is the most valuable that fits.",
+  "play.nKnBruteSubset": "{set}: weight {w}, value {v} — {verdict}",
+  "play.nKnBruteNofit": "doesn't fit.",
+  "play.nKnBruteLeader": "new leader {v}.",
+  "play.nKnBruteWorse": "not better than the leader.",
+  "play.nKnBruteDone": "Checked {count} subsets. Best: {set} = {best}.",
 
   // — Prim player —
   "play.primCode": "Code — Prim (lazy queue)",
