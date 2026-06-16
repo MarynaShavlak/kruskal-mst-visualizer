@@ -23,6 +23,9 @@ export function GreedyPanel({
   const used = capacity - frame.free
   const pct = capacity > 0 ? Math.round((used / capacity) * 100) : 0
   const current = frame.step
+  // На фінальному кадрі (done) frame.step = null, але всі предмети вже вирішено —
+  // показуємо їхні підсумкові статуси, а не «попереду».
+  const done = frame.sub.kind === "done"
 
   return (
     <Panel
@@ -55,8 +58,8 @@ export function GreedyPanel({
         </thead>
         <tbody>
           {steps.map((s, idx) => {
-            const decided = current !== null && idx <= current
-            const isCurrent = idx === current
+            const decided = done || (current !== null && idx <= current)
+            const isCurrent = !done && idx === current
             const status = !decided
               ? t("play.knapPending")
               : s.taken
