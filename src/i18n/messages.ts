@@ -491,6 +491,82 @@ const ua = {
   "bench.colDsuMs": "DSU, мс",
   "bench.colHasPathMs": "has-path, мс",
   "bench.colSpeedup": "Прискорення",
+
+  // — Бульбашкове сортування —
+  // Редактор.
+  "editor.bsIntro": "Приклад [5,1,4,2,8,3]",
+  "editor.bsBest": "Відсортований (найкращий)",
+  "editor.bsWorst": "Зворотний (гірший)",
+  "editor.bsValue": "Число",
+  "editor.bsArrayTitle": "Масив чисел",
+  "editor.bsNoValues": "Масив порожній — додайте перше число.",
+  "editor.bsSize": "Елементів",
+  "editor.bsMaxComparisons": "Порівнянь (n(n−1)/2)",
+  "editor.bsMaxPasses": "Проходів (n−1)",
+  "editor.bsSortedYes": "Масив уже відсортовано",
+  "editor.bsSortedNo": "Масив не відсортовано",
+  "editor.bsWarnMany":
+    "Масив завеликий — плеєр може бути неплавним. Зменште кількість елементів.",
+  "editor.bsAriaValue": "Значення на індексі {i}",
+  "editor.bsDeleteAt": "Видалити елемент {i}",
+  "editor.bsHelpCell": "Клітинка масиву",
+  "editor.helpBsAdd": "додати число в кінець масиву",
+  "editor.helpBsEdit": "редагувати значення (ціле ≥ 0)",
+  "editor.helpBsRemove": "видалити число з масиву",
+  "editor.helpBsNote":
+    "Сортуються будь-які цілі числа. Спробуйте відсортований і зворотний масиви, щоб побачити найкращий і гірший випадки.",
+  "editor.bsErrBadValues": "Поле values має бути масивом чисел",
+  // Плеєр.
+  "play.bsMethod": "Версія:",
+  "play.bsModeNaive": "Наївна",
+  "play.bsModeOptimized": "Оптимізована (swapped)",
+  "play.bsEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.bsTooBig":
+    "Масив завеликий для плавного плеєра (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.bsStatComparisons": "порівнянь:",
+  "play.bsStatSwaps": "обмінів:",
+  "play.bsStatPass": "прохід:",
+  "play.bsStatSize": "елементів:",
+  "play.bsPhaseScan": "порівняння",
+  "play.bsPhasePass": "кінець проходу",
+  "play.bsPhaseDone": "готово",
+  "play.bsArrayTitle": "Масив (n = {n})",
+  "play.codeBsNaive": "Код — наївна бульбашка",
+  "play.codeBsOptimized": "Код — оптимізована (swapped)",
+  "play.bsInputLabel": "Вхід",
+  "play.bsSortedLabel": "Відсортовано",
+  "play.bsResultSummary": "Підсумок",
+  "play.bsResultCounts":
+    "{comparisons} порівнянь · {swaps} обмінів · {passes} проходів",
+  "play.bsSaved":
+    "Рання зупинка зекономила {saved} порівнянь (наївна зробила б {max}).",
+  "play.nBsInit":
+    "Старт: масив {arr}, n = {n}. Зовнішній цикл зробить щонайбільше {passes} проходів.",
+  "play.nBsCompareSwap":
+    "Прохід i={i}, j={j}: {left} > {right} — пара стоїть неправильно, міняємо місцями. Порівнянь: {comparisons}, обмінів: {swaps}.",
+  "play.nBsCompareKeep":
+    "Прохід i={i}, j={j}: {left} ≤ {right} — порядок правильний, лишаємо. Порівнянь: {comparisons}, обмінів: {swaps}.",
+  "play.nBsPassEnd":
+    "Кінець проходу i={i}: значення {value} «сплило» на індекс {locked} — стало на місце, зелений хвіст виріс. Наступний прохід на один коротший.",
+  "play.nBsEarlyStop":
+    "За весь прохід i={i} не було жодного обміну → масив уже відсортовано. Рання зупинка.",
+  "play.nBsDone":
+    "Готово: масив відсортовано {arr}. Усього {comparisons} порівнянь і {swaps} обмінів за {passes} проходи(-ів).",
+  // Навчальні віджети.
+  "learn.bsLegendComparing": "порівнюються",
+  "learn.bsLegendSwapped": "щойно обміняли",
+  "learn.bsLegendSorted": "на місці",
+  "learn.bsLegendUnsorted": "не впорядковано",
+  "learn.bsVerdictSwap": "{left} > {right} — обмін",
+  "learn.bsVerdictKeep": "{left} ≤ {right} — лишаємо",
+  "learn.bsCounters": "порівнянь: {comparisons}, обмінів: {swaps}",
+  "learn.bsResultSummary":
+    "{comparisons} порівнянь · {swaps} обмінів · {passes} проходів",
+  "learn.bsStart": "старт",
+  "learn.bsPass": "прохід {i}",
+  "learn.bsStableNote":
+    "Стабільно: серед рівних ключів порядок підписів не змінився.",
+  "learn.bsGrowthNote": "n²/2 росте катастрофічно швидше за n·log₂n.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -968,6 +1044,80 @@ const en: Record<MessageKey, string> = {
   "bench.colDsuMs": "DSU, ms",
   "bench.colHasPathMs": "has-path, ms",
   "bench.colSpeedup": "Speedup",
+
+  // — Bubble Sort —
+  // Editor.
+  "editor.bsIntro": "Example [5,1,4,2,8,3]",
+  "editor.bsBest": "Sorted (best case)",
+  "editor.bsWorst": "Reversed (worst case)",
+  "editor.bsValue": "Value",
+  "editor.bsArrayTitle": "Array of numbers",
+  "editor.bsNoValues": "The array is empty — add the first number.",
+  "editor.bsSize": "Elements",
+  "editor.bsMaxComparisons": "Comparisons (n(n−1)/2)",
+  "editor.bsMaxPasses": "Passes (n−1)",
+  "editor.bsSortedYes": "The array is already sorted",
+  "editor.bsSortedNo": "The array is not sorted",
+  "editor.bsWarnMany":
+    "The array is too large — playback may stutter. Reduce the number of elements.",
+  "editor.bsAriaValue": "Value at index {i}",
+  "editor.bsDeleteAt": "Delete element {i}",
+  "editor.bsHelpCell": "Array cell",
+  "editor.helpBsAdd": "append a number to the array",
+  "editor.helpBsEdit": "edit a value (integer ≥ 0)",
+  "editor.helpBsRemove": "remove a number from the array",
+  "editor.helpBsNote":
+    "Any integers can be sorted. Try the sorted and reversed arrays to see the best and worst cases.",
+  "editor.bsErrBadValues": "The `values` field must be an array of numbers",
+  // Player.
+  "play.bsMethod": "Version:",
+  "play.bsModeNaive": "Naive",
+  "play.bsModeOptimized": "Optimized (swapped)",
+  "play.bsEmpty": "The array is empty — add numbers in the “Editor” tab.",
+  "play.bsTooBig":
+    "The array is too large for smooth playback (over {max} elements). Reduce it in the “Editor” tab.",
+  "play.bsStatComparisons": "comparisons:",
+  "play.bsStatSwaps": "swaps:",
+  "play.bsStatPass": "pass:",
+  "play.bsStatSize": "elements:",
+  "play.bsPhaseScan": "comparing",
+  "play.bsPhasePass": "pass complete",
+  "play.bsPhaseDone": "done",
+  "play.bsArrayTitle": "Array (n = {n})",
+  "play.codeBsNaive": "Code — naive bubble sort",
+  "play.codeBsOptimized": "Code — optimized (swapped)",
+  "play.bsInputLabel": "Input",
+  "play.bsSortedLabel": "Sorted",
+  "play.bsResultSummary": "Summary",
+  "play.bsResultCounts": "{comparisons} comparisons · {swaps} swaps · {passes} passes",
+  "play.bsSaved":
+    "Early exit saved {saved} comparisons (the naive version would do {max}).",
+  "play.nBsInit":
+    "Start: array {arr}, n = {n}. The outer loop runs at most {passes} passes.",
+  "play.nBsCompareSwap":
+    "Pass i={i}, j={j}: {left} > {right} — the pair is out of order, swap them. Comparisons: {comparisons}, swaps: {swaps}.",
+  "play.nBsCompareKeep":
+    "Pass i={i}, j={j}: {left} ≤ {right} — order is correct, leave it. Comparisons: {comparisons}, swaps: {swaps}.",
+  "play.nBsPassEnd":
+    "End of pass i={i}: value {value} “bubbled up” to index {locked} — it's now in place, the green tail grew. The next pass is one shorter.",
+  "play.nBsEarlyStop":
+    "No swaps happened during the whole pass i={i} → the array is already sorted. Early exit.",
+  "play.nBsDone":
+    "Done: the array is sorted {arr}. In total {comparisons} comparisons and {swaps} swaps over {passes} pass(es).",
+  // Learn widgets.
+  "learn.bsLegendComparing": "comparing",
+  "learn.bsLegendSwapped": "just swapped",
+  "learn.bsLegendSorted": "in place",
+  "learn.bsLegendUnsorted": "unsorted",
+  "learn.bsVerdictSwap": "{left} > {right} — swap",
+  "learn.bsVerdictKeep": "{left} ≤ {right} — keep",
+  "learn.bsCounters": "comparisons: {comparisons}, swaps: {swaps}",
+  "learn.bsResultSummary": "{comparisons} comparisons · {swaps} swaps · {passes} passes",
+  "learn.bsStart": "start",
+  "learn.bsPass": "pass {i}",
+  "learn.bsStableNote":
+    "Stable: among equal keys the order of labels did not change.",
+  "learn.bsGrowthNote": "n²/2 grows catastrophically faster than n·log₂n.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }

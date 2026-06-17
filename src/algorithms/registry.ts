@@ -4,6 +4,7 @@ import { prim } from "@/algorithms/prim"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { heldKarp } from "@/algorithms/held-karp"
 import { knapsack } from "@/algorithms/knapsack"
+import { bubbleSort } from "@/algorithms/bubble-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -17,6 +18,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   floydWarshall,
   heldKarp,
   knapsack,
+  bubbleSort,
 ]
 
 export function getAlgorithm(
