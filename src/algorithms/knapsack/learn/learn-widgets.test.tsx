@@ -6,6 +6,7 @@ import {
   SubsetsFigure,
   ItemsFigure,
   CellFormulaFigure,
+  CodeWalkthroughFigure,
   RecursionTreeFigure,
 } from "@/algorithms/knapsack/learn/learn-widgets"
 import { KNAPSACK_SMALL, KNAPSACK_CLASSIC } from "@/lib/exampleKnapsack"
@@ -50,6 +51,24 @@ describe("навчальні віджети рюкзака (обчислюють
       <CellFormulaFigure instance={KNAPSACK_SMALL} i={3} w={4} />,
     )
     expect(container.textContent).toContain("18")
+  })
+
+  it("CodeWalkthroughFigure (малий, focusRow=3): міні-плеєр код ↔ таблиця", () => {
+    const { container } = render(
+      <CodeWalkthroughFigure instance={KNAPSACK_SMALL} focusRow={3} />,
+    )
+    const text = container.textContent ?? ""
+    // Рядок i=3 → row-open + 5 клітинок (w=0…4) = 6 кадрів.
+    expect(text).toContain("/ 6")
+    // Жива таблиця K[i][w] показує предмети рядка.
+    expect(text).toContain("П3")
+  })
+
+  it("CodeWalkthroughFigure (малий, повний прогін): більше кадрів за фокус-рядок", () => {
+    const { container } = render(<CodeWalkthroughFigure instance={KNAPSACK_SMALL} />)
+    // Повний прогін малого інстансу (n=3, W=4): init + 4×(row-open+5 клітинок)
+    // + fill-done + bt-open + 3×bt-row + done = 31 кадр.
+    expect(container.textContent).toContain("/ 31")
   })
 
   it("RecursionTreeFigure (класичний): корінь 220, вузли 160/100/60", () => {

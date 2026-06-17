@@ -1,10 +1,10 @@
 import type { ReactNode } from "react"
 import { FigureCard } from "@/algorithms/shared/learn/FigureCard"
-import { tr } from "@/i18n/use-t"
 import { KNAPSACK_SMALL, KNAPSACK_CLASSIC } from "@/lib/exampleKnapsack"
 import {
   BacktrackFigure,
   CellFormulaFigure,
+  CodeWalkthroughFigure,
   ComplexityFigure,
   DpTableFigure,
   GreedyFigure,
@@ -71,18 +71,17 @@ export function figureForSrc(
       return <BacktrackFigure instance={KNAPSACK_CLASSIC} condense={10} caption={caption} />
     case "greedy_fill_classic":
       return <GreedyFigure instance={KNAPSACK_CLASSIC} caption={caption} />
-    default:
-      // Дерево рекурсії, клітинки-крупні плани й панелі «код↔таблиця» — статичні:
-      // для останніх ведемо у живий плеєр (вкладка «Алгоритм»).
+    // Розділ 21 «код ↔ таблиця» — вбудовані міні-плеєри (раніше вели у вкладку
+    // «Алгоритм»): огляд на малому/класичному інстансі + детальний скан рядка i=3.
+    case "code_steps_small":
+      return <CodeWalkthroughFigure instance={KNAPSACK_SMALL} caption={caption} />
+    case "code_walk_small_i3":
       return (
-        <FigureCard
-          caption={caption}
-          cta={
-            stem.startsWith("code_")
-              ? { label: tr("tab.playback"), route: "knapsack/playback" }
-              : undefined
-          }
-        />
+        <CodeWalkthroughFigure instance={KNAPSACK_SMALL} focusRow={3} caption={caption} />
       )
+    case "code_steps_classic":
+      return <CodeWalkthroughFigure instance={KNAPSACK_CLASSIC} caption={caption} />
+    default:
+      return <FigureCard caption={caption} />
   }
 }

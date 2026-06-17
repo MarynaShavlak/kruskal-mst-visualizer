@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useMemo, type ReactNode } from "react"
 import { Check, Crown } from "lucide-react"
 import {
   knapsackDpTable,
@@ -7,12 +7,20 @@ import {
   type KnapsackInstance,
 } from "@/lib/knapsack"
 import { buildBruteTrace } from "@/lib/knapsackAltTrace"
+import { buildKnapsackTrace } from "@/lib/knapsackTrace"
 import {
   backtrackPath,
   cellSources,
   dpLinear,
 } from "@/algorithms/knapsack/playback/highlight"
+import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
+import { DpGridPanel } from "@/algorithms/knapsack/playback/DpGridPanel"
+import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
+import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
+import type { MessageKey } from "@/i18n/messages"
+import type { Translate } from "@/lib/translate"
+import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
 // Живі навчальні віджети рюкзака на еталонних інстансах (малий W=4, класичний
@@ -405,6 +413,83 @@ export function CellFormulaFigure({
         </span>
       )}
     </Figure>
+  )
+}
+
+// — Покрокове виконання коду: міні-плеєр «код ↔ таблиця» ---------------------
+
+/**
+ * Вбудований у навчальну сторінку міні-плеєр: ліворуч код ДП із підсвіченими
+ * активними рядками, праворуч — жива таблиця K[i][w] (ті самі панелі, що й на
+ * вкладці «Алгоритм»). Гілку переходу кодує колір активної клітинки таблиці
+ * (🟩 взяти · 🟦 не брати · ⬜ не влазить · база). `focusRow` лишає тільки кадри
+ * одного рядка (детальний скан клітинок), інакше — весь прогін заповнення +
+ * відновлення. Замінює статичні фігури «код ↔ таблиця» розділу 21.
+ */
+export function CodeWalkthroughFigure({
+  instance,
+  focusRow,
+  caption,
+}: {
+  instance: KnapsackInstance
+  /** Лишити лише кадри цього рядка i (детальний скан однієї стрічки). */
+  focusRow?: number
+  caption?: string
+}) {
+  const t = useT()
+  const lang = useLangStore((s) => s.lang)
+  const tr: Translate = (k, v) => t(k as MessageKey, v)
+
+  const { frames, result, code } = useMemo(() => {
+    const run = buildKnapsackTrace(instance, tr)
+    const all = run.trace.frames
+    const picked =
+      focusRow === undefined
+        ? all
+        : all.filter(
+            (f) =>
+              f.phase === "fill" &&
+              f.row === focusRow &&
+              (f.sub.kind === "row-open" || f.sub.kind === "cell"),
+          )
+    return { frames: picked, result: run.result, code: run.trace.code }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [instance, lang, focusRow])
+
+  const player = usePlayer(frames.length, frames)
+
+  if (frames.length === 0) {
+    return (
+      <Figure caption={caption}>
+        <span className="block text-sm text-muted-foreground">—</span>
+      </Figure>
+    )
+  }
+
+  const frame = frames[Math.min(player.index, frames.length - 1)]
+
+  return (
+    <MiniPlayerShell
+      player={player}
+      frameCount={frames.length}
+      caption={frame.caption}
+    >
+      <span className="grid gap-3 lg:grid-cols-2">
+        <CodePanel
+          code={code}
+          title={t("play.codeKnapDp")}
+          activeLines={frame.lines}
+          contextLines={frame.contextLines}
+          className="h-[320px]"
+        />
+        <DpGridPanel result={result} frame={frame} className="h-[320px]" />
+      </span>
+      {caption && (
+        <span className="mt-2 block text-center text-xs text-muted-foreground">
+          {caption}
+        </span>
+      )}
+    </MiniPlayerShell>
   )
 }
 
