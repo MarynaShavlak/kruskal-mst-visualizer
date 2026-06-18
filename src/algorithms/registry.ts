@@ -9,6 +9,7 @@ import { insertionSort } from "@/algorithms/insertion-sort"
 import { selectionSort } from "@/algorithms/selection-sort"
 import { quickSort } from "@/algorithms/quick-sort"
 import { mergeSort } from "@/algorithms/merge-sort"
+import { shellSort } from "@/algorithms/shell-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -27,6 +28,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   selectionSort,
   quickSort,
   mergeSort,
+  shellSort,
 ]
 
 export function getAlgorithm(

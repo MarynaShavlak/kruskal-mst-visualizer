@@ -7,8 +7,10 @@
 swapped), сортування вставками (лінійний пошук місця проти бінарної вставки),
 сортування прямим вибором (стандартне з обміном проти стабільного зі зсувом) і
 швидке сортування (тристороннє «розділяй і володарюй» + дерево рекурсії, перемикач
-стратегії опорного) і сортування злиттям (поділ навпіл + злиття двома вказівниками,
+стратегії опорного), сортування злиттям (поділ навпіл + злиття двома вказівниками,
 дерево рекурсії, перемикач реалізації низхідна/вихідна bottom-up — місток до TimSort)
+і сортування Шелла (узагальнення вставок «через крок» gap, підпослідовності,
+перемикач послідовності проміжків n//2/Кнут/Ciura — субквадратичне, нестабільне)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -16,7 +18,8 @@ Python-репозиторіїв із повним розбором: https://gith
 вставки — https://github.com/MarynaShavlak/algo-insertion-sort,
 вибір — https://github.com/MarynaShavlak/algo-selection-sort,
 швидке — https://github.com/MarynaShavlak/algo-quick-sort,
-злиттям — https://github.com/MarynaShavlak/algo-merge-sort)
+злиттям — https://github.com/MarynaShavlak/algo-merge-sort,
+Шелла — https://github.com/MarynaShavlak/algo-shell-sort)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -50,7 +53,7 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             held-karp/{learn,editor,playback}, knapsack/{learn,editor,playback},
             bubble-sort/{learn,editor,playback}, insertion-sort/{learn,editor,playback},
             selection-sort/{learn,editor,playback}, quick-sort/{learn,editor,playback},
-            merge-sort/{learn,editor,playback}
+            merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -65,6 +68,10 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             навпіл униз 🔵/🟧, злиття вгору 🟢)/вихідна (bottom-up: проходи-пробіжки 1,2,4,…) +
             спільна ЗІРКОВА панель злиття двома вказівниками (ліва/права половини + курсори +
             merged); дерево ЗАВЖДИ збалансоване → гарантований O(n·log n);
+            Шелла: редактор масиву чисел; плеєр — стовпчики (temp «у руці» + «дірка» +
+            🔴 gap-зсув + 🟡 порівняння) з підсвіткою ПОТОЧНОЇ підпослідовності (індекси
+            через крок gap, фіолетові чипи) + перемикач послідовності проміжків
+            (n//2/Кнут/Ciura → різна ціна на тих самих даних); 76 кадрів = 76 подій;
             benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
@@ -80,6 +87,8 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
             quickSort.ts(+Trace)/exampleQuickSort (швидке: тристороння+in-place Ломуто; quicksortSteps → дерево рекурсії),
             mergeSort.ts(+Trace)/exampleMergeSort (злиттям: низхідна mergeSortSteps→дерево +
               вихідна mergeSortBottomUpSteps→проходи; mergeSteps→журнал двох вказівників; спільний randomArray),
+            shellSort.ts(+Trace)/exampleShellSort (Шелла: shellSortSteps→журнал подій (gap_start/
+              i_start/compare/shift/insert); gapsShell/Knuth/Ciura→послідовності проміжків; спільний randomArray),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -88,7 +97,7 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             presets / directed-presets; tsp-store(+presets); knapsack-store(+presets, без ребер/координат);
             bubble-sort-store(+presets, масив чисел); insertion-sort-store(+presets, масив чисел);
             selection-sort-store(+presets, масив чисел); quick-sort-store(+presets, масив чисел);
-            merge-sort-store(+presets, масив чисел);
+            merge-sort-store(+presets, масив чисел); shell-sort-store(+presets, масив чисел);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список

@@ -1,0 +1,182 @@
+import { ArrowDown } from "lucide-react"
+import { Panel } from "@/algorithms/shared/playback/Panel"
+import {
+  shellBarRole,
+  inCurrentGroup,
+  barHeightPct,
+  type ShellBarRole,
+} from "@/algorithms/shell-sort/playback/highlight"
+import { useT } from "@/i18n/use-t"
+import { cn } from "@/lib/utils"
+
+const BAR_CLASS: Record<ShellBarRole, string> = {
+  sorted: "bg-emerald-500/75 dark:bg-emerald-500/65",
+  insert: "bg-emerald-500/75 dark:bg-emerald-500/65",
+  compare: "bg-amber-400/80 dark:bg-amber-400/70",
+  shift: "bg-rose-500/80 dark:bg-rose-500/70",
+  hole: "border-2 border-dashed border-muted-foreground/50 bg-transparent",
+  idle: "bg-slate-400/60 dark:bg-slate-500/50",
+}
+
+export interface ShellBarsProps {
+  readonly array: readonly number[]
+  /** Поточний проміжок (для підсвітки підпослідовності) або null. */
+  readonly gap: number | null
+  /** Залишок i % gap — поточна підпослідовність; -1 якщо не підсвічуємо. */
+  readonly groupResidue: number
+  readonly hole: number | null
+  /** temp «у руці» (плаваючий бурштиновий стовпчик) або null. */
+  readonly keyValue: number | null
+  readonly compareAt: number | null
+  readonly shiftAt: number | null
+  readonly insertAt: number | null
+  readonly sortedAll: boolean
+  readonly height?: number
+}
+
+/**
+ * Стовпчиковий вид масиву для сортування Шелла. Над «діркою» висить бурштиновий
+ * стовпчик `temp` «у руці» (зі стрілкою ↓); 🟢 — вставлений/відсортований, 🟡 —
+ * arr[j−gap], що порівнюється, 🔴 — щойно gap-зсунутий, ⋯ — «дірка», ⬜ — решта.
+ * Індекси ПОТОЧНОЇ підпослідовності (крок gap) обведено фіолетовим — видно, що
+ * сортуються елементи «через крок». Спільне для плеєра й навчальних віджетів.
+ */
+export function ShellBars({
+  array,
+  gap,
+  groupResidue,
+  hole,
+  keyValue,
+  compareAt,
+  shiftAt,
+  insertAt,
+  sortedAll,
+  height = 220,
+}: ShellBarsProps) {
+  const max = Math.max(1, ...array, keyValue ?? 0)
+  const keyZone = Math.round(height * 0.4)
+  return (
+    <div className="flex items-end justify-center gap-1.5" style={{ height: height + keyZone }}>
+      {array.map((v, i) => {
+        const role = shellBarRole(i, { hole, compareAt, shiftAt, insertAt, sortedAll })
+        const isHole = role === "hole"
+        const active = role === "compare" || role === "shift"
+        const showKey = hole !== null && i === hole && keyValue !== null
+        const grouped = inCurrentGroup(i, gap, groupResidue)
+        return (
+          <div
+            key={i}
+            className="flex min-w-[1.5rem] flex-1 flex-col items-center justify-end gap-1"
+            style={{ height: height + keyZone }}
+          >
+            {/* Зона під temp «у руці» (висить над «діркою»). */}
+            <div className="flex w-full flex-col items-center justify-end gap-0.5" style={{ height: keyZone }}>
+              {showKey && (
+                <>
+                  <span className="text-[11px] font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300">
+                    {keyValue}
+                  </span>
+                  <div
+                    className="w-full rounded-t bg-amber-400/80 dark:bg-amber-400/70"
+                    style={{ height: `${Math.max(8, ((keyValue ?? 0) / max) * (keyZone - 28))}px` }}
+                  />
+                  <ArrowDown className="size-3 text-amber-600 dark:text-amber-400" />
+                </>
+              )}
+            </div>
+            {/* Сам стовпчик / порожня «дірка». */}
+            <div className="flex w-full flex-col items-center justify-end gap-1" style={{ height }}>
+              <span
+                className={cn(
+                  "text-[11px] font-medium tabular-nums leading-none",
+                  isHole && "opacity-0",
+                  active ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
+                {v}
+              </span>
+              <div
+                className={cn("w-full rounded-t transition-all", BAR_CLASS[role])}
+                style={{ height: isHole ? "100%" : `${barHeightPct(v, max)}%` }}
+              />
+            </div>
+            {/* Індекс: підпослідовність поточного gap — фіолетовий чип. */}
+            <span
+              className={cn(
+                "rounded px-1 text-[10px] tabular-nums",
+                grouped
+                  ? "bg-violet-500/20 font-semibold text-violet-700 dark:text-violet-300 ring-1 ring-violet-400/50"
+                  : "text-muted-foreground/70",
+              )}
+            >
+              {i}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Стовпчикова панель плеєра: ShellBars у рамці + рядок gap + легенда. */
+export function ShellBarsPanel({
+  className,
+  ...bars
+}: ShellBarsProps & { className?: string }) {
+  const t = useT()
+  return (
+    <Panel
+      title={t("play.shArrayTitle", { n: bars.array.length })}
+      className={className}
+      bodyClassName="flex flex-col gap-2 p-3"
+    >
+      <div className="text-xs text-muted-foreground">
+        {bars.gap != null ? (
+          <span>
+            {t("play.shGapLabel")}{" "}
+            <b className="text-violet-600 dark:text-violet-400 tabular-nums">{bars.gap}</b>
+            {bars.groupResidue >= 0 && (
+              <span className="ml-2">
+                {t("play.shGroupLabel", { residue: bars.groupResidue })}
+              </span>
+            )}
+          </span>
+        ) : (
+          <span>{t("play.shNoGap")}</span>
+        )}
+      </div>
+      <div className="min-h-0 flex-1">
+        <ShellBars {...bars} height={230} />
+      </div>
+      <Legend />
+    </Panel>
+  )
+}
+
+function Legend() {
+  const t = useT()
+  const items: { role: ShellBarRole; label: string }[] = [
+    { role: "sorted", label: t("learn.shLegendSorted") },
+    { role: "compare", label: t("learn.shLegendCompare") },
+    { role: "shift", label: t("learn.shLegendShift") },
+    { role: "idle", label: t("learn.shLegendIdle") },
+  ]
+  return (
+    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+      {items.map((it) => (
+        <span key={it.role} className="inline-flex items-center gap-1">
+          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
+          {it.label}
+        </span>
+      ))}
+      <span className="inline-flex items-center gap-1">
+        <span className="inline-block size-2.5 rounded-sm bg-amber-400/80" />
+        {t("learn.shLegendTemp")}
+      </span>
+      <span className="inline-flex items-center gap-1">
+        <span className="inline-block size-2.5 rounded-sm bg-violet-500/30 ring-1 ring-violet-400/50" />
+        {t("learn.shLegendGroup")}
+      </span>
+    </div>
+  )
+}
