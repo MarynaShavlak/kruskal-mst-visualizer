@@ -19,10 +19,16 @@ swapped), сортування вставками (лінійний пошук �
 або не дійдемо до кінця → -1; масив нерухомий, без передумов; «ціна» — кількість
 перевірок arr[i]==x; перемикач режимів «перший збіг»/«усі входження» find_all;
 головний акцент — аналіз випадків O(1)/O(n); місток до двійкового пошуку)
-і двійковий (бінарний) пошук binary search (ДРУГИЙ алгоритм ПОШУКУ, «винагорода за
+двійковий (бінарний) пошук binary search (ДРУГИЙ алгоритм ПОШУКУ, «винагорода за
 сортування»: на ВІДСОРТОВАНОМУ масиві дивимось у середину вікна [low..high] і
 відкидаємо половину, у якій шуканого точно немає; вікно звужується вдвічі → O(log n);
 передумова — масив відсортований; перемикач реалізації ітеративний/рекурсивний)
+і індексно-послідовний пошук indexed sequential search (ТРЕТІЙ і завершальний
+алгоритм ПОШУКУ — ГІБРИД двійкового й лінійного, СИНТЕЗ серії: дві фази на ДВОХ
+РІВНЯХ даних — 1) ДВІЙКОВИЙ пошук по розрідженій ІНДЕКСНІЙ таблиці (кожен step-ий
+елемент як (ключ, позиція)) → який БЛОК; 2) ПОСЛІДОВНИЙ скан лише цього блоку →
+індекс/-1; O(log n + m), оптимум кроку ≈ √n — місток до Jump Search; передумова —
+масив відсортований; перемикач фази 1 двійковий/лінійний індекс — той самий результат)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -34,7 +40,8 @@ Python-репозиторіїв із повним розбором: https://gith
 Шелла — https://github.com/MarynaShavlak/algo-shell-sort,
 порозрядне — https://github.com/MarynaShavlak/algo-radix-sort,
 лінійний пошук — https://github.com/MarynaShavlak/algo-linear-search,
-двійковий пошук — https://github.com/MarynaShavlak/algo-binary-search)
+двійковий пошук — https://github.com/MarynaShavlak/algo-binary-search,
+індексно-послідовний пошук — https://github.com/MarynaShavlak/algo-indexed-sequential-search)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -70,7 +77,7 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             selection-sort/{learn,editor,playback}, quick-sort/{learn,editor,playback},
             merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback},
             radix-sort/{learn,editor,playback}, linear-search/{learn,editor,playback},
-            binary-search/{learn,editor,playback}
+            binary-search/{learn,editor,playback}, indexed-sequential-search/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -108,7 +115,17 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             ітеративний(while)/рекурсивний(розділяй і володарюй: різний лістинг + «глибина рекурсії»,
             еволюція вікна ідентична); кадр = init + по 2 на крок (проба+розв'язок) + done
             (8 кадрів на INTRO [1,3,5,8,10,12,15,18,20,22,24]→15 = step_00..07; i18n-префікс `bin`,
-            бо `bs` зайнятий бульбашкою); benchmark лише у kruskal);
+            бо `bs` зайнятий бульбашкою);
+            індексно-послідовний (indexed-sequential-search): ТРЕТІЙ і завершальний алгоритм
+            ПОШУКУ, ГІБРИД — редактор ВІДСОРТОВАНОГО масиву + ЦІЛЬ target + КРОК step + «Відсортувати»
+            + індикатор передумови + прев'ю індексної таблиці + контраст лінійний/двійковий/гібрид +
+            оптимум ≈ √n; плеєр — ДВОРІВНЕВА схема: 🟪 ІНДЕКСНА таблиця згори (вікно [start..end]
+            звужується, 🌸 mid ▼, 🟥 відкидання, дужки start/end) + ⬜ МАСИВ із БЛОКАМИ знизу
+            (фіолетові шапки = позиції стовпів, 🟦 обраний блок, 🌸 курсор, 🩶 відкинуто ✗, 🟢 збіг ✓)
+            + 2 режими фази 1 двійковий/лінійний індекс (той самий результат+блок+порівняння, різна
+            ціна фази 1: 2 vs 3 зондування); кадр = init + (probe+discard)·k + block + (scan+reject)·m
+            /found + done (15 кадрів на MAIN [1,3,…,25] крок 4 ціль 15 = step_00..14; i18n-префікс
+            `iss`); benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
             shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
@@ -141,6 +158,16 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
               caseAnalysis (best 1/worst ⌊log₂n⌋+1/linear n);
               buildBinarySearchTrace(arr,target,recursive)→кадри проба+розв'язок (вікно low/high/mid +
               discardLo/discardHi); ITERATIVE_CODE/RECURSIVE_CODE; SearchCase спільний із linear),
+            indexedSequentialSearch.ts(+Trace)/exampleIndexedSequentialSearch (індексно-послідовний,
+              ГІБРИД на ВІДСОРТОВАНОМУ: createIndexTable (кожен step-ий →(ключ,позиція)) +
+              indexedSequentialSearch (база: двійковий по індексу→блок→лінійний скан) +
+              indexedSequentialSearchLinearIndex (фаза 1 лінійна, той самий результат) + jumpSearch
+              (родич, крок √n) + blockRange/branchFor (3 гілки start==0/start>=len/general) + isSorted +
+              optimalStep(≈√n) + indexedSequentialSearchSteps (журнал init/index_probe/found/
+              block_selected/seq_step/not_found/final, ДВА лічильники indexProbes/seqComparisons) +
+              countSteps; buildIndexedSequentialSearchTrace(arr,target,step,linearIndex)→кадри двох фаз
+              (idxLow/idxHigh/idxMid + blockLo/blockHi/cursor); BASE_CODE/LINEAR_INDEX_CODE; IxsCase
+              {values,target,step}; еталон MAIN [1,3,…,25] крок 4 ціль 15→поз.7, 2 зондування+4=6),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -153,6 +180,7 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             radix-sort-store(+presets, масив НЕВІД'ЄМНИХ цілих);
             linear-search-store(+presets, масив цілих + ЦІЛЬ target);
             binary-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
+            indexed-sequential-search-store(+presets, ВІДСОРТОВАНИЙ масив + ЦІЛЬ target + КРОК step + sortValues);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
