@@ -5,6 +5,7 @@ import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { heldKarp } from "@/algorithms/held-karp"
 import { knapsack } from "@/algorithms/knapsack"
 import { bubbleSort } from "@/algorithms/bubble-sort"
+import { insertionSort } from "@/algorithms/insertion-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -19,6 +20,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   heldKarp,
   knapsack,
   bubbleSort,
+  insertionSort,
 ]
 
 export function getAlgorithm(

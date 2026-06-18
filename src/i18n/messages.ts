@@ -567,6 +567,88 @@ const ua = {
   "learn.bsStableNote":
     "Стабільно: серед рівних ключів порядок підписів не змінився.",
   "learn.bsGrowthNote": "n²/2 росте катастрофічно швидше за n·log₂n.",
+
+  // — Сортування вставками —
+  // Редактор.
+  "editor.isIntro": "Приклад [5,2,4,6,1,3]",
+  "editor.isBest": "Відсортований (найкращий)",
+  "editor.isWorst": "Зворотний (гірший)",
+  "editor.isValue": "Число",
+  "editor.isArrayTitle": "Масив чисел",
+  "editor.isNoValues": "Масив порожній — додайте перше число.",
+  "editor.isSize": "Елементів",
+  "editor.isMaxComparisons": "Порівнянь у гіршому (n(n−1)/2)",
+  "editor.isInsertions": "Вставок (n−1)",
+  "editor.isSortedYes": "Масив уже відсортовано",
+  "editor.isSortedNo": "Масив не відсортовано",
+  "editor.isWarnMany":
+    "Масив завеликий — плеєр може бути неплавним. Зменште кількість елементів.",
+  "editor.isAriaValue": "Значення на індексі {i}",
+  "editor.isDeleteAt": "Видалити елемент {i}",
+  "editor.isHelpCell": "Клітинка масиву",
+  "editor.helpIsAdd": "додати число в кінець масиву",
+  "editor.helpIsEdit": "редагувати значення (ціле ≥ 0)",
+  "editor.helpIsRemove": "видалити число з масиву",
+  "editor.helpIsNote":
+    "Сортуються будь-які цілі числа. Спробуйте відсортований і зворотний масиви, щоб побачити найкращий і гірший випадки.",
+  "editor.isErrBadValues": "Поле values має бути масивом чисел",
+  // Плеєр.
+  "play.isMethod": "Версія:",
+  "play.isModeLinear": "Лінійна",
+  "play.isModeBinary": "Бінарна (двійковий пошук)",
+  "play.isEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.isTooBig":
+    "Масив завеликий для плавного плеєра (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.isStatComparisons": "порівнянь:",
+  "play.isStatShifts": "зсувів:",
+  "play.isStatPass": "ітерація:",
+  "play.isStatSize": "елементів:",
+  "play.isPhaseKey": "ключ у руці",
+  "play.isPhaseScan": "пошук місця",
+  "play.isPhaseInsert": "вставка",
+  "play.isPhaseDone": "готово",
+  "play.isArrayTitle": "Масив (n = {n})",
+  "play.codeIsLinear": "Код — лінійна вставка",
+  "play.codeIsBinary": "Код — бінарна вставка",
+  "play.isInputLabel": "Вхід",
+  "play.isSortedLabel": "Відсортовано",
+  "play.isResultSummary": "Підсумок",
+  "play.isResultCounts":
+    "{comparisons} порівнянь · {shifts} зсувів · {insertions} вставок",
+  "play.isSaved":
+    "Бінарний пошук: лише {comparisons} порівнянь (гірший лінійний — до {max}).",
+  "play.nIsInit":
+    "Старт: масив {arr}, n = {n}. Лівий елемент — тривіальний відсортований префікс.",
+  "play.nIsTake":
+    "Ітерація i={i}: беремо key = {key} «у руку». На позиції {pos} лишається «дірка»; префікс [0, {prefix}) уже відсортований.",
+  "play.nIsShift":
+    "i={i}, j={j}: {key} < {compared} — {compared} більший, зсуваємо його праворуч. Порівнянь: {comparisons}, зсувів: {shifts}.",
+  "play.nIsStop":
+    "i={i}, j={j}: {key} ≥ {compared} — місце знайдено, цикл while зупиняється. Порівнянь: {comparisons}, зсувів: {shifts}.",
+  "play.nIsProbeLeft":
+    "i={i}: двійковий пошук — перевіряємо a[{mid}]={compared}; {key} < {compared} → шукаємо ліворуч. Порівнянь: {comparisons}.",
+  "play.nIsProbeRight":
+    "i={i}: двійковий пошук — перевіряємо a[{mid}]={compared}; {key} ≥ {compared} → шукаємо праворуч. Порівнянь: {comparisons}.",
+  "play.nIsBShift":
+    "i={i}: зсуваємо {value} з індексу {from} на {to}, звільняючи місце. Зсувів: {shifts}.",
+  "play.nIsInsert":
+    "i={i}: ставимо key = {key} на звільнену позицію {at}. Відсортований префікс виріс до {prefix}.",
+  "play.nIsDone":
+    "Готово: масив відсортовано {arr}. Усього {comparisons} порівнянь і {shifts} зсувів за {insertions} вставок.",
+  // Навчальні віджети.
+  "learn.isLegendPrefix": "відсортований префікс",
+  "learn.isLegendCompare": "порівняння",
+  "learn.isLegendShift": "щойно зсунули",
+  "learn.isLegendUnsorted": "несортований суфікс",
+  "learn.isLegendKey": "key «в руці»",
+  "learn.isCounters": "порівнянь: {comparisons}, зсувів: {shifts}",
+  "learn.isResultSummary":
+    "{comparisons} порівнянь · {shifts} зсувів · {insertions} вставок",
+  "learn.isStart": "старт",
+  "learn.isPass": "ітерація {i}",
+  "learn.isStableNote":
+    "Стабільно: серед рівних ключів порядок підписів не змінився.",
+  "learn.isGrowthNote": "n²/2 росте катастрофічно швидше за n·log₂n.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -1118,6 +1200,86 @@ const en: Record<MessageKey, string> = {
   "learn.bsStableNote":
     "Stable: among equal keys the order of labels did not change.",
   "learn.bsGrowthNote": "n²/2 grows catastrophically faster than n·log₂n.",
+
+  // — Insertion Sort —
+  // Editor.
+  "editor.isIntro": "Example [5,2,4,6,1,3]",
+  "editor.isBest": "Sorted (best case)",
+  "editor.isWorst": "Reversed (worst case)",
+  "editor.isValue": "Value",
+  "editor.isArrayTitle": "Array of numbers",
+  "editor.isNoValues": "The array is empty — add the first number.",
+  "editor.isSize": "Elements",
+  "editor.isMaxComparisons": "Comparisons, worst case (n(n−1)/2)",
+  "editor.isInsertions": "Insertions (n−1)",
+  "editor.isSortedYes": "The array is already sorted",
+  "editor.isSortedNo": "The array is not sorted",
+  "editor.isWarnMany":
+    "The array is too large — playback may stutter. Reduce the number of elements.",
+  "editor.isAriaValue": "Value at index {i}",
+  "editor.isDeleteAt": "Delete element {i}",
+  "editor.isHelpCell": "Array cell",
+  "editor.helpIsAdd": "append a number to the array",
+  "editor.helpIsEdit": "edit a value (integer ≥ 0)",
+  "editor.helpIsRemove": "remove a number from the array",
+  "editor.helpIsNote":
+    "Any integers can be sorted. Try the sorted and reversed arrays to see the best and worst cases.",
+  "editor.isErrBadValues": "The `values` field must be an array of numbers",
+  // Player.
+  "play.isMethod": "Version:",
+  "play.isModeLinear": "Linear",
+  "play.isModeBinary": "Binary (binary search)",
+  "play.isEmpty": "The array is empty — add numbers in the “Editor” tab.",
+  "play.isTooBig":
+    "The array is too large for smooth playback (over {max} elements). Reduce it in the “Editor” tab.",
+  "play.isStatComparisons": "comparisons:",
+  "play.isStatShifts": "shifts:",
+  "play.isStatPass": "iteration:",
+  "play.isStatSize": "elements:",
+  "play.isPhaseKey": "key in hand",
+  "play.isPhaseScan": "finding the spot",
+  "play.isPhaseInsert": "insert",
+  "play.isPhaseDone": "done",
+  "play.isArrayTitle": "Array (n = {n})",
+  "play.codeIsLinear": "Code — linear insertion",
+  "play.codeIsBinary": "Code — binary insertion",
+  "play.isInputLabel": "Input",
+  "play.isSortedLabel": "Sorted",
+  "play.isResultSummary": "Summary",
+  "play.isResultCounts": "{comparisons} comparisons · {shifts} shifts · {insertions} insertions",
+  "play.isSaved":
+    "Binary search: only {comparisons} comparisons (the worst-case linear would do up to {max}).",
+  "play.nIsInit":
+    "Start: array {arr}, n = {n}. The leftmost element is a trivial sorted prefix.",
+  "play.nIsTake":
+    "Iteration i={i}: take key = {key} “in hand”. Position {pos} becomes a “hole”; the prefix [0, {prefix}) is already sorted.",
+  "play.nIsShift":
+    "i={i}, j={j}: {key} < {compared} — {compared} is bigger, shift it right. Comparisons: {comparisons}, shifts: {shifts}.",
+  "play.nIsStop":
+    "i={i}, j={j}: {key} ≥ {compared} — the spot is found, the while loop stops. Comparisons: {comparisons}, shifts: {shifts}.",
+  "play.nIsProbeLeft":
+    "i={i}: binary search — probe a[{mid}]={compared}; {key} < {compared} → search left. Comparisons: {comparisons}.",
+  "play.nIsProbeRight":
+    "i={i}: binary search — probe a[{mid}]={compared}; {key} ≥ {compared} → search right. Comparisons: {comparisons}.",
+  "play.nIsBShift":
+    "i={i}: shift {value} from index {from} to {to}, making room. Shifts: {shifts}.",
+  "play.nIsInsert":
+    "i={i}: place key = {key} into the freed position {at}. The sorted prefix grew to {prefix}.",
+  "play.nIsDone":
+    "Done: the array is sorted {arr}. In total {comparisons} comparisons and {shifts} shifts over {insertions} insertions.",
+  // Learn widgets.
+  "learn.isLegendPrefix": "sorted prefix",
+  "learn.isLegendCompare": "comparing",
+  "learn.isLegendShift": "just shifted",
+  "learn.isLegendUnsorted": "unsorted suffix",
+  "learn.isLegendKey": "key “in hand”",
+  "learn.isCounters": "comparisons: {comparisons}, shifts: {shifts}",
+  "learn.isResultSummary": "{comparisons} comparisons · {shifts} shifts · {insertions} insertions",
+  "learn.isStart": "start",
+  "learn.isPass": "iteration {i}",
+  "learn.isStableNote":
+    "Stable: among equal keys the order of labels did not change.",
+  "learn.isGrowthNote": "n²/2 grows catastrophically faster than n·log₂n.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
