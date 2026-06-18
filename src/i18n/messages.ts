@@ -1082,6 +1082,108 @@ const ua = {
   "learn.rxStableNote":
     "рівні ключі зберегли порядок: 52₁ перед 52₂, 12₁ перед 12₂ — підпрограма (сортування підрахунком) стабільна.",
   "learn.rxGrowthNote": "d·(n+k) росте лінійно (за сталих d, k), тоді як n·log₂n і тим паче n² — швидше; для цілих з малою розрядністю radix виграє.",
+
+  // — Лінійний пошук (Linear Search) —
+  // Редактор.
+  "editor.lsMain": "Приклад [5,3,8,1,4]→8",
+  "editor.lsDuplicates": "Дублікати",
+  "editor.lsSorted": "Відсортований",
+  "editor.lsValue": "Число",
+  "editor.lsArrayTitle": "Масив і ціль пошуку",
+  "editor.lsNoValues": "Масив порожній — додайте перше число.",
+  "editor.lsTargetLabel": "шукаємо:",
+  "editor.lsAriaTarget": "Ціль пошуку",
+  "editor.lsAriaValue": "Значення на індексі {i}",
+  "editor.lsDeleteAt": "Видалити елемент {i}",
+  "editor.lsHelpTarget": "шукаємо: x",
+  "editor.lsHelpCell": "Клітинка масиву",
+  "editor.helpLsTarget": "змінити значення, яке шукаємо в масиві",
+  "editor.helpLsAdd": "додати число в кінець масиву",
+  "editor.helpLsEdit": "редагувати значення (будь-яке ціле)",
+  "editor.helpLsRemove": "видалити число з масиву",
+  "editor.helpLsNote":
+    "Лінійний пошук працює на будь-яких (зокрема невпорядкованих) даних і не змінює масив. «Ціна» — лише кількість перевірок arr[i] == x; жодних обмінів чи зсувів, як у сортуваннях.",
+  "editor.lsErrBadValues": "Поле values має бути масивом чисел",
+  "editor.lsErrBadTarget": "Поле target має бути числом",
+  "editor.lsSize": "Елементів",
+  "editor.lsTargetResult": "результат для цілі {target}:",
+  "editor.lsFoundAt": "знайдено на індексі {i}",
+  "editor.lsNotFound": "елемента немає (-1)",
+  "editor.lsChecks": "перевірок:",
+  "editor.lsOccurrences": "входжень:",
+  "editor.lsCasesTitle": "Аналіз випадків (перевірок)",
+  "editor.lsCaseCol": "Випадок",
+  "editor.lsChecksCol": "Перевірок",
+  "editor.lsClassCol": "Клас",
+  "editor.lsCaseBest": "Найкращий (спереду)",
+  "editor.lsCaseAvg": "Середній (≈ посередині)",
+  "editor.lsCaseWorst": "Гірший (у кінці)",
+  "editor.lsCaseAbsent": "Відсутній (повний скан)",
+  "editor.lsCasesNote":
+    "Скільки перевірок зробить пошук, залежить від позиції цілі: O(1) спереду, O(n) у кінці або якщо елемента немає.",
+  "editor.lsWarnMany":
+    "Масив завеликий — кадрів стає багато, плеєр може бути неплавним. Зменште кількість елементів.",
+  // Плеєр.
+  "play.lsEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.lsTooBig":
+    "Масив завеликий для плавного плеєра (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.lsStatChecks": "перевірок:",
+  "play.lsStatResult": "результат:",
+  "play.lsStatMatches": "входжень:",
+  "play.lsStatSize": "елементів:",
+  "play.lsCodeFirst": "Код — перший збіг (linear_search)",
+  "play.lsCodeAll": "Код — усі входження (find_all)",
+  "play.lsScanTitle": "Масив і курсор пошуку",
+  "play.lsTargetBadge": "шукаємо: {target}",
+  "play.lsMethod": "Режим:",
+  "play.lsModeFirst": "Перший збіг",
+  "play.lsModeAll": "Усі входження",
+  "play.lsPhaseInit": "старт",
+  "play.lsPhaseCheck": "перевірка",
+  "play.lsPhaseReject": "не той",
+  "play.lsPhaseMatch": "збіг",
+  "play.lsPhaseDone": "готово",
+  "play.lsInputLabel": "Масив",
+  "play.lsTargetLabel": "Шукаємо",
+  "play.lsResultLabel": "Результат",
+  "play.lsResultIndex": "індекс {i}",
+  "play.lsResultMatches": "індекси {matches}",
+  "play.lsResultAbsent": "елемента немає (-1)",
+  "play.lsResultChecks": "{comparisons} перевірок",
+  "play.nLsInit":
+    "Старт: шукаємо {target} у масиві {arr}. Масив нерухомий — пошук його не змінює; рухатиметься лише курсор-бігунець зліва направо. Поки нічого не перевірено.",
+  "play.nLsCheck":
+    "Перевірка {k}: курсор став на індекс {i} (рожева комірка). Порівнюємо arr[{i}] = {value} із шуканим {target}. Чи це збіг?",
+  "play.nLsReject":
+    "{value} ≠ {target} — не той елемент. Комірку {i} відкинуто (✗), пошук переходить до наступного індексу. Перевірок зроблено: {comparisons}.",
+  "play.nLsMatchFirst":
+    "{value} = {target} — збіг! Повертаємо індекс {i} (зелена комірка ✓) і ЗУПИНЯЄМО пошук: решту масиву переглядати не треба.",
+  "play.nLsMatchAll":
+    "{value} = {target} — збіг на індексі {i} (✓). У режимі «усі входження» НЕ зупиняємось — запам'ятовуємо індекс і шукаємо далі.",
+  "play.nLsDoneFound":
+    "Готово: {target} знайдено на індексі {i} за {comparisons} перевірок. Базовий пошук повертає перший збіг і далі масив не проглядає.",
+  "play.nLsDoneAbsent":
+    "Готово: {target} немає в масиві — повернули -1 після повного скану ({comparisons} перевірок). Це гірший випадок: довелося перевірити всі елементи.",
+  "play.nLsDoneAll":
+    "Готово: усі входження {target} — індекси {matches} (повний скан, {comparisons} перевірок). На відміну від першого збігу, find_all завжди проходить масив до кінця.",
+  // Навчальні віджети.
+  "learn.lsLegendChecking": "перевіряємо зараз",
+  "learn.lsLegendMatch": "знайдено",
+  "learn.lsLegendRejected": "відкинуто",
+  "learn.lsLegendPending": "ще не перевіряли",
+  "learn.lsResultFound": "Знайдено на індексі {i} за {comparisons} перевірок.",
+  "learn.lsResultAbsent": "Елемента немає: -1 за {comparisons} перевірок (повний скан).",
+  "learn.lsDupFirst": "Перший збіг (linear_search): індекс {i}, {comparisons} перевірки.",
+  "learn.lsDupAll": "Усі входження (find_all): {matches}, {comparisons} перевірок (повний скан).",
+  "learn.lsCaseBest": "найкращий (спереду)",
+  "learn.lsCaseAvg": "середній (≈ n/2)",
+  "learn.lsCaseWorst": "гірший (у кінці)",
+  "learn.lsCaseAbsent": "відсутній (повний скан)",
+  "learn.lsCasesArray": "Масив {arr}",
+  "learn.lsGrowthLinear": "лінійний ≈ n",
+  "learn.lsGrowthBinary": "двійковий ≈ log₂ n",
+  "learn.lsGrowthNote":
+    "На відсортованому масиві двійковий пошук відкидає половину щокроку — O(log n) проти O(n) лінійного. Для мільйона елементів це ≈ 20 перевірок проти мільйона.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -2143,6 +2245,108 @@ const en: Record<MessageKey, string> = {
   "learn.rxStableNote":
     "equal keys kept their order: 52₁ before 52₂, 12₁ before 12₂ — the subroutine (counting sort) is stable.",
   "learn.rxGrowthNote": "d·(n+k) grows linearly (for fixed d, k), while n·log₂n and especially n² grow faster; for integers with few digits radix wins.",
+
+  // — Linear Search —
+  // Editor.
+  "editor.lsMain": "Example [5,3,8,1,4]→8",
+  "editor.lsDuplicates": "Duplicates",
+  "editor.lsSorted": "Sorted",
+  "editor.lsValue": "Number",
+  "editor.lsArrayTitle": "Array and search target",
+  "editor.lsNoValues": "The array is empty — add the first number.",
+  "editor.lsTargetLabel": "looking for:",
+  "editor.lsAriaTarget": "Search target",
+  "editor.lsAriaValue": "Value at index {i}",
+  "editor.lsDeleteAt": "Delete element {i}",
+  "editor.lsHelpTarget": "looking for: x",
+  "editor.lsHelpCell": "Array cell",
+  "editor.helpLsTarget": "change the value being searched for in the array",
+  "editor.helpLsAdd": "append a number to the end of the array",
+  "editor.helpLsEdit": "edit a value (any integer)",
+  "editor.helpLsRemove": "remove a number from the array",
+  "editor.helpLsNote":
+    "Linear search works on any (including unsorted) data and never modifies the array. The cost is just the number of checks arr[i] == x; no swaps or shifts like in sorting.",
+  "editor.lsErrBadValues": "The values field must be an array of numbers",
+  "editor.lsErrBadTarget": "The target field must be a number",
+  "editor.lsSize": "Elements",
+  "editor.lsTargetResult": "result for target {target}:",
+  "editor.lsFoundAt": "found at index {i}",
+  "editor.lsNotFound": "the element is absent (-1)",
+  "editor.lsChecks": "checks:",
+  "editor.lsOccurrences": "occurrences:",
+  "editor.lsCasesTitle": "Case analysis (checks)",
+  "editor.lsCaseCol": "Case",
+  "editor.lsChecksCol": "Checks",
+  "editor.lsClassCol": "Class",
+  "editor.lsCaseBest": "Best (at the front)",
+  "editor.lsCaseAvg": "Average (≈ middle)",
+  "editor.lsCaseWorst": "Worst (at the end)",
+  "editor.lsCaseAbsent": "Absent (full scan)",
+  "editor.lsCasesNote":
+    "How many checks the search makes depends on the target's position: O(1) at the front, O(n) at the end or when the element is absent.",
+  "editor.lsWarnMany":
+    "The array is too large — there are many frames and the player may be choppy. Reduce the number of elements.",
+  // Player.
+  "play.lsEmpty": "The array is empty — add numbers in the «Editor» tab.",
+  "play.lsTooBig":
+    "The array is too large for a smooth player (over {max} elements). Reduce it in the «Editor» tab.",
+  "play.lsStatChecks": "checks:",
+  "play.lsStatResult": "result:",
+  "play.lsStatMatches": "occurrences:",
+  "play.lsStatSize": "elements:",
+  "play.lsCodeFirst": "Code — first match (linear_search)",
+  "play.lsCodeAll": "Code — all occurrences (find_all)",
+  "play.lsScanTitle": "Array and search cursor",
+  "play.lsTargetBadge": "looking for: {target}",
+  "play.lsMethod": "Mode:",
+  "play.lsModeFirst": "First match",
+  "play.lsModeAll": "All occurrences",
+  "play.lsPhaseInit": "start",
+  "play.lsPhaseCheck": "check",
+  "play.lsPhaseReject": "not it",
+  "play.lsPhaseMatch": "match",
+  "play.lsPhaseDone": "done",
+  "play.lsInputLabel": "Array",
+  "play.lsTargetLabel": "Target",
+  "play.lsResultLabel": "Result",
+  "play.lsResultIndex": "index {i}",
+  "play.lsResultMatches": "indices {matches}",
+  "play.lsResultAbsent": "the element is absent (-1)",
+  "play.lsResultChecks": "{comparisons} checks",
+  "play.nLsInit":
+    "Start: searching for {target} in the array {arr}. The array is still — the search never changes it; only the running cursor moves left to right. Nothing checked yet.",
+  "play.nLsCheck":
+    "Check {k}: the cursor lands on index {i} (pink cell). We compare arr[{i}] = {value} with the target {target}. Is it a match?",
+  "play.nLsReject":
+    "{value} ≠ {target} — not it. Cell {i} is rejected (✗), the search moves to the next index. Checks made: {comparisons}.",
+  "play.nLsMatchFirst":
+    "{value} = {target} — match! We return index {i} (green cell ✓) and STOP the search: no need to look at the rest of the array.",
+  "play.nLsMatchAll":
+    "{value} = {target} — match at index {i} (✓). In «all occurrences» mode we do NOT stop — we record the index and keep searching.",
+  "play.nLsDoneFound":
+    "Done: {target} found at index {i} in {comparisons} checks. The base search returns the first match and does not scan the rest.",
+  "play.nLsDoneAbsent":
+    "Done: {target} is not in the array — we returned -1 after a full scan ({comparisons} checks). This is the worst case: every element had to be checked.",
+  "play.nLsDoneAll":
+    "Done: all occurrences of {target} — indices {matches} (full scan, {comparisons} checks). Unlike the first match, find_all always scans to the end.",
+  // Learn widgets.
+  "learn.lsLegendChecking": "checking now",
+  "learn.lsLegendMatch": "found",
+  "learn.lsLegendRejected": "rejected",
+  "learn.lsLegendPending": "not checked yet",
+  "learn.lsResultFound": "Found at index {i} in {comparisons} checks.",
+  "learn.lsResultAbsent": "The element is absent: -1 after {comparisons} checks (full scan).",
+  "learn.lsDupFirst": "First match (linear_search): index {i}, {comparisons} checks.",
+  "learn.lsDupAll": "All occurrences (find_all): {matches}, {comparisons} checks (full scan).",
+  "learn.lsCaseBest": "best (at the front)",
+  "learn.lsCaseAvg": "average (≈ n/2)",
+  "learn.lsCaseWorst": "worst (at the end)",
+  "learn.lsCaseAbsent": "absent (full scan)",
+  "learn.lsCasesArray": "Array {arr}",
+  "learn.lsGrowthLinear": "linear ≈ n",
+  "learn.lsGrowthBinary": "binary ≈ log₂ n",
+  "learn.lsGrowthNote":
+    "On a sorted array binary search discards half each step — O(log n) vs. O(n) for linear. For a million elements that is ≈ 20 checks vs. a million.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }

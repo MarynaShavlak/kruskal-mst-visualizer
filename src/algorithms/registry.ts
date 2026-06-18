@@ -11,6 +11,7 @@ import { quickSort } from "@/algorithms/quick-sort"
 import { mergeSort } from "@/algorithms/merge-sort"
 import { shellSort } from "@/algorithms/shell-sort"
 import { radixSort } from "@/algorithms/radix-sort"
+import { linearSearch } from "@/algorithms/linear-search"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -31,6 +32,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   mergeSort,
   shellSort,
   radixSort,
+  linearSearch,
 ]
 
 export function getAlgorithm(
