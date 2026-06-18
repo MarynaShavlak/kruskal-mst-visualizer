@@ -8,6 +8,7 @@ import { bubbleSort } from "@/algorithms/bubble-sort"
 import { insertionSort } from "@/algorithms/insertion-sort"
 import { selectionSort } from "@/algorithms/selection-sort"
 import { quickSort } from "@/algorithms/quick-sort"
+import { mergeSort } from "@/algorithms/merge-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -25,6 +26,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   insertionSort,
   selectionSort,
   quickSort,
+  mergeSort,
 ]
 
 export function getAlgorithm(
