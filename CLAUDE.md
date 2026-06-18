@@ -4,12 +4,14 @@
 алгоритм Краскала (мінімальне остовне дерево); далі — Прим (МОД), Флойда–Воршала,
 Хелда–Карпа (TSP), задача про рюкзак 0/1 (динамічне програмування проти перебору
 та жадібного), бульбашкове сортування (наївна проти оптимізованої з прапорцем
-swapped) і сортування вставками (лінійний пошук місця проти бінарної вставки) —
+swapped), сортування вставками (лінійний пошук місця проти бінарної вставки) і
+сортування прямим вибором (стандартне з обміном проти стабільного зі зсувом) —
 у кожного навчання/редактор/плеєр готові. Компаньйон до Python-репозиторіїв
 із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
 бульбашка — https://github.com/MarynaShavlak/algo-bubble-sort,
-вставки — https://github.com/MarynaShavlak/algo-insertion-sort)
+вставки — https://github.com/MarynaShavlak/algo-insertion-sort,
+вибір — https://github.com/MarynaShavlak/algo-selection-sort)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -41,12 +43,15 @@ src/
 algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки екранів
             kruskal/{learn,editor,playback,benchmark}, prim/{...}, floyd-warshall/{...},
             held-karp/{learn,editor,playback}, knapsack/{learn,editor,playback},
-            bubble-sort/{learn,editor,playback}, insertion-sort/{learn,editor,playback}
+            bubble-sort/{learn,editor,playback}, insertion-sort/{learn,editor,playback},
+            selection-sort/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
             панель стовпчиків із «ключем у руці» + «діркою» + зеленим префіксом;
-            benchmark лише у kruskal);
+            вибір: редактор масиву чисел; плеєр — 2 режими стандартний (обмін)/стабільний (зсув),
+            панель стовпчиків із «біжучим мінімумом» + курсором j + парою обміну ↔ + плаваючим
+            мінімумом «у руці» (стабільна); benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
             shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
@@ -57,6 +62,7 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
             knapsack.ts(+Trace, +AltTrace)/exampleKnapsack/randomKnapsack (рюкзак 0/1),
             bubbleSort.ts(+Trace)/exampleBubbleSort/randomArray (сортування, без графа),
             insertionSort.ts(+Trace)/exampleInsertionSort (вставки: лінійна+бінарна, спільний randomArray),
+            selectionSort.ts(+Trace)/exampleSelectionSort (вибір: стандартна+стабільна, спільний randomArray),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -64,6 +70,7 @@ i18n/       messages.ts (словник chrome UA/EN, парність типі�
 store/      create-graph-store (generic-ядро) → graph-store / directed-graph-store / prim-graph-store;
             presets / directed-presets; tsp-store(+presets); knapsack-store(+presets, без ребер/координат);
             bubble-sort-store(+presets, масив чисел); insertion-sort-store(+presets, масив чисел);
+            selection-sort-store(+presets, масив чисел);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список

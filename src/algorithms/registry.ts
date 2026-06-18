@@ -6,6 +6,7 @@ import { heldKarp } from "@/algorithms/held-karp"
 import { knapsack } from "@/algorithms/knapsack"
 import { bubbleSort } from "@/algorithms/bubble-sort"
 import { insertionSort } from "@/algorithms/insertion-sort"
+import { selectionSort } from "@/algorithms/selection-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -21,6 +22,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   knapsack,
   bubbleSort,
   insertionSort,
+  selectionSort,
 ]
 
 export function getAlgorithm(

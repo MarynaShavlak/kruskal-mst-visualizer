@@ -649,6 +649,98 @@ const ua = {
   "learn.isStableNote":
     "Стабільно: серед рівних ключів порядок підписів не змінився.",
   "learn.isGrowthNote": "n²/2 росте катастрофічно швидше за n·log₂n.",
+
+  // — Сортування прямим вибором —
+  // Редактор.
+  "editor.ssIntro": "Приклад [5,3,8,4,2,7]",
+  "editor.ssBest": "Відсортований (найкращий)",
+  "editor.ssWorst": "Зворотний (гірший)",
+  "editor.ssValue": "Число",
+  "editor.ssArrayTitle": "Масив чисел",
+  "editor.ssNoValues": "Масив порожній — додайте перше число.",
+  "editor.ssSize": "Елементів",
+  "editor.ssComparisons": "Порівнянь (n(n−1)/2)",
+  "editor.ssMaxSwaps": "Обмінів (≤ n−1)",
+  "editor.ssNonAdaptiveNote": "Порівнянь завжди n(n−1)/2 — метод НЕ адаптивний.",
+  "editor.ssSortedYes": "Масив уже відсортовано",
+  "editor.ssSortedNo": "Масив не відсортовано",
+  "editor.ssWarnMany":
+    "Масив завеликий — плеєр може бути неплавним. Зменште кількість елементів.",
+  "editor.ssAriaValue": "Значення на індексі {i}",
+  "editor.ssDeleteAt": "Видалити елемент {i}",
+  "editor.ssHelpCell": "Клітинка масиву",
+  "editor.helpSsAdd": "додати число в кінець масиву",
+  "editor.helpSsEdit": "редагувати значення (ціле ≥ 0)",
+  "editor.helpSsRemove": "видалити число з масиву",
+  "editor.helpSsNote":
+    "Сортуються будь-які цілі числа. Порівнянь завжди n(n−1)/2 — спробуйте відсортований масив: обмінів 0, але порівнянь стільки ж.",
+  "editor.ssErrBadValues": "Поле values має бути масивом чисел",
+  // Плеєр.
+  "play.ssMethod": "Версія:",
+  "play.ssModeStandard": "Стандартна (обмін)",
+  "play.ssModeStable": "Стабільна (зсув)",
+  "play.ssEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.ssTooBig":
+    "Масив завеликий для плавного плеєра (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.ssStatComparisons": "порівнянь:",
+  "play.ssStatSwaps": "обмінів:",
+  "play.ssStatWrites": "записів:",
+  "play.ssStatPass": "прохід:",
+  "play.ssStatSize": "елементів:",
+  "play.ssPhaseScan": "пошук мінімуму",
+  "play.ssPhasePlace": "на місце",
+  "play.ssPhaseDone": "готово",
+  "play.ssArrayTitle": "Масив (n = {n})",
+  "play.codeSsStandard": "Код — стандартний вибір (обмін)",
+  "play.codeSsStable": "Код — стабільний вибір (зсув)",
+  "play.ssInputLabel": "Вхід",
+  "play.ssSortedLabel": "Відсортовано",
+  "play.ssResultSummary": "Підсумок",
+  "play.ssResultStandard":
+    "{comparisons} порівнянь · {swaps} обмінів · {passes} проходів",
+  "play.ssResultStable":
+    "{comparisons} порівнянь · {writes} записів · {passes} проходів",
+  "play.ssSwapNote":
+    "Лише {swaps} обмінів (≤ {max}) — мінімум серед сортувань порівнянням.",
+  "play.ssWriteNote":
+    "{writes} записів — ціна стабільності (O(n²) замість O(n) обмінів).",
+  "play.nSsInit":
+    "Старт: масив {arr}, n = {n}. Префікс порожній — усе попереду.",
+  "play.nSsPassStart":
+    "Прохід i={i}: кандидат-мінімум min_idx={i} (a[{i}]={minVal}). Префікс [0, {prefix}) уже на місцях; скануємо суфікс.",
+  "play.nSsNewMin":
+    "i={i}, j={j}: a[{j}]={jVal} < {candVal} — новий мінімум, min перестрибує на {j}. Порівнянь: {comparisons}.",
+  "play.nSsKeepMin":
+    "i={i}, j={j}: a[{j}]={jVal} ≥ {candVal} — мінімум не змінюється (min_idx={minIdx}). Порівнянь: {comparisons}.",
+  "play.nSsSwap":
+    "Кінець проходу i={i}: обмін a[{i}] ↔ a[{minIdx}] — {placed} стало на місце {i}. Обмінів: {swaps}.",
+  "play.nSsSelfSwap":
+    "Кінець проходу i={i}: мінімум уже на місці (min_idx={i}) — обмін холостий, пропускаємо. Обмінів: {swaps}.",
+  "play.nSsShift":
+    "i={i}: зсуваємо {value} з індексу {from} на {to}, звільняючи місце під мінімум {held}. Записів: {writes}.",
+  "play.nSsPlace":
+    "i={i}: ставимо мінімум {value} на позицію {at}. Відсортований префікс виріс до {prefix}.",
+  "play.nSsDone":
+    "Готово: масив відсортовано {arr}. Усього {comparisons} порівнянь і {swaps} обмінів за {passes} проходів.",
+  "play.nSsDoneStable":
+    "Готово: масив відсортовано {arr}. {comparisons} порівнянь і {writes} записів за {passes} проходів (ціна стабільності).",
+  // Навчальні віджети.
+  "learn.ssLegendPrefix": "відсортований префікс",
+  "learn.ssLegendMin": "біжучий мінімум",
+  "learn.ssLegendSwap": "обмін / зсув",
+  "learn.ssLegendPlaced": "стало на місце",
+  "learn.ssLegendUnsorted": "несортований суфікс",
+  "learn.ssLegendCursor": "курсор j",
+  "learn.ssCounters": "порівнянь: {comparisons}, обмінів: {swaps}",
+  "learn.ssResultSummary":
+    "{comparisons} порівнянь · {swaps} обмінів · {passes} проходів",
+  "learn.ssStart": "старт",
+  "learn.ssPass": "прохід {i}",
+  "learn.ssUnstableLabel": "Стандартний (нестабільний) ✗",
+  "learn.ssStableLabel": "Стабільний (зсув) ✓",
+  "learn.ssStableNote":
+    "Стандартний вибір переставив рівні ключі; стабільний варіант зберіг їхній порядок.",
+  "learn.ssGrowthNote": "n²/2 порівнянь росте катастрофічно швидше за n·log₂n.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -1280,6 +1372,95 @@ const en: Record<MessageKey, string> = {
   "learn.isStableNote":
     "Stable: among equal keys the order of labels did not change.",
   "learn.isGrowthNote": "n²/2 grows catastrophically faster than n·log₂n.",
+
+  // — Selection Sort —
+  // Editor.
+  "editor.ssIntro": "Example [5,3,8,4,2,7]",
+  "editor.ssBest": "Sorted (best case)",
+  "editor.ssWorst": "Reversed (worst case)",
+  "editor.ssValue": "Value",
+  "editor.ssArrayTitle": "Array of numbers",
+  "editor.ssNoValues": "The array is empty — add the first number.",
+  "editor.ssSize": "Elements",
+  "editor.ssComparisons": "Comparisons (n(n−1)/2)",
+  "editor.ssMaxSwaps": "Swaps (≤ n−1)",
+  "editor.ssNonAdaptiveNote": "Comparisons are always n(n−1)/2 — the method is NOT adaptive.",
+  "editor.ssSortedYes": "The array is already sorted",
+  "editor.ssSortedNo": "The array is not sorted",
+  "editor.ssWarnMany":
+    "The array is too large — playback may stutter. Reduce the number of elements.",
+  "editor.ssAriaValue": "Value at index {i}",
+  "editor.ssDeleteAt": "Delete element {i}",
+  "editor.ssHelpCell": "Array cell",
+  "editor.helpSsAdd": "append a number to the array",
+  "editor.helpSsEdit": "edit a value (integer ≥ 0)",
+  "editor.helpSsRemove": "remove a number from the array",
+  "editor.helpSsNote":
+    "Any integers can be sorted. Comparisons are always n(n−1)/2 — try a sorted array: 0 swaps, yet the same number of comparisons.",
+  "editor.ssErrBadValues": "The `values` field must be an array of numbers",
+  // Player.
+  "play.ssMethod": "Version:",
+  "play.ssModeStandard": "Standard (swap)",
+  "play.ssModeStable": "Stable (shift)",
+  "play.ssEmpty": "The array is empty — add numbers in the “Editor” tab.",
+  "play.ssTooBig":
+    "The array is too large for smooth playback (over {max} elements). Reduce it in the “Editor” tab.",
+  "play.ssStatComparisons": "comparisons:",
+  "play.ssStatSwaps": "swaps:",
+  "play.ssStatWrites": "writes:",
+  "play.ssStatPass": "pass:",
+  "play.ssStatSize": "elements:",
+  "play.ssPhaseScan": "finding the minimum",
+  "play.ssPhasePlace": "placing",
+  "play.ssPhaseDone": "done",
+  "play.ssArrayTitle": "Array (n = {n})",
+  "play.codeSsStandard": "Code — standard selection (swap)",
+  "play.codeSsStable": "Code — stable selection (shift)",
+  "play.ssInputLabel": "Input",
+  "play.ssSortedLabel": "Sorted",
+  "play.ssResultSummary": "Summary",
+  "play.ssResultStandard": "{comparisons} comparisons · {swaps} swaps · {passes} passes",
+  "play.ssResultStable": "{comparisons} comparisons · {writes} writes · {passes} passes",
+  "play.ssSwapNote":
+    "Only {swaps} swaps (≤ {max}) — the fewest among comparison sorts.",
+  "play.ssWriteNote":
+    "{writes} writes — the price of stability (O(n²) instead of O(n) swaps).",
+  "play.nSsInit":
+    "Start: array {arr}, n = {n}. The prefix is empty — everything lies ahead.",
+  "play.nSsPassStart":
+    "Pass i={i}: candidate minimum min_idx={i} (a[{i}]={minVal}). The prefix [0, {prefix}) is already in place; scanning the suffix.",
+  "play.nSsNewMin":
+    "i={i}, j={j}: a[{j}]={jVal} < {candVal} — a new minimum, min jumps to {j}. Comparisons: {comparisons}.",
+  "play.nSsKeepMin":
+    "i={i}, j={j}: a[{j}]={jVal} ≥ {candVal} — the minimum is unchanged (min_idx={minIdx}). Comparisons: {comparisons}.",
+  "play.nSsSwap":
+    "End of pass i={i}: swap a[{i}] ↔ a[{minIdx}] — {placed} landed at position {i}. Swaps: {swaps}.",
+  "play.nSsSelfSwap":
+    "End of pass i={i}: the minimum is already in place (min_idx={i}) — the swap is a no-op, skip it. Swaps: {swaps}.",
+  "play.nSsShift":
+    "i={i}: shift {value} from index {from} to {to}, making room for the minimum {held}. Writes: {writes}.",
+  "play.nSsPlace":
+    "i={i}: place the minimum {value} at position {at}. The sorted prefix grew to {prefix}.",
+  "play.nSsDone":
+    "Done: the array is sorted {arr}. In total {comparisons} comparisons and {swaps} swaps over {passes} passes.",
+  "play.nSsDoneStable":
+    "Done: the array is sorted {arr}. {comparisons} comparisons and {writes} writes over {passes} passes (the price of stability).",
+  // Learn widgets.
+  "learn.ssLegendPrefix": "sorted prefix",
+  "learn.ssLegendMin": "running minimum",
+  "learn.ssLegendSwap": "swap / shift",
+  "learn.ssLegendPlaced": "landed in place",
+  "learn.ssLegendUnsorted": "unsorted suffix",
+  "learn.ssLegendCursor": "cursor j",
+  "learn.ssCounters": "comparisons: {comparisons}, swaps: {swaps}",
+  "learn.ssResultSummary": "{comparisons} comparisons · {swaps} swaps · {passes} passes",
+  "learn.ssStart": "start",
+  "learn.ssPass": "pass {i}",
+  "learn.ssUnstableLabel": "Standard (unstable) ✗",
+  "learn.ssStableLabel": "Stable (shift) ✓",
+  "learn.ssStableNote":
+    "The standard selection reordered equal keys; the stable variant preserved their order.",
+  "learn.ssGrowthNote": "n²/2 comparisons grow catastrophically faster than n·log₂n.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
