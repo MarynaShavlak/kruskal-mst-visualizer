@@ -9,8 +9,11 @@ swapped), сортування вставками (лінійний пошук �
 швидке сортування (тристороннє «розділяй і володарюй» + дерево рекурсії, перемикач
 стратегії опорного), сортування злиттям (поділ навпіл + злиття двома вказівниками,
 дерево рекурсії, перемикач реалізації низхідна/вихідна bottom-up — місток до TimSort)
-і сортування Шелла (узагальнення вставок «через крок» gap, підпослідовності,
+сортування Шелла (узагальнення вставок «через крок» gap, підпослідовності,
 перемикач послідовності проміжків n//2/Кнут/Ciura — субквадратичне, нестабільне)
+і порозрядне сортування radix sort (ПЕРШЕ НЕПОРІВНЯЛЬНЕ — не «що більше?», а самі
+цифри: розкладаємо по 10 кошиках 0–9 за цифрою розряду й збираємо, LSD; стабільне
+сортування підрахунком — лінчпін; лінійний час O(d·(n+k)), не in-place)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -19,7 +22,8 @@ Python-репозиторіїв із повним розбором: https://gith
 вибір — https://github.com/MarynaShavlak/algo-selection-sort,
 швидке — https://github.com/MarynaShavlak/algo-quick-sort,
 злиттям — https://github.com/MarynaShavlak/algo-merge-sort,
-Шелла — https://github.com/MarynaShavlak/algo-shell-sort)
+Шелла — https://github.com/MarynaShavlak/algo-shell-sort,
+порозрядне — https://github.com/MarynaShavlak/algo-radix-sort)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -53,7 +57,8 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             held-karp/{learn,editor,playback}, knapsack/{learn,editor,playback},
             bubble-sort/{learn,editor,playback}, insertion-sort/{learn,editor,playback},
             selection-sort/{learn,editor,playback}, quick-sort/{learn,editor,playback},
-            merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback}
+            merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback},
+            radix-sort/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -72,6 +77,11 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             🔴 gap-зсув + 🟡 порівняння) з підсвіткою ПОТОЧНОЇ підпослідовності (індекси
             через крок gap, фіолетові чипи) + перемикач послідовності проміжків
             (n//2/Кнут/Ciura → різна ціна на тих самих даних); 76 кадрів = 76 подій;
+            порозрядне (radix): редактор масиву НЕВІД'ЄМНИХ цілих; плеєр — КОШИКИ 0–9 +
+            фішки-числа з підсвіченою цифрою поточного розряду (🟠 цифра, 🔴 фішка падає,
+            🟢 зібраний, ⬜ ще не розкладені; провідні нулі тьмяні) + наочний код «з кошиками»;
+            режим/перемикача нема — основа фіксована 10 (вибір основи 2/10/256 — лише таблиця
+            у редакторі + навчанні); INTRO [3,89,67,254,9,21,185,4,62] = 35 кадрів = 35 подій;
             benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
@@ -89,6 +99,10 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
               вихідна mergeSortBottomUpSteps→проходи; mergeSteps→журнал двох вказівників; спільний randomArray),
             shellSort.ts(+Trace)/exampleShellSort (Шелла: shellSortSteps→журнал подій (gap_start/
               i_start/compare/shift/insert); gapsShell/Knuth/Ciura→послідовності проміжків; спільний randomArray),
+            radixSort.ts(+Trace)/exampleRadixSort (порозрядне: countingSort/radixSort (база) +
+              radixSortBuckets (наочна) + radixSortSteps→журнал подій кошиків (init/pass_start/distribute/
+              gather/final) + countingSortSteps→фази підрахунку (freq/prefix/builds); maxDigits/digitAt;
+              НЕВІД'ЄМНІ цілі, base=10; спільний randomArray),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -98,6 +112,7 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             bubble-sort-store(+presets, масив чисел); insertion-sort-store(+presets, масив чисел);
             selection-sort-store(+presets, масив чисел); quick-sort-store(+presets, масив чисел);
             merge-sort-store(+presets, масив чисел); shell-sort-store(+presets, масив чисел);
+            radix-sort-store(+presets, масив НЕВІД'ЄМНИХ цілих);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
