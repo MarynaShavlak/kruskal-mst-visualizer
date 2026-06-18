@@ -741,6 +741,82 @@ const ua = {
   "learn.ssStableNote":
     "Стандартний вибір переставив рівні ключі; стабільний варіант зберіг їхній порядок.",
   "learn.ssGrowthNote": "n²/2 порівнянь росте катастрофічно швидше за n·log₂n.",
+
+  // — Швидке сортування —
+  // Редактор.
+  "editor.qsIntro": "Приклад [3,5,2,4,6,1,7]",
+  "editor.qsSorted": "Відсортований [1..7]",
+  "editor.qsDuplicates": "Дублікати",
+  "editor.qsValue": "Число",
+  "editor.qsArrayTitle": "Масив чисел",
+  "editor.qsNoValues": "Масив порожній — додайте перше число.",
+  "editor.qsSize": "Елементів",
+  "editor.qsComparisons": "Порівнянь (середина)",
+  "editor.qsCalls": "Викликів",
+  "editor.qsDepth": "Глибина рекурсії",
+  "editor.qsPivotNote":
+    "Складність залежить від опорного: збалансоване дерево → O(n·log n), вироджене → O(n²).",
+  "editor.qsSortedYes": "Масив уже відсортовано",
+  "editor.qsSortedNo": "Масив не відсортовано",
+  "editor.qsWarnMany":
+    "Масив завеликий — дерево рекурсії стає громіздким, плеєр може бути неплавним. Зменште кількість елементів.",
+  "editor.qsAriaValue": "Значення на індексі {i}",
+  "editor.qsDeleteAt": "Видалити елемент {i}",
+  "editor.qsHelpCell": "Клітинка масиву",
+  "editor.helpQsAdd": "додати число в кінець масиву",
+  "editor.helpQsEdit": "редагувати значення (ціле ≥ 0)",
+  "editor.helpQsRemove": "видалити число з масиву",
+  "editor.helpQsNote":
+    "Сортуються будь-які цілі числа. У плеєрі змініть стратегію опорного — побачите, як змінюється форма дерева рекурсії (збалансоване проти виродженого).",
+  "editor.qsErrBadValues": "Поле values має бути масивом чисел",
+  // Плеєр.
+  "play.qsPivot": "Опорний:",
+  "play.qsPivotMiddle": "Середина",
+  "play.qsPivotFirst": "Перший",
+  "play.qsPivotLast": "Останній",
+  "play.qsPivotMedian3": "Медіана-3",
+  "play.qsEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.qsTooBig":
+    "Масив завеликий для плавного плеєра (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.qsStatComparisons": "порівнянь:",
+  "play.qsStatCalls": "викликів:",
+  "play.qsStatDepth": "глибина:",
+  "play.qsStatSize": "елементів:",
+  "play.qsPhasePartition": "розбиття",
+  "play.qsPhaseBase": "базовий випадок",
+  "play.qsPhaseDone": "готово",
+  "play.qsTreeTitle": "Дерево рекурсії",
+  "play.qsPartitionTitle": "Розбиття вузла",
+  "play.qsCodeTitle": "Код — тристороннє розбиття",
+  "play.qsPivotLabel": "Опорний:",
+  "play.qsBaseNote": "базовий випадок (довжина ≤ 1) — повертаємо як є",
+  "play.qsConcat": "Конкатенація: quicksort(left) + middle + quicksort(right) =",
+  "play.qsInputLabel": "Вхід",
+  "play.qsSortedLabel": "Відсортовано",
+  "play.qsResultCounts": "{comparisons} порівнянь · {calls} викликів · глибина {depth}",
+  "play.nQsPartition":
+    "Рівень {level}, {call} на {arr}. Опорний pivot = {pivot}. Поділ: left={left} (<), middle={middle} (=), right={right} (>). Далі рекурсія на left і right.",
+  "play.nQsBase":
+    "Рівень {level}, {call} на {arr} — базовий випадок (довжина ≤ 1): уже відсортовано, повертаємо як є.",
+  "play.nQsDone":
+    "Готово: масив відсортовано {arr}. Конкатенація всіх викликів. {comparisons} порівнянь · {calls} викликів · глибина {depth}.",
+  // Навчальні віджети.
+  "learn.qsLegendPivot": "опорний",
+  "learn.qsLegendLess": "< опорного (left)",
+  "learn.qsLegendEqual": "== опорного (middle)",
+  "learn.qsLegendGreater": "> опорного (right)",
+  "learn.qsLegendSorted": "повернутий/базовий",
+  "learn.qsResultSummary": "{comparisons} порівнянь · {calls} викликів · глибина {depth}",
+  "learn.qsColLevel": "Рівень",
+  "learn.qsColCall": "Виклик",
+  "learn.qsColSub": "Підмасив",
+  "learn.qsColPivot": "Опорний",
+  "learn.qsStableInput": "Вхід (мічені дублікати)",
+  "learn.qsStableLabel": "Тристороння (списко-включення) — стабільна ✓",
+  "learn.qsUnstableLabel": "Класична in-place (Ломуто) — нестабільна ✗",
+  "learn.qsStableNote":
+    "Тристороння версія зберегла порядок четвірок (4₁4₂4₃4₄); класична in-place переставила їх (4₃4₄4₂4₁).",
+  "learn.qsGrowthNote": "Збалансоване дерево дає n·log₂n; вироджене — n²/2 (катастрофічно гірше).",
 }
 
 export type MessageKey = keyof typeof ua
@@ -1461,6 +1537,82 @@ const en: Record<MessageKey, string> = {
   "learn.ssStableNote":
     "The standard selection reordered equal keys; the stable variant preserved their order.",
   "learn.ssGrowthNote": "n²/2 comparisons grow catastrophically faster than n·log₂n.",
+
+  // — Quick Sort —
+  // Editor.
+  "editor.qsIntro": "Example [3,5,2,4,6,1,7]",
+  "editor.qsSorted": "Sorted [1..7]",
+  "editor.qsDuplicates": "Duplicates",
+  "editor.qsValue": "Value",
+  "editor.qsArrayTitle": "Array of numbers",
+  "editor.qsNoValues": "The array is empty — add the first number.",
+  "editor.qsSize": "Elements",
+  "editor.qsComparisons": "Comparisons (middle)",
+  "editor.qsCalls": "Calls",
+  "editor.qsDepth": "Recursion depth",
+  "editor.qsPivotNote":
+    "Complexity depends on the pivot: a balanced tree → O(n·log n), a degenerate one → O(n²).",
+  "editor.qsSortedYes": "The array is already sorted",
+  "editor.qsSortedNo": "The array is not sorted",
+  "editor.qsWarnMany":
+    "The array is too large — the recursion tree gets unwieldy and playback may stutter. Reduce the number of elements.",
+  "editor.qsAriaValue": "Value at index {i}",
+  "editor.qsDeleteAt": "Delete element {i}",
+  "editor.qsHelpCell": "Array cell",
+  "editor.helpQsAdd": "append a number to the array",
+  "editor.helpQsEdit": "edit a value (integer ≥ 0)",
+  "editor.helpQsRemove": "remove a number from the array",
+  "editor.helpQsNote":
+    "Any integers can be sorted. In the player, switch the pivot strategy to see how the recursion tree's shape changes (balanced vs degenerate).",
+  "editor.qsErrBadValues": "The `values` field must be an array of numbers",
+  // Player.
+  "play.qsPivot": "Pivot:",
+  "play.qsPivotMiddle": "Middle",
+  "play.qsPivotFirst": "First",
+  "play.qsPivotLast": "Last",
+  "play.qsPivotMedian3": "Median-3",
+  "play.qsEmpty": "The array is empty — add numbers in the “Editor” tab.",
+  "play.qsTooBig":
+    "The array is too large for smooth playback (over {max} elements). Reduce it in the “Editor” tab.",
+  "play.qsStatComparisons": "comparisons:",
+  "play.qsStatCalls": "calls:",
+  "play.qsStatDepth": "depth:",
+  "play.qsStatSize": "elements:",
+  "play.qsPhasePartition": "partition",
+  "play.qsPhaseBase": "base case",
+  "play.qsPhaseDone": "done",
+  "play.qsTreeTitle": "Recursion tree",
+  "play.qsPartitionTitle": "Node partition",
+  "play.qsCodeTitle": "Code — three-way partition",
+  "play.qsPivotLabel": "Pivot:",
+  "play.qsBaseNote": "base case (length ≤ 1) — return as is",
+  "play.qsConcat": "Concatenation: quicksort(left) + middle + quicksort(right) =",
+  "play.qsInputLabel": "Input",
+  "play.qsSortedLabel": "Sorted",
+  "play.qsResultCounts": "{comparisons} comparisons · {calls} calls · depth {depth}",
+  "play.nQsPartition":
+    "Level {level}, {call} on {arr}. Pivot = {pivot}. Split: left={left} (<), middle={middle} (=), right={right} (>). Then recurse on left and right.",
+  "play.nQsBase":
+    "Level {level}, {call} on {arr} — base case (length ≤ 1): already sorted, return as is.",
+  "play.nQsDone":
+    "Done: the array is sorted {arr}. Concatenation of all calls. {comparisons} comparisons · {calls} calls · depth {depth}.",
+  // Learn widgets.
+  "learn.qsLegendPivot": "pivot",
+  "learn.qsLegendLess": "< pivot (left)",
+  "learn.qsLegendEqual": "== pivot (middle)",
+  "learn.qsLegendGreater": "> pivot (right)",
+  "learn.qsLegendSorted": "returned/base",
+  "learn.qsResultSummary": "{comparisons} comparisons · {calls} calls · depth {depth}",
+  "learn.qsColLevel": "Level",
+  "learn.qsColCall": "Call",
+  "learn.qsColSub": "Subarray",
+  "learn.qsColPivot": "Pivot",
+  "learn.qsStableInput": "Input (tagged duplicates)",
+  "learn.qsStableLabel": "Three-way (list comprehensions) — stable ✓",
+  "learn.qsUnstableLabel": "Classic in-place (Lomuto) — unstable ✗",
+  "learn.qsStableNote":
+    "The three-way version kept the order of the fours (4₁4₂4₃4₄); the classic in-place version reordered them (4₃4₄4₂4₁).",
+  "learn.qsGrowthNote": "A balanced tree gives n·log₂n; a degenerate one — n²/2 (catastrophically worse).",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }

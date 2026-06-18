@@ -7,6 +7,7 @@ import { knapsack } from "@/algorithms/knapsack"
 import { bubbleSort } from "@/algorithms/bubble-sort"
 import { insertionSort } from "@/algorithms/insertion-sort"
 import { selectionSort } from "@/algorithms/selection-sort"
+import { quickSort } from "@/algorithms/quick-sort"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -23,6 +24,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   bubbleSort,
   insertionSort,
   selectionSort,
+  quickSort,
 ]
 
 export function getAlgorithm(
