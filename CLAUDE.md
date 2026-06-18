@@ -14,11 +14,15 @@ swapped), сортування вставками (лінійний пошук �
 порозрядне сортування radix sort (ПЕРШЕ НЕПОРІВНЯЛЬНЕ — не «що більше?», а самі
 цифри: розкладаємо по 10 кошиках 0–9 за цифрою розряду й збираємо, LSD; стабільне
 сортування підрахунком — лінчпін; лінійний час O(d·(n+k)), не in-place)
-і лінійний пошук linear search (ПЕРШИЙ алгоритм ПОШУКУ після серії сортувань:
+лінійний пошук linear search (ПЕРШИЙ алгоритм ПОШУКУ після серії сортувань:
 послідовно перевіряємо кожен елемент зліва направо, доки не знайдемо x → індекс,
 або не дійдемо до кінця → -1; масив нерухомий, без передумов; «ціна» — кількість
 перевірок arr[i]==x; перемикач режимів «перший збіг»/«усі входження» find_all;
 головний акцент — аналіз випадків O(1)/O(n); місток до двійкового пошуку)
+і двійковий (бінарний) пошук binary search (ДРУГИЙ алгоритм ПОШУКУ, «винагорода за
+сортування»: на ВІДСОРТОВАНОМУ масиві дивимось у середину вікна [low..high] і
+відкидаємо половину, у якій шуканого точно немає; вікно звужується вдвічі → O(log n);
+передумова — масив відсортований; перемикач реалізації ітеративний/рекурсивний)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -29,7 +33,8 @@ Python-репозиторіїв із повним розбором: https://gith
 злиттям — https://github.com/MarynaShavlak/algo-merge-sort,
 Шелла — https://github.com/MarynaShavlak/algo-shell-sort,
 порозрядне — https://github.com/MarynaShavlak/algo-radix-sort,
-лінійний пошук — https://github.com/MarynaShavlak/algo-linear-search)
+лінійний пошук — https://github.com/MarynaShavlak/algo-linear-search,
+двійковий пошук — https://github.com/MarynaShavlak/algo-binary-search)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -64,7 +69,8 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             bubble-sort/{learn,editor,playback}, insertion-sort/{learn,editor,playback},
             selection-sort/{learn,editor,playback}, quick-sort/{learn,editor,playback},
             merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback},
-            radix-sort/{learn,editor,playback}, linear-search/{learn,editor,playback}
+            radix-sort/{learn,editor,playback}, linear-search/{learn,editor,playback},
+            binary-search/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -94,7 +100,15 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             «перший збіг» (linear_search, зупинка) / «усі входження» (find_all, повний скан);
             кадр = init + по 2 на перевірку (інтрига+розв'язок) + done (8 кадрів на головному
             прикладі = step_00..07); редактор-панель — АНАЛІЗ ВИПАДКІВ (best O(1)/worst/absent/
-            avg O(n)); benchmark лише у kruskal);
+            avg O(n));
+            двійковий пошук (binary-search): ДРУГИЙ алгоритм ПОШУКУ — редактор ВІДСОРТОВАНОГО
+            масиву цілих + ЦІЛЬ target + кнопка «Відсортувати» + індикатор передумови (is_sorted);
+            плеєр — ВІКНО [low..high], що звужується вдвічі (🟦 активне вікно, 🌸 mid-проба ▼,
+            🟥 половина-відкидання ✗, 🟢 збіг ✓, 🩶 поза вікном; дужки low/high) + 2 режими
+            ітеративний(while)/рекурсивний(розділяй і володарюй: різний лістинг + «глибина рекурсії»,
+            еволюція вікна ідентична); кадр = init + по 2 на крок (проба+розв'язок) + done
+            (8 кадрів на INTRO [1,3,5,8,10,12,15,18,20,22,24]→15 = step_00..07; i18n-префікс `bin`,
+            бо `bs` зайнятий бульбашкою); benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
             shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
@@ -120,6 +134,13 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
               init/probe/found/not_found/final) + countComparisons + caseAnalysis (best/worst/absent/avg);
               buildLinearSearchTrace(arr,target,findAll)→кадри інтрига+розв'язок; LINEAR_CODE/FIND_ALL_CODE;
               будь-які цілі, спільний randomArray),
+            binarySearch.ts(+Trace)/exampleBinarySearch (двійковий пошук на ВІДСОРТОВАНОМУ:
+              binarySearch/binarySearchRecursive (дослівно той самий результат)/lowerBound/upperBound
+              (bisect, межі при дублікатах)/isSorted (передумова)/binarySearchSteps (журнал
+              init/probe(compare lt/gt + decision right/left)/found/not_found/final) + countSteps +
+              caseAnalysis (best 1/worst ⌊log₂n⌋+1/linear n);
+              buildBinarySearchTrace(arr,target,recursive)→кадри проба+розв'язок (вікно low/high/mid +
+              discardLo/discardHi); ITERATIVE_CODE/RECURSIVE_CODE; SearchCase спільний із linear),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -131,6 +152,7 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             merge-sort-store(+presets, масив чисел); shell-sort-store(+presets, масив чисел);
             radix-sort-store(+presets, масив НЕВІД'ЄМНИХ цілих);
             linear-search-store(+presets, масив цілих + ЦІЛЬ target);
+            binary-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список

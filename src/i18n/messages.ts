@@ -1184,6 +1184,121 @@ const ua = {
   "learn.lsGrowthBinary": "двійковий ≈ log₂ n",
   "learn.lsGrowthNote":
     "На відсортованому масиві двійковий пошук відкидає половину щокроку — O(log n) проти O(n) лінійного. Для мільйона елементів це ≈ 20 перевірок проти мільйона.",
+
+  // — Двійковий (бінарний) пошук (Binary Search) —
+  // Редактор.
+  "editor.binIntro": "Приклад [1,3,5,…]→15",
+  "editor.binDuplicates": "Дублікати",
+  "editor.binAbsent": "Відсутній (→11)",
+  "editor.binValue": "Число",
+  "editor.binSort": "Відсортувати",
+  "editor.binArrayTitle": "Відсортований масив і ціль пошуку",
+  "editor.binNoValues": "Масив порожній — додайте перше число.",
+  "editor.binTargetLabel": "шукаємо:",
+  "editor.binAriaTarget": "Ціль пошуку",
+  "editor.binAriaValue": "Значення на індексі {i}",
+  "editor.binDeleteAt": "Видалити елемент {i}",
+  "editor.binHelpTarget": "шукаємо: x",
+  "editor.helpBinTarget": "змінити значення, яке шукаємо в масиві",
+  "editor.helpBinSort": "впорядкувати масив за зростанням (передумова методу)",
+  "editor.helpBinAdd": "додати число (вставляється зі збереженням порядку)",
+  "editor.helpBinRemove": "видалити число з масиву",
+  "editor.helpBinNote":
+    "Двійковий пошук коректний ЛИШЕ на відсортованому масиві — це його головна ціна й прямий зв'язок із сортуваннями. На невпорядкованих даних він може «відкинути» половину з шуканим і повернути -1.",
+  "editor.binErrBadValues": "Поле values має бути масивом чисел",
+  "editor.binErrBadTarget": "Поле target має бути числом",
+  "editor.binSize": "Елементів",
+  "editor.binSortedYes": "Масив відсортований — двійковий пошук коректний",
+  "editor.binSortedNo": "Масив НЕ відсортований — двійковий пошук некоректний; натисніть «Відсортувати»",
+  "editor.binTargetResult": "результат для цілі {target}:",
+  "editor.binFoundAt": "знайдено на індексі {i}",
+  "editor.binNotFound": "елемента немає (-1)",
+  "editor.binSteps": "кроків:",
+  "editor.binNeedSort": "Спершу відсортуйте масив — інакше результат не визначений.",
+  "editor.binCasesTitle": "Складність: кроків до результату",
+  "editor.binCaseBest": "Найкращий (одразу mid)",
+  "editor.binCaseWorst": "Гірший (двійковий)",
+  "editor.binCaseLinear": "Лінійний (для контрасту)",
+  "editor.binCasesNote":
+    "Двійковий: ⌊log₂ n⌋+1 кроку в гіршому випадку проти n у лінійного. Подвоєння n додає двійковому лише ОДИН крок.",
+  "editor.binWarnMany":
+    "Масив завеликий — комірки стають вузькими. Зменште кількість елементів для наочності.",
+  // Плеєр.
+  "play.binEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.binTooBig":
+    "Масив завеликий для наочного вікна (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.binUnsorted":
+    "Масив НЕ відсортований — двійковий пошук некоректний на таких даних (може повернути -1 для наявного елемента). Відсортуйте його у вкладці «Редактор».",
+  "play.binStatSteps": "кроків:",
+  "play.binStatResult": "результат:",
+  "play.binStatWindow": "вікно:",
+  "play.binStatDepth": "глибина рекурсії:",
+  "play.binStatSize": "елементів:",
+  "play.binCodeIterative": "Код — ітеративний (while)",
+  "play.binCodeRecursive": "Код — рекурсивний (розділяй і володарюй)",
+  "play.binWindowTitle": "Вікно [low..high] і проба mid",
+  "play.binTargetBadge": "шукаємо: {target}",
+  "play.binLowHigh": "low/high",
+  "play.binMethod": "Реалізація:",
+  "play.binModeIterative": "Ітеративний",
+  "play.binModeRecursive": "Рекурсивний",
+  "play.binPhaseInit": "старт",
+  "play.binPhaseProbe": "проба mid",
+  "play.binPhaseDiscard": "відкидаємо половину",
+  "play.binPhaseFound": "збіг",
+  "play.binPhaseDone": "готово",
+  "play.binInputLabel": "Масив",
+  "play.binTargetLabel": "Шукаємо",
+  "play.binResultLabel": "Результат",
+  "play.binResultIndex": "індекс {i}",
+  "play.binResultAbsent": "елемента немає (-1)",
+  "play.binResultSteps": "{steps} кроків",
+  "play.nBinInit":
+    "Старт: шукаємо {target} у відсортованому масиві {arr}. Вікно охоплює весь масив: low=0, high={high}. Усе вікно активне 🟦 — шукане може бути будь-де.",
+  "play.nBinProbe":
+    "Крок {k}: вікно [{low}..{high}]. Середина mid={mid}, проба arr[{mid}]={value}. Порівнюємо {value} із шуканим {target}?",
+  "play.nBinDiscardRight":
+    "arr[mid]={value} < {target} → шукане ПРАВОРУЧ. Відкидаємо ліву половину (червоні ✗): low = mid+1 = {low}. Вікно звузилось удвічі.",
+  "play.nBinDiscardLeft":
+    "arr[mid]={value} > {target} → шукане ЛІВОРУЧ. Відкидаємо праву половину (червоні ✗): high = mid-1 = {high}. Вікно звузилось удвічі.",
+  "play.nBinFound":
+    "arr[mid]={value} = {target} → збіг! Повертаємо індекс {mid} (зелена комірка ✓). Пошук завершено.",
+  "play.nBinDoneFound":
+    "Готово: {target} знайдено на індексі {i} за {steps} кроки. Щокроку вікно звужувалось удвічі — це O(log n).",
+  "play.nBinDoneAbsent":
+    "Готово: вікно спорожніло (low > high) — {target} немає в масиві, повертаємо -1 ({steps} кроки). Це повний спуск log n.",
+  // Навчальні віджети.
+  "learn.binLegendActive": "активне вікно",
+  "learn.binLegendMid": "mid (проба)",
+  "learn.binLegendDiscard": "відкидаємо",
+  "learn.binLegendFound": "знайдено",
+  "learn.binLegendOut": "поза вікном",
+  "learn.binResultFound": "Знайдено на індексі {i} за {steps} кроки.",
+  "learn.binResultAbsent": "Елемента немає: -1 за {steps} кроки (вікно спорожніло).",
+  "learn.binEvolStep": "крок {k}: [{low}..{high}]",
+  "learn.binCaseBest": "найкращий (одразу mid)",
+  "learn.binCaseWorst": "гірший двійковий ⌊log₂ n⌋+1",
+  "learn.binCaseLinear": "лінійний (для контрасту) ≈ n",
+  "learn.binCasesArray": "Масив {arr}",
+  "learn.binLogHalvings": "поділів навпіл до 1",
+  "learn.binLogNote":
+    "log₂ n — це і є відповідь на «скільки разів поділити n навпіл, щоб дійти до 1» (рівнозначно: у який степінь піднести 2, щоб отримати n).",
+  "learn.binCmpLinear": "лінійний ≈ n",
+  "learn.binCmpBinary": "двійковий ≈ log₂ n",
+  "learn.binCmpNote":
+    "Подвоєння n додає двійковому пошуку лише ОДИН крок. На великих відсортованих даних він недосяжно швидший за лінійний.",
+  "learn.binDupSome": "binary_search → {r} (ЯКИЙСЬ індекс зі збігів, не обов'язково перший)",
+  "learn.binDupBounds":
+    "lower_bound → {lo} (перше входження), upper_bound → {hi} (за останнім); кількість входжень = {count}",
+  "learn.binGuessTitle": "Загадали число 1–{hi} (нехай {secret}); називаємо середину й відкидаємо половину:",
+  "learn.binGuessStep": "спроба",
+  "learn.binGuessRange": "діапазон",
+  "learn.binGuessGuess": "здогад (mid)",
+  "learn.binGuessHint": "підказка",
+  "learn.binGuessFound": "вгадали! ✓",
+  "learn.binGuessHigher": "більше →",
+  "learn.binGuessLower": "← менше",
+  "learn.binGuessNote": "{steps} спроб замість {hi} — щоразу відкидаємо половину варіантів (O(log n)).",
 }
 
 export type MessageKey = keyof typeof ua
@@ -2347,6 +2462,121 @@ const en: Record<MessageKey, string> = {
   "learn.lsGrowthBinary": "binary ≈ log₂ n",
   "learn.lsGrowthNote":
     "On a sorted array binary search discards half each step — O(log n) vs. O(n) for linear. For a million elements that is ≈ 20 checks vs. a million.",
+
+  // — Binary Search —
+  // Editor.
+  "editor.binIntro": "Example [1,3,5,…]→15",
+  "editor.binDuplicates": "Duplicates",
+  "editor.binAbsent": "Absent (→11)",
+  "editor.binValue": "Number",
+  "editor.binSort": "Sort",
+  "editor.binArrayTitle": "Sorted array and search target",
+  "editor.binNoValues": "The array is empty — add the first number.",
+  "editor.binTargetLabel": "looking for:",
+  "editor.binAriaTarget": "Search target",
+  "editor.binAriaValue": "Value at index {i}",
+  "editor.binDeleteAt": "Delete element {i}",
+  "editor.binHelpTarget": "looking for: x",
+  "editor.helpBinTarget": "change the value being searched for in the array",
+  "editor.helpBinSort": "sort the array ascending (the method's precondition)",
+  "editor.helpBinAdd": "add a number (inserted keeping the order)",
+  "editor.helpBinRemove": "remove a number from the array",
+  "editor.helpBinNote":
+    "Binary search is correct ONLY on a sorted array — that's its main cost and the direct link to sorting. On unsorted data it may discard the half holding the target and return -1.",
+  "editor.binErrBadValues": "The values field must be an array of numbers",
+  "editor.binErrBadTarget": "The target field must be a number",
+  "editor.binSize": "Elements",
+  "editor.binSortedYes": "Array is sorted — binary search is correct",
+  "editor.binSortedNo": "Array is NOT sorted — binary search is incorrect; click «Sort»",
+  "editor.binTargetResult": "result for target {target}:",
+  "editor.binFoundAt": "found at index {i}",
+  "editor.binNotFound": "the element is absent (-1)",
+  "editor.binSteps": "steps:",
+  "editor.binNeedSort": "Sort the array first — otherwise the result is undefined.",
+  "editor.binCasesTitle": "Complexity: steps to the result",
+  "editor.binCaseBest": "Best (mid right away)",
+  "editor.binCaseWorst": "Worst (binary)",
+  "editor.binCaseLinear": "Linear (for contrast)",
+  "editor.binCasesNote":
+    "Binary: ⌊log₂ n⌋+1 steps worst case vs n for linear. Doubling n adds binary only ONE step.",
+  "editor.binWarnMany":
+    "The array is too large — cells get narrow. Reduce the number of elements for clarity.",
+  // Player.
+  "play.binEmpty": "The array is empty — add numbers in the «Editor» tab.",
+  "play.binTooBig":
+    "The array is too large for a clear window (over {max} elements). Reduce it in the «Editor» tab.",
+  "play.binUnsorted":
+    "The array is NOT sorted — binary search is incorrect on such data (it may return -1 for a present element). Sort it in the «Editor» tab.",
+  "play.binStatSteps": "steps:",
+  "play.binStatResult": "result:",
+  "play.binStatWindow": "window:",
+  "play.binStatDepth": "recursion depth:",
+  "play.binStatSize": "elements:",
+  "play.binCodeIterative": "Code — iterative (while)",
+  "play.binCodeRecursive": "Code — recursive (divide & conquer)",
+  "play.binWindowTitle": "Window [low..high] and the mid probe",
+  "play.binTargetBadge": "looking for: {target}",
+  "play.binLowHigh": "low/high",
+  "play.binMethod": "Implementation:",
+  "play.binModeIterative": "Iterative",
+  "play.binModeRecursive": "Recursive",
+  "play.binPhaseInit": "start",
+  "play.binPhaseProbe": "mid probe",
+  "play.binPhaseDiscard": "drop a half",
+  "play.binPhaseFound": "match",
+  "play.binPhaseDone": "done",
+  "play.binInputLabel": "Array",
+  "play.binTargetLabel": "Target",
+  "play.binResultLabel": "Result",
+  "play.binResultIndex": "index {i}",
+  "play.binResultAbsent": "the element is absent (-1)",
+  "play.binResultSteps": "{steps} steps",
+  "play.nBinInit":
+    "Start: searching for {target} in the sorted array {arr}. The window spans the whole array: low=0, high={high}. The whole window is active 🟦 — the target could be anywhere.",
+  "play.nBinProbe":
+    "Step {k}: window [{low}..{high}]. Middle mid={mid}, probe arr[{mid}]={value}. We compare {value} with the target {target}?",
+  "play.nBinDiscardRight":
+    "arr[mid]={value} < {target} → the target is on the RIGHT. Drop the left half (red ✗): low = mid+1 = {low}. The window halved.",
+  "play.nBinDiscardLeft":
+    "arr[mid]={value} > {target} → the target is on the LEFT. Drop the right half (red ✗): high = mid-1 = {high}. The window halved.",
+  "play.nBinFound":
+    "arr[mid]={value} = {target} → match! Return index {mid} (green cell ✓). The search is done.",
+  "play.nBinDoneFound":
+    "Done: {target} found at index {i} in {steps} steps. The window halved each step — that's O(log n).",
+  "play.nBinDoneAbsent":
+    "Done: the window emptied (low > high) — {target} is not in the array, return -1 ({steps} steps). That's a full log n descent.",
+  // Learn widgets.
+  "learn.binLegendActive": "active window",
+  "learn.binLegendMid": "mid (probe)",
+  "learn.binLegendDiscard": "dropped",
+  "learn.binLegendFound": "found",
+  "learn.binLegendOut": "outside window",
+  "learn.binResultFound": "Found at index {i} in {steps} steps.",
+  "learn.binResultAbsent": "The element is absent: -1 in {steps} steps (window emptied).",
+  "learn.binEvolStep": "step {k}: [{low}..{high}]",
+  "learn.binCaseBest": "best (mid right away)",
+  "learn.binCaseWorst": "worst binary ⌊log₂ n⌋+1",
+  "learn.binCaseLinear": "linear (for contrast) ≈ n",
+  "learn.binCasesArray": "Array {arr}",
+  "learn.binLogHalvings": "halvings down to 1",
+  "learn.binLogNote":
+    "log₂ n is the answer to «how many times do we halve n to reach 1» (equivalently: what power we raise 2 to in order to get n).",
+  "learn.binCmpLinear": "linear ≈ n",
+  "learn.binCmpBinary": "binary ≈ log₂ n",
+  "learn.binCmpNote":
+    "Doubling n adds binary search only ONE step. On large sorted data it is unreachably faster than linear.",
+  "learn.binDupSome": "binary_search → {r} (SOME matching index, not necessarily the first)",
+  "learn.binDupBounds":
+    "lower_bound → {lo} (first occurrence), upper_bound → {hi} (past the last); number of occurrences = {count}",
+  "learn.binGuessTitle": "We picked a number 1–{hi} (say {secret}); name the middle and drop a half:",
+  "learn.binGuessStep": "attempt",
+  "learn.binGuessRange": "range",
+  "learn.binGuessGuess": "guess (mid)",
+  "learn.binGuessHint": "hint",
+  "learn.binGuessFound": "guessed it! ✓",
+  "learn.binGuessHigher": "higher →",
+  "learn.binGuessLower": "← lower",
+  "learn.binGuessNote": "{steps} attempts instead of {hi} — we drop half the options each time (O(log n)).",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
