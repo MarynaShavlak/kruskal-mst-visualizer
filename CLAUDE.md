@@ -29,6 +29,14 @@ swapped), сортування вставками (лінійний пошук �
 елемент як (ключ, позиція)) → який БЛОК; 2) ПОСЛІДОВНИЙ скан лише цього блоку →
 індекс/-1; O(log n + m), оптимум кроку ≈ √n — місток до Jump Search; передумова —
 масив відсортований; перемикач фази 1 двійковий/лінійний індекс — той самий результат)
+та інтерполяційний пошук interpolation search (ЧЕТВЕРТИЙ алгоритм ПОШУКУ — «розумна»
+проба: каркас той самий, що в двійкового (вікно [low,high], відкидаємо половину), але
+замість СЕРЕДИНИ обчислюємо пробу index ФОРМУЛОЮ ЛІНІЙНОЇ ІНТЕРПОЛЯЦІЇ — «вгадуємо»
+позицію за значенням ключа, як шукають слово у словнику (проєкція ключа на «ПРЯМУ-
+МОДЕЛЬ» (low,arr[low])→(high,arr[high])); на РІВНОМІРНИХ даних O(log log n) (часто
+1–2 проби незалежно від n), на скупчених (один викид збиває пряму) деградує до O(n)
+— гірше за двійковий; передумова — масив відсортований; перемикач реалізації
+ітеративний/рекурсивний)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -41,7 +49,8 @@ Python-репозиторіїв із повним розбором: https://gith
 порозрядне — https://github.com/MarynaShavlak/algo-radix-sort,
 лінійний пошук — https://github.com/MarynaShavlak/algo-linear-search,
 двійковий пошук — https://github.com/MarynaShavlak/algo-binary-search,
-індексно-послідовний пошук — https://github.com/MarynaShavlak/algo-indexed-sequential-search)
+індексно-послідовний пошук — https://github.com/MarynaShavlak/algo-indexed-sequential-search,
+інтерполяційний пошук — https://github.com/MarynaShavlak/algo-interpolation-search)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -77,7 +86,8 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             selection-sort/{learn,editor,playback}, quick-sort/{learn,editor,playback},
             merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback},
             radix-sort/{learn,editor,playback}, linear-search/{learn,editor,playback},
-            binary-search/{learn,editor,playback}, indexed-sequential-search/{learn,editor,playback}
+            binary-search/{learn,editor,playback}, indexed-sequential-search/{learn,editor,playback},
+            interpolation-search/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -125,7 +135,19 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             + 2 режими фази 1 двійковий/лінійний індекс (той самий результат+блок+порівняння, різна
             ціна фази 1: 2 vs 3 зондування); кадр = init + (probe+discard)·k + block + (scan+reject)·m
             /found + done (15 кадрів на MAIN [1,3,…,25] крок 4 ціль 15 = step_00..14; i18n-префікс
-            `iss`); benchmark лише у kruskal);
+            `iss`);
+            інтерполяційний (interpolation-search): ЧЕТВЕРТИЙ алгоритм ПОШУКУ — редактор
+            ВІДСОРТОВАНОГО масиву + ЦІЛЬ target + «Відсортувати» + індикатор передумови + КОНТРАСТ
+            проб «формула проти середини» (інтерполяційний vs двійковий на тому самому масиві) +
+            складність best 1/O(log log n)/O(log n)/O(n); плеєр — ДВА образи: ⬜ ВІКНО [low..high]
+            масиву (звужується НЕсиметрично, 🌸 проба index ▼ — НЕ середина, 🟥 відкидання ✗,
+            🟢 збіг ✓) + 🟣 СИГНАТУРНА «ПРЯМА-МОДЕЛЬ» (SVG: пряма (low,arr[low])→(high,arr[high]),
+            точки реальних значень, горизонталь ключа x і проєкція на вісь індексів → проба;
+            точки НА прямій = рівномірні дані, проба точна; точки ДАЛЕКО = деградація) + 2 режими
+            ітеративний/рекурсивний; кадр = init + (probe+discard)·k + found + done (4 кадри на
+            ДЕМО1 [1,3,…,19]→15 = індекс7/1 проба; 6 кадрів = step_00..05 на ДЕМО2 →25 = індекс11/
+            2 проби; скупчені [1,…,9,1000]→9 = 9 проб vs двійковий 3 — деградація; i18n-префікс `ip`);
+            benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
             player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
             shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
@@ -168,6 +190,17 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
               countSteps; buildIndexedSequentialSearchTrace(arr,target,step,linearIndex)→кадри двох фаз
               (idxLow/idxHigh/idxMid + blockLo/blockHi/cursor); BASE_CODE/LINEAR_INDEX_CODE; IxsCase
               {values,target,step}; еталон MAIN [1,3,…,25] крок 4 ціль 15→поз.7, 2 зондування+4=6),
+            interpolationSearch.ts(+Trace)/exampleInterpolationSearch (інтерполяційний, «розумна»
+              проба на ВІДСОРТОВАНОМУ: interpolationSearch (база — index = low+⌊(high-low)/(arr[high]-
+              arr[low])·(x-arr[low])⌋, формула інтерполяції замість середини) + interpolationSearchRecursive
+              (той самий результат) + interpolationSearchSafe (закриває ділення на нуль + кламп) +
+              interpolationSearchSteps (журнал init/probe/found/guard_exit/not_found/final + лічильник
+              probes) + countProbes + caseAnalysis (best 1/avgUniform O(log log n)/binary/worst n);
+              isSorted + countBinaryProbes РЕЕКСПОРТ із binarySearch (контраст середина проти формули);
+              buildInterpolationSearchTrace(arr,target,recursive)→кадри проба+розв'язок з «прямою-моделлю»
+              (lineLow/lineHigh/loVal/hiVal/frac/pos + index/discardLo/discardHi + exit found/empty/guard);
+              BASE_CODE/RECURSIVE_CODE; SearchCase спільний із linear; еталон ДЕМО1 [1,3,…,19]→15=поз.7/
+              1 проба, ДЕМО2 →25=поз.11/2 проби, скупчені [1,…,9,1000]→9=9 проб vs двійк.3),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -181,6 +214,7 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             linear-search-store(+presets, масив цілих + ЦІЛЬ target);
             binary-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
             indexed-sequential-search-store(+presets, ВІДСОРТОВАНИЙ масив + ЦІЛЬ target + КРОК step + sortValues);
+            interpolation-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список

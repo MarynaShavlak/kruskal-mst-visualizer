@@ -1431,6 +1431,133 @@ const ua = {
   "learn.issTradeTotal": "разом",
   "learn.issTradeOptimal": "оптимум близько √{n} ≈ {opt}",
   "learn.issTradeNote": "Сума n/крок + крок мінімальна при кроці ≈ √n — той самий баланс, що й у Jump Search.",
+
+  // — Інтерполяційний пошук (Interpolation Search) —
+  // Редактор.
+  "editor.ipDemo1": "Демо 1 [1,3,…]→15",
+  "editor.ipDemo2": "Демо 2 →25",
+  "editor.ipClustered": "Скупчені (→9)",
+  "editor.ipValue": "Число",
+  "editor.ipSort": "Відсортувати",
+  "editor.ipArrayTitle": "Відсортований масив і ціль пошуку",
+  "editor.ipNoValues": "Масив порожній — додайте перше число.",
+  "editor.ipTargetLabel": "шукаємо:",
+  "editor.ipAriaTarget": "Ціль пошуку",
+  "editor.ipAriaValue": "Значення на індексі {i}",
+  "editor.ipDeleteAt": "Видалити елемент {i}",
+  "editor.ipHelpTarget": "шукаємо: x",
+  "editor.helpIpTarget": "змінити значення, яке шукаємо в масиві",
+  "editor.helpIpSort": "впорядкувати масив за зростанням (передумова методу)",
+  "editor.helpIpAdd": "додати число (вставляється зі збереженням порядку)",
+  "editor.helpIpRemove": "видалити число з масиву",
+  "editor.helpIpNote":
+    "Інтерполяційний пошук коректний лише на відсортованому масиві, а ВИГРАЄ — на рівномірно розподілених даних. На скупчених (один викид) формула систематично промахується й метод деградує до O(n) — гірше за двійковий.",
+  "editor.ipErrBadValues": "Поле values має бути масивом чисел",
+  "editor.ipErrBadTarget": "Поле target має бути числом",
+  "editor.ipSize": "Елементів",
+  "editor.ipSortedYes": "Масив відсортований — інтерполяційний пошук коректний",
+  "editor.ipSortedNo": "Масив НЕ відсортований — метод некоректний; натисніть «Відсортувати»",
+  "editor.ipTargetResult": "результат для цілі {target}:",
+  "editor.ipFoundAt": "знайдено на індексі {i}",
+  "editor.ipNotFound": "елемента немає (-1)",
+  "editor.ipProbes": "проб:",
+  "editor.ipNeedSort": "Спершу відсортуйте масив — інакше результат не визначений.",
+  "editor.ipVsTitle": "Проб: формула проти середини",
+  "editor.ipVsInterp": "інтерполяційний",
+  "editor.ipVsBinary": "двійковий",
+  "editor.ipVsWin": "Формула вгадала точніше — інтерполяційний зробив менше проб (виграш на рівномірних даних).",
+  "editor.ipVsTie": "Нічия — однаково проб; на цих даних формула не дає переваги.",
+  "editor.ipVsLose": "Формула промахнулась — інтерполяційний зробив більше проб (деградація на скупчених даних).",
+  "editor.ipCasesTitle": "Складність: проб до результату",
+  "editor.ipCaseBest": "Найкращий (ідеальний здогад)",
+  "editor.ipCaseUniform": "Рівномірні дані",
+  "editor.ipCaseBinary": "Двійковий (для контрасту)",
+  "editor.ipCaseWorst": "Гірший (скупчені)",
+  "editor.ipCasesNote":
+    "На рівномірних даних O(log log n) — часто 1–2 проби незалежно від n. На скупчених деградує до O(n) — гірше за двійковий O(log n).",
+  "editor.ipWarnMany":
+    "Масив завеликий — комірки й пряма стають вузькими. Зменште кількість елементів для наочності.",
+  // Плеєр.
+  "play.ipEmpty": "Масив порожній — додайте числа у вкладці «Редактор».",
+  "play.ipTooBig":
+    "Масив завеликий для наочного вікна (понад {max} елементів). Зменште його у вкладці «Редактор».",
+  "play.ipUnsorted":
+    "Масив НЕ відсортований — інтерполяційний пошук некоректний на таких даних. Відсортуйте його у вкладці «Редактор».",
+  "play.ipStatProbes": "проб:",
+  "play.ipStatResult": "результат:",
+  "play.ipStatWindow": "вікно:",
+  "play.ipStatFrac": "частка:",
+  "play.ipStatDepth": "глибина рекурсії:",
+  "play.ipStatSize": "елементів:",
+  "play.ipCodeIterative": "Код — ітеративний (while)",
+  "play.ipCodeRecursive": "Код — рекурсивний (піддіапазон)",
+  "play.ipWindowTitle": "Вікно [low..high] і проба index",
+  "play.ipTargetBadge": "шукаємо: {target}",
+  "play.ipLowHigh": "low/high",
+  "play.ipMethod": "Реалізація:",
+  "play.ipModeIterative": "Ітеративний",
+  "play.ipModeRecursive": "Рекурсивний",
+  "play.ipPhaseInit": "старт",
+  "play.ipPhaseProbe": "проба за формулою",
+  "play.ipPhaseDiscard": "відкидаємо частину",
+  "play.ipPhaseFound": "збіг",
+  "play.ipPhaseDone": "готово",
+  "play.ipResultLabel": "Результат",
+  "play.ipResultIndex": "індекс {i}",
+  "play.ipResultAbsent": "елемента немає (-1)",
+  "play.ipResultProbes": "інтерполяційний: {probes} проб",
+  "play.ipResultBinary": "двійковий: {probes} проб",
+  "play.ipLineTitle": "Пряма-модель: проєкція ключа",
+  "play.ipLineDegenerate":
+    "Пряма-модель недоступна: вікно вироджене (одна точка або однакові межі).",
+  "play.ipLineLegLine": "пряма (low→high)",
+  "play.ipLineLegDots": "реальні значення",
+  "play.ipLineLegKey": "ключ x і проєкція",
+  "play.ipLineHint":
+    "Точки на прямій → дані рівномірні, проба точна. Точки далеко від прямої → формула промахується (деградація).",
+  // Нарація плеєра.
+  "play.nIpInit":
+    "Старт: шукаємо {target} у відсортованому масиві {arr}. Вікно охоплює весь масив: low=0, high={high}. Усе вікно активне 🟦.",
+  "play.nIpProbe":
+    "Проба {k}: вікно [{low}..{high}], значення на межах {loVal}…{hiVal}. Ключ — це {frac} діапазону значень, тож формула вказує на index={index}: arr[{index}]={value}. Порівнюємо {value} із {target}?",
+  "play.nIpDiscardRight":
+    "arr[index]={value} < {target} → шукане ПРАВОРУЧ. Відкидаємо ліву частину (червоні ✗): low = index+1 = {low}.",
+  "play.nIpDiscardLeft":
+    "arr[index]={value} > {target} → шукане ЛІВОРУЧ. Відкидаємо праву частину (червоні ✗): high = index-1 = {high}.",
+  "play.nIpFound":
+    "arr[index]={value} = {target} → збіг! Повертаємо індекс {index} (зелена комірка ✓). Пошук завершено.",
+  "play.nIpDoneFound":
+    "Готово: {target} знайдено на індексі {index} за {probes} проб. На рівномірних даних формула вгадує майже точно — звідси O(log log n).",
+  "play.nIpDoneGuard":
+    "Готово: ключ {target} вийшов за діапазон значень вікна [{loVal}..{hiVal}] — у масиві його немає, повертаємо -1 ({probes} проб). Це рання відмова за охоронцем діапазону.",
+  "play.nIpDoneEmpty":
+    "Готово: вікно спорожніло (low > high) — {target} немає в масиві, повертаємо -1 ({probes} проб).",
+  // Навчальні віджети.
+  "learn.ipLegendActive": "активне вікно",
+  "learn.ipLegendProbe": "проба (формула)",
+  "learn.ipLegendDiscard": "відкидаємо",
+  "learn.ipLegendFound": "знайдено",
+  "learn.ipLegendOut": "поза вікном",
+  "learn.ipResultFound": "Знайдено на індексі {i} за {probes} проб.",
+  "learn.ipResultAbsent": "Елемента немає: -1 за {probes} проб.",
+  "learn.ipEvolStep": "проба {k}: [{low}..{high}], index={index}",
+  "learn.ipIntuitionTitle": "Шукаємо слово на «{letter}» у словнику — куди розгорнути?",
+  "learn.ipIntuitionInterp":
+    "Інтерполяційний: «{letter}» — наприкінці абетки, гортаємо ОДРАЗУ в кінець (вгадуємо за значенням).",
+  "learn.ipIntuitionBinary": "Двійковий: завжди починає із СЕРЕДИНИ, байдуже до того, що шукаємо.",
+  "learn.ipCmpLinear": "лінійний ≈ n",
+  "learn.ipCmpBinary": "двійковий ≈ log₂ n",
+  "learn.ipCmpInterp": "інтерполяційний ≈ log log n",
+  "learn.ipCmpNote":
+    "На рівномірних даних інтерполяційний майже не залежить від n (часто 1 проба), двійковий росте як log n, лінійний — як n.",
+  "learn.ipVsInterp": "інтерполяційний",
+  "learn.ipVsBinary": "двійковий",
+  "learn.ipVsArray": "Масив {arr}",
+  "learn.ipVsWin": "Інтерполяційний виграв: менше проб (рівномірні дані).",
+  "learn.ipVsLose": "Інтерполяційний програв: більше проб (скупчені дані — деградація).",
+  "learn.ipDegradeTitle": "Масив [1, 2, …, n−1, 1 000 000 000]: один викид збиває пряму-модель",
+  "learn.ipDegradeNote":
+    "Формула щоразу вказує майже на початок — метод повзе по одному елементу (O(n)). Двійковий байдужий до значень і лишається O(log n).",
 }
 
 export type MessageKey = keyof typeof ua
@@ -2841,6 +2968,133 @@ const en: Record<MessageKey, string> = {
   "learn.issTradeTotal": "total",
   "learn.issTradeOptimal": "optimum near √{n} ≈ {opt}",
   "learn.issTradeNote": "The sum n/step + step is minimal at step ≈ √n — the same balance as in Jump Search.",
+
+  // — Interpolation Search —
+  // Editor.
+  "editor.ipDemo1": "Demo 1 [1,3,…]→15",
+  "editor.ipDemo2": "Demo 2 →25",
+  "editor.ipClustered": "Clustered (→9)",
+  "editor.ipValue": "Number",
+  "editor.ipSort": "Sort",
+  "editor.ipArrayTitle": "Sorted array and search target",
+  "editor.ipNoValues": "The array is empty — add the first number.",
+  "editor.ipTargetLabel": "searching for:",
+  "editor.ipAriaTarget": "Search target",
+  "editor.ipAriaValue": "Value at index {i}",
+  "editor.ipDeleteAt": "Delete element {i}",
+  "editor.ipHelpTarget": "searching for: x",
+  "editor.helpIpTarget": "change the value searched for in the array",
+  "editor.helpIpSort": "sort the array ascending (the method's precondition)",
+  "editor.helpIpAdd": "add a number (inserted keeping the order)",
+  "editor.helpIpRemove": "remove a number from the array",
+  "editor.helpIpNote":
+    "Interpolation search is correct only on a sorted array, and WINS on uniformly distributed data. On clustered data (a single outlier) the formula keeps missing and the method degrades to O(n) — worse than binary search.",
+  "editor.ipErrBadValues": "Field values must be an array of numbers",
+  "editor.ipErrBadTarget": "Field target must be a number",
+  "editor.ipSize": "Elements",
+  "editor.ipSortedYes": "Array is sorted — interpolation search is correct",
+  "editor.ipSortedNo": "Array is NOT sorted — the method is incorrect; click “Sort”",
+  "editor.ipTargetResult": "result for target {target}:",
+  "editor.ipFoundAt": "found at index {i}",
+  "editor.ipNotFound": "not present (-1)",
+  "editor.ipProbes": "probes:",
+  "editor.ipNeedSort": "Sort the array first — otherwise the result is undefined.",
+  "editor.ipVsTitle": "Probes: formula vs middle",
+  "editor.ipVsInterp": "interpolation",
+  "editor.ipVsBinary": "binary",
+  "editor.ipVsWin": "The formula guessed more precisely — interpolation made fewer probes (a win on uniform data).",
+  "editor.ipVsTie": "A tie — same number of probes; the formula gives no edge on this data.",
+  "editor.ipVsLose": "The formula missed — interpolation made more probes (degradation on clustered data).",
+  "editor.ipCasesTitle": "Complexity: probes to result",
+  "editor.ipCaseBest": "Best (ideal guess)",
+  "editor.ipCaseUniform": "Uniform data",
+  "editor.ipCaseBinary": "Binary (for contrast)",
+  "editor.ipCaseWorst": "Worst (clustered)",
+  "editor.ipCasesNote":
+    "On uniform data O(log log n) — often 1–2 probes regardless of n. On clustered data it degrades to O(n) — worse than binary's O(log n).",
+  "editor.ipWarnMany":
+    "Array is too large — cells and the line get narrow. Reduce the number of elements for clarity.",
+  // Player.
+  "play.ipEmpty": "The array is empty — add numbers in the “Editor” tab.",
+  "play.ipTooBig":
+    "Array is too large for a clear window (over {max} elements). Reduce it in the “Editor” tab.",
+  "play.ipUnsorted":
+    "Array is NOT sorted — interpolation search is incorrect on such data. Sort it in the “Editor” tab.",
+  "play.ipStatProbes": "probes:",
+  "play.ipStatResult": "result:",
+  "play.ipStatWindow": "window:",
+  "play.ipStatFrac": "fraction:",
+  "play.ipStatDepth": "recursion depth:",
+  "play.ipStatSize": "elements:",
+  "play.ipCodeIterative": "Code — iterative (while)",
+  "play.ipCodeRecursive": "Code — recursive (subrange)",
+  "play.ipWindowTitle": "Window [low..high] and probe index",
+  "play.ipTargetBadge": "searching for: {target}",
+  "play.ipLowHigh": "low/high",
+  "play.ipMethod": "Implementation:",
+  "play.ipModeIterative": "Iterative",
+  "play.ipModeRecursive": "Recursive",
+  "play.ipPhaseInit": "start",
+  "play.ipPhaseProbe": "probe by formula",
+  "play.ipPhaseDiscard": "discard a part",
+  "play.ipPhaseFound": "match",
+  "play.ipPhaseDone": "done",
+  "play.ipResultLabel": "Result",
+  "play.ipResultIndex": "index {i}",
+  "play.ipResultAbsent": "not present (-1)",
+  "play.ipResultProbes": "interpolation: {probes} probes",
+  "play.ipResultBinary": "binary: {probes} probes",
+  "play.ipLineTitle": "Line model: key projection",
+  "play.ipLineDegenerate":
+    "Line model unavailable: the window is degenerate (a single point or equal bounds).",
+  "play.ipLineLegLine": "line (low→high)",
+  "play.ipLineLegDots": "actual values",
+  "play.ipLineLegKey": "key x and projection",
+  "play.ipLineHint":
+    "Dots on the line → uniform data, the probe is accurate. Dots far from the line → the formula misses (degradation).",
+  // Player narration.
+  "play.nIpInit":
+    "Start: searching for {target} in the sorted array {arr}. The window spans the whole array: low=0, high={high}. The whole window is active 🟦.",
+  "play.nIpProbe":
+    "Probe {k}: window [{low}..{high}], boundary values {loVal}…{hiVal}. The key is {frac} of the value range, so the formula points to index={index}: arr[{index}]={value}. Compare {value} with {target}?",
+  "play.nIpDiscardRight":
+    "arr[index]={value} < {target} → the target is to the RIGHT. Discard the left part (red ✗): low = index+1 = {low}.",
+  "play.nIpDiscardLeft":
+    "arr[index]={value} > {target} → the target is to the LEFT. Discard the right part (red ✗): high = index-1 = {high}.",
+  "play.nIpFound":
+    "arr[index]={value} = {target} → match! Return index {index} (green cell ✓). Search complete.",
+  "play.nIpDoneFound":
+    "Done: {target} found at index {index} in {probes} probes. On uniform data the formula guesses almost exactly — hence O(log log n).",
+  "play.nIpDoneGuard":
+    "Done: the key {target} fell outside the window's value range [{loVal}..{hiVal}] — it is not in the array, return -1 ({probes} probes). This is an early bail-out by the range guard.",
+  "play.nIpDoneEmpty":
+    "Done: the window emptied (low > high) — {target} is not in the array, return -1 ({probes} probes).",
+  // Learn widgets.
+  "learn.ipLegendActive": "active window",
+  "learn.ipLegendProbe": "probe (formula)",
+  "learn.ipLegendDiscard": "discard",
+  "learn.ipLegendFound": "found",
+  "learn.ipLegendOut": "out of window",
+  "learn.ipResultFound": "Found at index {i} in {probes} probes.",
+  "learn.ipResultAbsent": "Not present: -1 in {probes} probes.",
+  "learn.ipEvolStep": "probe {k}: [{low}..{high}], index={index}",
+  "learn.ipIntuitionTitle": "Looking up a word starting with “{letter}” — where do you flip?",
+  "learn.ipIntuitionInterp":
+    "Interpolation: “{letter}” is at the end of the alphabet, so flip STRAIGHT to the end (guess by value).",
+  "learn.ipIntuitionBinary": "Binary: always starts in the MIDDLE, regardless of what you're looking for.",
+  "learn.ipCmpLinear": "linear ≈ n",
+  "learn.ipCmpBinary": "binary ≈ log₂ n",
+  "learn.ipCmpInterp": "interpolation ≈ log log n",
+  "learn.ipCmpNote":
+    "On uniform data interpolation barely depends on n (often 1 probe), binary grows like log n, linear like n.",
+  "learn.ipVsInterp": "interpolation",
+  "learn.ipVsBinary": "binary",
+  "learn.ipVsArray": "Array {arr}",
+  "learn.ipVsWin": "Interpolation won: fewer probes (uniform data).",
+  "learn.ipVsLose": "Interpolation lost: more probes (clustered data — degradation).",
+  "learn.ipDegradeTitle": "Array [1, 2, …, n−1, 1,000,000,000]: a single outlier skews the line model",
+  "learn.ipDegradeNote":
+    "The formula keeps pointing near the start — the method crawls one element at a time (O(n)). Binary ignores values and stays O(log n).",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }

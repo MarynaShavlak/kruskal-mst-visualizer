@@ -14,6 +14,7 @@ import { radixSort } from "@/algorithms/radix-sort"
 import { linearSearch } from "@/algorithms/linear-search"
 import { binarySearch } from "@/algorithms/binary-search"
 import { indexedSequentialSearch } from "@/algorithms/indexed-sequential-search"
+import { interpolationSearch } from "@/algorithms/interpolation-search"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -37,6 +38,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   linearSearch,
   binarySearch,
   indexedSequentialSearch,
+  interpolationSearch,
 ]
 
 export function getAlgorithm(
