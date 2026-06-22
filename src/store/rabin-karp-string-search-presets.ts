@@ -11,6 +11,7 @@ import {
   type StringSearchCase,
 } from "@/lib/exampleRabinKarpStringSearch"
 import type { RabinKarpStringSearchDoc } from "@/store/rabin-karp-string-search-store"
+import { mulberry32 } from "@/lib/prng"
 
 const fromCase = (c: StringSearchCase): RabinKarpStringSearchDoc => ({
   text: c.text,
@@ -35,18 +36,6 @@ export function rkMultiPreset(): RabinKarpStringSearchDoc {
 /** Не знайдено `("Being a developer is not easy", "manager")` → -1. */
 export function rkNotFoundPreset(): RabinKarpStringSearchDoc {
   return fromCase(RK_NOT_FOUND)
-}
-
-/** Детермінований PRNG (mulberry32) — щоб «випадковий» пресет був відтворюваний за seed. */
-function mulberry32(seed: number): () => number {
-  let a = seed >>> 0
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
 }
 
 /**
