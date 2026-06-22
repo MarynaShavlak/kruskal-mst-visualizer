@@ -16,6 +16,7 @@ import { binarySearch } from "@/algorithms/binary-search"
 import { indexedSequentialSearch } from "@/algorithms/indexed-sequential-search"
 import { interpolationSearch } from "@/algorithms/interpolation-search"
 import { naiveStringSearch } from "@/algorithms/naive-string-search"
+import { kmpStringSearch } from "@/algorithms/kmp-string-search"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -41,6 +42,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   indexedSequentialSearch,
   interpolationSearch,
   naiveStringSearch,
+  kmpStringSearch,
 ]
 
 export function getAlgorithm(
