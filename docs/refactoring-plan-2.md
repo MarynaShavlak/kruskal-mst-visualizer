@@ -126,7 +126,7 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 > **Чисто −322 рр.** (15 сторів: 761 видалено / 211 додано = −550; фабрики +228), логіка
 > мутацій тепер single-source. `tsc -b` чистий · `npm test` 1126/1126 · прод-білд ОК.
 
-### Фаза I — спільний `ArrayEditor` + `NumberField` (🟢🟡) — 🔲 НЕ ПОЧАТО
+### Фаза I — спільний `ArrayEditor` + `NumberField` (🟢🟡) — ✅ ВИКОНАНО
 
 `algorithms/shared/editor/ArrayEditor.tsx` + винесений `NumberField` (parse/commit логіка —
 зараз 100% копія в 11 файлах). Generic за стор-хуками (`values`/`updateValue`/`removeValue`)
@@ -137,6 +137,17 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 **Верифікація:** `tsc -b` + прод-білд + ручна перевірка редактора одного сортування й
 одного пошуку (зокрема `target`/`step` і кнопка «Відсортувати»).
 **Коміт:** `Рефакторинг: спільний ArrayEditor + NumberField`
+
+> **Підсумок виконання.** Створено презентаційний `algorithms/shared/editor/ArrayEditor.tsx`
+> (184 рр.) з єдиним `NumberField` (узагальнений із найповнішого — індексного: `tone`
+> rose/violet, `min`-кламп, `className`-ширина). 11 редакторів (7 сортувань + 4 пошуки в
+> масиві) → тонкі обгортки (стор + i18n-ключі через пропси). Пошуки додають верхній ряд
+> `fields` (ціль 🌹; indexed — ще крок 🟣 ≥1). Рядкові 4 не чіпали (вже `TextPatternEditor`).
+> Розмітку/класи/HTML-`min`/ширини (sorts `w-14`, radix+пошуки `w-16`) збережено байт-у-байт;
+> єдина зміна DOM — одиночне поле пошуку дістало нешкідливий зовнішній flex-обгортковий div
+> (візуально ідентично). **Чисто −495 рр.** (11 обгорток: 855 видалено / 176 додано = −679;
+> спільний +184). `tsc -b` чистий · `npm test` 1126/1126 · прод-білд ОК. `EditorView` не
+> чіпали (виклик `<ArrayEditor />` без пропсів незмінний).
 
 ### Фаза J — playback-«kit» (🟡; найбільший зиск) — 🔲 НЕ ПОЧАТО
 
@@ -225,7 +236,7 @@ defaultTab, tabKeys })` сам будує lazy-імпорти за списко�
 | Фаза | Суть | Tier | Ризик | Статус |
 |---|---|---|---|---|
 | H | фабрики сторів (array/search/string) | 1 | 🟢 | ✅ ВИКОНАНО (−322 рр.) |
-| I | спільний ArrayEditor + NumberField | 1 | 🟢🟡 | 🔲 НЕ ПОЧАТО |
+| I | спільний ArrayEditor + NumberField | 1 | 🟢🟡 | ✅ ВИКОНАНО (−495 рр.) |
 | J | playback-kit (ResultCard/StatsBar/ModeSwitch/PhaseBadge + useAlgorithmRun) | 1 | 🟡 | 🔲 НЕ ПОЧАТО |
 | K | lib-утиліти fmt/prng + assertTraceInvariants | 1 | 🟢 | 🔲 НЕ ПОЧАТО |
 | L | реєстр figureForSrc | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
