@@ -1,27 +1,7 @@
-import { lazy } from "react"
 import { ArrowDownNarrowWide } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Сортування вставками» (Insertion Sort). Готові навчальна вкладка,
-// редактор масиву чисел і плеєр із двома режимами (лінійний пошук місця /
-// бінарна вставка). Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/insertion-sort/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/insertion-sort/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/insertion-sort/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const insertionSort: Algorithm = {
+export const insertionSort = createAlgorithm({
   id: "insertion-sort",
   name: { ua: "Сортування вставками", en: "Insertion Sort" },
   shortName: { ua: "Вставки", en: "Insertion Sort" },
@@ -33,12 +13,10 @@ export const insertionSort: Algorithm = {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",
   },
-  status: "ready",
   icon: ArrowDownNarrowWide,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/insertion-sort/learn/LearnView"),
+    editor: () => import("@/algorithms/insertion-sort/editor/EditorView"),
+    playback: () => import("@/algorithms/insertion-sort/playback/PlaybackView"),
+  },
+})

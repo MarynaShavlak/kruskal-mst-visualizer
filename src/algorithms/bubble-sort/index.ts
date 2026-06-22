@@ -1,27 +1,7 @@
-import { lazy } from "react"
 import { ArrowDownUp } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Бульбашкове сортування» (Bubble Sort). Готові навчальна вкладка,
-// редактор масиву чисел і плеєр із двома режимами (наївний / оптимізований із
-// прапорцем swapped). Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/bubble-sort/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/bubble-sort/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/bubble-sort/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const bubbleSort: Algorithm = {
+export const bubbleSort = createAlgorithm({
   id: "bubble-sort",
   name: { ua: "Бульбашкове сортування", en: "Bubble Sort" },
   shortName: { ua: "Бульбашка", en: "Bubble Sort" },
@@ -33,12 +13,10 @@ export const bubbleSort: Algorithm = {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",
   },
-  status: "ready",
   icon: ArrowDownUp,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/bubble-sort/learn/LearnView"),
+    editor: () => import("@/algorithms/bubble-sort/editor/EditorView"),
+    playback: () => import("@/algorithms/bubble-sort/playback/PlaybackView"),
+  },
+})

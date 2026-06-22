@@ -1,28 +1,7 @@
-import { lazy } from "react"
 import { Split } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Швидке сортування» (Quick Sort) — перший НЕ-квадратичний алгоритм серії.
-// Готові навчальна вкладка, редактор масиву чисел і плеєр із деревом рекурсії
-// (перемикач стратегії опорного: середина / перший / останній / медіана-3).
-// Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/quick-sort/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/quick-sort/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/quick-sort/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const quickSort: Algorithm = {
+export const quickSort = createAlgorithm({
   id: "quick-sort",
   name: { ua: "Швидке сортування", en: "Quick Sort" },
   shortName: { ua: "Швидке", en: "Quick Sort" },
@@ -34,12 +13,10 @@ export const quickSort: Algorithm = {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",
   },
-  status: "ready",
   icon: Split,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/quick-sort/learn/LearnView"),
+    editor: () => import("@/algorithms/quick-sort/editor/EditorView"),
+    playback: () => import("@/algorithms/quick-sort/playback/PlaybackView"),
+  },
+})

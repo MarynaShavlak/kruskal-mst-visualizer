@@ -1,31 +1,7 @@
-import { lazy } from "react"
 import { FastForward } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Боєра-Мура (таблиця поганого символу)» — рядковий пошук, що змінює сам НАПРЯМ
-// і КРОК: порівнюємо суфікс шаблону СПРАВА НАЛІВО й на розбіжності ПЕРЕСТРИБУЄМО вперед
-// за передобробленою таблицею поганого символу — часто пропускаючи цілі шматки тексту
-// (сублінійно у найкращому випадку). Реалізовано ЛИШЕ компоненту поганого символу
-// (добрий суфікс — на потім). Найгірший — O(n·m) (CAAAA в AAAA…). Готові навчальна
-// вкладка, редактор (текст + шаблон) і плеєр (фаза таблиці зсувів + фаза пошуку зі
-// стрічкою «текст / шаблон» і великими стрибками).
-const LearnView = lazy(() =>
-  import("@/algorithms/boyer-moore-string-search/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/boyer-moore-string-search/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/boyer-moore-string-search/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const boyerMooreStringSearch: Algorithm = {
+export const boyerMooreStringSearch = createAlgorithm({
   id: "boyer-moore-string-search",
   name: { ua: "Боєра-Мура (рядки)", en: "Boyer–Moore (strings)" },
   shortName: { ua: "Боєра-Мура", en: "Boyer–Moore" },
@@ -37,12 +13,10 @@ export const boyerMooreStringSearch: Algorithm = {
     ua: "Пошук у рядку · Боєра–Мура",
     en: "String search · Boyer–Moore",
   },
-  status: "ready",
   icon: FastForward,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/boyer-moore-string-search/learn/LearnView"),
+    editor: () => import("@/algorithms/boyer-moore-string-search/editor/EditorView"),
+    playback: () => import("@/algorithms/boyer-moore-string-search/playback/PlaybackView"),
+  },
+})

@@ -1,32 +1,7 @@
-import { lazy } from "react"
 import { TrendingUp } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Інтерполяційний пошук» (Interpolation Search) — «розумна» проба у
-// ВІДСОРТОВАНОМУ масиві. Каркас той самий, що в двійкового (вікно [low, high],
-// відкидаємо половину), але замість СЕРЕДИНИ обчислюємо пробу ФОРМУЛОЮ ЛІНІЙНОЇ
-// ІНТЕРПОЛЯЦІЇ — «вгадуємо» позицію за значенням ключа (проєкція на «пряму-модель»).
-// На РІВНОМІРНИХ даних — O(log log n) (часто 1–2 проби незалежно від n), на скупчених
-// деградує до O(n) — гірше за двійковий. Готові навчальна вкладка, редактор (масив +
-// ціль + контраст із двійковим) і плеєр (вікно + пряма-модель; 2 режими ітеративний/
-// рекурсивний). Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/interpolation-search/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/interpolation-search/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/interpolation-search/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const interpolationSearch: Algorithm = {
+export const interpolationSearch = createAlgorithm({
   id: "interpolation-search",
   name: { ua: "Інтерполяційний пошук", en: "Interpolation Search" },
   shortName: { ua: "Інтерполяційний пошук", en: "Interpolation Search" },
@@ -38,12 +13,10 @@ export const interpolationSearch: Algorithm = {
     ua: "Пошук · інтерполяція",
     en: "Search · interpolation",
   },
-  status: "ready",
   icon: TrendingUp,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/interpolation-search/learn/LearnView"),
+    editor: () => import("@/algorithms/interpolation-search/editor/EditorView"),
+    playback: () => import("@/algorithms/interpolation-search/playback/PlaybackView"),
+  },
+})

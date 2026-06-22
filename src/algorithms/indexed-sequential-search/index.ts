@@ -1,31 +1,7 @@
-import { lazy } from "react"
 import { BookMarked } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Індексно-послідовний пошук» (Indexed Sequential Search) — ТРЕТІЙ і
-// завершальний алгоритм ПОШУКУ серії, ГІБРИД двійкового й лінійного. Дві фази на
-// двох рівнях даних: 1) ДВІЙКОВИЙ пошук по розрідженій ІНДЕКСНІЙ таблиці → блок;
-// 2) ПОСЛІДОВНИЙ скан лише цього блоку. Складність O(log n + m); оптимум кроку ≈ √n
-// (місток до Jump Search). ПЕРЕДУМОВА — масив відсортований. Готові навчальна вкладка,
-// редактор (масив + ціль + крок + перевірка відсортованості) і плеєр із дворівневою
-// схемою (2 режими фази 1: двійковий/лінійний індекс). Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/indexed-sequential-search/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/indexed-sequential-search/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/indexed-sequential-search/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const indexedSequentialSearch: Algorithm = {
+export const indexedSequentialSearch = createAlgorithm({
   id: "indexed-sequential-search",
   name: { ua: "Індексно-послідовний пошук", en: "Indexed Sequential Search" },
   shortName: { ua: "Індексно-послідовний", en: "Indexed Sequential" },
@@ -37,12 +13,10 @@ export const indexedSequentialSearch: Algorithm = {
     ua: "Пошук · гібрид (індекс + блок)",
     en: "Search · hybrid (index + block)",
   },
-  status: "ready",
   icon: BookMarked,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/indexed-sequential-search/learn/LearnView"),
+    editor: () => import("@/algorithms/indexed-sequential-search/editor/EditorView"),
+    playback: () => import("@/algorithms/indexed-sequential-search/playback/PlaybackView"),
+  },
+})

@@ -1,26 +1,7 @@
-import { lazy } from "react"
 import { Route } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ Хелда–Карпа (задача комівояжера) будується по фазах. Готові навчальна
-// вкладка, редактор і плеєр.
-const LearnView = lazy(() =>
-  import("@/algorithms/held-karp/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/held-karp/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/held-karp/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const heldKarp: Algorithm = {
+export const heldKarp = createAlgorithm({
   id: "held-karp",
   name: { ua: "Алгоритм Хелда–Карпа", en: "Held–Karp Algorithm" },
   shortName: { ua: "Хелда–Карпа (TSP)", en: "Held–Karp (TSP)" },
@@ -32,12 +13,10 @@ export const heldKarp: Algorithm = {
     ua: "Динамічне програмування · Комівояжер",
     en: "Dynamic programming · TSP",
   },
-  status: "ready",
   icon: Route,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/held-karp/learn/LearnView"),
+    editor: () => import("@/algorithms/held-karp/editor/EditorView"),
+    playback: () => import("@/algorithms/held-karp/playback/PlaybackView"),
+  },
+})

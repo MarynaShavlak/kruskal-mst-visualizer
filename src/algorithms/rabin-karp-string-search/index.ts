@@ -1,30 +1,7 @@
-import { lazy } from "react"
 import { Hash } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Пошук Рабіна-Карпа» (Rabin-Karp, ковзний хеш) — рядковий пошук, що порівнює НЕ
-// символи, а ЧИСЛА. Поліноміальний хеш перетворює кожне вікно завдовжки M на число; хеш
-// вікна порівнюємо з хешем шаблону, і лише на збігу хешів звіряємо символи (щоб відсіяти
-// КОЛІЗІЇ). Ковзний хеш оновлюється за O(1) на зсув. Середнє O(n+m), найгірший O(n·m).
-// base=256, modulus=101. Готові навчальна вкладка, редактор (текст + шаблон) і плеєр
-// (фаза 1 — побудова хешу; фаза 2 — ковзне вікно зі стрічкою; 2 режими rolling/перерахунок).
-const LearnView = lazy(() =>
-  import("@/algorithms/rabin-karp-string-search/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/rabin-karp-string-search/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/rabin-karp-string-search/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const rabinKarpStringSearch: Algorithm = {
+export const rabinKarpStringSearch = createAlgorithm({
   id: "rabin-karp-string-search",
   name: { ua: "Пошук Рабіна–Карпа", en: "Rabin–Karp Search" },
   shortName: { ua: "Рабіна–Карпа", en: "Rabin–Karp" },
@@ -36,12 +13,10 @@ export const rabinKarpStringSearch: Algorithm = {
     ua: "Пошук у рядку · Рабіна–Карпа",
     en: "String search · Rabin–Karp",
   },
-  status: "ready",
   icon: Hash,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/rabin-karp-string-search/learn/LearnView"),
+    editor: () => import("@/algorithms/rabin-karp-string-search/editor/EditorView"),
+    playback: () => import("@/algorithms/rabin-karp-string-search/playback/PlaybackView"),
+  },
+})

@@ -1,29 +1,7 @@
-import { lazy } from "react"
 import { GitMerge } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Сортування злиттям» (Merge Sort) — другий НЕ-квадратичний алгоритм серії,
-// гарантований O(n·log n) у всіх випадках (поділ строго навпіл → завжди збалансоване
-// дерево). Готові навчальна вкладка, редактор масиву чисел і плеєр із деревом
-// рекурсії + зірковою панеллю злиття (дві реалізації: низхідна / вихідна bottom-up).
-// Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/merge-sort/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/merge-sort/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/merge-sort/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const mergeSort: Algorithm = {
+export const mergeSort = createAlgorithm({
   id: "merge-sort",
   name: { ua: "Сортування злиттям", en: "Merge Sort" },
   shortName: { ua: "Злиттям", en: "Merge Sort" },
@@ -35,12 +13,10 @@ export const mergeSort: Algorithm = {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",
   },
-  status: "ready",
   icon: GitMerge,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/merge-sort/learn/LearnView"),
+    editor: () => import("@/algorithms/merge-sort/editor/EditorView"),
+    playback: () => import("@/algorithms/merge-sort/playback/PlaybackView"),
+  },
+})

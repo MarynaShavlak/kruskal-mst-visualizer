@@ -1,29 +1,7 @@
-import { lazy } from "react"
 import { AlignHorizontalDistributeCenter } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Сортування Шелла» (Shell Sort) — узагальнення сортування вставками:
-// порівнюємо й зсуваємо елементи, віддалені на крок gap (а не сусідні). Готові
-// навчальна вкладка, редактор масиву чисел і плеєр зі стовпчиками + підсвіткою
-// підпослідовностей; перемикач послідовності проміжків (n//2 / Кнут / Ciura).
-// Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/shell-sort/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/shell-sort/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/shell-sort/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const shellSort: Algorithm = {
+export const shellSort = createAlgorithm({
   id: "shell-sort",
   name: { ua: "Сортування Шелла", en: "Shell Sort" },
   shortName: { ua: "Шелла", en: "Shell Sort" },
@@ -35,12 +13,10 @@ export const shellSort: Algorithm = {
     ua: "Сортування · субквадратичне",
     en: "Sorting · sub-quadratic",
   },
-  status: "ready",
   icon: AlignHorizontalDistributeCenter,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/shell-sort/learn/LearnView"),
+    editor: () => import("@/algorithms/shell-sort/editor/EditorView"),
+    playback: () => import("@/algorithms/shell-sort/playback/PlaybackView"),
+  },
+})

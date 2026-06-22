@@ -1,31 +1,7 @@
-import { lazy } from "react"
 import { SearchCheck } from "lucide-react"
-import type { Algorithm } from "@/algorithms/types"
+import { createAlgorithm } from "@/algorithms/create-algorithm"
 
-// Розділ «Двійковий (бінарний) пошук» (Binary Search) — ДРУГИЙ алгоритм ПОШУКУ
-// серії, «винагорода за сортування». Тримаємо вікно [low, high]; дивимось у його
-// середину mid і відкидаємо половину, у якій шуканого точно немає; повторюємо, доки
-// не знайдемо або вікно не спорожніє. ПЕРЕДУМОВА — масив відсортований; за це O(log n)
-// замість O(n). Готові навчальна вкладка, редактор (масив + ціль + перевірка
-// відсортованості) і плеєр із вікном, що звужується вдвічі (2 режими: ітеративний/
-// рекурсивний). Бенчмарку немає (лише в kruskal).
-const LearnView = lazy(() =>
-  import("@/algorithms/binary-search/learn/LearnView").then((m) => ({
-    default: m.LearnView,
-  })),
-)
-const EditorView = lazy(() =>
-  import("@/algorithms/binary-search/editor/EditorView").then((m) => ({
-    default: m.EditorView,
-  })),
-)
-const PlaybackView = lazy(() =>
-  import("@/algorithms/binary-search/playback/PlaybackView").then((m) => ({
-    default: m.PlaybackView,
-  })),
-)
-
-export const binarySearch: Algorithm = {
+export const binarySearch = createAlgorithm({
   id: "binary-search",
   name: { ua: "Двійковий пошук", en: "Binary Search" },
   shortName: { ua: "Двійковий пошук", en: "Binary Search" },
@@ -37,12 +13,10 @@ export const binarySearch: Algorithm = {
     ua: "Пошук · поділ навпіл",
     en: "Search · halving",
   },
-  status: "ready",
   icon: SearchCheck,
-  defaultTab: "learn",
-  tabs: [
-    { key: "learn", View: LearnView },
-    { key: "editor", View: EditorView },
-    { key: "playback", View: PlaybackView },
-  ],
-}
+  views: {
+    learn: () => import("@/algorithms/binary-search/learn/LearnView"),
+    editor: () => import("@/algorithms/binary-search/editor/EditorView"),
+    playback: () => import("@/algorithms/binary-search/playback/PlaybackView"),
+  },
+})
