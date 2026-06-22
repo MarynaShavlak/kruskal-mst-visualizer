@@ -225,7 +225,7 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 **Верифікація:** ручний рендер навчальної вкладки + наявні learn-тести.
 **Коміт:** `Рефакторинг: спільний реєстр figureForSrc для навчальних фігур`
 
-### Фаза M — generic `SearchTraceBuilder` + базові `Frame`-інтерфейси (🟡; по-одному) — 🔲 НЕ ПОЧАТО
+### Фаза M — generic `SearchTraceBuilder` + базові `Frame`-інтерфейси (🟡; по-одному) — ✅ ВИКОНАНО (звужено до баз)
 
 **Чесний обсяг:** виносимо лише боілерплейт-каркас, а **не** весь Frame (поля родин різні).
 - `lib/searchTraceBuilder.ts` — крихітний білдер: централізує `i: frames.length` + снапшот
@@ -238,6 +238,19 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 запобіжником, бо зачіпає найгарячіший за коректністю код.
 **Верифікація:** `*Trace.test` кожного мігрованого алгоритму без змін очікувань.
 **Коміт (на алгоритм):** `Рефакторинг: <algo> trace на спільний SearchTraceBuilder/базу Frame`
+
+> **Підсумок виконання (звужено до баз — рішення користувача після аналізу коду).**
+> `lib/traceFrame.ts`: `FrameNarration` (lines/contextLines/caption — універсально); `ArraySearchFrameBase`
+> (+i/array/target/result) для 4 масивних; `StringSearchFrameBase` (+text/pattern/result, **без `i`** — KMP
+> нумерує кадри полем `index`) для 4 рядкових; `SortFrameBase` (+`i`; `array` НЕ в усіх — швидке/злиттям
+> деревні) для 7 сортувань. Кожен `XxFrame extends` свою базу. **Суто типи** (інтерфейси стираються) →
+> побудова кадрів і тести без змін. **Чисто ≈ −48 рр.** (15 файлів: 120 видалено / 30 додано; база +42).
+> `tsc -b` чистий · `npm test` 1127/1127 · прод-білд ОК.
+>
+> **Runtime `SearchTraceBuilder` свідомо ПРОПУЩЕНО.** Читання білдерів показало: `push`-замикання кожного
+> захоплює *мутабельні лічильники* по-своєму (binary `steps/low/high`; naive `comparisons/alignments/…`;
+> сортування — свої) і знімкує їх; generic міг би централізувати лише `i: frames.length` — ~1 рядок на
+> білдер ціною переструктурування найгарячішого коду. Негативний ROI (узгоджено з принципом «не переінженерити»).
 
 ### Фаза N — хелпер `createAlgorithm(...)` для `index.ts` (🟢) — ✅ ВИКОНАНО
 
@@ -283,7 +296,7 @@ defaultTab, tabKeys })` сам будує lazy-імпорти за списко�
 | J | playback-kit (StatsBar/Stat/ModeSwitch + useTraceRun/TraceFallback) | 1 | 🟡 | ✅ ВИКОНАНО (−458 рр.) |
 | K | lib-утиліти: prng (fmt/assertTraceInvariants свідомо пропущено) | 1 | 🟢 | ✅ ВИКОНАНО (−36 рр.) |
 | L | реєстр figureForSrc | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
-| M | SearchTraceBuilder + базові Frame-інтерфейси | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
+| M | базові Frame-інтерфейси (SearchTraceBuilder свідомо пропущено) | 2 | 🟡 | ✅ ВИКОНАНО (−48 рр.) |
 | N | хелпер createAlgorithm | 2 | 🟢 | ✅ ВИКОНАНО (−422 рр.) |
 | O | розбиття i18n | 3 | 🔴 | ⏸️ ВІДКЛАДЕНО |
 
