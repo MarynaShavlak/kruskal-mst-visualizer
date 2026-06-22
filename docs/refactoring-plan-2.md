@@ -239,7 +239,7 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 **Верифікація:** `*Trace.test` кожного мігрованого алгоритму без змін очікувань.
 **Коміт (на алгоритм):** `Рефакторинг: <algo> trace на спільний SearchTraceBuilder/базу Frame`
 
-### Фаза N — хелпер `createAlgorithm(...)` для `index.ts` (🟢) — 🔲 НЕ ПОЧАТО
+### Фаза N — хелпер `createAlgorithm(...)` для `index.ts` (🟢) — ✅ ВИКОНАНО
 
 Однакова lazy-обгортка views (`learn`/`editor`/`playback`/`benchmark`) повторюється у 20
 `index.ts`. Хелпер `createAlgorithm({ id, name, shortName, tagline, category, status, icon,
@@ -247,6 +247,18 @@ defaultTab, tabKeys })` сам будує lazy-імпорти за списко�
 Кожен `index.ts`: ~45 → ~8 рр. `registry.ts` (60 рр.) і `types.ts` лишаються як є.
 **Верифікація:** `tsc -b` + smoke роуту (каталог → алгоритм → кожна вкладка вантажиться).
 **Коміт:** `Рефакторинг: хелпер createAlgorithm для описів алгоритмів`
+
+> **Підсумок виконання.** `src/algorithms/create-algorithm.ts` — `createAlgorithm({ id, name,
+> shortName, tagline, category, icon, views, status?, defaultTab?, planned? })`. Вкладка задається
+> лише лінивим import свого модуля (`views: { learn: () => import("@/algorithms/<id>/learn/LearnView") }`);
+> назва компонента виводиться з ключа (learn→LearnView, editor→EditorView, playback→PlaybackView,
+> benchmark→BenchmarkView), `status`/`defaultTab` дефолтяться ("ready"/перша вкладка). Усі 20 `index.ts`
+> переписано (kruskal +benchmark; floyd-warshall +planned — обидва підтримані). **Ключове рішення:**
+> import-шляхи лишив ЯВНИМИ (а не `import.meta.glob`/динамічний шлях) → статичний аналіз Vite зберіг
+> per-view код-спліттинг (білд: **61 окремий view-чанк**, як було) і tsc перевіряє існування модулів.
+> Двомовні метадані/іконки не ретайплено (правки точкові). **Чисто ≈ −422 рр.** (20 файлів: 638
+> видалено / 161 додано; хелпер +55). `tsc -b` чистий · `npm test` 1127/1127 · прод-білд 61 чанк ·
+> візуально: каталог 20 карток + lazy-завантаження вкладок (вкл. унікальний benchmark).
 
 ---
 
@@ -272,7 +284,7 @@ defaultTab, tabKeys })` сам будує lazy-імпорти за списко�
 | K | lib-утиліти: prng (fmt/assertTraceInvariants свідомо пропущено) | 1 | 🟢 | ✅ ВИКОНАНО (−36 рр.) |
 | L | реєстр figureForSrc | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
 | M | SearchTraceBuilder + базові Frame-інтерфейси | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
-| N | хелпер createAlgorithm | 2 | 🟢 | 🔲 НЕ ПОЧАТО |
+| N | хелпер createAlgorithm | 2 | 🟢 | ✅ ВИКОНАНО (−422 рр.) |
 | O | розбиття i18n | 3 | 🔴 | ⏸️ ВІДКЛАДЕНО |
 
 ### Орієнтовний сукупний зиск
