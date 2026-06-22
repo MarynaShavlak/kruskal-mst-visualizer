@@ -17,6 +17,7 @@ import { indexedSequentialSearch } from "@/algorithms/indexed-sequential-search"
 import { interpolationSearch } from "@/algorithms/interpolation-search"
 import { naiveStringSearch } from "@/algorithms/naive-string-search"
 import { kmpStringSearch } from "@/algorithms/kmp-string-search"
+import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -43,6 +44,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   interpolationSearch,
   naiveStringSearch,
   kmpStringSearch,
+  boyerMooreStringSearch,
 ]
 
 export function getAlgorithm(
