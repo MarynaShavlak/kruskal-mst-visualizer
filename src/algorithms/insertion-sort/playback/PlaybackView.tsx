@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   buildInsertionSortTrace,
@@ -9,6 +9,9 @@ import { useInsertionSortStore } from "@/store/insertion-sort-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
+import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { InsertionBarsPanel } from "@/algorithms/insertion-sort/playback/InsertionBarsPanel"
 import type { Translate } from "@/lib/translate"
 import { useT } from "@/i18n/use-t"
@@ -33,29 +36,34 @@ export function PlaybackView() {
   // Сигнатура стабільна щодо мови — курсор плеєра не скидається на UA/EN.
   const sig = `${mode}|${values.join(",")}`
 
-  const run = useMemo<Run>(() => {
-    if (values.length === 0) return { kind: "empty" }
-    if (values.length > MAX_SIZE) return { kind: "too-big" }
-    const trace = buildInsertionSortTrace(values, binary, tr)
-    return { kind: "ok", trace }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, lang])
+  const run = useTraceRun(() => buildInsertionSortTrace(values, binary, tr), {
+    empty: values.length === 0,
+    tooBig: values.length > MAX_SIZE,
+    sig,
+    lang,
+  })
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
 
-  const switcher = <ModeSwitch mode={mode} onChange={setMode} />
+  const switcher = (
+    <ModeSwitch
+      label={t("play.isMethod")}
+      value={mode}
+      onChange={setMode}
+      options={[
+        { key: "linear", label: t("play.isModeLinear") },
+        { key: "binary", label: t("play.isModeBinary") },
+      ]}
+    />
+  )
 
   if (run.kind !== "ok") {
     return (
-      <div className="flex flex-col gap-3">
-        {switcher}
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            {run.kind === "empty" ? t("play.isEmpty") : t("play.isTooBig", { max: MAX_SIZE })}
-          </CardContent>
-        </Card>
-      </div>
+      <TraceFallback
+        headerExtra={switcher}
+        message={run.kind === "empty" ? t("play.isEmpty") : t("play.isTooBig", { max: MAX_SIZE })}
+      />
     )
   }
 
@@ -106,58 +114,7 @@ export function PlaybackView() {
   )
 }
 
-type Run =
-  | { kind: "empty" }
-  | { kind: "too-big" }
-  | { kind: "ok"; trace: ReturnType<typeof buildInsertionSortTrace> }
-
 // — дрібні презентаційні шматки ----------------------------------------------
-
-function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
-  const t = useT()
-  const opts: { key: Mode; label: string }[] = [
-    { key: "linear", label: t("play.isModeLinear") },
-    { key: "binary", label: t("play.isModeBinary") },
-  ]
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="font-medium text-muted-foreground">{t("play.isMethod")}</span>
-      <div className="inline-flex rounded-md border p-0.5">
-        {opts.map((o) => (
-          <button
-            key={o.key}
-            type="button"
-            onClick={() => onChange(o.key)}
-            className={cn(
-              "rounded px-3 py-1 transition-colors",
-              mode === o.key
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function StatsBar({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-      {children}
-    </div>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span>
-      <b>{label}</b> <span className="tabular-nums">{value}</span>
-    </span>
-  )
-}
 
 function PhaseBadge({ phase }: { phase: InsPhase }) {
   const t = useT()

@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   buildMergeSortTrace,
@@ -10,6 +10,9 @@ import { useMergeSortStore } from "@/store/merge-sort-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
+import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { MergeTreePanel } from "@/algorithms/merge-sort/playback/MergeTreePanel"
 import { PassesPanel } from "@/algorithms/merge-sort/playback/PassesPanel"
 import { MergeDetailPanel } from "@/algorithms/merge-sort/playback/MergeStatePanel"
@@ -23,8 +26,6 @@ import { cn } from "@/lib/utils"
 // плеєра (редактор попереджає вже від 16).
 const MAX_SIZE = 16
 
-const MODES: readonly MergeMode[] = ["topDown", "bottomUp"]
-
 export function PlaybackView() {
   const values = useMergeSortStore((s) => s.values)
   const t = useT()
@@ -35,29 +36,35 @@ export function PlaybackView() {
   // Сигнатура стабільна щодо мови — курсор плеєра не скидається на UA/EN.
   const sig = `${mode}|${values.join(",")}`
 
-  const run = useMemo<Run>(() => {
-    if (values.length === 0) return { kind: "empty" }
-    if (values.length > MAX_SIZE) return { kind: "too-big" }
-    const trace = buildMergeSortTrace(values, mode, tr)
-    return { kind: "ok", trace }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, lang])
+  const run = useTraceRun(() => buildMergeSortTrace(values, mode, tr), {
+    empty: values.length === 0,
+    tooBig: values.length > MAX_SIZE,
+    sig,
+    lang,
+  })
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
 
-  const switcher = <ModeSwitch mode={mode} onChange={setMode} />
+  const switcher = (
+    <ModeSwitch
+      label={t("play.msMode")}
+      value={mode}
+      onChange={setMode}
+      options={[
+        { key: "topDown", label: t("play.msModeTopDown") },
+        { key: "bottomUp", label: t("play.msModeBottomUp") },
+      ]}
+      wrapButtons
+    />
+  )
 
   if (run.kind !== "ok") {
     return (
-      <div className="flex flex-col gap-3">
-        {switcher}
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            {run.kind === "empty" ? t("play.msEmpty") : t("play.msTooBig", { max: MAX_SIZE })}
-          </CardContent>
-        </Card>
-      </div>
+      <TraceFallback
+        headerExtra={switcher}
+        message={run.kind === "empty" ? t("play.msEmpty") : t("play.msTooBig", { max: MAX_SIZE })}
+      />
     )
   }
 
@@ -130,64 +137,7 @@ export function PlaybackView() {
   )
 }
 
-type Run =
-  | { kind: "empty" }
-  | { kind: "too-big" }
-  | { kind: "ok"; trace: ReturnType<typeof buildMergeSortTrace> }
-
 // — дрібні презентаційні шматки ----------------------------------------------
-
-function ModeSwitch({
-  mode,
-  onChange,
-}: {
-  mode: MergeMode
-  onChange: (m: MergeMode) => void
-}) {
-  const t = useT()
-  const label: Record<MergeMode, string> = {
-    topDown: t("play.msModeTopDown"),
-    bottomUp: t("play.msModeBottomUp"),
-  }
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="font-medium text-muted-foreground">{t("play.msMode")}</span>
-      <div className="inline-flex flex-wrap rounded-md border p-0.5">
-        {MODES.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => onChange(m)}
-            className={cn(
-              "rounded px-3 py-1 transition-colors",
-              mode === m
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {label[m]}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function StatsBar({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-      {children}
-    </div>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span>
-      <b>{label}</b> <span className="tabular-nums">{value}</span>
-    </span>
-  )
-}
 
 function PhaseBadge({ phase }: { phase: MsPhase }) {
   const t = useT()

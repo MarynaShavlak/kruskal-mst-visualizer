@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, useState } from "react"
 import { Check, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -10,6 +10,8 @@ import { useRabinKarpStringSearchStore } from "@/store/rabin-karp-string-search-
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { HashBuildPanel } from "@/algorithms/rabin-karp-string-search/playback/HashBuildPanel"
 import { RkStripPanel } from "@/algorithms/rabin-karp-string-search/playback/RkStripPanel"
 import type { Translate } from "@/lib/translate"
@@ -46,7 +48,17 @@ export function PlaybackView() {
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
 
-  const switcher = <ModeSwitch mode={mode} onChange={setMode} />
+  const switcher = (
+    <ModeSwitch
+      label={t("play.rkMode")}
+      value={mode}
+      onChange={setMode}
+      options={[
+        { key: "rolling", label: t("play.rkModeRollingShort") },
+        { key: "recompute", label: t("play.rkModeRecomputeShort") },
+      ]}
+    />
+  )
 
   if (run.kind !== "ok") {
     return (
@@ -144,52 +156,6 @@ type Run =
   | { kind: "ok"; trace: ReturnType<typeof buildRabinKarpStringSearchTrace> }
 
 // — дрібні презентаційні шматки ----------------------------------------------
-
-function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
-  const t = useT()
-  const opts: { key: Mode; label: string }[] = [
-    { key: "rolling", label: t("play.rkModeRollingShort") },
-    { key: "recompute", label: t("play.rkModeRecomputeShort") },
-  ]
-  return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="font-medium text-muted-foreground">{t("play.rkMode")}</span>
-      <div className="inline-flex rounded-md border p-0.5">
-        {opts.map((o) => (
-          <button
-            key={o.key}
-            type="button"
-            onClick={() => onChange(o.key)}
-            className={cn(
-              "rounded px-3 py-1 transition-colors",
-              mode === o.key
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function StatsBar({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-      {children}
-    </div>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span>
-      <b>{label}</b> <span className="tabular-nums">{value}</span>
-    </span>
-  )
-}
 
 function PhaseBadge({ phase }: { phase: RkPhase }) {
   const t = useT()

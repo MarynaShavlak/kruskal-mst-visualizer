@@ -1,4 +1,3 @@
-import { useMemo, type ReactNode } from "react"
 import { Check, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -10,6 +9,8 @@ import { useKmpStringSearchStore } from "@/store/kmp-string-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { LpsTablePanel } from "@/algorithms/kmp-string-search/playback/LpsTablePanel"
 import { KmpStripPanel } from "@/algorithms/kmp-string-search/playback/KmpStripPanel"
 import type { Translate } from "@/lib/translate"
@@ -30,24 +31,21 @@ export function PlaybackView() {
 
   const sig = `${text}|${pattern}`
 
-  const run = useMemo<Run>(() => {
-    if (pattern.length === 0) return { kind: "empty" }
-    if (text.length > MAX_TEXT) return { kind: "too-big" }
-    const trace = buildKmpStringSearchTrace(text, pattern, tr)
-    return { kind: "ok", trace }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, lang])
+  const run = useTraceRun(() => buildKmpStringSearchTrace(text, pattern, tr), {
+    empty: pattern.length === 0,
+    tooBig: text.length > MAX_TEXT,
+    sig,
+    lang,
+  })
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
 
   if (run.kind !== "ok") {
     return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          {run.kind === "empty" ? t("play.kmpEmpty") : t("play.kmpTooBig", { max: MAX_TEXT })}
-        </CardContent>
-      </Card>
+      <TraceFallback
+        message={run.kind === "empty" ? t("play.kmpEmpty") : t("play.kmpTooBig", { max: MAX_TEXT })}
+      />
     )
   }
 
@@ -114,11 +112,6 @@ export function PlaybackView() {
   )
 }
 
-type Run =
-  | { kind: "empty" }
-  | { kind: "too-big" }
-  | { kind: "ok"; trace: ReturnType<typeof buildKmpStringSearchTrace> }
-
 /** Останній кадр фази пошуку зі станом (для відмальовки на done). */
 function lastSearchState(trace: ReturnType<typeof buildKmpStringSearchTrace>) {
   for (let i = trace.frames.length - 1; i >= 0; i--) {
@@ -129,22 +122,6 @@ function lastSearchState(trace: ReturnType<typeof buildKmpStringSearchTrace>) {
 }
 
 // — дрібні презентаційні шматки ----------------------------------------------
-
-function StatsBar({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-      {children}
-    </div>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <span>
-      <b>{label}</b> <span className="tabular-nums">{value}</span>
-    </span>
-  )
-}
 
 function PhaseBadge({ phase }: { phase: KmpPhase }) {
   const t = useT()
