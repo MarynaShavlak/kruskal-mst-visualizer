@@ -41,6 +41,13 @@ describe("indexedSequentialSearch — еталон коректності з REA
     expect(indexedSequentialSearch(MAIN, table, 15)).toBe(7)
   })
 
+  it("порожній масив → -1 (порожня індексна таблиця, без падіння)", () => {
+    const table = createIndexTable([], 4)
+    expect(table).toEqual([])
+    expect(indexedSequentialSearch([], table, 15)).toBe(-1)
+    expect(indexedSequentialSearchLinearIndex([], table, 15)).toBe(-1)
+  })
+
   it("усі канонічні інстанси дають відому позицію", () => {
     const expected = new Map<string, number>([
       ["main", 7], ["in_index", 4], ["left_absent", -1], ["right_absent", -1],

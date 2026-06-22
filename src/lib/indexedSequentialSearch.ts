@@ -47,6 +47,9 @@ export function indexedSequentialSearch(
   indexTable: readonly IndexEntry[],
   target: number,
 ): number {
+  // Порожня таблиця (порожній масив) → шукати нема де (як у *Steps і jumpSearch):
+  // без цього blockRange(start=0) звернувся б до indexTable[0] = undefined.
+  if (indexTable.length === 0) return -1
   // Фаза 1: двійковий пошук в індексній таблиці
   let start = 0
   let end = indexTable.length - 1
@@ -76,6 +79,8 @@ export function indexedSequentialSearchLinearIndex(
   indexTable: readonly IndexEntry[],
   target: number,
 ): number {
+  // Порожня таблиця (порожній масив) → шукати нема де (узгоджено з базовою версією).
+  if (indexTable.length === 0) return -1
   // Фаза 1 (лінійно): шукаємо, між якими стовпами лежить target
   let start = 0
   while (start < indexTable.length) {
