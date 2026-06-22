@@ -1558,6 +1558,96 @@ const ua = {
   "learn.ipDegradeTitle": "Масив [1, 2, …, n−1, 1 000 000 000]: один викид збиває пряму-модель",
   "learn.ipDegradeNote":
     "Формула щоразу вказує майже на початок — метод повзе по одному елементу (O(n)). Двійковий байдужий до значень і лишається O(log n).",
+
+  // — Наївний пошук у рядках (Naive String Search) —
+  "editor.nssMain": "Канонічний приклад",
+  "editor.nssWorst": "Найгірший (AAAA…)",
+  "editor.nssNotFoundPreset": "Не знайдено",
+  "editor.nssOverlap": "Кілька входжень",
+  "editor.nssEditorTitle": "Текст і шаблон",
+  "editor.strPatternLabel": "шаблон:",
+  "editor.strTextLabel": "текст:",
+  "editor.strAriaPattern": "Шаблон для пошуку",
+  "editor.strAriaText": "Текст, у якому шукаємо",
+  "editor.strLenNote": "Довжина тексту: {n}, шаблону: {m}.",
+  "editor.helpNssPattern": "підрядок, який шукаємо в тексті",
+  "editor.helpNssText": "текст, у якому ковзаємо шаблоном",
+  "editor.helpNssWorst": "повторюваний префікс — вибух порівнянь (найгірший випадок)",
+  "editor.helpNssOverlap": "кілька входжень — наочно в режимі «усі входження»",
+  "editor.helpNssNote":
+    "Наївний метод не має передумов і працює на будь-яких рядках, але повторно звіряє вже перевірений префікс («марна робота») — звідси O(n·m) у найгіршому. Саме це усуває KMP.",
+  "editor.nssErrBadText": "Поле text має бути рядком",
+  "editor.nssErrBadPattern": "Поле pattern має бути рядком",
+  "editor.nssLen": "Довжини",
+  "editor.nssLenVal": "n={n}, m={m}",
+  "editor.nssTargetResult": "результат пошуку:",
+  "editor.nssEmptyPattern": "Порожній шаблон — вважається знайденим на 0.",
+  "editor.nssTooLong": "Шаблон довший за текст — входження неможливе (-1).",
+  "editor.nssFoundAt": "знайдено на позиції {i}",
+  "editor.nssNotFound": "шаблону немає (-1)",
+  "editor.nssComparisons": "порівнянь:",
+  "editor.nssAllAt": "усі входження:",
+  "editor.nssCasesTitle": "Складність: порівнянь символів",
+  "editor.nssCaseAlignments": "Вирівнювань",
+  "editor.nssCaseBest": "Найкращий випадок",
+  "editor.nssCaseWorst": "Найгірший випадок",
+  "editor.nssCasesNote":
+    "Найкращий ≈ N−M+1 (розбіжність на першому символі щоразу) — O(n). Найгірший (N−M+1)·M (повторюваний префікс) — O(n·m), а при m≈n → O(n²).",
+  // Плеєр.
+  "play.nssEmpty": "Порожній шаблон — введіть підрядок у вкладці «Редактор».",
+  "play.nssTooBig":
+    "Текст завеликий для наочної стрічки (понад {max} символів). Скоротіть його у вкладці «Редактор».",
+  "play.nssStatComparisons": "порівнянь:",
+  "play.nssStatAlignments": "вирівнювань:",
+  "play.nssStatShifts": "зсувів:",
+  "play.nssStatMatches": "входжень:",
+  "play.nssStatResult": "результат:",
+  "play.nssStatLen": "текст/шаблон:",
+  "play.nssCodeFirst": "Код — перший збіг (naive_search)",
+  "play.nssCodeAll": "Код — усі входження (naive_search_all)",
+  "play.nssMode": "Режим:",
+  "play.nssModeFirst": "Перший збіг",
+  "play.nssModeAll": "Усі входження",
+  "play.nssText": "текст",
+  "play.nssPattern": "шаблон",
+  "play.nssStripTitle": "Стрічка «текст / шаблон» і вирівнювання",
+  "play.nssTargetBadge": "шукаємо: {pattern}",
+  "play.nssPhaseInit": "старт",
+  "play.nssPhaseAlign": "вирівнювання · розбіжність",
+  "play.nssPhaseFound": "повний збіг",
+  "play.nssPhaseDone": "готово",
+  "play.nssResultLabel": "Результат",
+  "play.nssResultIndex": "позиція {i}",
+  "play.nssResultAll": "позиції [{list}] ({count})",
+  "play.nssResultAbsent": "шаблону немає (-1)",
+  "play.nssResultComparisons": "порівнянь: {comparisons}",
+  "play.nssResultAlignments": "вирівнювань: {alignments}",
+  "play.nssResultShifts": "зсувів: {shifts}",
+  // Нарація плеєра.
+  "play.nNssInit":
+    "Старт: шукаємо «{pattern}» у тексті «{text}» (N={n}, M={m}). Ковзатимемо шаблоном зліва направо, вирівнювання за вирівнюванням.",
+  "play.nNssAlign":
+    "Вирівнювання i={i}: збіглося {matched} символів (🟢), далі text[{pos}]={tc} ≠ pattern[{j}]={pc} — розбіжність (🔴). Зсуваємо шаблон на 1.",
+  "play.nNssFound":
+    "Повний збіг на позиції {i}: усі {m} символів шаблону збіглися (🟢). Шаблон знайдено.",
+  "play.nNssFoundAll":
+    "Збіг на позиції {i} (знайдено {count}). У режимі «усі входження» не зупиняємось — ковзаємо далі.",
+  "play.nNssDoneFound":
+    "Готово: «{pattern}» знайдено на позиції {index} за {comparisons} порівнянь.",
+  "play.nNssDoneAll":
+    "Готово: «{pattern}» трапляється на позиціях [{list}] ({count}) за {comparisons} порівнянь.",
+  "play.nNssDoneNone": "Готово: «{pattern}» у тексті немає (-1) за {comparisons} порівнянь.",
+  "play.nNssDoneNotFound":
+    "Готово: «{pattern}» немає (-1). Перевірено {alignments} вирівнювань за {comparisons} порівнянь.",
+  // Навчальні віджети.
+  "learn.nssLegendMatch": "збіглося",
+  "learn.nssLegendMismatch": "розбіжність",
+  "learn.nssLegendWindow": "у вікні (ще не звірено)",
+  "learn.nssLegendOut": "поза вікном",
+  "learn.nssCmpBest": "найкращий: {v}",
+  "learn.nssCmpWorst": "найгірший: {v}",
+  "learn.nssCmpNote":
+    "Найкращий випадок росте як n (одне порівняння на вирівнювання), найгірший — як n·m (повторюваний префікс щоразу матчиться, далі розбіжність).",
 }
 
 export type MessageKey = keyof typeof ua
@@ -3095,6 +3185,95 @@ const en: Record<MessageKey, string> = {
   "learn.ipDegradeTitle": "Array [1, 2, …, n−1, 1,000,000,000]: a single outlier skews the line model",
   "learn.ipDegradeNote":
     "The formula keeps pointing near the start — the method crawls one element at a time (O(n)). Binary ignores values and stays O(log n).",
+  // — Naive String Search —
+  "editor.nssMain": "Canonical example",
+  "editor.nssWorst": "Worst case (AAAA…)",
+  "editor.nssNotFoundPreset": "Not found",
+  "editor.nssOverlap": "Several matches",
+  "editor.nssEditorTitle": "Text and pattern",
+  "editor.strPatternLabel": "pattern:",
+  "editor.strTextLabel": "text:",
+  "editor.strAriaPattern": "Pattern to search for",
+  "editor.strAriaText": "Text to search in",
+  "editor.strLenNote": "Text length: {n}, pattern: {m}.",
+  "editor.helpNssPattern": "the substring we look for in the text",
+  "editor.helpNssText": "the text we slide the pattern along",
+  "editor.helpNssWorst": "a repeated prefix — an explosion of comparisons (the worst case)",
+  "editor.helpNssOverlap": "several matches — best seen in the “all occurrences” mode",
+  "editor.helpNssNote":
+    "The naive method needs no precondition and works on any strings, but it re-checks an already-verified prefix (“wasted work”) — hence O(n·m) in the worst case. That is exactly what KMP removes.",
+  "editor.nssErrBadText": "The text field must be a string",
+  "editor.nssErrBadPattern": "The pattern field must be a string",
+  "editor.nssLen": "Lengths",
+  "editor.nssLenVal": "n={n}, m={m}",
+  "editor.nssTargetResult": "search result:",
+  "editor.nssEmptyPattern": "Empty pattern — treated as found at 0.",
+  "editor.nssTooLong": "The pattern is longer than the text — no match possible (-1).",
+  "editor.nssFoundAt": "found at position {i}",
+  "editor.nssNotFound": "pattern not present (-1)",
+  "editor.nssComparisons": "comparisons:",
+  "editor.nssAllAt": "all occurrences:",
+  "editor.nssCasesTitle": "Complexity: character comparisons",
+  "editor.nssCaseAlignments": "Alignments",
+  "editor.nssCaseBest": "Best case",
+  "editor.nssCaseWorst": "Worst case",
+  "editor.nssCasesNote":
+    "Best ≈ N−M+1 (mismatch on the first character every time) — O(n). Worst (N−M+1)·M (a repeated prefix) — O(n·m), and when m≈n → O(n²).",
+  // Player.
+  "play.nssEmpty": "Empty pattern — enter a substring in the “Editor” tab.",
+  "play.nssTooBig":
+    "The text is too long for a clear strip (over {max} characters). Shorten it in the “Editor” tab.",
+  "play.nssStatComparisons": "comparisons:",
+  "play.nssStatAlignments": "alignments:",
+  "play.nssStatShifts": "shifts:",
+  "play.nssStatMatches": "matches:",
+  "play.nssStatResult": "result:",
+  "play.nssStatLen": "text/pattern:",
+  "play.nssCodeFirst": "Code — first match (naive_search)",
+  "play.nssCodeAll": "Code — all occurrences (naive_search_all)",
+  "play.nssMode": "Mode:",
+  "play.nssModeFirst": "First match",
+  "play.nssModeAll": "All occurrences",
+  "play.nssText": "text",
+  "play.nssPattern": "pattern",
+  "play.nssStripTitle": "The “text / pattern” strip and alignment",
+  "play.nssTargetBadge": "searching: {pattern}",
+  "play.nssPhaseInit": "start",
+  "play.nssPhaseAlign": "alignment · mismatch",
+  "play.nssPhaseFound": "full match",
+  "play.nssPhaseDone": "done",
+  "play.nssResultLabel": "Result",
+  "play.nssResultIndex": "position {i}",
+  "play.nssResultAll": "positions [{list}] ({count})",
+  "play.nssResultAbsent": "pattern not present (-1)",
+  "play.nssResultComparisons": "comparisons: {comparisons}",
+  "play.nssResultAlignments": "alignments: {alignments}",
+  "play.nssResultShifts": "shifts: {shifts}",
+  // Player narration.
+  "play.nNssInit":
+    "Start: searching for “{pattern}” in the text “{text}” (N={n}, M={m}). We slide the pattern left to right, alignment by alignment.",
+  "play.nNssAlign":
+    "Alignment i={i}: {matched} characters matched (🟢), then text[{pos}]={tc} ≠ pattern[{j}]={pc} — a mismatch (🔴). Shift the pattern by 1.",
+  "play.nNssFound":
+    "Full match at position {i}: all {m} pattern characters matched (🟢). Pattern found.",
+  "play.nNssFoundAll":
+    "Match at position {i} ({count} found). In “all occurrences” mode we do not stop — keep sliding.",
+  "play.nNssDoneFound":
+    "Done: “{pattern}” found at position {index} in {comparisons} comparisons.",
+  "play.nNssDoneAll":
+    "Done: “{pattern}” occurs at positions [{list}] ({count}) in {comparisons} comparisons.",
+  "play.nNssDoneNone": "Done: “{pattern}” is not in the text (-1) after {comparisons} comparisons.",
+  "play.nNssDoneNotFound":
+    "Done: “{pattern}” not present (-1). Checked {alignments} alignments in {comparisons} comparisons.",
+  // Learn widgets.
+  "learn.nssLegendMatch": "matched",
+  "learn.nssLegendMismatch": "mismatch",
+  "learn.nssLegendWindow": "in window (not yet checked)",
+  "learn.nssLegendOut": "outside window",
+  "learn.nssCmpBest": "best: {v}",
+  "learn.nssCmpWorst": "worst: {v}",
+  "learn.nssCmpNote":
+    "The best case grows like n (one comparison per alignment); the worst like n·m (a repeated prefix matches each time, then a mismatch).",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }

@@ -37,6 +37,31 @@ swapped), сортування вставками (лінійний пошук �
 1–2 проби незалежно від n), на скупчених (один викид збиває пряму) деградує до O(n)
 — гірше за двійковий; передумова — масив відсортований; перемикач реалізації
 ітеративний/рекурсивний)
+далі — РОДИНА ПОШУКУ В РЯДКУ (string matching, ПЕРША на платформі: шукаємо не число у
+масиві, а ШАБЛОН pattern у ТЕКСТІ text → індекс першого входження або -1; «ціна» —
+кількість ПОРІВНЯНЬ СИМВОЛІВ; спільний редактор text+pattern, спільна СТРІЧКА «текст/
+шаблон» зі збіглим зеленим префіксом + червоною розбіжністю):
+наївний (прямий) пошук naive string search (17-й алгоритм, ПЕРШИЙ
+рядковий: «у лоб» — ставимо шаблон на кожне з N−M+1 вирівнювань і звіряємо посимвольно
+зліва направо; найгірший O(n·m) (повторюваний префікс щоразу матчиться, далі розбіжність
+→ марна повторна робота — МІСТОК до KMP); перемикач режимів «перший збіг»/«усі входження»
+find_all; еталон «ABABDABACDABABCABAB»/«ABABCABAB»→10, 29 порівнянь, i18n-префікс `nss`)
+Кнут–Морріс–Пратт KMP (18-й, ДРУГИЙ рядковий — «пам'ять про себе»: спершу будуємо ТАБЛИЦЮ
+LPS (longest proper prefix = suffix, префікс-функція) для шаблону, далі індекс тексту i
+НІКОЛИ не відкочується — при розбіжності зсуваємо лише шаблон за LPS; лінійний O(n+m);
+lps(«ABABCABAB»)=[0,0,1,2,0,1,2,3,4]; перемикача нема; еталон→10, 32 операції (LPS 9 +
+пошук 23) проти 29 наївного — на цьому прикладі трохи більше, виграш на «злих» даних;
+i18n-префікс `kmp`)
+Боєра–Мура Boyer–Moore (19-й, ТРЕТІЙ рядковий — «дивимось із кінця»: звіряємо шаблон
+СПРАВА НАЛІВО, а при розбіжності за ТАБЛИЦЕЮ ПОГАНОГО СИМВОЛУ (bad-char) стрибаємо вперед
+одразу на кілька позицій — часто ПРОПУСКАючи символи тексту зовсім; субліній на практиці;
+лише правило поганого символу (без good-suffix); таблиця для «developer» {d:8,e:1,v:6,l:4,
+o:3,p:2,r:9}; еталон→8, 10 порівнянь/1 стрибок/8 пропущених; i18n-префікс `bm`)
+та Рабіна–Карпа Rabin–Karp (20-й, ЧЕТВЕРТИЙ рядковий — «хеш замість символів»: рахуємо
+ПОЛІНОМІАЛЬНИЙ хеш шаблону й вікон тексту, порівнюємо ЧИСЛА; збіг хешів → доперевіряємо
+символи (бо можлива КОЛІЗІЯ — різні рядки, рівний хеш); ROLLING HASH оновлює хеш вікна за
+O(1) (відняти старий символ, додати новий) замість перерахунку з нуля; у середньому O(n+m);
+перемикач реалізації rolling/recompute (наочно показує економію); еталон→8; i18n-префікс `rk`)
 — у кожного навчання/редактор/плеєр готові. Компаньйон до
 Python-репозиторіїв із повним розбором: https://github.com/MarynaShavlak/algo-krustal-mst
 (рюкзак — https://github.com/MarynaShavlak/algo-knapsack,
@@ -50,7 +75,11 @@ Python-репозиторіїв із повним розбором: https://gith
 лінійний пошук — https://github.com/MarynaShavlak/algo-linear-search,
 двійковий пошук — https://github.com/MarynaShavlak/algo-binary-search,
 індексно-послідовний пошук — https://github.com/MarynaShavlak/algo-indexed-sequential-search,
-інтерполяційний пошук — https://github.com/MarynaShavlak/algo-interpolation-search)
+інтерполяційний пошук — https://github.com/MarynaShavlak/algo-interpolation-search,
+наївний пошук у рядку — https://github.com/MarynaShavlak/algo-naive-string-search,
+Кнут–Морріс–Пратт — https://github.com/MarynaShavlak/algo-knuth-morris-pratt-search,
+Боєра–Мура — https://github.com/MarynaShavlak/algo-boyer-moore-string-search,
+Рабіна–Карпа — https://github.com/MarynaShavlak/algo-rabin-karp-string-search)
 Мова — глобальна (стор `lang-store`, перемикач UA/EN у шапці, persist у localStorage).
 Повністю двомовний (UA/EN): каталог/шапка, навчальна вкладка (markdown), редактор,
 плеєр і бенчмарк. Глобальний перемикач у шапці (`lang-store`, persist). UI-рядки —
@@ -87,7 +116,9 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             merge-sort/{learn,editor,playback}, shell-sort/{learn,editor,playback},
             radix-sort/{learn,editor,playback}, linear-search/{learn,editor,playback},
             binary-search/{learn,editor,playback}, indexed-sequential-search/{learn,editor,playback},
-            interpolation-search/{learn,editor,playback}
+            interpolation-search/{learn,editor,playback}, naive-string-search/{learn,editor,playback},
+            kmp-string-search/{learn,editor,playback}, boyer-moore-string-search/{learn,editor,playback},
+            rabin-karp-string-search/{learn,editor,playback}
             (рюкзак 0/1: табличний редактор предметів; плеєр — 3 режими ДП/жадібний/перебір;
             бульбашка: редактор масиву чисел; плеєр — 2 режими наївна/оптимізована (swapped),
             панель стовпчиків; вставки: редактор масиву чисел; плеєр — 2 режими лінійна/бінарна,
@@ -147,11 +178,34 @@ algorithms/ types.ts, registry.ts; <id>/index.ts (опис Algorithm) + теки
             ітеративний/рекурсивний; кадр = init + (probe+discard)·k + found + done (4 кадри на
             ДЕМО1 [1,3,…,19]→15 = індекс7/1 проба; 6 кадрів = step_00..05 на ДЕМО2 →25 = індекс11/
             2 проби; скупчені [1,…,9,1000]→9 = 9 проб vs двійковий 3 — деградація; i18n-префікс `ip`);
+            наївний рядковий (naive-string-search): ПЕРШИЙ алгоритм ПОШУКУ В РЯДКУ — спільний
+            редактор TextPatternEditor (text + pattern); плеєр — СТРІЧКА «текст/шаблон» (StringStrip:
+            ⬜ idle, 🟦 у вікні, 🌸 active, 🟢 match збіглий префікс, 🟥 mismatch розбіжність,
+            🩶 skipped) з курсором ▼ на позиції звіряння + 2 режими «перший збіг»/«усі входження»
+            (find_all); кадр = init + по 1 на вирівнювання + done (13 кадрів на еталоні
+            «ABABDABACDABABCABAB»/«ABABCABAB»→10); редактор-панель NssSummaryPanel — аналіз
+            best≈N−M+1/worst (N−M+1)·M; i18n-префікс `nss`;
+            KMP (kmp-string-search): ДРУГИЙ рядковий — редактор text+pattern; плеєр — стрічка +
+            ТАБЛИЦЯ LPS (LpsTablePanel: для кожного j значення префікс-функції, підсвітка поточного)
+            + лічильник «глибина повернення» (індекс i ніколи не відкочується); перемикача нема;
+            кадр охоплює фазу побудови LPS і фазу пошуку (69 кадрів на еталоні→10); контраст
+            операцій KMP проти наївного у навчанні; i18n-префікс `kmp`;
+            Боєра–Мура (boyer-moore-string-search): ТРЕТІЙ рядковий — редактор text+pattern; плеєр —
+            стрічка зі звірянням СПРАВА НАЛІВО + ТАБЛИЦЯ ПОГАНОГО СИМВОЛУ (ShiftTablePanel) +
+            наочний СТРИБОК (skipped-символи 🩶 тьмяні, бо їх не порівнювали); лише bad-char;
+            перемикача нема; 24 кадри на еталоні→8 (10 порівнянь/1 стрибок/8 пропущених);
+            нарація-префікс `nBm`, i18n-префікс `bm`;
+            Рабіна–Карпа (rabin-karp-string-search): ЧЕТВЕРТИЙ рядковий — редактор text+pattern;
+            плеєр — стрічка + БЕЙДЖІ ХЕШІВ (хеш шаблону проти хешу вікна) + ФАЗА 1 Horner-побудови
+            хешу + підсвітка КОЛІЗІЇ (рівні хеші, різні рядки → доперевірка символів) + 2 режими
+            rolling/recompute (наочна економія O(1) проти перерахунку); polynomialHashRaw повертає
+            BigInt; 22 кадри на еталоні→8; нарація-префікс `nRk`, i18n-префікс `rk`;
             benchmark лише у kruskal);
   shared/   спільний UI-«kit»: playback/ (PlayerShell, PlayerControls, CodePanel, Panel,
-            player+use-player), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
-            shiki/scroll-spy), editor/ (graph-doc codec). Специфічне інжектиться пропсами
-            (figureForSrc, панелі/слоти плеєра, graph-модель).
+            player+use-player, StringStrip — стрічка «текст/шаблон» зі станами CharRole для всіх
+            рядкових), learn/ (LearnView, TableOfContents, MarkdownCode, learn-content,
+            shiki/scroll-spy), editor/ (graph-doc codec, TextPatternEditor — спільні поля text+pattern).
+            Специфічне інжектиться пропсами (figureForSrc, панелі/слоти плеєра, graph-модель).
 features/   home/ (каталог карток), shell/ (AlgorithmShell, AlgorithmSwitcher, ComingSoon)
 lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts, trace.ts,
             floydWarshall.ts(+Trace), heldKarp.ts(+Trace), tsp.ts, prim.ts(+Trace),
@@ -201,6 +255,27 @@ lib/        graph.ts, directedGraph.ts, dsu.ts, kruskalHasPath.ts, kruskalDsu.ts
               (lineLow/lineHigh/loVal/hiVal/frac/pos + index/discardLo/discardHi + exit found/empty/guard);
               BASE_CODE/RECURSIVE_CODE; SearchCase спільний із linear; еталон ДЕМО1 [1,3,…,19]→15=поз.7/
               1 проба, ДЕМО2 →25=поз.11/2 проби, скупчені [1,…,9,1000]→9=9 проб vs двійк.3),
+            naiveStringSearch.ts(+Trace)/exampleNaiveStringSearch (наївний рядковий — ПЕРШИЙ ПОШУК
+              У РЯДКУ: naiveSearch/naiveSearchAll/naiveSearchSlices + naiveSearchSteps (журнал init/
+              align/compare/mismatch/match_found/not_found/final + лічильники comparisons/alignments/
+              shifts) + countComparisons + caseAnalysis (alignments=N−M+1, best=alignments, worst=
+              alignments·m); buildNaiveStringSearchTrace(text,pattern,findAll,t)→кадр на вирівнювання
+              (offset/matched/mismatchJ); BASE_CODE/ALL_CODE; ВИЗНАЧАЄ StringSearchCase {text,pattern}
+              (спільний тип для всіх 4 рядкових); еталон «ABABDABACDABABCABAB»/«ABABCABAB»→10/29 порівнянь),
+            kmpStringSearch.ts(+Trace)/exampleKmpStringSearch (KMP — computeLps (префікс-функція) +
+              kmpSearch (індекс тексту i без відкату) + countKmpComparisons/countNaiveComparisons
+              (контраст) + kmpSearchSteps (журнал фаз LPS і пошуку); buildKmpStringSearchTrace→69 кадрів;
+              lps(«ABABCABAB»)=[0,0,1,2,0,1,2,3,4]; еталон→10, LPS 9+пошук 23=32 операції; StringSearchCase),
+            boyerMooreStringSearch.ts(+Trace)/exampleBoyerMooreStringSearch (Боєра–Мура — buildShiftTable
+              (таблиця поганого символу, остання позиція символу) + boyerMooreSearch (звіряння справа
+              наліво, стрибок за bad-char; лише це правило, без good-suffix) + лічильники comparisons/
+              jumps/skipped + кроки; buildBoyerMooreStringSearchTrace→24 кадри; buildShiftTable(«developer»)
+              ={d:8,e:1,v:6,l:4,o:3,p:2,r:9}; еталон→8 (10 порівнянь/1 стрибок/8 пропущених); StringSearchCase),
+            rabinKarpStringSearch.ts(+Trace)/exampleRabinKarpStringSearch (Рабіна–Карпа — polynomialHashRaw
+              (BigInt, Horner) + polynomialHashSteps (журнал побудови) + rabinKarpSearchSteps (rolling/
+              recompute, лічильники hashComp/charVerif/collisions/rolls) base=256 modulus=101; колізії →
+              доперевірка символів; buildRabinKarpStringSearchTrace(text,pattern,rolling,t)→22 кадри;
+              еталон→8; StringSearchCase),
             graphAnalysis.ts, randomGraph.ts, theme.ts
 components/ спільний UI (shadcn/ui)
 hooks/      use-route.ts (роутер платформи)
@@ -215,6 +290,8 @@ store/      create-graph-store (generic-ядро) → graph-store / directed-gra
             binary-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
             indexed-sequential-search-store(+presets, ВІДСОРТОВАНИЙ масив + ЦІЛЬ target + КРОК step + sortValues);
             interpolation-search-store(+presets, ВІДСОРТОВАНИЙ масив цілих + ЦІЛЬ target + sortValues);
+            naive-string-search-store(+presets, {text,pattern}); kmp-string-search-store(+presets, {text,pattern});
+            boyer-moore-string-search-store(+presets, {text,pattern}); rabin-karp-string-search-store(+presets, {text,pattern});
             theme-store, lang-store, toast-store
 
 Ключова абстракція — модель trace: алгоритм проганяється один раз і пише список
