@@ -12,6 +12,7 @@
 // ⬜ ще не перевіряли), а не стовпчики/кошики, як у сортуваннях.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг базового пошуку (перший збіг) — його розбирає README рядок за рядком. */
 export const LINEAR_CODE: readonly string[] = [
@@ -35,12 +36,8 @@ export const FIND_ALL_CODE: readonly string[] = [
 /** Фаза кадру для бейджа в нарації. */
 export type LsPhase = "init" | "check" | "reject" | "match" | "done"
 
-export interface LsFrame {
-  readonly i: number
+export interface LsFrame extends ArraySearchFrameBase {
   readonly phase: LsPhase
-  /** Знімок масиву (НЕЗМІННИЙ — пошук лише читає). */
-  readonly array: readonly number[]
-  readonly target: number
   /** Індекс, який ЗАРАЗ розглядаємо (курсор), або null (init / done-відсутній). */
   readonly cursor: number | null
   /** Значення `arr[cursor]` або null. */
@@ -48,18 +45,12 @@ export interface LsFrame {
   /** Результат перевірки: null (питаємо) · false (не той) · true (збіг). */
   readonly match: boolean | null
   readonly comparisons: number
-  /** Знайдений індекс (перший режим) або -1, поки немає. */
-  readonly result: number
   /** Накопичені індекси збігів (для «усі входження»; для першого — [індекс] або []). */
   readonly matches: readonly number[]
   /** Найбільший УЖЕ РОЗВ'ЯЗАНИЙ (перевірений) індекс включно; -1 якщо жоден. */
   readonly resolvedTo: number
   /** Режим «усі входження» (інакше «перший збіг»). */
   readonly findAll: boolean
-  /** Підсвічені рядки коду (1-based). */
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface LsResult {

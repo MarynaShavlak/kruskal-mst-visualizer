@@ -14,6 +14,7 @@
 // проти повного перерахунку хешу кожного вікна). Перемикач міняє лістинг і нарацію фази 2.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { StringSearchFrameBase } from "@/lib/traceFrame"
 import {
   polynomialHashSteps,
   rabinKarpSearchSteps,
@@ -72,11 +73,9 @@ export type RkPhase = "hashInit" | "hashTerm" | "hashDone" | "searchInit" | "win
 /** Вердикт вікна фази 2. */
 export type RkVerdict = "slide" | "collision" | "match"
 
-export interface RkFrame {
+export interface RkFrame extends StringSearchFrameBase {
   readonly i: number
   readonly phase: RkPhase
-  readonly text: string
-  readonly pattern: string
   readonly base: number
   readonly modulus: number
   /** Яка панель активна: «hash» (фаза 1) чи «search» (фаза 2). */
@@ -110,11 +109,7 @@ export interface RkFrame {
   readonly rolls: number
   /** Скільки повних перерахунків хешу зроблено (режим перерахунку). */
   readonly recomputes: number
-  readonly result: number
   readonly rolling: boolean
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface RkResult {

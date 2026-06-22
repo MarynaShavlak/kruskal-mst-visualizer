@@ -13,6 +13,7 @@ import {
   type SelectionEvent,
 } from "@/lib/selectionSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг стандартної версії для панелі підсвітки (1-based рядки). */
 export const STANDARD_CODE: readonly string[] = [
@@ -63,9 +64,7 @@ export type SelSub =
   | { readonly kind: "place"; readonly at: number }
   | { readonly kind: "done" }
 
-export interface SelFrame {
-  /** Порядковий індекс кадру. */
-  readonly i: number
+export interface SelFrame extends SortFrameBase {
   readonly sub: SelSub
   readonly phase: SelPhase
   /** Знімок масиву на цьому кадрі. */
@@ -89,12 +88,6 @@ export interface SelFrame {
   readonly comparisons: number
   readonly swaps: number
   readonly writes: number
-  /** Підсвічені рядки коду (1-based у CODE). */
-  readonly lines: readonly number[]
-  /** Рядки-контекст (охопні цикли) — тьмяна підсвітка. */
-  readonly contextLines: readonly number[]
-  /** Нарація. */
-  readonly caption: string
 }
 
 export interface SelResult {

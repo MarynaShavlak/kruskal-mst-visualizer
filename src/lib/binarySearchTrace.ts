@@ -12,6 +12,7 @@
 // 🟥 половина, яку відкидаємо · 🟢 збіг · 🩶 поза вікном.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
 /** Ітеративний лістинг (база з конспекту) — його розбирає README рядок за рядком. */
 export const ITERATIVE_CODE: readonly string[] = [
@@ -73,12 +74,8 @@ const REC_LINES: LineMap = {
 /** Фаза кадру для бейджа в нарації. */
 export type BsPhase = "init" | "probe" | "discard" | "found" | "done"
 
-export interface BsFrame {
-  readonly i: number
+export interface BsFrame extends ArraySearchFrameBase {
   readonly phase: BsPhase
-  /** Знімок масиву (НЕЗМІННИЙ — пошук лише читає). */
-  readonly array: readonly number[]
-  readonly target: number
   /** Активне вікно `[low..high]` на цьому кадрі (🟦). */
   readonly low: number
   readonly high: number
@@ -91,14 +88,9 @@ export interface BsFrame {
   readonly discardHi: number | null
   /** Накопичена кількість кроків (порівнянь). */
   readonly steps: number
-  /** Знайдений індекс або -1. */
-  readonly result: number
   /** Глибина рекурсії (рекурсивний режим; = номер кроку). */
   readonly depth: number
   readonly recursive: boolean
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface BsResult {

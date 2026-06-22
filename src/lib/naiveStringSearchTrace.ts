@@ -13,6 +13,7 @@
 // «марна робота», місток до KMP.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { StringSearchFrameBase } from "@/lib/traceFrame"
 
 /** Ітеративний лістинг «перший збіг» (база з конспекту) — його розбирає README. */
 export const BASE_CODE: readonly string[] = [
@@ -69,11 +70,9 @@ const ALL_LINES: LineMap = {
 /** Фаза кадру для бейджа в нарації. */
 export type NaivePhase = "init" | "align" | "found" | "done"
 
-export interface NaiveFrame {
+export interface NaiveFrame extends StringSearchFrameBase {
   readonly i: number
   readonly phase: NaivePhase
-  readonly text: string
-  readonly pattern: string
   /** Зсув шаблону (pattern[0] під text[offset]); -1 на init / done-без-вирівнювання. */
   readonly offset: number
   /** Скільки символів збіглося в цьому вирівнюванні (зелений префікс). */
@@ -88,12 +87,7 @@ export interface NaiveFrame {
   readonly shifts: number
   /** Знайдені позиції до цього кадру включно. */
   readonly matches: readonly number[]
-  /** Перший знайдений індекс або -1 (фінальне значення). */
-  readonly result: number
   readonly findAll: boolean
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface NaiveResult {

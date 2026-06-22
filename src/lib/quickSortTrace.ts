@@ -11,6 +11,7 @@ import {
   type QuickEvent,
 } from "@/lib/quickSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Рядок лістингу, де змінюється лише вибір опорного (рядок 4) — решта спільна. */
 function pivotLine(strategy: PivotStrategy): string {
@@ -71,8 +72,7 @@ export interface QsTree {
   readonly maxDepth: number
 }
 
-export interface QsFrame {
-  readonly i: number
+export interface QsFrame extends SortFrameBase {
   /** id поточного вузла (підсвічений). */
   readonly currentId: number
   /** Відкриті вузли — ті, чий id ≤ revealedMax (дерево «росте» в pre-order). */
@@ -81,10 +81,6 @@ export interface QsFrame {
   readonly comparisons: number
   /** Скільки викликів зроблено (вузлів відкрито). */
   readonly calls: number
-  /** Підсвічені рядки коду (1-based). */
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface QsResult {

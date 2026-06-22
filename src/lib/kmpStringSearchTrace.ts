@@ -13,6 +13,7 @@
 // done. На канонічному прикладі = 20 (lps) + 48 (search) + 1 (done) = 69 кадрів.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { StringSearchFrameBase } from "@/lib/traceFrame"
 import {
   computeLpsSteps,
   kmpSearchSteps,
@@ -151,11 +152,9 @@ export interface KmpSearchState {
   readonly match: boolean | null
 }
 
-export interface KmpFrame {
+export interface KmpFrame extends StringSearchFrameBase {
   readonly index: number
   readonly phase: KmpPhase
-  readonly text: string
-  readonly pattern: string
   /** Дані таблиці lps (для phase === "lps"), інакше null. */
   readonly lpsState: KmpLpsState | null
   /** Дані стрічки пошуку (для phase === "search"), інакше null. */
@@ -165,13 +164,8 @@ export interface KmpFrame {
   readonly searchComparisons: number
   /** Чи `i` жодного разу не зменшилося (завжди true для коректного KMP). */
   readonly iMonotonic: boolean
-  /** Перший знайдений індекс або -1 (фінальне значення). */
-  readonly result: number
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
   /** Який лістинг показувати: "lps" або "search". */
   readonly code: "lps" | "search"
-  readonly caption: string
 }
 
 export interface KmpResult {

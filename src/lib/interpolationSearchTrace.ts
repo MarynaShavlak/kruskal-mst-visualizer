@@ -18,6 +18,7 @@
 // (x поза [arr[low]..arr[high]]) — це і є рання відмова інтерполяційного пошуку.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
 /** Ітеративний лістинг (база з конспекту) — його розбирає README рядок за рядком. */
 export const BASE_CODE: readonly string[] = [
@@ -85,12 +86,8 @@ export type IpPhase = "init" | "probe" | "discard" | "found" | "done"
 /** Чому пошук завершився без збігу (для нарації done). */
 export type IpExit = "found" | "empty" | "guard"
 
-export interface IpFrame {
-  readonly i: number
+export interface IpFrame extends ArraySearchFrameBase {
   readonly phase: IpPhase
-  /** Знімок масиву (НЕЗМІННИЙ — пошук лише читає). */
-  readonly array: readonly number[]
-  readonly target: number
   /** Активне вікно `[low..high]` масиву на цьому кадрі (🟦). */
   readonly low: number
   readonly high: number
@@ -113,16 +110,11 @@ export interface IpFrame {
   readonly pos: number | null
   /** Накопичена кількість проб (обчислень index). */
   readonly probes: number
-  /** Знайдений індекс або -1. */
-  readonly result: number
   /** Глибина рекурсії (рекурсивний режим; = номер проби). */
   readonly depth: number
   readonly recursive: boolean
   /** Як завершився пошук (лише на фінальному кадрі осмислено). */
   readonly exit: IpExit
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface IpResult {

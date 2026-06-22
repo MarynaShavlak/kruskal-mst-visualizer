@@ -12,6 +12,7 @@
 // різниться лише фаза 1 (вікно vs курсор) та її ціна (зондування індексу).
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 import {
   blockRange,
   branchFor,
@@ -127,15 +128,12 @@ export type IxsPhase =
   | "found"
   | "done"
 
-export interface IxsFrame {
-  readonly i: number
+export interface IxsFrame extends ArraySearchFrameBase {
   readonly phase: IxsPhase
   /** Чи це подія РІВНЯ ІНДЕКСУ (фаза 1) — для бейджа/легенди. */
   readonly level: "index" | "block"
-  readonly array: readonly number[]
   readonly indexTable: readonly IndexEntry[]
   readonly step: number
-  readonly target: number
 
   // — Рівень індексу (фаза 1) —
   /** Активне вікно індексу `[idxLow..idxHigh]` (двійковий: [start,end]; лінійний: [cursor,len-1]). */
@@ -161,12 +159,8 @@ export interface IxsFrame {
   // — Лічильники / результат —
   readonly indexProbes: number
   readonly seqComparisons: number
-  readonly result: number
 
   readonly linearIndex: boolean
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface IxsTraceResult {

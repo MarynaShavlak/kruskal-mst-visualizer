@@ -18,6 +18,7 @@ import {
   type BottomUpPass,
 } from "@/lib/mergeSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
@@ -179,8 +180,7 @@ function layoutTree(
 
 export type MsPhase = "init" | "split" | "base" | "merge" | "final"
 
-export interface MsFrame {
-  readonly i: number
+export interface MsFrame extends SortFrameBase {
   readonly phase: MsPhase
   // — стан дерева (top-down) —
   readonly currentId: number
@@ -201,10 +201,6 @@ export interface MsFrame {
   readonly comparisons: number
   readonly appends: number
   readonly merges: number
-  // — код —
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface MsResult {

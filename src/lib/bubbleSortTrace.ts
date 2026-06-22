@@ -11,6 +11,7 @@ import {
   type BubbleEvent,
 } from "@/lib/bubbleSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг наївної версії для панелі підсвітки (1-based рядки). */
 export const NAIVE_CODE: readonly string[] = [
@@ -55,9 +56,7 @@ export type BsSub =
   | { readonly kind: "early-stop" }
   | { readonly kind: "done" }
 
-export interface BsFrame {
-  /** Порядковий індекс кадру. */
-  readonly i: number
+export interface BsFrame extends SortFrameBase {
   readonly sub: BsSub
   readonly phase: BsPhase
   /** Знімок масиву на цьому кадрі. */
@@ -72,12 +71,6 @@ export interface BsFrame {
   readonly sortedFrom: number
   readonly comparisons: number
   readonly swaps: number
-  /** Підсвічені рядки коду (1-based у CODE). */
-  readonly lines: readonly number[]
-  /** Рядки-контекст (охопні цикли) — тьмяна підсвітка. */
-  readonly contextLines: readonly number[]
-  /** Нарація. */
-  readonly caption: string
 }
 
 export interface BsResult {

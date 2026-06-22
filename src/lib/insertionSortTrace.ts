@@ -12,6 +12,7 @@ import {
   type InsertionEvent,
 } from "@/lib/insertionSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг лінійної версії для панелі підсвітки (1-based рядки). */
 export const LINEAR_CODE: readonly string[] = [
@@ -63,9 +64,7 @@ export type InsSub =
   | { readonly kind: "insert"; readonly at: number }
   | { readonly kind: "done" }
 
-export interface InsFrame {
-  /** Порядковий індекс кадру. */
-  readonly i: number
+export interface InsFrame extends SortFrameBase {
   readonly sub: InsSub
   readonly phase: InsPhase
   /** Знімок масиву на цьому кадрі. */
@@ -84,12 +83,6 @@ export interface InsFrame {
   readonly shiftAt: number | null
   readonly comparisons: number
   readonly shifts: number
-  /** Підсвічені рядки коду (1-based у CODE). */
-  readonly lines: readonly number[]
-  /** Рядки-контекст (охопні цикли) — тьмяна підсвітка. */
-  readonly contextLines: readonly number[]
-  /** Нарація. */
-  readonly caption: string
 }
 
 export interface InsResult {

@@ -15,6 +15,7 @@ import {
   type RadixEvent,
 } from "@/lib/radixSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг для панелі підсвітки (1-based рядки). Наочна версія з кошиками. */
 export const RADIX_CODE: readonly string[] = [
@@ -32,8 +33,7 @@ export const RADIX_CODE: readonly string[] = [
 /** Фаза кадру для бейджа в нарації. */
 export type RxPhase = "init" | "pass" | "distribute" | "gather" | "done"
 
-export interface RxFrame {
-  readonly i: number
+export interface RxFrame extends SortFrameBase {
   readonly phase: RxPhase
   /** Знімок масиву на цьому кадрі (джерело проходу або зібраний результат). */
   readonly array: readonly number[]
@@ -55,10 +55,6 @@ export interface RxFrame {
   readonly gathered: boolean
   readonly passes: number
   readonly distributions: number
-  /** Підсвічені рядки коду (1-based). */
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface RxResult {

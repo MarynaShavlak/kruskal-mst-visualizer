@@ -14,6 +14,7 @@ import {
   type ShellEvent,
 } from "@/lib/shellSort"
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { SortFrameBase } from "@/lib/traceFrame"
 
 /** Лістинг для панелі підсвітки (1-based рядки). Параметризований gaps-варіант. */
 export const SHELL_CODE: readonly string[] = [
@@ -40,8 +41,7 @@ export type ShPhase =
   | "insert"
   | "done"
 
-export interface ShFrame {
-  readonly i: number
+export interface ShFrame extends SortFrameBase {
   readonly phase: ShPhase
   /** Знімок масиву на цьому кадрі. */
   readonly array: readonly number[]
@@ -63,10 +63,6 @@ export interface ShFrame {
   readonly sortedAll: boolean
   readonly comparisons: number
   readonly shifts: number
-  /** Підсвічені рядки коду (1-based). */
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface ShResult {

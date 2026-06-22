@@ -18,6 +18,7 @@
 // справа наліво, зеленим суфіксом і ВЕЛИКИМИ стрибками з пропущеними (🩶) символами.
 
 import { identityTranslate, type Translate } from "@/lib/translate"
+import type { StringSearchFrameBase } from "@/lib/traceFrame"
 import {
   buildShiftTableSteps,
   boyerMooreSearchSteps,
@@ -102,12 +103,10 @@ export type BmStep =
   | "found"
   | "done"
 
-export interface BmFrame {
+export interface BmFrame extends StringSearchFrameBase {
   readonly i: number
   readonly phase: BmPhase
   readonly step: BmStep
-  readonly text: string
-  readonly pattern: string
   // — фаза таблиці —
   /** Знімок словника зсувів на цей момент. */
   readonly table: Record<string, number>
@@ -140,10 +139,6 @@ export interface BmFrame {
   readonly comparisons: number
   readonly jumps: number
   readonly skipped: number
-  readonly result: number
-  readonly lines: readonly number[]
-  readonly contextLines: readonly number[]
-  readonly caption: string
 }
 
 export interface BmResult {
