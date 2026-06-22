@@ -18,6 +18,7 @@ import { interpolationSearch } from "@/algorithms/interpolation-search"
 import { naiveStringSearch } from "@/algorithms/naive-string-search"
 import { kmpStringSearch } from "@/algorithms/kmp-string-search"
 import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
+import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -45,6 +46,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   naiveStringSearch,
   kmpStringSearch,
   boyerMooreStringSearch,
+  rabinKarpStringSearch,
 ]
 
 export function getAlgorithm(
