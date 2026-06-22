@@ -1,6 +1,6 @@
-// Стан пошуку Боєра-Мура (Zustand). Редагований об'єкт — пара рядків: ТЕКСТ, у якому
-// шукаємо, і ШАБЛОН (підрядок). Жодних передумов (рядки будь-які) і жодного графа.
-// Спільна модель {text, pattern} для всіх рядкових алгоритмів серії.
+// Стан пошуку Боєра–Мура (Zustand). Редагований об'єкт — пара рядків {text, pattern},
+// без графа й передумов; спільні дії — у stringCore (create-string-store), тут лише
+// пресети.
 
 import { create } from "zustand"
 import {
@@ -10,23 +10,16 @@ import {
   bmMultiPreset,
   bmRandomPreset,
 } from "@/store/boyer-moore-string-search-presets"
+import {
+  stringCore,
+  type StringCore,
+  type StringStoreDoc,
+} from "@/store/create-string-store"
 
 /** Документ редактора: текст + шаблон (серіалізовний). */
-export interface BoyerMooreStringSearchDoc {
-  readonly text: string
-  readonly pattern: string
-}
+export type BoyerMooreStringSearchDoc = StringStoreDoc
 
-interface BoyerMooreStringSearchState {
-  readonly text: string
-  readonly pattern: string
-
-  setText: (text: string) => void
-  setPattern: (pattern: string) => void
-  clear: () => void
-  loadDoc: (doc: BoyerMooreStringSearchDoc) => void
-  toDoc: () => BoyerMooreStringSearchDoc
-
+interface BoyerMooreStringSearchState extends StringCore {
   loadMain: () => void
   loadBigJumps: () => void
   loadWorst: () => void
@@ -34,19 +27,13 @@ interface BoyerMooreStringSearchState {
   loadRandom: (seed: number) => void
 }
 
-export const useBoyerMooreStringSearchStore = create<BoyerMooreStringSearchState>()((set, get) => ({
-  ...bmMainPreset(),
+export const useBoyerMooreStringSearchStore =
+  create<BoyerMooreStringSearchState>()((set, get) => ({
+    ...stringCore(bmMainPreset(), set, get),
 
-  setText: (text) => set({ text }),
-  setPattern: (pattern) => set({ pattern }),
-  clear: () => set({ text: "", pattern: "" }),
-
-  loadDoc: (doc) => set({ text: String(doc.text), pattern: String(doc.pattern) }),
-  toDoc: () => ({ text: get().text, pattern: get().pattern }),
-
-  loadMain: () => set(bmMainPreset()),
-  loadBigJumps: () => set(bmBigJumpsPreset()),
-  loadWorst: () => set(bmWorstPreset()),
-  loadMulti: () => set(bmMultiPreset()),
-  loadRandom: (seed) => set(bmRandomPreset(seed)),
-}))
+    loadMain: () => set(bmMainPreset()),
+    loadBigJumps: () => set(bmBigJumpsPreset()),
+    loadWorst: () => set(bmWorstPreset()),
+    loadMulti: () => set(bmMultiPreset()),
+    loadRandom: (seed) => set(bmRandomPreset(seed)),
+  }))

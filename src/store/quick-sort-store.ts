@@ -1,7 +1,5 @@
-// Стан швидкого сортування (Zustand). Як selection-sort-store / insertion-sort-store,
-// НЕ будується на graphCore: редагований об'єкт — це просто масив цілих чисел, без
-// ребер, ваг чи координат. Редактор пише, плеєр і навчальні віджети читають.
-// Значення санітизуються в діях (цілі ≥0).
+// Стан швидкого сортування (Zustand). Редагований об'єкт — масив цілих ≥ 0, без графа;
+// спільні мутації — у arrayCore (create-array-store), тут лише пресети.
 
 import { create } from "zustand"
 import {
@@ -10,68 +8,20 @@ import {
   quickDuplicatesPreset,
   quickRandomPreset,
 } from "@/store/quick-sort-presets"
+import { arrayCore, type ArrayCore, type ArrayStoreDoc } from "@/store/create-array-store"
 
 /** Документ редактора: масив чисел (серіалізовний). */
-export interface QuickSortDoc {
-  readonly values: readonly number[]
-}
+export type QuickSortDoc = ArrayStoreDoc
 
-interface QuickSortState {
-  readonly values: readonly number[]
-
-  /** Додає число (дефолт — варіативне ціле, щоб масив одразу був «цікавим»). */
-  addValue: () => void
-  /** Оновлює значення за індексом (ціле ≥ 0). */
-  updateValue: (index: number, value: number) => void
-  removeValue: (index: number) => void
-  /** Замінює весь масив (значення санітизуються). */
-  setValues: (values: readonly number[]) => void
-  clear: () => void
-  loadDoc: (doc: QuickSortDoc) => void
-  toDoc: () => QuickSortDoc
-
+interface QuickSortState extends ArrayCore {
   loadIntro: () => void
   loadSorted: () => void
   loadDuplicates: () => void
   loadRandom: (seed: number) => void
 }
 
-/** Ціле ≥ 0 (відкидає дробову частину; нечисло → 0). */
-const clampValue = (value: number): number =>
-  Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0
-
-const sanitize = (values: readonly number[]): number[] => values.map(clampValue)
-
 export const useQuickSortStore = create<QuickSortState>()((set, get) => ({
-  ...quickIntroPreset(),
-
-  addValue: () =>
-    set((s) => ({
-      // Псевдовипадкове, але детерміноване від довжини — щоб додані числа різнилися.
-      values: [...s.values, ((s.values.length * 37 + 13) % 90) + 1],
-    })),
-
-  updateValue: (index, value) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return {
-        values: s.values.map((v, i) => (i === index ? clampValue(value) : v)),
-      }
-    }),
-
-  removeValue: (index) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return { values: s.values.filter((_, i) => i !== index) }
-    }),
-
-  setValues: (values) => set({ values: sanitize(values) }),
-
-  clear: () => set({ values: [] }),
-
-  loadDoc: (doc) => set({ values: sanitize(doc.values) }),
-
-  toDoc: () => ({ values: get().values }),
+  ...arrayCore({ initial: quickIntroPreset() }, set, get),
 
   loadIntro: () => set(quickIntroPreset()),
   loadSorted: () => set(quickSortedPreset()),

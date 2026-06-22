@@ -1,6 +1,6 @@
-// Стан KMP (Zustand). Редагований об'єкт — пара рядків: ТЕКСТ, у якому шукаємо, і ШАБЛОН
-// (підрядок). Жодних передумов (рядки будь-які) і жодного графа. Спільна модель {text,
-// pattern} для всіх рядкових алгоритмів серії.
+// Стан пошуку Кнута–Морріса–Пратта (Zustand). Редагований об'єкт — пара рядків {text,
+// pattern}, без графа й передумов; спільні дії — у stringCore (create-string-store),
+// тут лише пресети.
 
 import { create } from "zustand"
 import {
@@ -10,23 +10,16 @@ import {
   kmpNotFoundPreset,
   kmpRandomPreset,
 } from "@/store/kmp-string-search-presets"
+import {
+  stringCore,
+  type StringCore,
+  type StringStoreDoc,
+} from "@/store/create-string-store"
 
 /** Документ редактора: текст + шаблон (серіалізовний). */
-export interface KmpStringSearchDoc {
-  readonly text: string
-  readonly pattern: string
-}
+export type KmpStringSearchDoc = StringStoreDoc
 
-interface KmpStringSearchState {
-  readonly text: string
-  readonly pattern: string
-
-  setText: (text: string) => void
-  setPattern: (pattern: string) => void
-  clear: () => void
-  loadDoc: (doc: KmpStringSearchDoc) => void
-  toDoc: () => KmpStringSearchDoc
-
+interface KmpStringSearchState extends StringCore {
   loadMain: () => void
   loadKonspect: () => void
   loadWorst: () => void
@@ -34,19 +27,14 @@ interface KmpStringSearchState {
   loadRandom: (seed: number) => void
 }
 
-export const useKmpStringSearchStore = create<KmpStringSearchState>()((set, get) => ({
-  ...kmpMainPreset(),
+export const useKmpStringSearchStore = create<KmpStringSearchState>()(
+  (set, get) => ({
+    ...stringCore(kmpMainPreset(), set, get),
 
-  setText: (text) => set({ text }),
-  setPattern: (pattern) => set({ pattern }),
-  clear: () => set({ text: "", pattern: "" }),
-
-  loadDoc: (doc) => set({ text: String(doc.text), pattern: String(doc.pattern) }),
-  toDoc: () => ({ text: get().text, pattern: get().pattern }),
-
-  loadMain: () => set(kmpMainPreset()),
-  loadKonspect: () => set(kmpKonspectPreset()),
-  loadWorst: () => set(kmpWorstPreset()),
-  loadNotFound: () => set(kmpNotFoundPreset()),
-  loadRandom: (seed) => set(kmpRandomPreset(seed)),
-}))
+    loadMain: () => set(kmpMainPreset()),
+    loadKonspect: () => set(kmpKonspectPreset()),
+    loadWorst: () => set(kmpWorstPreset()),
+    loadNotFound: () => set(kmpNotFoundPreset()),
+    loadRandom: (seed) => set(kmpRandomPreset(seed)),
+  }),
+)

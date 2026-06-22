@@ -1,8 +1,8 @@
-// Стан двійкового пошуку (Zustand). Як linear-search-store, НЕ будується на
-// graphCore: редагований об'єкт — масив цілих + ЦІЛЬ пошуку `target`, без графа.
-// ПЕРЕДУМОВА двійкового пошуку — масив відсортований; стор не примушує цього
-// автоматично (щоб показати, що буває на невпорядкованих даних), але має дію
-// `sortValues` і пресети завжди завантажують відсортовані масиви.
+// Стан двійкового пошуку (Zustand). Редагований об'єкт — масив цілих + ЦІЛЬ `target`,
+// без графа; спільні мутації — у searchCore (create-search-store), тут — пресети та
+// `sortValues`. ПЕРЕДУМОВА методу — масив відсортований; стор не примушує цього
+// автоматично, але `addValue` вставляє зі збереженням порядку (keepSorted), є дія
+// `sortValues`, а пресети завжди завантажують відсортовані масиви.
 
 import { create } from "zustand"
 import {
@@ -11,75 +11,27 @@ import {
   bsAbsentPreset,
   bsRandomPreset,
 } from "@/store/binary-search-presets"
+import {
+  searchCore,
+  type SearchCore,
+  type SearchStoreDoc,
+} from "@/store/create-search-store"
 
 /** Документ редактора: масив чисел + ціль пошуку (серіалізовний). */
-export interface BinarySearchDoc {
-  readonly values: readonly number[]
-  readonly target: number
-}
+export type BinarySearchDoc = SearchStoreDoc
 
-interface BinarySearchState {
-  readonly values: readonly number[]
-  readonly target: number
-
-  addValue: () => void
-  updateValue: (index: number, value: number) => void
-  removeValue: (index: number) => void
-  setValues: (values: readonly number[]) => void
-  setTarget: (target: number) => void
+interface BinarySearchState extends SearchCore {
   sortValues: () => void
-  clear: () => void
-  loadDoc: (doc: BinarySearchDoc) => void
-  toDoc: () => BinarySearchDoc
-
   loadIntro: () => void
   loadDuplicates: () => void
   loadAbsent: () => void
   loadRandom: (seed: number) => void
 }
 
-const clampValue = (value: number): number =>
-  Number.isFinite(value) ? Math.trunc(value) : 0
-
-const sanitize = (values: readonly number[]): number[] => values.map(clampValue)
-
 export const useBinarySearchStore = create<BinarySearchState>()((set, get) => ({
-  ...bsIntroPreset(),
-
-  // Нове число вставляємо так, щоб масив лишився відсортованим (передумова).
-  addValue: () =>
-    set((s) => {
-      const next = ((s.values.length * 37 + 13) % 90) + 1
-      const out = [...s.values, next].sort((a, b) => a - b)
-      return { values: out }
-    }),
-
-  updateValue: (index, value) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return {
-        values: s.values.map((v, i) => (i === index ? clampValue(value) : v)),
-      }
-    }),
-
-  removeValue: (index) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return { values: s.values.filter((_, i) => i !== index) }
-    }),
-
-  setValues: (values) => set({ values: sanitize(values) }),
-
-  setTarget: (target) => set({ target: clampValue(target) }),
+  ...searchCore({ initial: bsIntroPreset(), keepSorted: true }, set, get),
 
   sortValues: () => set((s) => ({ values: [...s.values].sort((a, b) => a - b) })),
-
-  clear: () => set({ values: [] }),
-
-  loadDoc: (doc) =>
-    set({ values: sanitize(doc.values), target: clampValue(doc.target) }),
-
-  toDoc: () => ({ values: get().values, target: get().target }),
 
   loadIntro: () => set(bsIntroPreset()),
   loadDuplicates: () => set(bsDuplicatesPreset()),

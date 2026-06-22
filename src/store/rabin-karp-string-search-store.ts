@@ -1,6 +1,6 @@
-// Стан пошуку Рабіна-Карпа (Zustand). Редагований об'єкт — пара рядків: ТЕКСТ, у якому
-// шукаємо, і ШАБЛОН (підрядок). Жодних передумов (рядки будь-які) і жодного графа.
-// Спільна модель {text, pattern} для всіх рядкових алгоритмів серії.
+// Стан пошуку Рабіна–Карпа (Zustand). Редагований об'єкт — пара рядків {text, pattern},
+// без графа й передумов; спільні дії — у stringCore (create-string-store), тут лише
+// пресети.
 
 import { create } from "zustand"
 import {
@@ -10,23 +10,16 @@ import {
   rkNotFoundPreset,
   rkRandomPreset,
 } from "@/store/rabin-karp-string-search-presets"
+import {
+  stringCore,
+  type StringCore,
+  type StringStoreDoc,
+} from "@/store/create-string-store"
 
 /** Документ редактора: текст + шаблон (серіалізовний). */
-export interface RabinKarpStringSearchDoc {
-  readonly text: string
-  readonly pattern: string
-}
+export type RabinKarpStringSearchDoc = StringStoreDoc
 
-interface RabinKarpStringSearchState {
-  readonly text: string
-  readonly pattern: string
-
-  setText: (text: string) => void
-  setPattern: (pattern: string) => void
-  clear: () => void
-  loadDoc: (doc: RabinKarpStringSearchDoc) => void
-  toDoc: () => RabinKarpStringSearchDoc
-
+interface RabinKarpStringSearchState extends StringCore {
   loadMain: () => void
   loadCollision: () => void
   loadMulti: () => void
@@ -34,19 +27,13 @@ interface RabinKarpStringSearchState {
   loadRandom: (seed: number) => void
 }
 
-export const useRabinKarpStringSearchStore = create<RabinKarpStringSearchState>()((set, get) => ({
-  ...rkMainPreset(),
+export const useRabinKarpStringSearchStore =
+  create<RabinKarpStringSearchState>()((set, get) => ({
+    ...stringCore(rkMainPreset(), set, get),
 
-  setText: (text) => set({ text }),
-  setPattern: (pattern) => set({ pattern }),
-  clear: () => set({ text: "", pattern: "" }),
-
-  loadDoc: (doc) => set({ text: String(doc.text), pattern: String(doc.pattern) }),
-  toDoc: () => ({ text: get().text, pattern: get().pattern }),
-
-  loadMain: () => set(rkMainPreset()),
-  loadCollision: () => set(rkCollisionPreset()),
-  loadMulti: () => set(rkMultiPreset()),
-  loadNotFound: () => set(rkNotFoundPreset()),
-  loadRandom: (seed) => set(rkRandomPreset(seed)),
-}))
+    loadMain: () => set(rkMainPreset()),
+    loadCollision: () => set(rkCollisionPreset()),
+    loadMulti: () => set(rkMultiPreset()),
+    loadNotFound: () => set(rkNotFoundPreset()),
+    loadRandom: (seed) => set(rkRandomPreset(seed)),
+  }))

@@ -1,8 +1,5 @@
-// Стан сортування прямим вибором (Zustand). Як insertion-sort-store /
-// bubble-sort-store, НЕ будується на graphCore: редагований об'єкт — це просто
-// масив цілих чисел, без ребер, ваг чи координат. Редактор пише, плеєр і
-// навчальні віджети читають. Значення санітизуються в діях (цілі ≥0), щоб панель
-// стовпчиків і ядро лишалися коректними.
+// Стан сортування прямим вибором (Zustand). Редагований об'єкт — масив цілих ≥ 0, без
+// графа; спільні мутації — у arrayCore (create-array-store), тут лише пресети.
 
 import { create } from "zustand"
 import {
@@ -11,68 +8,20 @@ import {
   selectionWorstPreset,
   selectionRandomPreset,
 } from "@/store/selection-sort-presets"
+import { arrayCore, type ArrayCore, type ArrayStoreDoc } from "@/store/create-array-store"
 
 /** Документ редактора: масив чисел (серіалізовний). */
-export interface SelectionSortDoc {
-  readonly values: readonly number[]
-}
+export type SelectionSortDoc = ArrayStoreDoc
 
-interface SelectionSortState {
-  readonly values: readonly number[]
-
-  /** Додає число (дефолт — варіативне ціле, щоб масив одразу був «цікавим»). */
-  addValue: () => void
-  /** Оновлює значення за індексом (ціле ≥ 0). */
-  updateValue: (index: number, value: number) => void
-  removeValue: (index: number) => void
-  /** Замінює весь масив (значення санітизуються). */
-  setValues: (values: readonly number[]) => void
-  clear: () => void
-  loadDoc: (doc: SelectionSortDoc) => void
-  toDoc: () => SelectionSortDoc
-
+interface SelectionSortState extends ArrayCore {
   loadIntro: () => void
   loadBest: () => void
   loadWorst: () => void
   loadRandom: (seed: number) => void
 }
 
-/** Ціле ≥ 0 (відкидає дробову частину; нечисло → 0). */
-const clampValue = (value: number): number =>
-  Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0
-
-const sanitize = (values: readonly number[]): number[] => values.map(clampValue)
-
 export const useSelectionSortStore = create<SelectionSortState>()((set, get) => ({
-  ...selectionIntroPreset(),
-
-  addValue: () =>
-    set((s) => ({
-      // Псевдовипадкове, але детерміноване від довжини — щоб додані числа різнилися.
-      values: [...s.values, ((s.values.length * 37 + 13) % 90) + 1],
-    })),
-
-  updateValue: (index, value) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return {
-        values: s.values.map((v, i) => (i === index ? clampValue(value) : v)),
-      }
-    }),
-
-  removeValue: (index) =>
-    set((s) => {
-      if (index < 0 || index >= s.values.length) return {}
-      return { values: s.values.filter((_, i) => i !== index) }
-    }),
-
-  setValues: (values) => set({ values: sanitize(values) }),
-
-  clear: () => set({ values: [] }),
-
-  loadDoc: (doc) => set({ values: sanitize(doc.values) }),
-
-  toDoc: () => ({ values: get().values }),
+  ...arrayCore({ initial: selectionIntroPreset() }, set, get),
 
   loadIntro: () => set(selectionIntroPreset()),
   loadBest: () => set(selectionBestPreset()),
