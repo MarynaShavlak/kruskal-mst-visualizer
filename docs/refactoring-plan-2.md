@@ -149,7 +149,7 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 > спільний +184). `tsc -b` чистий · `npm test` 1126/1126 · прод-білд ОК. `EditorView` не
 > чіпали (виклик `<ArrayEditor />` без пропсів незмінний).
 
-### Фаза J — playback-«kit» (🟡; найбільший зиск) — 🔲 НЕ ПОЧАТО
+### Фаза J — playback-«kit» (🟡; найбільший зиск) — ✅ ВИКОНАНО
 
 Винести у `algorithms/shared/playback/` повторювані не-візуальні шматки плеєра (зараз
 скопійовані у 14–16 `PlaybackView`):
@@ -167,6 +167,21 @@ export const useBubbleSortStore = create<BubbleSortState>()((set, get) => ({
 **Верифікація:** патерн `PlayerShell.test`; ручна перевірка по одному плеєру з кожної
 родини (сортування / пошук у масиві / рядковий), вкл. перемикач режимів і `too-big`.
 **Коміт:** `Рефакторинг: спільний playback-kit (ResultCard/StatsBar/ModeSwitch/PhaseBadge + useAlgorithmRun)`
+
+> **Підсумок виконання.** Створено `shared/playback/`: `Stats.tsx` (`StatsBar`+`Stat`,
+> 100% копії), `ModeSwitch.tsx` (generic перемикач: опції/підпис через пропси, `wrapButtons`
+> для довгих підписів — merge/quick/shell), `use-trace-run.tsx` (`TraceRun`-тип + `useTraceRun`
+> мемо-trace + `TraceFallback` карта порожній/завеликий, слот `headerExtra` для перемикача).
+> Мігровано всі 15 не-графових плеєрів (7 сортувань + 4 пошуки в масиві + 4 рядкові).
+> **Свідоме звуження проти первісного опису:** `PhaseBadge` і `ResultCard` лишив локальними
+> — їхня спільна частина мала (бейдж — 6-рядковий span), а вміст (мапа фаз, поля результату,
+> розкладки) суто алгоритмо-специфічний; винесення дало б малий зиск за помітний churn на
+> коді без юніт-тестів. **Виняток:** `rabin-karp` має 3-тю передумову (`too-long`), несумісну
+> з `useTraceRun` → тримає власний `Run`/fallback, виніс лише `StatsBar`/`Stat`/`ModeSwitch`.
+> Графові плеєри + knapsack (інша архітектура — SinglePlayer/CompareView) не чіпав.
+> Розмітку/класи збережено. **Чисто −458 рр.** (15 плеєрів: 924 видалено / 332 додано = −592;
+> kit +134). `tsc -b` чистий · `npm test` 1126/1126 · прод-білд ОК.
+> ⚠️ Плеєри без юніт-тестів — варто колись очима глянути по одному з кожної родини.
 
 ### Фаза K — дрібні lib-утиліти (🟢; нульовий ризик, незалежна) — 🔲 НЕ ПОЧАТО
 
@@ -237,7 +252,7 @@ defaultTab, tabKeys })` сам будує lazy-імпорти за списко�
 |---|---|---|---|---|
 | H | фабрики сторів (array/search/string) | 1 | 🟢 | ✅ ВИКОНАНО (−322 рр.) |
 | I | спільний ArrayEditor + NumberField | 1 | 🟢🟡 | ✅ ВИКОНАНО (−495 рр.) |
-| J | playback-kit (ResultCard/StatsBar/ModeSwitch/PhaseBadge + useAlgorithmRun) | 1 | 🟡 | 🔲 НЕ ПОЧАТО |
+| J | playback-kit (StatsBar/Stat/ModeSwitch + useTraceRun/TraceFallback) | 1 | 🟡 | ✅ ВИКОНАНО (−458 рр.) |
 | K | lib-утиліти fmt/prng + assertTraceInvariants | 1 | 🟢 | 🔲 НЕ ПОЧАТО |
 | L | реєстр figureForSrc | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
 | M | SearchTraceBuilder + базові Frame-інтерфейси | 2 | 🟡 | 🔲 НЕ ПОЧАТО |
