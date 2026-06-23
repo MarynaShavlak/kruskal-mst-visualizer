@@ -67,9 +67,9 @@ export function PlaybackView() {
   const badge = phaseBadge(frame, t)
 
   // Жива складність (лічильник — заповнені комірки DP): орієнтир — ОМРІЯНИЙ поліном n²
-  // (якби TSP була в P); права межа — стани Хелда–Карпа (n−1)·2^(n−1) (експоненційно).
-  // Інваріант для фіксованого n; перевага над перебором n! — у вердикті (на малих n,
-  // які тут дозволені, n! ще менший за HK — тож на бар його не виносимо).
+  // (якби TSP була в P); права межа — стани Хелда–Карпа (n−1)·2^(n−2) (експоненційно).
+  // Інваріант для фіксованого n. Перебір n! на бар НЕ виносимо: перевага HK над ним
+  // АСИМПТОТИЧНА (на малих дозволених тут n розриву ще нема), тож контрастуємо з n².
   const nCities = result.names.length
   const polyRef = nCities * nCities
   const hkStates = result.cells.length
@@ -108,7 +108,7 @@ export function PlaybackView() {
               value: hkStates,
               cls: "O(n·2ⁿ)",
               name: t("play.hkLcStates"),
-              formula: `(n−1)·2^(n−1) = ${hkStates}`,
+              formula: `(n−1)·2^(n−2) = ${hkStates}`,
             }}
             verdict={done ? t("play.hkLcVerdict") : undefined}
           />

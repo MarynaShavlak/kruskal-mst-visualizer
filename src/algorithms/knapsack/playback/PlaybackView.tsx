@@ -35,10 +35,16 @@ export function PlaybackView() {
 
   const n = items.length
   // Жива складність — СПІЛЬНА шкала «операцій» для контрасту 3 режимів на тому ж
-  // інстансі: орієнтир — ДП O(n·W) = (n+1)(W+1); права межа — перебір O(2ⁿ).
-  // Жадібний (≈n) лягає крихтою; ДП ≈ орієнтир; перебір сягає правого краю.
+  // інстансі. ДП O(n·W)=(n+1)(W+1) і перебір O(2ⁿ) МІНЯЮТЬСЯ місцями залежно від
+  // інстансу (велике W → ДП дорожчий за перебір — псевдополіном!). Тож орієнтир =
+  // ДЕШЕВШИЙ із двох, найгірша = ДОРОЖЧИЙ — жоден лічильник не вийде за шкалу, мітки
+  // лишаються точними; жадібний (≈n) завжди лягає крихтою зліва.
   const dpOps = (n + 1) * (capacity + 1)
   const bruteOps = 2 ** n
+  const dpBound = { value: dpOps, cls: "O(n·W)", name: t("play.knapLcDp"), formula: `(n+1)(W+1) = ${dpOps}` }
+  const bruteBound = { value: bruteOps, cls: "O(2ⁿ)", name: t("play.knapLcBrute"), formula: `2ⁿ = ${bruteOps}` }
+  const refBound = dpOps <= bruteOps ? dpBound : bruteBound
+  const worstBound = dpOps <= bruteOps ? bruteBound : dpBound
   // Сигнатура інстансу стабільна щодо мови — курсор плеєра не скидається на UA/EN.
   const sig = `${mode}|${capacity}|${items
     .map((it) => `${it.name},${it.weight},${it.value}`)
@@ -108,18 +114,8 @@ export function PlaybackView() {
               unit={t("play.knapLcUnit")}
               actual={Math.min(frame.filled, dpOps)}
               actualLabel={t("play.knapLcActual")}
-              reference={{
-                value: dpOps,
-                cls: "O(n·W)",
-                name: t("play.knapLcDp"),
-                formula: `(n+1)(W+1) = ${dpOps}`,
-              }}
-              worst={{
-                value: bruteOps,
-                cls: "O(2ⁿ)",
-                name: t("play.knapLcBrute"),
-                formula: `2ⁿ = ${bruteOps}`,
-              }}
+              reference={refBound}
+              worst={worstBound}
               verdict={done ? t("play.knapLcVerdictDp") : undefined}
             />
           </>
@@ -162,18 +158,8 @@ export function PlaybackView() {
             unit={t("play.knapLcUnit")}
             actual={frame.step !== null ? Math.min(frame.step + 1, n) : n}
             actualLabel={t("play.knapLcActual")}
-            reference={{
-              value: dpOps,
-              cls: "O(n·W)",
-              name: t("play.knapLcDp"),
-              formula: `(n+1)(W+1) = ${dpOps}`,
-            }}
-            worst={{
-              value: bruteOps,
-              cls: "O(2ⁿ)",
-              name: t("play.knapLcBrute"),
-              formula: `2ⁿ = ${bruteOps}`,
-            }}
+            reference={refBound}
+            worst={worstBound}
             verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictGreedy") : undefined}
           />
         }
@@ -222,18 +208,8 @@ export function PlaybackView() {
                   : 0
             }
             actualLabel={t("play.knapLcActual")}
-            reference={{
-              value: dpOps,
-              cls: "O(n·W)",
-              name: t("play.knapLcDp"),
-              formula: `(n+1)(W+1) = ${dpOps}`,
-            }}
-            worst={{
-              value: bruteOps,
-              cls: "O(2ⁿ)",
-              name: t("play.knapLcBrute"),
-              formula: `2ⁿ = ${bruteOps}`,
-            }}
+            reference={refBound}
+            worst={worstBound}
             verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictBrute") : undefined}
           />
         </>

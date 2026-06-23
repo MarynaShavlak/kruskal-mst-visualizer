@@ -60,8 +60,11 @@ export function PlaybackView() {
   const vCount = result.order.length
   const layerCost = vCount * vCount
   const cubeCost = layerCost * vCount
-  const attemptsSoFar = (frame.k === null ? vCount : frame.k) * layerCost
   const atEnd = index === trace.frames.length - 1
+  // frame.k === null і на СТАРТІ (ще не обрано k), і на фініші. Розрізняємо: старт → 0
+  // спроб, фініш → повний куб V³; під час шару k завершено k·V² спроб.
+  const attemptsSoFar =
+    frame.k === null ? (atEnd ? cubeCost : 0) : frame.k * layerCost
 
   return (
     <PlayerShell
