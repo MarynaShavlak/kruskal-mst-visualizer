@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { QuickTreePanel } from "@/algorithms/quick-sort/playback/QuickTreePanel"
@@ -74,6 +75,13 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const node = trace.tree.nodes[frame.currentId]
 
+  // Межі складності В ОДИНИЦЯХ лічильника comparisons (= Σ розмірів не-базових
+  // вузлів): найгірша = вироджене дерево n(n+1)/2−1 (рівно стільки на відсортованому
+  // вході з опорним-першим/останнім); орієнтир O(n·log n) = ⌈n·log₂n⌉.
+  const n = trace.result.size
+  const worstCmp = Math.max(0, (n * (n + 1)) / 2 - 1)
+  const refCmp = n >= 2 ? Math.ceil(n * Math.log2(n)) : 0
+
   return (
     <PlayerShell
       player={player}
@@ -81,12 +89,42 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.qsStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.qsStatCalls")} value={String(frame.calls)} />
-          <Stat label={t("play.qsStatDepth")} value={String(trace.result.depth)} />
-          <Stat label={t("play.qsStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.qsStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.qsStatCalls")} value={String(frame.calls)} />
+            <Stat label={t("play.qsStatDepth")} value={String(trace.result.depth)} />
+            <Stat label={t("play.qsStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.qsLcTitle")}
+            n={n}
+            unit={t("play.qsLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.qsLcActual")}
+            reference={{
+              value: refCmp,
+              cls: "O(n·log n)",
+              name: t("play.qsLcTypical"),
+              formula: `⌈n·log₂n⌉ = ${refCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.qsLcWorst"),
+              formula: `n(n+1)/2 − 1 = ${worstCmp}`,
+            }}
+            verdict={
+              frame.phase === "done" ? (
+                <LcVerdict
+                  actual={trace.result.comparisons}
+                  reference={refCmp}
+                  worst={worstCmp}
+                />
+              ) : undefined
+            }
+          />
+        </>
       }
       panels={
         <>
@@ -121,6 +159,26 @@ export function PlaybackView() {
 }
 
 // — дрібні презентаційні шматки ----------------------------------------------
+
+/** Вердикт «живої складності» при завершенні: куди лягла фактична ціна. */
+function LcVerdict({
+  actual,
+  reference,
+  worst,
+}: {
+  actual: number
+  reference: number
+  worst: number
+}) {
+  const t = useT()
+  const msg =
+    actual <= reference * 1.05
+      ? t("play.qsLcVerdictGood")
+      : actual >= worst * 0.95
+        ? t("play.qsLcVerdictBad")
+        : t("play.qsLcVerdictMid")
+  return <span>{msg}</span>
+}
 
 function PhaseBadge({ phase }: { phase: QsPhase }) {
   const t = useT()

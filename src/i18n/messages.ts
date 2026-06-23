@@ -808,6 +808,14 @@ const ua = {
   "play.qsInputLabel": "Вхід",
   "play.qsSortedLabel": "Відсортовано",
   "play.qsResultCounts": "{comparisons} порівнянь · {calls} викликів · глибина {depth}",
+  "play.qsLcTitle": "Жива складність",
+  "play.qsLcActual": "Фактично:",
+  "play.qsLcUnit": "порівнянь",
+  "play.qsLcTypical": "типова",
+  "play.qsLcWorst": "найгірша",
+  "play.qsLcVerdictGood": "≈ O(n·log n) — збалансоване дерево, ефективно",
+  "play.qsLcVerdictMid": "між O(n·log n) і O(n²)",
+  "play.qsLcVerdictBad": "→ O(n²) — вироджене дерево (найгірший випадок)",
   "play.nQsPartition":
     "Рівень {level}, {call} на {arr}. Опорний pivot = {pivot}. Поділ: left={left} (<), middle={middle} (=), right={right} (>). Далі рекурсія на left і right.",
   "play.nQsBase":
@@ -2726,6 +2734,14 @@ const en: Record<MessageKey, string> = {
   "play.qsInputLabel": "Input",
   "play.qsSortedLabel": "Sorted",
   "play.qsResultCounts": "{comparisons} comparisons · {calls} calls · depth {depth}",
+  "play.qsLcTitle": "Live complexity",
+  "play.qsLcActual": "Actual:",
+  "play.qsLcUnit": "comparisons",
+  "play.qsLcTypical": "typical",
+  "play.qsLcWorst": "worst",
+  "play.qsLcVerdictGood": "≈ O(n·log n) — balanced tree, efficient",
+  "play.qsLcVerdictMid": "between O(n·log n) and O(n²)",
+  "play.qsLcVerdictBad": "→ O(n²) — degenerate tree (worst case)",
   "play.nQsPartition":
     "Level {level}, {call} on {arr}. Pivot = {pivot}. Split: left={left} (<), middle={middle} (=), right={right} (>). Then recurse on left and right.",
   "play.nQsBase":
