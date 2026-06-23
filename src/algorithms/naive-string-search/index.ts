@@ -9,6 +9,7 @@ export const naiveStringSearch = createAlgorithm({
     ua: "Перший алгоритм пошуку В РЯДКАХ: ковзаємо шаблоном уздовж тексту й порівнюємо символи зліва направо; на першій розбіжності — зсув на 1 і початок спочатку. Без передобробки. «Ціна» — порівняння символів: найкращий ≈ N−M+1, найгірший (N−M+1)·M. «Марна робота» (повторне звіряння префікса) — місток до KMP.",
     en: "The first STRING-matching algorithm: slide the pattern along the text and compare characters left-to-right; on the first mismatch, shift by one and restart. No preprocessing. The cost is character comparisons: best ≈ N−M+1, worst (N−M+1)·M. The “wasted work” (re-comparing the prefix) is the bridge to KMP.",
   },
+  family: "string-search",
   category: {
     ua: "Пошук у рядку · наївний",
     en: "String search · naive",

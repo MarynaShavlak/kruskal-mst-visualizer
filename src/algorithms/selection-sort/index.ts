@@ -9,6 +9,7 @@ export const selectionSort = createAlgorithm({
     ua: "На кожному проході скануємо весь несортований суфікс, знаходимо мінімум і одним обміном ставимо його на межу префікса. Наочно про НЕадаптивність, мінімум обмінів і «пастку» зі стабільністю.",
     en: "Each pass scans the whole unsorted suffix, finds the minimum and puts it on the prefix boundary with a single swap. A clear lens on non-adaptivity, minimal swaps and the stability trap.",
   },
+  family: "sorting",
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

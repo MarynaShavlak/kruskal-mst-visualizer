@@ -9,6 +9,7 @@ export const radixSort = createAlgorithm({
     ua: "Перше непорівняльне сортування: не «що більше?», а самі ЦИФРИ. Розкладаємо числа по 10 кошиках (0–9) за цифрою розряду й збираємо — від одиниць до старших (LSD). Стабільне сортування підрахунком — лінчпін. Лінійний час O(d·(n+k)).",
     en: "The first non-comparison sort: not «which is larger?» but the DIGITS themselves. Distribute numbers into 10 buckets (0–9) by the current digit and gather — from units up (LSD). Stable counting sort is the linchpin. Linear time O(d·(n+k)).",
   },
+  family: "sorting",
   category: {
     ua: "Сортування · непорівняльне",
     en: "Sorting · non-comparison",

@@ -9,6 +9,7 @@ export const bubbleSort = createAlgorithm({
     ua: "Найпростіший метод упорядкування: порівнюй сусідів і міняй місцями. Наочно про інваріант проходу, стабільність, ранню зупинку й чому O(n²) непрактичний.",
     en: "The simplest sorting method: compare neighbours and swap. A clear lens on the pass invariant, stability, early exit and why O(n²) is impractical.",
   },
+  family: "sorting",
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

@@ -9,6 +9,7 @@ export const interpolationSearch = createAlgorithm({
     ua: "Розумна проба: замість середини вікна обчислюємо позицію ФОРМУЛОЮ ІНТЕРПОЛЯЦІЇ — «вгадуємо» за значенням ключа, як шукають слово у словнику. На РІВНОМІРНИХ даних O(log log n) (часто 1–2 проби незалежно від n); на скупчених деградує до O(n). Передумова — масив відсортований.",
     en: "A smart probe: instead of the window's middle, compute the position by the INTERPOLATION FORMULA — guess it from the key's value, the way you look up a word in a dictionary. On UNIFORM data O(log log n) (often 1–2 probes regardless of n); on clustered data it degrades to O(n). Precondition — the array must be sorted.",
   },
+  family: "search",
   category: {
     ua: "Пошук · інтерполяція",
     en: "Search · interpolation",

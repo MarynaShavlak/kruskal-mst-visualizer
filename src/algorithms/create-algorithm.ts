@@ -1,5 +1,10 @@
 import { lazy, type ComponentType } from "react"
-import type { Algorithm, AlgorithmStatus, Localized } from "@/algorithms/types"
+import type {
+  Algorithm,
+  AlgorithmFamily,
+  AlgorithmStatus,
+  Localized,
+} from "@/algorithms/types"
 
 // Фабрика опису алгоритму: прибирає повторювану lazy-обгортку екранів із кожного
 // `<id>/index.ts`. Кожна вкладка задається лише лінивим import свого View-модуля —
@@ -23,6 +28,7 @@ export interface AlgorithmConfig {
   readonly name: Localized
   readonly shortName: Localized
   readonly tagline: Localized
+  readonly family: AlgorithmFamily
   readonly category: Localized
   readonly icon: ComponentType<{ className?: string }>
   /** Вкладки в порядку показу: ключ → лінивий import свого View-модуля. */
@@ -49,6 +55,7 @@ export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
     name: cfg.name,
     shortName: cfg.shortName,
     tagline: cfg.tagline,
+    family: cfg.family,
     category: cfg.category,
     icon: cfg.icon,
     status: cfg.status ?? "ready",

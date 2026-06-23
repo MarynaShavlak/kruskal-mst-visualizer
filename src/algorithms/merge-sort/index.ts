@@ -9,6 +9,7 @@ export const mergeSort = createAlgorithm({
     ua: "«Розділяй і володарюй»: ділимо масив навпіл, рекурсивно сортуємо половини й зливаємо їх двома вказівниками. Дерево рекурсії завжди збалансоване → гарантований O(n·log n), стабільне; низхідна проти вихідної (bottom-up) — місток до TimSort.",
     en: "Divide and conquer: split the array in half, sort the halves recursively and merge them with two pointers. The recursion tree is always balanced → guaranteed O(n·log n), stable; top-down vs bottom-up — a bridge to TimSort.",
   },
+  family: "sorting",
   category: {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",

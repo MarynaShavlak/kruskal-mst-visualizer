@@ -9,6 +9,7 @@ export const shellSort = createAlgorithm({
     ua: "Вставки, але «через крок»: порівнюємо й зсуваємо елементи, віддалені на gap. Великий gap прибирає безлад здалеку, далі gap зменшується до 1. Підпослідовності, послідовності проміжків (n//2 / Кнут / Ciura) і нестабільність.",
     en: "Insertion sort «with a step»: compare and shift elements gap apart. A large gap clears far-away disorder, then gap shrinks to 1. Subsequences, gap sequences (n//2 / Knuth / Ciura) and instability.",
   },
+  family: "sorting",
   category: {
     ua: "Сортування · субквадратичне",
     en: "Sorting · sub-quadratic",

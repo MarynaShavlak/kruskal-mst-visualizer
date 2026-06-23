@@ -9,6 +9,7 @@ export const heldKarp = createAlgorithm({
     ua: "Найкоротший замкнений маршрут комівояжера: динамічне програмування за підмножинами (бітова маска) замість перебору всіх (n−1)! турів.",
     en: "Shortest closed salesman route: dynamic programming over subsets (bitmask) instead of enumerating all (n−1)! tours.",
   },
+  family: "dp",
   category: {
     ua: "Динамічне програмування · Комівояжер",
     en: "Dynamic programming · TSP",

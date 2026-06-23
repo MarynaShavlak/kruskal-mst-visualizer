@@ -1,4 +1,8 @@
-import type { Algorithm } from "@/algorithms/types"
+import type {
+  Algorithm,
+  AlgorithmFamily,
+  Localized,
+} from "@/algorithms/types"
 import { kruskal } from "@/algorithms/kruskal"
 import { prim } from "@/algorithms/prim"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
@@ -48,6 +52,77 @@ export const ALGORITHMS: readonly Algorithm[] = [
   boyerMooreStringSearch,
   rabinKarpStringSearch,
 ]
+
+/** Опис родини для каталогу: підпис + один рядок «про що вона». */
+export interface AlgorithmFamilyInfo {
+  readonly id: AlgorithmFamily
+  readonly label: Localized
+  readonly blurb: Localized
+}
+
+/**
+ * Родини в порядку показу на стартовій сторінці (верхній рівень групування).
+ * Порядок алгоритмів УСЕРЕДИНІ родини бере `ALGORITHMS` (навчальна послідовність).
+ */
+export const FAMILIES: readonly AlgorithmFamilyInfo[] = [
+  {
+    id: "graphs",
+    label: { ua: "Графи", en: "Graphs" },
+    blurb: {
+      ua: "Остовні дерева й найкоротші шляхи на зважених графах.",
+      en: "Spanning trees and shortest paths on weighted graphs.",
+    },
+  },
+  {
+    id: "dp",
+    label: { ua: "Динамічне програмування", en: "Dynamic programming" },
+    blurb: {
+      ua: "Оптимум через підзадачі: рюкзак і комівояжер.",
+      en: "Optimum via subproblems: knapsack and the travelling salesman.",
+    },
+  },
+  {
+    id: "sorting",
+    label: { ua: "Сортування", en: "Sorting" },
+    blurb: {
+      ua: "Упорядкування масиву: від O(n²) до O(n·log n) і непорівняльного.",
+      en: "Ordering an array: from O(n²) to O(n·log n) and non-comparison.",
+    },
+  },
+  {
+    id: "search",
+    label: { ua: "Пошук", en: "Search" },
+    blurb: {
+      ua: "Знайти елемент у масиві: від лінійного до інтерполяційного.",
+      en: "Find an element in an array: from linear to interpolation.",
+    },
+  },
+  {
+    id: "string-search",
+    label: { ua: "Пошук у рядку", en: "String search" },
+    blurb: {
+      ua: "Знайти шаблон у тексті: від наївного до Рабіна–Карпа.",
+      en: "Find a pattern in text: from naive to Rabin–Karp.",
+    },
+  },
+]
+
+/** Група каталогу: опис родини + її алгоритми в порядку реєстру. */
+export interface AlgorithmGroup {
+  readonly family: AlgorithmFamilyInfo
+  readonly items: readonly Algorithm[]
+}
+
+/**
+ * Алгоритми, згруповані за родиною — у порядку `FAMILIES`, а всередині — у порядку
+ * `ALGORITHMS`. Порожні родини пропускаються. Споживає каталог на стартовій сторінці.
+ */
+export function algorithmsByFamily(): readonly AlgorithmGroup[] {
+  return FAMILIES.map((family) => ({
+    family,
+    items: ALGORITHMS.filter((a) => a.family === family.id),
+  })).filter((g) => g.items.length > 0)
+}
 
 export function getAlgorithm(
   id: string | null | undefined,

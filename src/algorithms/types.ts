@@ -3,6 +3,17 @@ import type { ComponentType, LazyExoticComponent } from "react"
 /** Стан готовності алгоритму на платформі. */
 export type AlgorithmStatus = "ready" | "soon"
 
+/**
+ * Родина алгоритму — верхній рівень групування каталогу. Підпис і порядок родин
+ * описує `FAMILIES` у `registry.ts`; поле `category` лишається підтипом усередині.
+ */
+export type AlgorithmFamily =
+  | "graphs"
+  | "dp"
+  | "sorting"
+  | "search"
+  | "string-search"
+
 /** Двомовний рядок (UA/EN). Споживач бере `value[lang]` із lang-store. */
 export interface Localized {
   readonly ua: string
@@ -33,7 +44,9 @@ export interface Algorithm {
   readonly shortName: Localized
   /** Один рядок опису для картки каталогу. */
   readonly tagline: Localized
-  /** Категорія, напр. «Графи · Остовні дерева». */
+  /** Родина — верхній рівень групування каталогу (секція + чип-фільтр). */
+  readonly family: AlgorithmFamily
+  /** Категорія (підтип усередині родини), напр. «Графи · Остовні дерева». */
   readonly category: Localized
   readonly status: AlgorithmStatus
   /** Іконка (lucide-react). */

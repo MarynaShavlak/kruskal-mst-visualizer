@@ -9,6 +9,7 @@ export const knapsack = createAlgorithm({
     ua: "Максимальна цінність за обмеженої місткості: динамічне програмування (таблиця K[i][w]) проти повного перебору 2ⁿ і жадібного, що не дає оптимуму для 0/1.",
     en: "Maximum value under a capacity limit: dynamic programming (table K[i][w]) vs brute-force 2ⁿ and greedy, which misses the optimum for 0/1.",
   },
+  family: "dp",
   category: {
     ua: "Динамічне програмування · Рюкзак",
     en: "Dynamic programming · Knapsack",

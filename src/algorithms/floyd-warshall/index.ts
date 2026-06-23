@@ -9,6 +9,7 @@ export const floydWarshall = createAlgorithm({
     ua: "Найкоротші шляхи між усіма парами вершин: динамічне програмування на матриці відстаней.",
     en: "Shortest paths between all pairs of vertices: dynamic programming on a distance matrix.",
   },
+  family: "graphs",
   category: { ua: "Графи · Найкоротші шляхи", en: "Graphs · Shortest paths" },
   icon: Grid3x3,
   views: {

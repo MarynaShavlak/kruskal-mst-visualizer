@@ -9,6 +9,7 @@ export const linearSearch = createAlgorithm({
     ua: "Перший алгоритм ПОШУКУ серії: послідовно перевіряємо кожен елемент зліва направо, доки не знайдемо x (повертаємо індекс) або не дійдемо до кінця (-1). Масив не змінюється і не потребує впорядкованості. «Ціна» — кількість перевірок: O(1) у найкращому, O(n) у гіршому.",
     en: "The series' first SEARCH algorithm: check each element left to right until x is found (return its index) or the end is reached (-1). The array is never modified and needs no ordering. The cost is the number of checks: O(1) best case, O(n) worst.",
   },
+  family: "search",
   category: {
     ua: "Пошук · послідовний",
     en: "Search · sequential",

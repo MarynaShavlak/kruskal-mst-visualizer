@@ -9,6 +9,7 @@ export const binarySearch = createAlgorithm({
     ua: "Винагорода за сортування: на ВІДСОРТОВАНОМУ масиві дивимось у середину вікна [low..high] і відкидаємо половину, у якій шуканого точно немає. Щокроку вікно звужується вдвічі → O(log n) замість O(n). Передумова — масив відсортований.",
     en: "The reward for sorting: on a SORTED array look at the middle of the window [low..high] and drop the half that can't contain the target. The window halves each step → O(log n) instead of O(n). Precondition — the array must be sorted.",
   },
+  family: "search",
   category: {
     ua: "Пошук · поділ навпіл",
     en: "Search · halving",

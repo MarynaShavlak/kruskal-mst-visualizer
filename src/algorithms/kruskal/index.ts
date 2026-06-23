@@ -9,6 +9,7 @@ export const kruskal = createAlgorithm({
     ua: "Мінімальне остовне дерево: жадібно додаємо найлегші ребра, відсікаючи цикли через Union-Find.",
     en: "Minimum spanning tree: greedily add the lightest edges, cutting cycles via Union-Find.",
   },
+  family: "graphs",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Waypoints,
   views: {

@@ -9,6 +9,7 @@ export const prim = createAlgorithm({
     ua: "Мінімальне остовне дерево: дерево росте з однієї вершини, щокроку приєднуючи найдешевше ребро через розріз (черга з пріоритетами).",
     en: "Minimum spanning tree: the tree grows from one vertex, each step attaching the cheapest edge across the cut (a priority queue).",
   },
+  family: "graphs",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Sprout,
   views: {
