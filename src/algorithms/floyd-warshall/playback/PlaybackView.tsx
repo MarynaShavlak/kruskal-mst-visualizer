@@ -11,6 +11,7 @@ import { useDirectedGraphStore } from "@/store/directed-graph-store"
 import { useLangStore } from "@/store/lang-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
 import { GraphView } from "@/algorithms/floyd-warshall/playback/GraphView"
@@ -53,6 +54,15 @@ export function PlaybackView() {
 
   const kLabel = frame.k !== null ? result.order[frame.k] : "—"
 
+  // Жива складність (лічильник — спроби релаксації (i,j,k)): Флойд ЗАВЖДИ робить V³ —
+  // потрійний цикл без раннього виходу, незалежно від ребер. Орієнтир — ОДИН шар k
+  // (прохід матриці V×V = V²); права межа — куб V³ (усі V шарів). Лічимо за шарами.
+  const vCount = result.order.length
+  const layerCost = vCount * vCount
+  const cubeCost = layerCost * vCount
+  const attemptsSoFar = (frame.k === null ? vCount : frame.k) * layerCost
+  const atEnd = index === trace.frames.length - 1
+
   return (
     <PlayerShell
       player={player}
@@ -65,20 +75,49 @@ export function PlaybackView() {
         )
       }
       statsBar={
-        <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-          <span>
-            <b>{t("play.intermediateK")}</b>{" "}
-            <span className="tabular-nums">{kLabel}</span>
-          </span>
-          <span>
-            <b>{t("play.relaxTotal")}</b>{" "}
-            <span className="tabular-nums">{relaxations.length}</span>
-          </span>
-          <span>
-            <b>{t("play.improvedThisK")}</b>{" "}
-            <span className="tabular-nums">{frame.improvedThisK.length}</span>
-          </span>
-        </div>
+        <>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
+            <span>
+              <b>{t("play.intermediateK")}</b>{" "}
+              <span className="tabular-nums">{kLabel}</span>
+            </span>
+            <span>
+              <b>{t("play.relaxTotal")}</b>{" "}
+              <span className="tabular-nums">{relaxations.length}</span>
+            </span>
+            <span>
+              <b>{t("play.improvedThisK")}</b>{" "}
+              <span className="tabular-nums">{frame.improvedThisK.length}</span>
+            </span>
+          </div>
+          <LiveComplexity
+            title={t("play.fwLcTitle")}
+            n={vCount}
+            unit={t("play.fwLcUnit")}
+            actual={attemptsSoFar}
+            actualLabel={t("play.fwLcActual")}
+            reference={{
+              value: layerCost,
+              cls: "O(V²)",
+              name: t("play.fwLcLayer"),
+              formula: `V² = ${layerCost}`,
+            }}
+            worst={{
+              value: cubeCost,
+              cls: "O(V³)",
+              name: t("play.fwLcCube"),
+              formula: `V³ = ${cubeCost}`,
+            }}
+            verdict={
+              atEnd
+                ? t("play.fwLcVerdict", {
+                    improved: result.improvedCount,
+                    total: cubeCost,
+                  })
+                : undefined
+            }
+          />
+        </>
       }
       panels={
         <>

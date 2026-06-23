@@ -6,6 +6,7 @@ import { knapsackCells } from "@/lib/knapsack"
 import { useKnapsackStore } from "@/store/knapsack-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { DpGridPanel } from "@/algorithms/knapsack/playback/DpGridPanel"
 import { ItemsPanel } from "@/algorithms/knapsack/playback/ItemsPanel"
@@ -33,6 +34,11 @@ export function PlaybackView() {
   const [mode, setMode] = useState<Mode>("dp")
 
   const n = items.length
+  // Жива складність — СПІЛЬНА шкала «операцій» для контрасту 3 режимів на тому ж
+  // інстансі: орієнтир — ДП O(n·W) = (n+1)(W+1); права межа — перебір O(2ⁿ).
+  // Жадібний (≈n) лягає крихтою; ДП ≈ орієнтир; перебір сягає правого краю.
+  const dpOps = (n + 1) * (capacity + 1)
+  const bruteOps = 2 ** n
   // Сигнатура інстансу стабільна щодо мови — курсор плеєра не скидається на UA/EN.
   const sig = `${mode}|${capacity}|${items
     .map((it) => `${it.name},${it.weight},${it.value}`)
@@ -90,11 +96,33 @@ export function PlaybackView() {
         caption={frame.caption}
         captionBadge={<DpBadge phase={frame.phase} />}
         statsBar={
-          <StatsBar>
-            <Stat label={t("play.knapStatFilled")} value={`${Math.min(frame.filled, run.result.operations)}/${run.result.operations}`} />
-            <Stat label={t("play.knapStatItems")} value={String(run.result.weights.length)} />
-            <Stat label={t("play.knapStatCapacity")} value={String(run.result.capacity)} />
-          </StatsBar>
+          <>
+            <StatsBar>
+              <Stat label={t("play.knapStatFilled")} value={`${Math.min(frame.filled, run.result.operations)}/${run.result.operations}`} />
+              <Stat label={t("play.knapStatItems")} value={String(run.result.weights.length)} />
+              <Stat label={t("play.knapStatCapacity")} value={String(run.result.capacity)} />
+            </StatsBar>
+            <LiveComplexity
+              title={t("play.knapLcTitle")}
+              n={n}
+              unit={t("play.knapLcUnit")}
+              actual={Math.min(frame.filled, dpOps)}
+              actualLabel={t("play.knapLcActual")}
+              reference={{
+                value: dpOps,
+                cls: "O(n·W)",
+                name: t("play.knapLcDp"),
+                formula: `(n+1)(W+1) = ${dpOps}`,
+              }}
+              worst={{
+                value: bruteOps,
+                cls: "O(2ⁿ)",
+                name: t("play.knapLcBrute"),
+                formula: `2ⁿ = ${bruteOps}`,
+              }}
+              verdict={done ? t("play.knapLcVerdictDp") : undefined}
+            />
+          </>
         }
         panels={
           <>
@@ -127,6 +155,28 @@ export function PlaybackView() {
         player={player}
         headerExtra={switcher}
         caption={frame.caption}
+        statsBar={
+          <LiveComplexity
+            title={t("play.knapLcTitle")}
+            n={n}
+            unit={t("play.knapLcUnit")}
+            actual={frame.step !== null ? Math.min(frame.step + 1, n) : n}
+            actualLabel={t("play.knapLcActual")}
+            reference={{
+              value: dpOps,
+              cls: "O(n·W)",
+              name: t("play.knapLcDp"),
+              formula: `(n+1)(W+1) = ${dpOps}`,
+            }}
+            worst={{
+              value: bruteOps,
+              cls: "O(2ⁿ)",
+              name: t("play.knapLcBrute"),
+              formula: `2ⁿ = ${bruteOps}`,
+            }}
+            verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictGreedy") : undefined}
+          />
+        }
         panels={
           <>
             <GreedyPanel result={run.result} frame={frame} className="min-h-[320px]" />
@@ -152,13 +202,41 @@ export function PlaybackView() {
       headerExtra={switcher}
       caption={frame.caption}
       statsBar={
-        <StatsBar>
-          <Stat
-            label={t("play.knapStatChecked")}
-            value={`${frame.index !== null ? frame.index + 1 : frame.sub.kind === "done" ? run.result.subsets.length : 0}/${run.result.subsets.length}`}
+        <>
+          <StatsBar>
+            <Stat
+              label={t("play.knapStatChecked")}
+              value={`${frame.index !== null ? frame.index + 1 : frame.sub.kind === "done" ? run.result.subsets.length : 0}/${run.result.subsets.length}`}
+            />
+            <Stat label={t("play.knapStatBest")} value={String(frame.bestValue)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.knapLcTitle")}
+            n={n}
+            unit={t("play.knapLcUnit")}
+            actual={
+              frame.index !== null
+                ? frame.index + 1
+                : frame.sub.kind === "done"
+                  ? run.result.subsets.length
+                  : 0
+            }
+            actualLabel={t("play.knapLcActual")}
+            reference={{
+              value: dpOps,
+              cls: "O(n·W)",
+              name: t("play.knapLcDp"),
+              formula: `(n+1)(W+1) = ${dpOps}`,
+            }}
+            worst={{
+              value: bruteOps,
+              cls: "O(2ⁿ)",
+              name: t("play.knapLcBrute"),
+              formula: `2ⁿ = ${bruteOps}`,
+            }}
+            verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictBrute") : undefined}
           />
-          <Stat label={t("play.knapStatBest")} value={String(frame.bestValue)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

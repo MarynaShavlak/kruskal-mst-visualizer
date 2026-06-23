@@ -7,6 +7,7 @@ import { usePrimGraphStore } from "@/store/prim-graph-store"
 import { useLangStore } from "@/store/lang-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
 import { GraphView } from "@/algorithms/prim/playback/GraphView"
@@ -31,6 +32,14 @@ export function PlaybackView() {
   const index = Math.min(player.index, trace.frames.length - 1)
   const frame = trace.frames[index]
 
+  // Жива складність (лічильник — зняття з купи ≈ опрацьовані ребра): орієнтир —
+  // РОЗРІДЖЕНИЙ граф (E ≈ V−1, дерево), права межа — ЩІЛЬНИЙ (повний граф,
+  // E ≈ V(V−1)/2). Кожне зняття коштує ще й O(log V) у купі → разом O(E·log V).
+  const vCount = result.vertexCount
+  const refPops = Math.max(1, vCount - 1)
+  const worstPops = Math.max(refPops, (vCount * (vCount - 1)) / 2)
+  const atEnd = index === trace.frames.length - 1
+
   if (graph.vertices.length === 0) {
     return (
       <Card>
@@ -46,22 +55,52 @@ export function PlaybackView() {
       player={player}
       caption={frame.caption}
       statsBar={
-        <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-          <span>
-            <b>{t("play.primTreeSize")}</b>{" "}
-            <span className="tabular-nums">
-              {frame.visited.length}/{result.vertexCount}
+        <>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
+            <span>
+              <b>{t("play.primTreeSize")}</b>{" "}
+              <span className="tabular-nums">
+                {frame.visited.length}/{result.vertexCount}
+              </span>
             </span>
-          </span>
-          <span>
-            <b>{t("play.primQueueSize")}</b>{" "}
-            <span className="tabular-nums">{frame.queue.length}</span>
-          </span>
-          <span>
-            <b>{t("play.primPoppedCount")}</b>{" "}
-            <span className="tabular-nums">{frame.step}</span>
-          </span>
-        </div>
+            <span>
+              <b>{t("play.primQueueSize")}</b>{" "}
+              <span className="tabular-nums">{frame.queue.length}</span>
+            </span>
+            <span>
+              <b>{t("play.primPoppedCount")}</b>{" "}
+              <span className="tabular-nums">{frame.step}</span>
+            </span>
+          </div>
+          <LiveComplexity
+            title={t("play.primLcTitle")}
+            n={vCount}
+            unit={t("play.primLcUnit")}
+            actual={frame.step}
+            actualLabel={t("play.primLcActual")}
+            reference={{
+              value: refPops,
+              cls: "O(V)",
+              name: t("play.primLcSparse"),
+              formula: `V−1 = ${refPops}`,
+            }}
+            worst={{
+              value: worstPops,
+              cls: "O(V²)",
+              name: t("play.primLcDense"),
+              formula: `V(V−1)/2 = ${worstPops}`,
+            }}
+            verdict={
+              atEnd
+                ? frame.step <= refPops * 2
+                  ? t("play.primLcVerdictGood")
+                  : frame.step >= worstPops * 0.7
+                    ? t("play.primLcVerdictBad")
+                    : t("play.primLcVerdictMid")
+                : undefined
+            }
+          />
+        </>
       }
       panels={
         <>

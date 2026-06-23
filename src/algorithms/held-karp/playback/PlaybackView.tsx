@@ -4,6 +4,7 @@ import { buildHeldKarpTrace, type HkFrame, type HkResult } from "@/lib/heldKarpT
 import { useTspStore } from "@/store/tsp-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import {
   cellCommitFrames,
@@ -65,6 +66,15 @@ export function PlaybackView() {
   const result = run.result
   const badge = phaseBadge(frame, t)
 
+  // Жива складність (лічильник — заповнені комірки DP): орієнтир — ОМРІЯНИЙ поліном n²
+  // (якби TSP була в P); права межа — стани Хелда–Карпа (n−1)·2^(n−1) (експоненційно).
+  // Інваріант для фіксованого n; перевага над перебором n! — у вердикті (на малих n,
+  // які тут дозволені, n! ще менший за HK — тож на бар його не виносимо).
+  const nCities = result.names.length
+  const polyRef = nCities * nCities
+  const hkStates = result.cells.length
+  const done = frame.phase === "done"
+
   return (
     <PlayerShell
       player={player}
@@ -79,7 +89,31 @@ export function PlaybackView() {
           {badge.text}
         </span>
       }
-      statsBar={<StatsBar frame={frame} result={result} />}
+      statsBar={
+        <>
+          <StatsBar frame={frame} result={result} />
+          <LiveComplexity
+            title={t("play.hkLcTitle")}
+            n={nCities}
+            unit={t("play.hkLcUnit")}
+            actual={frame.committedCount}
+            actualLabel={t("play.hkLcActual")}
+            reference={{
+              value: polyRef,
+              cls: "O(n²)",
+              name: t("play.hkLcPoly"),
+              formula: `n² = ${polyRef}`,
+            }}
+            worst={{
+              value: hkStates,
+              cls: "O(n·2ⁿ)",
+              name: t("play.hkLcStates"),
+              formula: `(n−1)·2^(n−1) = ${hkStates}`,
+            }}
+            verdict={done ? t("play.hkLcVerdict") : undefined}
+          />
+        </>
+      }
       panels={
         <>
           <TourMapPanel

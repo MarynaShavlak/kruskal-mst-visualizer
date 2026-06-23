@@ -5,6 +5,7 @@ import type { Frame, KruskalRun, MstResult } from "@/lib/trace"
 import type { XY } from "@/store/graph-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
@@ -44,6 +45,14 @@ export function SinglePlayer({
     return map
   }, [trace])
 
+  // Жива складність DSU (лічильник — find-кроки): орієнтир — ОПТИМІЗОВАНИЙ DSU
+  // (стиснення шляху + ранг роблять find майже O(1) → ~2 finds на ребро ≈ 2·E);
+  // права межа — вироджений ЛАНЦЮГ без оптимізацій (find іде до V−1) → 2·E·(V−1).
+  const vCount = graph.vertices.length
+  const eCount = graph.edges.length
+  const refSteps = Math.max(1, 2 * eCount)
+  const worstSteps = Math.max(refSteps, 2 * eCount * Math.max(1, vCount - 1))
+
   return (
     <PlayerShell
       player={player}
@@ -51,20 +60,50 @@ export function SinglePlayer({
       headerExtra={headerExtra}
       statsBar={
         frame.dsuStats && (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
-            <span>
-              <b>{t("play.findSteps")}</b>{" "}
-              <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
-            </span>
-            <span>
-              <b>{t("play.unions")}</b>{" "}
-              <span className="tabular-nums">{frame.dsuStats.unions}</span>
-            </span>
-            <span>
-              <b>{t("play.compressions")}</b>{" "}
-              <span className="tabular-nums">{frame.dsuStats.compressions}</span>
-            </span>
-          </div>
+          <>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md border bg-card px-3 py-2 text-xs">
+              <span>
+                <b>{t("play.findSteps")}</b>{" "}
+                <span className="tabular-nums">{frame.dsuStats.findSteps}</span>
+              </span>
+              <span>
+                <b>{t("play.unions")}</b>{" "}
+                <span className="tabular-nums">{frame.dsuStats.unions}</span>
+              </span>
+              <span>
+                <b>{t("play.compressions")}</b>{" "}
+                <span className="tabular-nums">{frame.dsuStats.compressions}</span>
+              </span>
+            </div>
+            <LiveComplexity
+              title={t("play.krLcTitle")}
+              n={vCount}
+              unit={t("play.krLcUnit")}
+              actual={frame.dsuStats.findSteps}
+              actualLabel={t("play.krLcActual")}
+              reference={{
+                value: refSteps,
+                cls: "O(E·α)",
+                name: t("play.krLcOpt"),
+                formula: `2·E = ${refSteps}`,
+              }}
+              worst={{
+                value: worstSteps,
+                cls: "O(E·V)",
+                name: t("play.krLcChain"),
+                formula: `2·E·(V−1) = ${worstSteps}`,
+              }}
+              verdict={
+                frame.sub.kind === "done"
+                  ? frame.dsuStats.findSteps <= refSteps * 1.5
+                    ? t("play.krLcVerdictGood")
+                    : frame.dsuStats.findSteps >= worstSteps * 0.5
+                      ? t("play.krLcVerdictBad")
+                      : t("play.krLcVerdictMid")
+                  : undefined
+              }
+            />
+          </>
         )
       }
       panels={
