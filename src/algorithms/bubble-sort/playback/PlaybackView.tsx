@@ -6,6 +6,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ArrayBarsPanel } from "@/algorithms/bubble-sort/playback/ArrayBarsPanel"
@@ -68,6 +69,13 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Межі в одиницях лічильника comparisons: найгірша = n(n−1)/2 (повний квадрат,
+  // який завжди робить наївна), найкраща = n−1 (один прохід без обмінів — рання
+  // зупинка на вже впорядкованому масиві).
+  const n = trace.result.size
+  const worstCmp = trace.result.maxComparisons
+  const bestCmp = Math.max(0, n - 1)
+
   return (
     <PlayerShell
       player={player}
@@ -75,15 +83,45 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.bsStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.bsStatSwaps")} value={String(frame.swaps)} />
-          <Stat
-            label={t("play.bsStatPass")}
-            value={frame.pass !== null ? String(frame.pass) : "—"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.bsStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.bsStatSwaps")} value={String(frame.swaps)} />
+            <Stat
+              label={t("play.bsStatPass")}
+              value={frame.pass !== null ? String(frame.pass) : "—"}
+            />
+            <Stat label={t("play.bsStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.bsLcTitle")}
+            n={n}
+            unit={t("play.bsLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.bsLcActual")}
+            reference={{
+              value: bestCmp,
+              cls: "O(n)",
+              name: t("play.bsLcBest"),
+              formula: `n−1 = ${bestCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.bsLcWorst"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={
+              done ? (
+                <BsLcVerdict
+                  actual={trace.result.comparisons}
+                  best={bestCmp}
+                  worst={worstCmp}
+                />
+              ) : undefined
+            }
           />
-          <Stat label={t("play.bsStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>
@@ -109,6 +147,26 @@ export function PlaybackView() {
 }
 
 // — дрібні презентаційні шматки ----------------------------------------------
+
+/** Вердикт «живої складності» бульбашки: куди лягла фактична ціна для цього входу. */
+function BsLcVerdict({
+  actual,
+  best,
+  worst,
+}: {
+  actual: number
+  best: number
+  worst: number
+}) {
+  const t = useT()
+  const msg =
+    actual <= best * 1.3
+      ? t("play.bsLcVerdictGood")
+      : actual >= worst * 0.95
+        ? t("play.bsLcVerdictBad")
+        : t("play.bsLcVerdictMid")
+  return <span>{msg}</span>
+}
 
 function PhaseBadge({ phase }: { phase: BsPhase }) {
   const t = useT()

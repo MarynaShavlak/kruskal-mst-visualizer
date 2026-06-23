@@ -12,6 +12,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { WindowPanel } from "@/algorithms/binary-search/playback/WindowPanel"
@@ -75,6 +76,12 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Двійковий не «деградує» — його історія в іншому: O(log n) проти O(n) лінійного.
+  // Орієнтир = межа двійкового ⌊log₂n⌋+1; права межа шкали = n (скільки коштував би
+  // лінійний скан). Фактичні проби заповнюють лише крихту шкали.
+  const n = trace.result.size
+  const logBound = Math.floor(Math.log2(n)) + 1
+
   return (
     <PlayerShell
       player={player}
@@ -92,18 +99,44 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.binStatSteps")} value={String(frame.steps)} />
-          <Stat
-            label={t("play.binStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.binStatSteps")} value={String(frame.steps)} />
+            <Stat
+              label={t("play.binStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+            <Stat label={t("play.binStatWindow")} value={windowLabel(frame)} />
+            {recursive && (
+              <Stat label={t("play.binStatDepth")} value={String(frame.depth)} />
+            )}
+            <Stat label={t("play.binStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.binLcTitle")}
+            n={n}
+            unit={t("play.binLcUnit")}
+            actual={frame.steps}
+            actualLabel={t("play.binLcActual")}
+            reference={{
+              value: logBound,
+              cls: "O(log n)",
+              name: t("play.binLcLog"),
+              formula: `⌊log₂n⌋+1 = ${logBound}`,
+            }}
+            worst={{
+              value: n,
+              cls: "O(n)",
+              name: t("play.binLcLinear"),
+              formula: `n = ${n}`,
+            }}
+            verdict={
+              done
+                ? t("play.binLcVerdict", { steps: trace.result.steps, n })
+                : undefined
+            }
           />
-          <Stat label={t("play.binStatWindow")} value={windowLabel(frame)} />
-          {recursive && (
-            <Stat label={t("play.binStatDepth")} value={String(frame.depth)} />
-          )}
-          <Stat label={t("play.binStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

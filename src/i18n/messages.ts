@@ -554,6 +554,14 @@ const ua = {
     "{comparisons} порівнянь · {swaps} обмінів · {passes} проходів",
   "play.bsSaved":
     "Рання зупинка зекономила {saved} порівнянь (наївна зробила б {max}).",
+  "play.bsLcTitle": "Жива складність",
+  "play.bsLcActual": "Фактично:",
+  "play.bsLcUnit": "порівнянь",
+  "play.bsLcBest": "найкраща",
+  "play.bsLcWorst": "найгірша",
+  "play.bsLcVerdictGood": "≈ O(n) — масив майже впорядкований (рання зупинка)",
+  "play.bsLcVerdictMid": "між O(n) і O(n²)",
+  "play.bsLcVerdictBad": "→ O(n²) — повний квадрат порівнянь",
   "play.nBsInit":
     "Старт: масив {arr}, n = {n}. Зовнішній цикл зробить щонайбільше {passes} проходів.",
   "play.nBsCompareSwap":
@@ -1275,6 +1283,12 @@ const ua = {
   "play.binResultIndex": "індекс {i}",
   "play.binResultAbsent": "елемента немає (-1)",
   "play.binResultSteps": "{steps} кроків",
+  "play.binLcTitle": "Жива складність",
+  "play.binLcActual": "Фактично:",
+  "play.binLcUnit": "проб",
+  "play.binLcLog": "двійковий",
+  "play.binLcLinear": "лінійний пошук",
+  "play.binLcVerdict": "{steps} проб замість до {n} — двійковий ≈ O(log n)",
   "play.nBinInit":
     "Старт: шукаємо {target} у відсортованому масиві {arr}. Вікно охоплює весь масив: low=0, high={high}. Усе вікно активне 🟦 — шукане може бути будь-де.",
   "play.nBinProbe":
@@ -2486,6 +2500,14 @@ const en: Record<MessageKey, string> = {
   "play.bsResultCounts": "{comparisons} comparisons · {swaps} swaps · {passes} passes",
   "play.bsSaved":
     "Early exit saved {saved} comparisons (the naive version would do {max}).",
+  "play.bsLcTitle": "Live complexity",
+  "play.bsLcActual": "Actual:",
+  "play.bsLcUnit": "comparisons",
+  "play.bsLcBest": "best",
+  "play.bsLcWorst": "worst",
+  "play.bsLcVerdictGood": "≈ O(n) — nearly sorted array (early exit)",
+  "play.bsLcVerdictMid": "between O(n) and O(n²)",
+  "play.bsLcVerdictBad": "→ O(n²) — full quadratic of comparisons",
   "play.nBsInit":
     "Start: array {arr}, n = {n}. The outer loop runs at most {passes} passes.",
   "play.nBsCompareSwap":
@@ -3201,6 +3223,12 @@ const en: Record<MessageKey, string> = {
   "play.binResultIndex": "index {i}",
   "play.binResultAbsent": "the element is absent (-1)",
   "play.binResultSteps": "{steps} steps",
+  "play.binLcTitle": "Live complexity",
+  "play.binLcActual": "Actual:",
+  "play.binLcUnit": "probes",
+  "play.binLcLog": "binary",
+  "play.binLcLinear": "linear search",
+  "play.binLcVerdict": "{steps} probes instead of up to {n} — binary ≈ O(log n)",
   "play.nBinInit":
     "Start: searching for {target} in the sorted array {arr}. The window spans the whole array: low=0, high={high}. The whole window is active 🟦 — the target could be anywhere.",
   "play.nBinProbe":
