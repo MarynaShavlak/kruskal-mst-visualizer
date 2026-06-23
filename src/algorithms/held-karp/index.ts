@@ -11,6 +11,7 @@ export const heldKarp = createAlgorithm({
   },
   family: "dp",
   complexity: { typical: "O(n²·2ⁿ)", worst: "O(n²·2ⁿ)" },
+  complexityClass: "exponential",
   category: {
     ua: "Динамічне програмування · Комівояжер",
     en: "Dynamic programming · TSP",

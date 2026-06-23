@@ -11,6 +11,7 @@ export const shellSort = createAlgorithm({
   },
   family: "sorting",
   complexity: { typical: "O(n√n)", worst: "O(n²)" },
+  complexityClass: "subquadratic",
   category: {
     ua: "Сортування · субквадратичне",
     en: "Sorting · sub-quadratic",

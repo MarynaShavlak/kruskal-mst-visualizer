@@ -11,6 +11,7 @@ export const prim = createAlgorithm({
   },
   family: "graphs",
   complexity: { typical: "O(E log V)", worst: "O(E log V)" },
+  complexityClass: "linearithmic",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Sprout,
   views: {

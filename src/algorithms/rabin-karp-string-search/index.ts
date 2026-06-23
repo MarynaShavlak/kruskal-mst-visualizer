@@ -11,6 +11,7 @@ export const rabinKarpStringSearch = createAlgorithm({
   },
   family: "string-search",
   complexity: { typical: "O(n+m)", worst: "O(n·m)" },
+  complexityClass: "linear",
   category: {
     ua: "Пошук у рядку · Рабіна–Карпа",
     en: "String search · Rabin–Karp",

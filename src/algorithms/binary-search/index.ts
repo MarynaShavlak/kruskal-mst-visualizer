@@ -11,6 +11,7 @@ export const binarySearch = createAlgorithm({
   },
   family: "search",
   complexity: { typical: "O(log n)", worst: "O(log n)" },
+  complexityClass: "logarithmic",
   category: {
     ua: "Пошук · поділ навпіл",
     en: "Search · halving",

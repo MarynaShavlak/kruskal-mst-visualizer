@@ -1,6 +1,7 @@
 import type {
   Algorithm,
   AlgorithmFamily,
+  ComplexityClass,
   Localized,
 } from "@/algorithms/types"
 import { kruskal } from "@/algorithms/kruskal"
@@ -123,6 +124,29 @@ export function algorithmsByFamily(): readonly AlgorithmGroup[] {
     items: ALGORITHMS.filter((a) => a.family === family.id),
   })).filter((g) => g.items.length > 0)
 }
+
+/** Опис класу складності для фільтра: назва словами + представницька формула. */
+export interface ComplexityClassInfo {
+  readonly id: ComplexityClass
+  readonly label: Localized
+  readonly formula: string
+}
+
+/**
+ * Класи складності в порядку зростання — другий (фасетний) фільтр каталогу.
+ * Кожен алгоритм оголошує свій `complexityClass` (за ТИПОВОЮ складністю).
+ */
+export const COMPLEXITY_CLASSES: readonly ComplexityClassInfo[] = [
+  { id: "logarithmic", label: { ua: "Логарифмічна", en: "Logarithmic" }, formula: "O(log n)" },
+  { id: "sublinear", label: { ua: "Сублінійна", en: "Sublinear" }, formula: "O(√n)" },
+  { id: "linear", label: { ua: "Лінійна", en: "Linear" }, formula: "O(n)" },
+  { id: "linearithmic", label: { ua: "Лінійно-логарифмічна", en: "Linearithmic" }, formula: "O(n log n)" },
+  { id: "subquadratic", label: { ua: "Субквадратична", en: "Sub-quadratic" }, formula: "O(n√n)" },
+  { id: "quadratic", label: { ua: "Квадратична", en: "Quadratic" }, formula: "O(n²)" },
+  { id: "cubic", label: { ua: "Кубічна", en: "Cubic" }, formula: "O(n³)" },
+  { id: "pseudo-polynomial", label: { ua: "Псевдополіноміальна", en: "Pseudo-polynomial" }, formula: "O(n·W)" },
+  { id: "exponential", label: { ua: "Експоненційна", en: "Exponential" }, formula: "O(2ⁿ)" },
+]
 
 export function getAlgorithm(
   id: string | null | undefined,

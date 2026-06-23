@@ -11,6 +11,7 @@ export const kruskal = createAlgorithm({
   },
   family: "graphs",
   complexity: { typical: "O(E log E)", worst: "O(E log E)" },
+  complexityClass: "linearithmic",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Waypoints,
   views: {

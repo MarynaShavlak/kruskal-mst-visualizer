@@ -11,6 +11,7 @@ export const selectionSort = createAlgorithm({
   },
   family: "sorting",
   complexity: { typical: "O(n²)", worst: "O(n²)" },
+  complexityClass: "quadratic",
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

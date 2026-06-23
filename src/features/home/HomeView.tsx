@@ -1,42 +1,63 @@
 import { useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { algorithmsByFamily } from "@/algorithms/registry"
+import { COMPLEXITY_CLASSES, algorithmsByFamily } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 import { useLangStore } from "@/store/lang-store"
 import type { Lang } from "@/store/lang-store"
-import type { Algorithm, AlgorithmFamily } from "@/algorithms/types"
+import type {
+  Algorithm,
+  AlgorithmFamily,
+  ComplexityClass,
+} from "@/algorithms/types"
 
-/** Активний фільтр каталогу: конкретна родина або «всі». */
-type Filter = AlgorithmFamily | "all"
+/** Активні фасети каталогу: родина та клас складності (або «всі»). */
+type FamilyFilter = AlgorithmFamily | "all"
+type ClassFilter = ComplexityClass | "all"
 
-/** Чип-перемикач родини у липкій панелі фільтрів. */
+/** Чип-перемикач у липкій панелі фільтрів (опційно з формулою класу складності). */
 function FilterChip({
   active,
   label,
+  formula,
   count,
+  disabled,
   onClick,
 }: {
   active: boolean
   label: string
+  formula?: string
   count: number
+  disabled?: boolean
   onClick: () => void
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={active}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition outline-none focus-visible:ring-2 focus-visible:ring-ring",
         active
           ? "border-foreground bg-foreground text-background"
           : "border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground",
+        disabled && "pointer-events-none opacity-40",
       )}
     >
       {label}
+      {formula && (
+        <span
+          className={cn(
+            "font-mono text-xs",
+            active ? "text-background/70" : "text-muted-foreground/70",
+          )}
+        >
+          {formula}
+        </span>
+      )}
       <span
         className={cn(
           "text-xs tabular-nums",
@@ -108,16 +129,24 @@ function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
   )
 }
 
-/** Каталог: картки алгоритмів, згруповані за родиною, з фільтром-чипами. */
+/** Каталог: картки за родиною + дві фасети-фільтри (родина / клас складності). */
 export function HomeView() {
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const [filter, setFilter] = useState<Filter>("all")
+  const [family, setFamily] = useState<FamilyFilter>("all")
+  const [cls, setCls] = useState<ClassFilter>("all")
 
   const groups = algorithmsByFamily()
-  const total = groups.reduce((n, g) => n + g.items.length, 0)
-  const visible =
-    filter === "all" ? groups : groups.filter((g) => g.family.id === filter)
+  const all = groups.flatMap((g) => g.items)
+
+  const matchesClass = (a: Algorithm) => cls === "all" || a.complexityClass === cls
+  const matchesFamily = (a: Algorithm) => family === "all" || a.family === family
+
+  // Секції — родини, що проходять фільтр родини; всередині лишаємо лише той клас.
+  const visible = groups
+    .filter((g) => family === "all" || g.family.id === family)
+    .map((g) => ({ family: g.family, items: g.items.filter(matchesClass) }))
+    .filter((g) => g.items.length > 0)
 
   return (
     <div className="space-y-6">
@@ -126,28 +155,67 @@ export function HomeView() {
         <p className="text-sm text-muted-foreground">{t("home.intro")}</p>
       </div>
 
-      {/* Липка панель фільтрів за родиною. */}
-      <div className="sticky top-0 z-20 -mx-4 border-b bg-background/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      {/* Липка панель фасет: родина (зверху) + клас складності (знизу). */}
+      <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b bg-background/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/70">
         <div
-          className="flex flex-wrap gap-2"
+          className="flex flex-wrap items-center gap-2"
           role="group"
           aria-label={t("home.filterAria")}
         >
+          <span className="mr-1 shrink-0 text-xs font-medium text-muted-foreground">
+            {t("home.filterFamily")}
+          </span>
           <FilterChip
-            active={filter === "all"}
+            active={family === "all"}
             label={t("home.filterAll")}
-            count={total}
-            onClick={() => setFilter("all")}
+            count={all.filter(matchesClass).length}
+            onClick={() => setFamily("all")}
           />
-          {groups.map((g) => (
-            <FilterChip
-              key={g.family.id}
-              active={filter === g.family.id}
-              label={g.family.label[lang]}
-              count={g.items.length}
-              onClick={() => setFilter(g.family.id)}
-            />
-          ))}
+          {groups.map((g) => {
+            const count = g.items.filter(matchesClass).length
+            return (
+              <FilterChip
+                key={g.family.id}
+                active={family === g.family.id}
+                label={g.family.label[lang]}
+                count={count}
+                disabled={count === 0}
+                onClick={() => setFamily(g.family.id)}
+              />
+            )
+          })}
+        </div>
+
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label={t("home.filterComplexityAria")}
+        >
+          <span className="mr-1 shrink-0 text-xs font-medium text-muted-foreground">
+            {t("home.filterComplexity")}
+          </span>
+          <FilterChip
+            active={cls === "all"}
+            label={t("home.filterAll")}
+            count={all.filter(matchesFamily).length}
+            onClick={() => setCls("all")}
+          />
+          {COMPLEXITY_CLASSES.map((c) => {
+            const count = all.filter(
+              (a) => a.complexityClass === c.id && matchesFamily(a),
+            ).length
+            return (
+              <FilterChip
+                key={c.id}
+                active={cls === c.id}
+                label={c.label[lang]}
+                formula={c.formula}
+                count={count}
+                disabled={count === 0}
+                onClick={() => setCls(c.id)}
+              />
+            )
+          })}
         </div>
       </div>
 

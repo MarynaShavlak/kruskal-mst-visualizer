@@ -11,6 +11,7 @@ export const radixSort = createAlgorithm({
   },
   family: "sorting",
   complexity: { typical: "O(d·(n+k))", worst: "O(d·(n+k))" },
+  complexityClass: "linear",
   category: {
     ua: "Сортування · непорівняльне",
     en: "Sorting · non-comparison",

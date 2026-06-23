@@ -11,6 +11,7 @@ export const indexedSequentialSearch = createAlgorithm({
   },
   family: "search",
   complexity: { typical: "O(√n)", worst: "O(√n)" },
+  complexityClass: "sublinear",
   category: {
     ua: "Пошук · гібрид (індекс + блок)",
     en: "Search · hybrid (index + block)",

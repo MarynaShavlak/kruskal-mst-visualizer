@@ -11,6 +11,7 @@ export const linearSearch = createAlgorithm({
   },
   family: "search",
   complexity: { typical: "O(n)", worst: "O(n)" },
+  complexityClass: "linear",
   category: {
     ua: "Пошук · послідовний",
     en: "Search · sequential",

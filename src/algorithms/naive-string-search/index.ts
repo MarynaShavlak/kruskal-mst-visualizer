@@ -11,6 +11,7 @@ export const naiveStringSearch = createAlgorithm({
   },
   family: "string-search",
   complexity: { typical: "O(n·m)", worst: "O(n·m)" },
+  complexityClass: "quadratic",
   category: {
     ua: "Пошук у рядку · наївний",
     en: "String search · naive",

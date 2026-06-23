@@ -11,6 +11,7 @@ export const boyerMooreStringSearch = createAlgorithm({
   },
   family: "string-search",
   complexity: { typical: "O(n/m)", worst: "O(n·m)" },
+  complexityClass: "sublinear",
   category: {
     ua: "Пошук у рядку · Боєра–Мура",
     en: "String search · Boyer–Moore",

@@ -4,6 +4,7 @@ import type {
   AlgorithmFamily,
   AlgorithmStatus,
   Complexity,
+  ComplexityClass,
   Localized,
 } from "@/algorithms/types"
 
@@ -32,6 +33,7 @@ export interface AlgorithmConfig {
   readonly family: AlgorithmFamily
   readonly category: Localized
   readonly complexity: Complexity
+  readonly complexityClass: ComplexityClass
   readonly icon: ComponentType<{ className?: string }>
   /** Вкладки в порядку показу: ключ → лінивий import свого View-модуля. */
   readonly views: Record<string, ViewLoader>
@@ -60,6 +62,7 @@ export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
     family: cfg.family,
     category: cfg.category,
     complexity: cfg.complexity,
+    complexityClass: cfg.complexityClass,
     icon: cfg.icon,
     status: cfg.status ?? "ready",
     defaultTab: cfg.defaultTab ?? Object.keys(cfg.views)[0],

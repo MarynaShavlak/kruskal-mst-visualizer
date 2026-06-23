@@ -11,6 +11,7 @@ export const mergeSort = createAlgorithm({
   },
   family: "sorting",
   complexity: { typical: "O(n log n)", worst: "O(n log n)" },
+  complexityClass: "linearithmic",
   category: {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",

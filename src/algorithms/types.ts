@@ -23,6 +23,22 @@ export interface Complexity {
   readonly worst: string
 }
 
+/**
+ * Клас складності — named bucket за ТИПОВОЮ складністю; верхній рівень другого
+ * фільтра каталогу. Підпис словами й представницьку формулу описує
+ * `COMPLEXITY_CLASSES` у `registry.ts`.
+ */
+export type ComplexityClass =
+  | "logarithmic"
+  | "sublinear"
+  | "linear"
+  | "linearithmic"
+  | "subquadratic"
+  | "quadratic"
+  | "cubic"
+  | "pseudo-polynomial"
+  | "exponential"
+
 /** Двомовний рядок (UA/EN). Споживач бере `value[lang]` із lang-store. */
 export interface Localized {
   readonly ua: string
@@ -59,6 +75,8 @@ export interface Algorithm {
   readonly category: Localized
   /** Часова складність — бейджі «типова / найгірша» на картці каталогу. */
   readonly complexity: Complexity
+  /** Клас складності (named bucket за типовою) — для фільтра каталогу. */
+  readonly complexityClass: ComplexityClass
   readonly status: AlgorithmStatus
   /** Іконка (lucide-react). */
   readonly icon: ComponentType<{ className?: string }>

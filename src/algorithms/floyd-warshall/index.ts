@@ -11,6 +11,7 @@ export const floydWarshall = createAlgorithm({
   },
   family: "graphs",
   complexity: { typical: "O(V³)", worst: "O(V³)" },
+  complexityClass: "cubic",
   category: { ua: "Графи · Найкоротші шляхи", en: "Graphs · Shortest paths" },
   icon: Grid3x3,
   views: {

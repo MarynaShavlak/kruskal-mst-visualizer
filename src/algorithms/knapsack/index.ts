@@ -11,6 +11,7 @@ export const knapsack = createAlgorithm({
   },
   family: "dp",
   complexity: { typical: "O(n·W)", worst: "O(n·W)" },
+  complexityClass: "pseudo-polynomial",
   category: {
     ua: "Динамічне програмування · Рюкзак",
     en: "Dynamic programming · Knapsack",

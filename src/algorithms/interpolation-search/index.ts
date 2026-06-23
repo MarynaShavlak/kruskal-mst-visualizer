@@ -11,6 +11,7 @@ export const interpolationSearch = createAlgorithm({
   },
   family: "search",
   complexity: { typical: "O(log log n)", worst: "O(n)" },
+  complexityClass: "logarithmic",
   category: {
     ua: "Пошук · інтерполяція",
     en: "Search · interpolation",

@@ -11,6 +11,7 @@ export const kmpStringSearch = createAlgorithm({
   },
   family: "string-search",
   complexity: { typical: "O(n+m)", worst: "O(n+m)" },
+  complexityClass: "linear",
   category: {
     ua: "Пошук у рядку · KMP",
     en: "String search · KMP",
