@@ -13,6 +13,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import {
@@ -106,6 +107,12 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Гібрид: орієнтир — «солодка точка» O(√n) (двійковий по індексу ≈log + скан блоку
+  // ≈√n при кроці ≈√n), права межа — лінійний скан O(n) (вироджений крок). Лічильник —
+  // сума зондувань індексу й порівнянь у блоці.
+  const n = trace.result.size
+  const refTotal = Math.max(1, Math.ceil(2 * Math.sqrt(n)))
+
   return (
     <PlayerShell
       player={player}
@@ -123,17 +130,39 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.issStatProbes")} value={String(frame.indexProbes)} />
-          <Stat label={t("play.issStatComparisons")} value={String(frame.seqComparisons)} />
-          <Stat label={t("play.issStatTotal")} value={String(frame.indexProbes + frame.seqComparisons)} />
-          <Stat label={t("play.issStatBlock")} value={blockLabel(frame)} />
-          <Stat
-            label={t("play.issStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.issStatProbes")} value={String(frame.indexProbes)} />
+            <Stat label={t("play.issStatComparisons")} value={String(frame.seqComparisons)} />
+            <Stat label={t("play.issStatTotal")} value={String(frame.indexProbes + frame.seqComparisons)} />
+            <Stat label={t("play.issStatBlock")} value={blockLabel(frame)} />
+            <Stat
+              label={t("play.issStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+            <Stat label={t("play.issStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.issLcTitle")}
+            n={n}
+            unit={t("play.issLcUnit")}
+            actual={frame.indexProbes + frame.seqComparisons}
+            actualLabel={t("play.issLcActual")}
+            reference={{
+              value: refTotal,
+              cls: "O(√n)",
+              name: t("play.issLcHybrid"),
+              formula: `≈2√n = ${refTotal}`,
+            }}
+            worst={{
+              value: n,
+              cls: "O(n)",
+              name: t("play.issLcLinear"),
+              formula: `n = ${n}`,
+            }}
+            verdict={done ? t("play.issLcVerdict", { total: trace.result.total, n }) : undefined}
           />
-          <Stat label={t("play.issStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

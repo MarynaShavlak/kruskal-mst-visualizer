@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { StripPanel } from "@/algorithms/naive-string-search/playback/StripPanel"
@@ -72,6 +73,21 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Межі в одиницях порівнянь символів: найкраща ≈ N−M+1 вирівнювань (швидка
+  // розбіжність на першому символі щоразу), найгірша (N−M+1)·M (повний префікс
+  // матчиться, далі розбіжність — марна повторна робота, місток до KMP).
+  const n = text.length
+  const m = pattern.length
+  const bestC = Math.max(0, n - m + 1)
+  const worstC = bestC * m
+  const lcVerdict = done
+    ? trace.result.comparisons <= Math.max(1, bestC * 1.5)
+      ? t("play.nssLcVerdictGood")
+      : trace.result.comparisons >= worstC * 0.7
+        ? t("play.nssLcVerdictBad")
+        : t("play.nssLcVerdictMid")
+    : undefined
+
   return (
     <PlayerShell
       player={player}
@@ -79,20 +95,42 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.nssStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.nssStatAlignments")} value={String(frame.alignments)} />
-          <Stat label={t("play.nssStatShifts")} value={String(frame.shifts)} />
-          {findAll ? (
-            <Stat label={t("play.nssStatMatches")} value={String(frame.matches.length)} />
-          ) : (
-            <Stat
-              label={t("play.nssStatResult")}
-              value={frame.result >= 0 ? String(frame.result) : "−1"}
-            />
-          )}
-          <Stat label={t("play.nssStatLen")} value={`${text.length}/${pattern.length}`} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.nssStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.nssStatAlignments")} value={String(frame.alignments)} />
+            <Stat label={t("play.nssStatShifts")} value={String(frame.shifts)} />
+            {findAll ? (
+              <Stat label={t("play.nssStatMatches")} value={String(frame.matches.length)} />
+            ) : (
+              <Stat
+                label={t("play.nssStatResult")}
+                value={frame.result >= 0 ? String(frame.result) : "−1"}
+              />
+            )}
+            <Stat label={t("play.nssStatLen")} value={`${text.length}/${pattern.length}`} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.nssLcTitle")}
+            n={n}
+            unit={t("play.nssLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.nssLcActual")}
+            reference={{
+              value: bestC,
+              cls: "O(n)",
+              name: t("play.nssLcBest"),
+              formula: `N−M+1 = ${bestC}`,
+            }}
+            worst={{
+              value: worstC,
+              cls: "O(n·m)",
+              name: t("play.nssLcWorst"),
+              formula: `(N−M+1)·M = ${worstC}`,
+            }}
+            verdict={lcVerdict}
+          />
+        </>
       }
       panels={
         <>

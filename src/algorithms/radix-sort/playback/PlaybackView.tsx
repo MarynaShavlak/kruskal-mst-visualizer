@@ -9,6 +9,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { BucketsPanel } from "@/algorithms/radix-sort/playback/BucketsPanel"
 import type { Translate } from "@/lib/translate"
@@ -50,19 +51,52 @@ export function PlaybackView() {
   const index = Math.min(player.index, trace.frames.length - 1)
   const frame = trace.frames[index]
 
+  // Порозрядне — НЕПОРІВНЯЛЬНЕ: 0 порівнянь, лише d·n розкладань по кошиках (лінійно).
+  // Орієнтир — ця лінійна ціна d·n; права межа — O(n²) порівнянь ПОРІВНЯЛЬНИХ сортувань.
+  // Radix виграє, НЕ порівнюючи (поки d мале відносно log n).
+  const n = trace.result.size
+  const d = trace.result.maxDigits
+  const refCmp = d * n
+  // Права межа — точне n(n−1)/2 порівнянь, які платять ПОРІВНЯЛЬНІ сортування. Radix
+  // (d·n розкладань) виграє, поки d·n < n(n−1)/2; за великого d може й програти —
+  // стовпчик чесно вийде за мітку.
+  const worstCmp = (n * (n - 1)) / 2
+
   return (
     <PlayerShell
       player={player}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.rxStatPasses")} value={String(frame.passes)} />
-          <Stat label={t("play.rxStatDistributions")} value={String(frame.distributions)} />
-          <Stat label={t("play.rxStatComparisons")} value="0" />
-          <Stat label={t("play.rxStatDigits")} value={String(trace.result.maxDigits)} />
-          <Stat label={t("play.rxStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.rxStatPasses")} value={String(frame.passes)} />
+            <Stat label={t("play.rxStatDistributions")} value={String(frame.distributions)} />
+            <Stat label={t("play.rxStatComparisons")} value="0" />
+            <Stat label={t("play.rxStatDigits")} value={String(trace.result.maxDigits)} />
+            <Stat label={t("play.rxStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.rxLcTitle")}
+            n={n}
+            unit={t("play.rxLcUnit")}
+            actual={frame.distributions}
+            actualLabel={t("play.rxLcActual")}
+            reference={{
+              value: refCmp,
+              cls: "O(d·n)",
+              name: t("play.rxLcLinear"),
+              formula: `d·n = ${refCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.rxLcCompare"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={frame.phase === "done" ? t("play.rxLcVerdict", { d }) : undefined}
+          />
+        </>
       }
       panels={
         <>

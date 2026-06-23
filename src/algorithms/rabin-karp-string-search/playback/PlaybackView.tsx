@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { HashBuildPanel } from "@/algorithms/rabin-karp-string-search/playback/HashBuildPanel"
 import { RkStripPanel } from "@/algorithms/rabin-karp-string-search/playback/RkStripPanel"
@@ -83,6 +84,14 @@ export function PlaybackView() {
   const done = frame.phase === "done"
   const inHash = frame.panel === "hash"
 
+  // Рабіна–Карпа порівнює ХЕШІ (O(1) за вікно з ковзним хешем) → у середньому O(n+m).
+  // Орієнтир — ця межа N+M; права межа — O(n·m), куди штовхають КОЛІЗІЇ (рівний хеш,
+  // різні рядки → доперевірка символів). Лічильник — хеш-порівняння + доперевірки.
+  const n = text.length
+  const m = pattern.length
+  const refOps = n + m
+  const worstOps = Math.max(0, n - m + 1) * m
+
   return (
     <PlayerShell
       player={player}
@@ -90,20 +99,44 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.rkStatPatternHash")} value={String(frame.patternHash)} />
-          <Stat label={t("play.rkStatHashComparisons")} value={String(frame.hashComparisons)} />
-          <Stat label={t("play.rkStatCharVerifications")} value={String(frame.charVerifications)} />
-          <Stat label={t("play.rkStatCollisions")} value={String(frame.collisions)} />
-          <Stat
-            label={rolling ? t("play.rkStatRolls") : t("play.rkStatRecomputes")}
-            value={String(rolling ? frame.rolls : frame.recomputes)}
+        <>
+          <StatsBar>
+            <Stat label={t("play.rkStatPatternHash")} value={String(frame.patternHash)} />
+            <Stat label={t("play.rkStatHashComparisons")} value={String(frame.hashComparisons)} />
+            <Stat label={t("play.rkStatCharVerifications")} value={String(frame.charVerifications)} />
+            <Stat label={t("play.rkStatCollisions")} value={String(frame.collisions)} />
+            <Stat
+              label={rolling ? t("play.rkStatRolls") : t("play.rkStatRecomputes")}
+              value={String(rolling ? frame.rolls : frame.recomputes)}
+            />
+            <Stat
+              label={t("play.rkStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.rkLcTitle")}
+            n={n}
+            unit={t("play.rkLcUnit")}
+            actual={frame.hashComparisons + frame.charVerifications}
+            actualLabel={t("play.rkLcActual")}
+            reference={{
+              value: refOps,
+              cls: "O(n+m)",
+              name: t("play.rkLcAvg"),
+              formula: `N+M = ${refOps}`,
+            }}
+            worst={{
+              value: worstOps,
+              cls: "O(n·m)",
+              name: t("play.rkLcWorst"),
+              formula: `(N−M+1)·M = ${worstOps}`,
+            }}
+            verdict={
+              done ? t("play.rkLcVerdict", { collisions: trace.result.collisions }) : undefined
+            }
           />
-          <Stat
-            label={t("play.rkStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
-          />
-        </StatsBar>
+        </>
       }
       panels={
         <>

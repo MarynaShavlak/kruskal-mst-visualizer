@@ -10,6 +10,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { InsertionBarsPanel } from "@/algorithms/insertion-sort/playback/InsertionBarsPanel"
@@ -72,6 +73,20 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Межі в одиницях лічильника comparisons: найкраща = n−1 (вже впорядкований масив,
+  // одне порівняння на елемент), найгірша = n(n−1)/2 (зворотний порядок). Бінарна
+  // вставка знижує саме ПОРІВНЯННЯ (~n·log n) — стовпчик не дотягує до правого краю.
+  const n = trace.result.size
+  const worstCmp = trace.result.maxComparisons
+  const bestCmp = Math.max(0, n - 1)
+  const lcVerdict = done
+    ? trace.result.comparisons <= bestCmp * 1.3
+      ? t("play.isLcVerdictGood")
+      : trace.result.comparisons >= worstCmp * 0.95
+        ? t("play.isLcVerdictBad")
+        : t("play.isLcVerdictMid")
+    : undefined
+
   return (
     <PlayerShell
       player={player}
@@ -79,15 +94,37 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.isStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.isStatShifts")} value={String(frame.shifts)} />
-          <Stat
-            label={t("play.isStatPass")}
-            value={frame.pass !== null ? String(frame.pass) : "—"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.isStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.isStatShifts")} value={String(frame.shifts)} />
+            <Stat
+              label={t("play.isStatPass")}
+              value={frame.pass !== null ? String(frame.pass) : "—"}
+            />
+            <Stat label={t("play.isStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.isLcTitle")}
+            n={n}
+            unit={t("play.isLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.isLcActual")}
+            reference={{
+              value: bestCmp,
+              cls: "O(n)",
+              name: t("play.isLcBest"),
+              formula: `n−1 = ${bestCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.isLcWorst"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={lcVerdict}
           />
-          <Stat label={t("play.isStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

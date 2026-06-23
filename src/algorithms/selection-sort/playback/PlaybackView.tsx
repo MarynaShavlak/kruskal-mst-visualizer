@@ -10,6 +10,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { SelectionBarsPanel } from "@/algorithms/selection-sort/playback/SelectionBarsPanel"
@@ -72,6 +73,14 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Порівняння в selection ІНВАРІАНТНІ: завжди n(n−1)/2, навіть на впорядкованому
+  // масиві — алгоритм НЕ адаптується (стовпчик завжди впритул до правого краю).
+  // Орієнтир — n−1: куди АДАПТИВНІ сортування (бульбашка/вставки) падають на вже
+  // впорядкованому вході; selection цієї «знижки» не отримує ніколи.
+  const n = trace.result.size
+  const worstCmp = trace.result.maxComparisons
+  const bestAdaptive = Math.max(0, n - 1)
+
   return (
     <PlayerShell
       player={player}
@@ -79,19 +88,41 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.ssStatComparisons")} value={String(frame.comparisons)} />
-          {stable ? (
-            <Stat label={t("play.ssStatWrites")} value={String(frame.writes)} />
-          ) : (
-            <Stat label={t("play.ssStatSwaps")} value={String(frame.swaps)} />
-          )}
-          <Stat
-            label={t("play.ssStatPass")}
-            value={frame.pass !== null ? String(frame.pass) : "—"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.ssStatComparisons")} value={String(frame.comparisons)} />
+            {stable ? (
+              <Stat label={t("play.ssStatWrites")} value={String(frame.writes)} />
+            ) : (
+              <Stat label={t("play.ssStatSwaps")} value={String(frame.swaps)} />
+            )}
+            <Stat
+              label={t("play.ssStatPass")}
+              value={frame.pass !== null ? String(frame.pass) : "—"}
+            />
+            <Stat label={t("play.ssStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.ssLcTitle")}
+            n={n}
+            unit={t("play.ssLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.ssLcActual")}
+            reference={{
+              value: bestAdaptive,
+              cls: "O(n)",
+              name: t("play.ssLcAdaptive"),
+              formula: `n−1 = ${bestAdaptive}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.ssLcSelection"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={done ? t("play.ssLcVerdict") : undefined}
           />
-          <Stat label={t("play.ssStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ShellBarsPanel } from "@/algorithms/shell-sort/playback/ShellBarsPanel"
@@ -69,6 +70,21 @@ export function PlaybackView() {
   const index = Math.min(player.index, trace.frames.length - 1)
   const frame = trace.frames[index]
 
+  // Ціна Шелла залежить від ПОСЛІДОВНОСТІ ПРОМІЖКІВ: орієнтир — субквадратична межа
+  // O(n^1.5) (Кнут), права межа — O(n²) (зрив n//2 ≈ звичайні вставки). Той самий
+  // масив за різних послідовностей дає різну ціну — стовпчик помітно рухається.
+  const shDone = frame.phase === "done"
+  const n = trace.result.size
+  const refCmp = Math.ceil(n * Math.sqrt(n))
+  const worstCmp = (n * (n - 1)) / 2
+  const lcVerdict = shDone
+    ? trace.result.comparisons <= refCmp * 1.05
+      ? t("play.shLcVerdictGood")
+      : trace.result.comparisons >= worstCmp * 0.9
+        ? t("play.shLcVerdictBad")
+        : t("play.shLcVerdictMid")
+    : undefined
+
   return (
     <PlayerShell
       player={player}
@@ -76,13 +92,35 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.shStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.shStatShifts")} value={String(frame.shifts)} />
-          <Stat label={t("play.shStatPhases")} value={String(trace.result.gapPhases)} />
-          <Stat label={t("play.shStatGaps")} value={`[${trace.result.gaps.join(", ")}]`} />
-          <Stat label={t("play.shStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.shStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.shStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.shStatPhases")} value={String(trace.result.gapPhases)} />
+            <Stat label={t("play.shStatGaps")} value={`[${trace.result.gaps.join(", ")}]`} />
+            <Stat label={t("play.shStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.shLcTitle")}
+            n={n}
+            unit={t("play.shLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.shLcActual")}
+            reference={{
+              value: refCmp,
+              cls: "O(n^1.5)",
+              name: t("play.shLcSub"),
+              formula: `⌈n·√n⌉ = ${refCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.shLcWorst"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={lcVerdict}
+          />
+        </>
       }
       panels={
         <>

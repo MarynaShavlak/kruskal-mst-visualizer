@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ScanPanel } from "@/algorithms/linear-search/playback/ScanPanel"
@@ -73,6 +74,18 @@ export function PlaybackView() {
   const frame = trace.frames[index]
   const done = frame.phase === "done"
 
+  // Межі в одиницях лічильника перевірок: найкраща O(1) = 1 (збіг на першому
+  // елементі), найгірша O(n) = n (збіг у кінці або відсутній; режим «усі входження»
+  // завжди сканує всі n). Стовпчик показує, куди лягла ЦЯ ціль.
+  const n = trace.result.size
+  const lcVerdict = done
+    ? trace.result.comparisons <= Math.max(1, n * 0.25)
+      ? t("play.lsLcVerdictGood")
+      : trace.result.comparisons >= n * 0.9
+        ? t("play.lsLcVerdictBad")
+        : t("play.lsLcVerdictMid")
+    : undefined
+
   return (
     <PlayerShell
       player={player}
@@ -80,17 +93,39 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.lsStatChecks")} value={String(frame.comparisons)} />
-          <Stat
-            label={t("play.lsStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.lsStatChecks")} value={String(frame.comparisons)} />
+            <Stat
+              label={t("play.lsStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+            {findAll && (
+              <Stat label={t("play.lsStatMatches")} value={String(frame.matches.length)} />
+            )}
+            <Stat label={t("play.lsStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.lsLcTitle")}
+            n={n}
+            unit={t("play.lsLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.lsLcActual")}
+            reference={{
+              value: 1,
+              cls: "O(1)",
+              name: t("play.lsLcBest"),
+              formula: "1",
+            }}
+            worst={{
+              value: n,
+              cls: "O(n)",
+              name: t("play.lsLcWorst"),
+              formula: `n = ${n}`,
+            }}
+            verdict={lcVerdict}
           />
-          {findAll && (
-            <Stat label={t("play.lsStatMatches")} value={String(frame.matches.length)} />
-          )}
-          <Stat label={t("play.lsStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

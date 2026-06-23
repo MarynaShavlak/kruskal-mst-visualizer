@@ -12,6 +12,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { WindowPanel } from "@/algorithms/interpolation-search/playback/WindowPanel"
@@ -76,6 +77,19 @@ export function PlaybackView() {
   const done = frame.phase === "done"
   const resolved = frame.phase === "found" || frame.phase === "done"
 
+  // Інтерполяційний: орієнтир — O(log log n) на РІВНОМІРНИХ даних (часто 1–2 проби
+  // незалежно від n), права межа — O(n) на СКУПЧЕНИХ (один викид збиває «пряму» →
+  // деградація до лінійного, гірше за двійковий).
+  const n = trace.result.size
+  const llBound = n >= 4 ? Math.max(1, Math.ceil(Math.log2(Math.log2(n))) + 1) : 1
+  const lcVerdict = done
+    ? trace.result.probes <= llBound
+      ? t("play.ipLcVerdictGood")
+      : trace.result.probes >= n * 0.6
+        ? t("play.ipLcVerdictBad")
+        : t("play.ipLcVerdictMid")
+    : undefined
+
   return (
     <PlayerShell
       player={player}
@@ -93,21 +107,43 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.ipStatProbes")} value={String(frame.probes)} />
-          <Stat
-            label={t("play.ipStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.ipStatProbes")} value={String(frame.probes)} />
+            <Stat
+              label={t("play.ipStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+            <Stat label={t("play.ipStatWindow")} value={windowLabel(frame)} />
+            {frame.frac != null && (
+              <Stat label={t("play.ipStatFrac")} value={`${Math.round(frame.frac * 100)}%`} />
+            )}
+            {recursive && (
+              <Stat label={t("play.ipStatDepth")} value={String(frame.depth)} />
+            )}
+            <Stat label={t("play.ipStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.ipLcTitle")}
+            n={n}
+            unit={t("play.ipLcUnit")}
+            actual={frame.probes}
+            actualLabel={t("play.ipLcActual")}
+            reference={{
+              value: llBound,
+              cls: "O(log log n)",
+              name: t("play.ipLcUniform"),
+              formula: `≈log₂log₂n = ${llBound}`,
+            }}
+            worst={{
+              value: n,
+              cls: "O(n)",
+              name: t("play.ipLcClustered"),
+              formula: `n = ${n}`,
+            }}
+            verdict={lcVerdict}
           />
-          <Stat label={t("play.ipStatWindow")} value={windowLabel(frame)} />
-          {frame.frac != null && (
-            <Stat label={t("play.ipStatFrac")} value={`${Math.round(frame.frac * 100)}%`} />
-          )}
-          {recursive && (
-            <Stat label={t("play.ipStatDepth")} value={String(frame.depth)} />
-          )}
-          <Stat label={t("play.ipStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        </>
       }
       panels={
         <>

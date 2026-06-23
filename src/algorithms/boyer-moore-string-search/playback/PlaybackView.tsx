@@ -10,6 +10,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ShiftTablePanel } from "@/algorithms/boyer-moore-string-search/playback/ShiftTablePanel"
 import { BmStripPanel } from "@/algorithms/boyer-moore-string-search/playback/BmStripPanel"
@@ -55,6 +56,20 @@ export function PlaybackView() {
   const done = frame.step === "done"
   const isTable = frame.phase === "table"
 
+  // Боєра–Мура часто СУБЛІНІЙНИЙ: стрибки за таблицею поганого символу пропускають
+  // символи тексту зовсім → менше за n порівнянь. Орієнтир — лінійний рівень n
+  // (наївний оглядає ~n); права межа — O(n·m) на повторюваному шаблоні.
+  const n = text.length
+  const m = pattern.length
+  const worstC = Math.max(0, n - m + 1) * m
+  const lcVerdict = done
+    ? trace.result.comparisons <= n
+      ? t("play.bmLcVerdictGood")
+      : trace.result.comparisons >= worstC * 0.7
+        ? t("play.bmLcVerdictBad")
+        : t("play.bmLcVerdictMid")
+    : undefined
+
   const codePanel = (
     <CodePanel
       code={isTable ? trace.tableCode : trace.searchCode}
@@ -95,14 +110,36 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.bmStatPhase")} value={isTable ? t("play.bmPhaseTableShort") : t("play.bmPhaseSearchShort")} />
-          <Stat label={t("play.bmStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.bmStatJumps")} value={String(frame.jumps)} />
-          <Stat label={t("play.bmStatSkipped")} value={String(frame.skipped)} />
-          <Stat label={t("play.bmStatResult")} value={frame.result >= 0 ? String(frame.result) : "−1"} />
-          <Stat label={t("play.bmStatLen")} value={`${text.length}/${pattern.length}`} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.bmStatPhase")} value={isTable ? t("play.bmPhaseTableShort") : t("play.bmPhaseSearchShort")} />
+            <Stat label={t("play.bmStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.bmStatJumps")} value={String(frame.jumps)} />
+            <Stat label={t("play.bmStatSkipped")} value={String(frame.skipped)} />
+            <Stat label={t("play.bmStatResult")} value={frame.result >= 0 ? String(frame.result) : "−1"} />
+            <Stat label={t("play.bmStatLen")} value={`${text.length}/${pattern.length}`} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.bmLcTitle")}
+            n={n}
+            unit={t("play.bmLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.bmLcActual")}
+            reference={{
+              value: n,
+              cls: "O(n)",
+              name: t("play.bmLcLinear"),
+              formula: `n = ${n}`,
+            }}
+            worst={{
+              value: worstC,
+              cls: "O(n·m)",
+              name: t("play.bmLcWorst"),
+              formula: `(N−M+1)·M = ${worstC}`,
+            }}
+            verdict={lcVerdict}
+          />
+        </>
       }
       panels={
         <>

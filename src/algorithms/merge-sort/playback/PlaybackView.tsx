@@ -11,6 +11,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { MergeTreePanel } from "@/algorithms/merge-sort/playback/MergeTreePanel"
@@ -74,6 +75,15 @@ export function PlaybackView() {
   const node = frame.currentId >= 0 ? trace.tree.nodes[frame.currentId] ?? null : null
   const done = frame.phase === "final"
 
+  // Злиття ГАРАНТУЄ O(n·log n) на будь-якому вході (дерево завжди збалансоване).
+  // Орієнтир — ця гарантія ⌈n·log₂n⌉; права межа — квадрат O(n²), якого наївні
+  // сортування сягають, а злиття НІКОЛИ (на відміну від швидкого — без зриву).
+  const n = trace.result.size
+  const refCmp = n >= 2 ? Math.ceil(n * Math.log2(n)) : 0
+  // Точна квадратична межа — мітка показує саме n(n−1)/2. Для крихітних n вона близька
+  // до орієнтиру n·log n; розрив гарантія↔квадрат росте на більших масивах.
+  const worstCmp = (n * (n - 1)) / 2
+
   return (
     <PlayerShell
       player={player}
@@ -81,13 +91,35 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.msStatComparisons")} value={String(frame.comparisons)} />
-          <Stat label={t("play.msStatAppends")} value={String(frame.appends)} />
-          <Stat label={t("play.msStatMerges")} value={String(frame.merges)} />
-          <Stat label={t("play.msStatDepth")} value={String(trace.result.depth)} />
-          <Stat label={t("play.msStatSize")} value={String(trace.result.size)} />
-        </StatsBar>
+        <>
+          <StatsBar>
+            <Stat label={t("play.msStatComparisons")} value={String(frame.comparisons)} />
+            <Stat label={t("play.msStatAppends")} value={String(frame.appends)} />
+            <Stat label={t("play.msStatMerges")} value={String(frame.merges)} />
+            <Stat label={t("play.msStatDepth")} value={String(trace.result.depth)} />
+            <Stat label={t("play.msStatSize")} value={String(trace.result.size)} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.msLcTitle")}
+            n={n}
+            unit={t("play.msLcUnit")}
+            actual={frame.comparisons}
+            actualLabel={t("play.msLcActual")}
+            reference={{
+              value: refCmp,
+              cls: "O(n·log n)",
+              name: t("play.msLcGuaranteed"),
+              formula: `⌈n·log₂n⌉ = ${refCmp}`,
+            }}
+            worst={{
+              value: worstCmp,
+              cls: "O(n²)",
+              name: t("play.msLcNaive"),
+              formula: `n(n−1)/2 = ${worstCmp}`,
+            }}
+            verdict={done ? t("play.msLcVerdict") : undefined}
+          />
+        </>
       }
       panels={
         <>

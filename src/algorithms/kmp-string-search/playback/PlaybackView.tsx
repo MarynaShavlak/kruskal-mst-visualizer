@@ -10,6 +10,7 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
+import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { LpsTablePanel } from "@/algorithms/kmp-string-search/playback/LpsTablePanel"
 import { KmpStripPanel } from "@/algorithms/kmp-string-search/playback/KmpStripPanel"
@@ -55,6 +56,14 @@ export function PlaybackView() {
   const done = frame.phase === "done"
   const isLps = frame.lpsState != null
 
+  // KMP ГАРАНТУЄ лінійний O(n+m): індекс тексту i ніколи не відкочується. Орієнтир —
+  // ця гарантія N+M; права межа — O(n·m) наївного, якого KMP уникає. На «легких»
+  // даних може бути трохи більше за наївний — виграш на повторюваних префіксах.
+  const n = text.length
+  const m = pattern.length
+  const refOps = n + m
+  const worstOps = Math.max(0, n - m + 1) * m
+
   // У фазі lps (та init) праворуч — таблиця lps; інакше — стрічка пошуку.
   // На done показуємо останній відомий стан пошуку (offset/i/j з результату).
   const dataPanel = isLps ? (
@@ -83,17 +92,46 @@ export function PlaybackView() {
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} />}
       statsBar={
-        <StatsBar>
-          <Stat label={t("play.kmpStatLps")} value={String(frame.lpsComparisons)} />
-          <Stat label={t("play.kmpStatSearch")} value={String(frame.searchComparisons)} />
-          <Stat label={t("play.kmpStatTotal")} value={String(frame.lpsComparisons + frame.searchComparisons)} />
-          <Stat label={t("play.kmpStatMonotonic")} value={frame.iMonotonic ? t("play.kmpMonoNo") : t("play.kmpMonoYes")} />
-          <Stat
-            label={t("play.kmpStatResult")}
-            value={frame.result >= 0 ? String(frame.result) : "−1"}
+        <>
+          <StatsBar>
+            <Stat label={t("play.kmpStatLps")} value={String(frame.lpsComparisons)} />
+            <Stat label={t("play.kmpStatSearch")} value={String(frame.searchComparisons)} />
+            <Stat label={t("play.kmpStatTotal")} value={String(frame.lpsComparisons + frame.searchComparisons)} />
+            <Stat label={t("play.kmpStatMonotonic")} value={frame.iMonotonic ? t("play.kmpMonoNo") : t("play.kmpMonoYes")} />
+            <Stat
+              label={t("play.kmpStatResult")}
+              value={frame.result >= 0 ? String(frame.result) : "−1"}
+            />
+            <Stat label={t("play.kmpStatLen")} value={`${text.length}/${pattern.length}`} />
+          </StatsBar>
+          <LiveComplexity
+            title={t("play.kmpLcTitle")}
+            n={n}
+            unit={t("play.kmpLcUnit")}
+            actual={frame.lpsComparisons + frame.searchComparisons}
+            actualLabel={t("play.kmpLcActual")}
+            reference={{
+              value: refOps,
+              cls: "O(n+m)",
+              name: t("play.kmpLcGuaranteed"),
+              formula: `N+M = ${refOps}`,
+            }}
+            worst={{
+              value: worstOps,
+              cls: "O(n·m)",
+              name: t("play.kmpLcNaive"),
+              formula: `(N−M+1)·M = ${worstOps}`,
+            }}
+            verdict={
+              done
+                ? t("play.kmpLcVerdict", {
+                    total: trace.result.totalComparisons,
+                    naive: trace.result.naiveComparisons,
+                  })
+                : undefined
+            }
           />
-          <Stat label={t("play.kmpStatLen")} value={`${text.length}/${pattern.length}`} />
-        </StatsBar>
+        </>
       }
       panels={
         <>
