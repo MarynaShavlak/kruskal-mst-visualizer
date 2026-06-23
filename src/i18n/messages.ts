@@ -16,6 +16,12 @@ const ua = {
   "common.cancel": "Скасувати",
   "common.save": "Зберегти",
 
+  "error.title": "Щось пішло не так",
+  "error.body":
+    "Не вдалося відобразити цей розділ. Спробуйте перезавантажити або поверніться до каталогу.",
+  "error.retry": "Перезавантажити",
+  "error.home": "До каталогу",
+
   "home.heading": "Оберіть алгоритм",
   "home.intro":
     "Інтерактивні розбори: теорія, редактор графа, покрокове програвання та бенчмарк. Нові алгоритми додаються поступово.",
@@ -1947,6 +1953,12 @@ const en: Record<MessageKey, string> = {
   "common.soonShort": "soon",
   "common.cancel": "Cancel",
   "common.save": "Save",
+
+  "error.title": "Something went wrong",
+  "error.body":
+    "This section failed to render. Try reloading or go back to the catalog.",
+  "error.retry": "Reload",
+  "error.home": "To catalog",
 
   "home.heading": "Choose an algorithm",
   "home.intro":

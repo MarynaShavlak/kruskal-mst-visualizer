@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { ComingSoon } from "@/features/shell/ComingSoon"
 import { navigateTo } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
@@ -52,9 +53,11 @@ export function AlgorithmShell({
       </TabsList>
       {algorithm.tabs.map((tb) => (
         <TabsContent key={tb.key} value={tb.key} className="mt-4">
-          <Suspense fallback={<TabFallback />}>
-            <tb.View />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<TabFallback />}>
+              <tb.View />
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
       ))}
     </Tabs>
