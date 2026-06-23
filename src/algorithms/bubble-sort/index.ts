@@ -10,7 +10,7 @@ export const bubbleSort = createAlgorithm({
     en: "The simplest sorting method: compare neighbours and swap. A clear lens on the pass invariant, stability, early exit and why O(n²) is impractical.",
   },
   family: "sorting",
-  complexity: "O(n²)",
+  complexity: { typical: "O(n²)", worst: "O(n²)" },
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

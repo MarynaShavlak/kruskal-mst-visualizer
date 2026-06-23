@@ -3,6 +3,7 @@ import type {
   Algorithm,
   AlgorithmFamily,
   AlgorithmStatus,
+  Complexity,
   Localized,
 } from "@/algorithms/types"
 
@@ -30,7 +31,7 @@ export interface AlgorithmConfig {
   readonly tagline: Localized
   readonly family: AlgorithmFamily
   readonly category: Localized
-  readonly complexity: string
+  readonly complexity: Complexity
   readonly icon: ComponentType<{ className?: string }>
   /** Вкладки в порядку показу: ключ → лінивий import свого View-модуля. */
   readonly views: Record<string, ViewLoader>

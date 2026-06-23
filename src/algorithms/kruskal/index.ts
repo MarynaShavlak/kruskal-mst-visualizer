@@ -10,7 +10,7 @@ export const kruskal = createAlgorithm({
     en: "Minimum spanning tree: greedily add the lightest edges, cutting cycles via Union-Find.",
   },
   family: "graphs",
-  complexity: "O(E log E)",
+  complexity: { typical: "O(E log E)", worst: "O(E log E)" },
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Waypoints,
   views: {

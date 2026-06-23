@@ -10,7 +10,7 @@ export const boyerMooreStringSearch = createAlgorithm({
     en: "A string search that changes DIRECTION and STEP: compare the pattern suffix RIGHT-TO-LEFT and, on a mismatch, LEAP forward using a precomputed bad-character table — often skipping whole chunks of text (sublinear at best). Only the bad-character rule here (good-suffix is left for later). Worst case O(n·m) (CAAAA in AAAA…).",
   },
   family: "string-search",
-  complexity: "O(n/m)",
+  complexity: { typical: "O(n/m)", worst: "O(n·m)" },
   category: {
     ua: "Пошук у рядку · Боєра–Мура",
     en: "String search · Boyer–Moore",

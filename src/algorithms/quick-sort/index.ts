@@ -10,7 +10,7 @@ export const quickSort = createAlgorithm({
     en: "Divide and conquer: pick a pivot, split into smaller/equal/greater and recurse. The recursion tree, pivot choice (O(n·log n) vs O(n²)), three-way partition and stability.",
   },
   family: "sorting",
-  complexity: "O(n log n)",
+  complexity: { typical: "O(n log n)", worst: "O(n²)" },
   category: {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",

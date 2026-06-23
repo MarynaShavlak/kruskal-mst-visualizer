@@ -10,7 +10,7 @@ export const mergeSort = createAlgorithm({
     en: "Divide and conquer: split the array in half, sort the halves recursively and merge them with two pointers. The recursion tree is always balanced → guaranteed O(n·log n), stable; top-down vs bottom-up — a bridge to TimSort.",
   },
   family: "sorting",
-  complexity: "O(n log n)",
+  complexity: { typical: "O(n log n)", worst: "O(n log n)" },
   category: {
     ua: "Сортування · O(n·log n)",
     en: "Sorting · O(n·log n)",

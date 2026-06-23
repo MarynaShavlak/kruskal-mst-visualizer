@@ -10,7 +10,7 @@ export const shellSort = createAlgorithm({
     en: "Insertion sort «with a step»: compare and shift elements gap apart. A large gap clears far-away disorder, then gap shrinks to 1. Subsequences, gap sequences (n//2 / Knuth / Ciura) and instability.",
   },
   family: "sorting",
-  complexity: "O(n√n)",
+  complexity: { typical: "O(n√n)", worst: "O(n²)" },
   category: {
     ua: "Сортування · субквадратичне",
     en: "Sorting · sub-quadratic",

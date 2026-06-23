@@ -21,7 +21,9 @@ const ua = {
     "Інтерактивні розбори: теорія, редактор графа, покрокове програвання та бенчмарк. Нові алгоритми додаються поступово.",
   "home.filterAll": "Усі",
   "home.filterAria": "Фільтр за родиною алгоритмів",
-  "home.complexityHint": "Характеристична часова складність",
+  "home.complexityHint": "Часова складність",
+  "home.complexityTypical": "типова",
+  "home.complexityWorst": "найгірша",
 
   "switcher.aria": "Обрати алгоритм",
   "switcher.placeholder": "Оберіть алгоритм",
@@ -1948,7 +1950,9 @@ const en: Record<MessageKey, string> = {
     "Interactive walkthroughs: theory, a graph editor, step-by-step playback and a benchmark. New algorithms are added gradually.",
   "home.filterAll": "All",
   "home.filterAria": "Filter by algorithm family",
-  "home.complexityHint": "Typical time complexity",
+  "home.complexityHint": "Time complexity",
+  "home.complexityTypical": "typical",
+  "home.complexityWorst": "worst",
 
   "switcher.aria": "Choose algorithm",
   "switcher.placeholder": "Choose an algorithm",

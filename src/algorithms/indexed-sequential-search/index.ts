@@ -10,7 +10,7 @@ export const indexedSequentialSearch = createAlgorithm({
     en: "A hybrid of binary and linear search: binary-search a sparse INDEX table to narrow down to a BLOCK, then scan only that block SEQUENTIALLY. O(log n + m); the optimal step ≈ √n. Precondition — the array must be sorted.",
   },
   family: "search",
-  complexity: "O(√n)",
+  complexity: { typical: "O(√n)", worst: "O(√n)" },
   category: {
     ua: "Пошук · гібрид (індекс + блок)",
     en: "Search · hybrid (index + block)",

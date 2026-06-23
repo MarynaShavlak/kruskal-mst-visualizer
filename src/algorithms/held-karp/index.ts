@@ -10,7 +10,7 @@ export const heldKarp = createAlgorithm({
     en: "Shortest closed salesman route: dynamic programming over subsets (bitmask) instead of enumerating all (n−1)! tours.",
   },
   family: "dp",
-  complexity: "O(n²·2ⁿ)",
+  complexity: { typical: "O(n²·2ⁿ)", worst: "O(n²·2ⁿ)" },
   category: {
     ua: "Динамічне програмування · Комівояжер",
     en: "Dynamic programming · TSP",

@@ -10,7 +10,7 @@ export const kmpStringSearch = createAlgorithm({
     en: "Linear-time string search O(n+m). PHASE 1 builds the lps (longest-prefix-suffix) table from the pattern itself; PHASE 2 searches, and on a mismatch JUMPS the pattern index j to lps[j−1] instead of re-reading the text — the text index i NEVER decreases (the contrast with the naive method’s “wasted work”).",
   },
   family: "string-search",
-  complexity: "O(n+m)",
+  complexity: { typical: "O(n+m)", worst: "O(n+m)" },
   category: {
     ua: "Пошук у рядку · KMP",
     en: "String search · KMP",

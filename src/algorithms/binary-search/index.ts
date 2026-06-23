@@ -10,7 +10,7 @@ export const binarySearch = createAlgorithm({
     en: "The reward for sorting: on a SORTED array look at the middle of the window [low..high] and drop the half that can't contain the target. The window halves each step → O(log n) instead of O(n). Precondition — the array must be sorted.",
   },
   family: "search",
-  complexity: "O(log n)",
+  complexity: { typical: "O(log n)", worst: "O(log n)" },
   category: {
     ua: "Пошук · поділ навпіл",
     en: "Search · halving",

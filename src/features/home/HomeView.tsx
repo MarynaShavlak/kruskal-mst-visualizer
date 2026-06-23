@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ArrowRight, Gauge } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { algorithmsByFamily } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
@@ -68,19 +68,9 @@ function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
       className="group/card cursor-pointer transition outline-none hover:ring-2 hover:ring-foreground/20 focus-visible:ring-2 focus-visible:ring-ring"
     >
       <CardHeader>
-        <div className="mb-2 flex items-center justify-between">
-          <span className="flex size-10 items-center justify-center rounded-lg bg-muted text-foreground/80">
-            <algo.icon className="size-5" />
-          </span>
-          <span
-            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground"
-            title={t("home.complexityHint")}
-            aria-label={`${t("home.complexityHint")}: ${algo.complexity}`}
-          >
-            <Gauge className="size-3" aria-hidden="true" />
-            {algo.complexity}
-          </span>
-        </div>
+        <span className="mb-2 flex size-10 items-center justify-center rounded-lg bg-muted text-foreground/80">
+          <algo.icon className="size-5" />
+        </span>
         <CardTitle className="flex items-center gap-1.5">
           {algo.shortName[lang]}
           {ready && (
@@ -91,6 +81,28 @@ function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
         <p className="mt-1 text-xs text-muted-foreground/80">
           {algo.category[lang]}
         </p>
+        <div
+          className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-3 text-xs"
+          role="group"
+          aria-label={t("home.complexityHint")}
+        >
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-muted-foreground">
+              {t("home.complexityTypical")}
+            </span>
+            <span className="font-mono text-foreground/90">
+              {algo.complexity.typical}
+            </span>
+          </span>
+          <span className="inline-flex items-baseline gap-1.5">
+            <span className="text-muted-foreground">
+              {t("home.complexityWorst")}
+            </span>
+            <span className="font-mono text-foreground/90">
+              {algo.complexity.worst}
+            </span>
+          </span>
+        </div>
       </CardHeader>
     </Card>
   )

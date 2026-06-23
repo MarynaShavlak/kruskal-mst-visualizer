@@ -10,7 +10,7 @@ export const radixSort = createAlgorithm({
     en: "The first non-comparison sort: not «which is larger?» but the DIGITS themselves. Distribute numbers into 10 buckets (0–9) by the current digit and gather — from units up (LSD). Stable counting sort is the linchpin. Linear time O(d·(n+k)).",
   },
   family: "sorting",
-  complexity: "O(d·(n+k))",
+  complexity: { typical: "O(d·(n+k))", worst: "O(d·(n+k))" },
   category: {
     ua: "Сортування · непорівняльне",
     en: "Sorting · non-comparison",

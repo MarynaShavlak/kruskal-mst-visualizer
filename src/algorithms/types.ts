@@ -14,6 +14,15 @@ export type AlgorithmFamily =
   | "search"
   | "string-search"
 
+/**
+ * Часова складність алгоритму: типова (характеристична) і найгірша.
+ * Big-O — мовно-нейтральний рядок, тож не `Localized`.
+ */
+export interface Complexity {
+  readonly typical: string
+  readonly worst: string
+}
+
 /** Двомовний рядок (UA/EN). Споживач бере `value[lang]` із lang-store. */
 export interface Localized {
   readonly ua: string
@@ -48,8 +57,8 @@ export interface Algorithm {
   readonly family: AlgorithmFamily
   /** Категорія (підтип усередині родини), напр. «Графи · Остовні дерева». */
   readonly category: Localized
-  /** Характеристична (типова) часова складність — бейдж на картці, напр. "O(n log n)". */
-  readonly complexity: string
+  /** Часова складність — бейджі «типова / найгірша» на картці каталогу. */
+  readonly complexity: Complexity
   readonly status: AlgorithmStatus
   /** Іконка (lucide-react). */
   readonly icon: ComponentType<{ className?: string }>
