@@ -30,6 +30,7 @@ export interface AlgorithmConfig {
   readonly tagline: Localized
   readonly family: AlgorithmFamily
   readonly category: Localized
+  readonly complexity: string
   readonly icon: ComponentType<{ className?: string }>
   /** Вкладки в порядку показу: ключ → лінивий import свого View-модуля. */
   readonly views: Record<string, ViewLoader>
@@ -57,6 +58,7 @@ export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
     tagline: cfg.tagline,
     family: cfg.family,
     category: cfg.category,
+    complexity: cfg.complexity,
     icon: cfg.icon,
     status: cfg.status ?? "ready",
     defaultTab: cfg.defaultTab ?? Object.keys(cfg.views)[0],

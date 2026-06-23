@@ -10,6 +10,7 @@ export const rabinKarpStringSearch = createAlgorithm({
     en: "A string search that compares NUMBERS, not characters: a polynomial hash turns each length-M window into a number; compare the window hash to the pattern hash, and only on a HASH MATCH verify characters (to rule out COLLISIONS — different strings with the same hash). The rolling hash updates in O(1) per shift. Average O(n+m); worst O(n·m) with a bad modulus. base=256, modulus=101.",
   },
   family: "string-search",
+  complexity: "O(n+m)",
   category: {
     ua: "Пошук у рядку · Рабіна–Карпа",
     en: "String search · Rabin–Karp",

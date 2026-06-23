@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Gauge } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { algorithmsByFamily } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
@@ -7,31 +7,10 @@ import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 import { useLangStore } from "@/store/lang-store"
 import type { Lang } from "@/store/lang-store"
-import type {
-  Algorithm,
-  AlgorithmFamily,
-  AlgorithmStatus,
-} from "@/algorithms/types"
+import type { Algorithm, AlgorithmFamily } from "@/algorithms/types"
 
 /** Активний фільтр каталогу: конкретна родина або «всі». */
 type Filter = AlgorithmFamily | "all"
-
-function StatusBadge({ status }: { status: AlgorithmStatus }) {
-  const t = useT()
-  const ready = status === "ready"
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-        ready
-          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-          : "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-      )}
-    >
-      {ready ? t("common.ready") : t("common.soon")}
-    </span>
-  )
-}
 
 /** Чип-перемикач родини у липкій панелі фільтрів. */
 function FilterChip({
@@ -72,6 +51,7 @@ function FilterChip({
 
 /** Картка одного алгоритму в сітці каталогу. */
 function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
+  const t = useT()
   const ready = algo.status === "ready"
   const open = () => navigateTo(algo.id, ready ? algo.defaultTab : null)
   return (
@@ -92,7 +72,14 @@ function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
           <span className="flex size-10 items-center justify-center rounded-lg bg-muted text-foreground/80">
             <algo.icon className="size-5" />
           </span>
-          <StatusBadge status={algo.status} />
+          <span
+            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground"
+            title={t("home.complexityHint")}
+            aria-label={`${t("home.complexityHint")}: ${algo.complexity}`}
+          >
+            <Gauge className="size-3" aria-hidden="true" />
+            {algo.complexity}
+          </span>
         </div>
         <CardTitle className="flex items-center gap-1.5">
           {algo.shortName[lang]}

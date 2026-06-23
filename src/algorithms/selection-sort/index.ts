@@ -10,6 +10,7 @@ export const selectionSort = createAlgorithm({
     en: "Each pass scans the whole unsorted suffix, finds the minimum and puts it on the prefix boundary with a single swap. A clear lens on non-adaptivity, minimal swaps and the stability trap.",
   },
   family: "sorting",
+  complexity: "O(n²)",
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

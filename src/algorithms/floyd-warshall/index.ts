@@ -10,6 +10,7 @@ export const floydWarshall = createAlgorithm({
     en: "Shortest paths between all pairs of vertices: dynamic programming on a distance matrix.",
   },
   family: "graphs",
+  complexity: "O(V³)",
   category: { ua: "Графи · Найкоротші шляхи", en: "Graphs · Shortest paths" },
   icon: Grid3x3,
   views: {

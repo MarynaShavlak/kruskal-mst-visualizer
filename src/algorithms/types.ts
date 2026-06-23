@@ -48,6 +48,8 @@ export interface Algorithm {
   readonly family: AlgorithmFamily
   /** Категорія (підтип усередині родини), напр. «Графи · Остовні дерева». */
   readonly category: Localized
+  /** Характеристична (типова) часова складність — бейдж на картці, напр. "O(n log n)". */
+  readonly complexity: string
   readonly status: AlgorithmStatus
   /** Іконка (lucide-react). */
   readonly icon: ComponentType<{ className?: string }>

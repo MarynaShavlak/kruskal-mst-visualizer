@@ -10,6 +10,7 @@ export const interpolationSearch = createAlgorithm({
     en: "A smart probe: instead of the window's middle, compute the position by the INTERPOLATION FORMULA — guess it from the key's value, the way you look up a word in a dictionary. On UNIFORM data O(log log n) (often 1–2 probes regardless of n); on clustered data it degrades to O(n). Precondition — the array must be sorted.",
   },
   family: "search",
+  complexity: "O(log log n)",
   category: {
     ua: "Пошук · інтерполяція",
     en: "Search · interpolation",

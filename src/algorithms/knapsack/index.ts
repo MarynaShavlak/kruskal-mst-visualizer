@@ -10,6 +10,7 @@ export const knapsack = createAlgorithm({
     en: "Maximum value under a capacity limit: dynamic programming (table K[i][w]) vs brute-force 2ⁿ and greedy, which misses the optimum for 0/1.",
   },
   family: "dp",
+  complexity: "O(n·W)",
   category: {
     ua: "Динамічне програмування · Рюкзак",
     en: "Dynamic programming · Knapsack",

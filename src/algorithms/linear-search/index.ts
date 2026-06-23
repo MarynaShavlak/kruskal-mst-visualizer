@@ -10,6 +10,7 @@ export const linearSearch = createAlgorithm({
     en: "The series' first SEARCH algorithm: check each element left to right until x is found (return its index) or the end is reached (-1). The array is never modified and needs no ordering. The cost is the number of checks: O(1) best case, O(n) worst.",
   },
   family: "search",
+  complexity: "O(n)",
   category: {
     ua: "Пошук · послідовний",
     en: "Search · sequential",

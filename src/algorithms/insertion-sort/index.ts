@@ -10,6 +10,7 @@ export const insertionSort = createAlgorithm({
     en: "Like sorting cards in your hand: take a key and shift bigger prefix elements right. A clear lens on the prefix, the invariant, stability, flag-free adaptivity and binary insertion.",
   },
   family: "sorting",
+  complexity: "O(n²)",
   category: {
     ua: "Сортування · O(n²)",
     en: "Sorting · O(n²)",

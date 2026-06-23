@@ -10,6 +10,7 @@ export const prim = createAlgorithm({
     en: "Minimum spanning tree: the tree grows from one vertex, each step attaching the cheapest edge across the cut (a priority queue).",
   },
   family: "graphs",
+  complexity: "O(E log V)",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Sprout,
   views: {
