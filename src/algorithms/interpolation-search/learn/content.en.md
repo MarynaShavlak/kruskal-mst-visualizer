@@ -53,7 +53,7 @@ The skeleton is exactly like binary search (a window, narrowing by comparison), 
 
 The method has **two** conditions — and these are its limitations:
 
-1. **The array is sorted ascending.** Just like for binary search: only then can the comparison of `arr[index]` with `key` confidently drop a part of the array. This is a direct link to [sorting](#series) — it is sorting that prepares the data. The `is_sorted` utility in [`interpolation_search/core.py`](interpolation_search/core.py) helps check it.
+1. **The array is sorted ascending.** Just like for binary search: only then can the comparison of `arr[index]` with `key` confidently drop a part of the array. This is a direct link to [sorting](#series) — it is sorting that prepares the data. The `is_sorted` utility helps check it.
 2. **The keys are distributed uniformly.** The formula guesses accurately only when the data lies close to a straight line. On **clustered** data (for example, one huge "outlier") the probe misses systematically, and the method [degrades](#vs-binary).
 
 | | Binary search | Interpolation search |
@@ -79,7 +79,7 @@ At the start the window spans the whole array: `low = 0`, `high = 9`. The badge 
 
 ### Base implementation
 
-Here is the base implementation — the one we walk through line by line (the full documented version is in [`interpolation_search/core.py`](interpolation_search/core.py)):
+Here is the base implementation — the one we walk through line by line:
 
 ```python
 def interpolation_search(arr, x):
@@ -110,7 +110,7 @@ What is what:
 - `else` → `arr[index] > x`, the key is on the left — move `high = index - 1`;
 - `return -1` — we left the loop (the window became empty or the key is out of range) — the element is absent.
 
-The educational version [`interpolation_search_steps`](interpolation_search/core.py) repeats this code **action for action**, but after each probe records a snapshot: the bounds `[low..high]`, the values at them, the **interpolation fraction** and the computed `index` — all the pictures below are built from these snapshots.
+The educational version `interpolation_search_steps` repeats this code **action for action**, but after each probe records a snapshot: the bounds `[low..high]`, the values at them, the **interpolation fraction** and the computed `index` — all the pictures below are built from these snapshots.
 
 ### How to read the frames
 
@@ -142,7 +142,7 @@ The probe `index = 7` (pink, shifted). `arr[7] = 15 = key` — a match! We retur
 
 ### Probe table and result
 
-The same walkthrough as a `low/high/index/arr[index]/comparison` table (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+The same walkthrough as a `low/high/index/arr[index]/comparison` table:
 
 ```text
 probe | low | high | index | arr[index] | comparison
@@ -185,7 +185,7 @@ $$index = \left\lfloor 11 + \frac{25 - 25}{30 - 25} \times (13 - 11) \right\rflo
 
 ![Probe 2: index=11, arr\[11]=25 — found](docs/images/en/step_demo2_1.png)
 
-`arr[11] = 25 = key` — a match! We return `11`. This is the loop of refining the "guess", similar to binary search, but with a probe by formula. The probe table (printed by [`examples/02_adjusting.py`](examples/02_adjusting.py)):
+`arr[11] = 25 = key` — a match! We return `11`. This is the loop of refining the "guess", similar to binary search, but with a probe by formula. The probe table:
 
 ```text
 probe | low | high | index | arr[index] | comparison
@@ -215,7 +215,7 @@ Both probes one below the other — you can see the window `[low..high]` narrows
 
 ## 7. Complexity: `O(log log n)` vs `O(n)`
 
-The expected complexity of interpolation search on **uniformly** distributed data is **$O(\log \log n)$**. That is incredibly small: the double logarithm grows so slowly that in practice the number of probes barely depends on the array's size (often 1–2 even on a million elements). Printed by [`examples/04_complexity.py`](examples/04_complexity.py):
+The expected complexity of interpolation search on **uniformly** distributed data is **$O(\log \log n)$**. That is incredibly small: the double logarithm grows so slowly that in practice the number of probes barely depends on the array's size (often 1–2 even on a million elements):
 
 ```text
   n =       100 → interpolation 1 / binary 6 probes
@@ -246,7 +246,7 @@ The array here is `[1, 2, …, n-1, 1000000000]`: one huge "outlier" skews the s
 
 ## 8. Interpolation vs binary: who wins when
 
-A direct contrast with [binary search](https://github.com/MarynaShavlak/algo-binary-search) — **the middle vs the interpolated position** — on the same array. Printed by [`examples/03_vs_binary.py`](examples/03_vs_binary.py):
+A direct contrast with [binary search](https://github.com/MarynaShavlak/algo-binary-search) — **the middle vs the interpolated position** — on the same array:
 
 ```text
   uniform data (n=15), searching for 21: interpolation 1 / binary 4 probes
@@ -296,7 +296,7 @@ The textbook code has a **latent bug**:
 
 ## 11. Safe version
 
-[`interpolation_search_safe`](interpolation_search/core.py) closes both pitfalls — an honest fix of the textbook code:
+`interpolation_search_safe` closes both pitfalls — an honest fix of the textbook code:
 
 ```python
 def interpolation_search_safe(arr, x):
@@ -322,15 +322,15 @@ Two changes: explicit handling of `arr[high] == arr[low]` (return `low` if the k
 
 The same in motion — the probe "jumps" to the interpolated position, the window narrows asymmetrically, and on the straight-line model you can see the key's projection move.
 
-▶️ Demo 1 — a perfect guess: `15` found in **one** probe (generated by [`examples/01_intro.py`](examples/01_intro.py)):
+▶️ Demo 1 — a perfect guess: `15` found in **one** probe:
 
 ![Animation: searching for 15 in one step](docs/images/en/search_demo1.gif)
 
-▶️ Demo 2 — with correction: probe `10` (too small) → correction → probe `11` (generated by [`examples/02_adjusting.py`](examples/02_adjusting.py)):
+▶️ Demo 2 — with correction: probe `10` (too small) → correction → probe `11`:
 
 ![Animation: searching for 25 with correction](docs/images/en/search_adjust.gif)
 
-▶️ Degradation — on clustered data the probe crawls one element at a time (generated by [`examples/03_vs_binary.py`](examples/03_vs_binary.py)):
+▶️ Degradation — on clustered data the probe crawls one element at a time:
 
 ![Animation: degradation on clustered data](docs/images/en/search_degrade.gif)
 
@@ -342,7 +342,7 @@ The same in motion — the probe "jumps" to the interpolated position, the windo
 
 The examples above showed the *result* of each probe. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, in the middle the **straight-line model** with the key's projection, on the right the window with the shifted probe at that very moment. **The color of a code line encodes what is happening:** 🟡 the line runs now (the loop / `index = …` by formula / a check), 🟦 a bound-shift branch fired (`low = index + 1` / `high = index - 1`), 🟢 `arr[index] == x` → `return index`, 🔴 exit → `return -1`.
 
-We build this for demo 2 (with correction); generated by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py). Each grid row is one decision:
+We build this for demo 2 (with correction). Each grid row is one decision:
 
 ![Code ↔ data: searching for 25](docs/images/en/code_steps_demo2.png)
 
@@ -352,7 +352,7 @@ We build this for demo 2 (with correction); generated by [`examples/05_code_walk
 
 ## 14. Full step-by-step trace of `25`
 
-Below is the same execution of demo 2, but **in full**: every computation of `index` by formula, every comparison and bound shift as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same execution of demo 2, but **in full**: every computation of `index` by formula, every comparison and bound shift as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
 
 #### Step 00
 
@@ -429,7 +429,7 @@ This is the **fourth** search algorithm in the series — the "smart" developmen
 | [Linear search](https://github.com/MarynaShavlak/algo-linear-search) | brute-force search (unordered data) | $O(n)$ |
 | [Binary search](https://github.com/MarynaShavlak/algo-binary-search) | search by halving (sorted data) | $O(\log n)$ |
 | [Indexed sequential search](https://github.com/MarynaShavlak/algo-indexed-sequential-search) | search by a sparse index | $O(\sqrt{n})$ |
-| **Interpolation search** *(this repository)* | search by formula (uniform data) | $O(\log \log n)$ expected |
+| **Interpolation search** | search by formula (uniform data) | $O(\log \log n)$ expected |
 | [Bubble](https://github.com/MarynaShavlak/algo-bubble-sort) · [Insertion](https://github.com/MarynaShavlak/algo-insertion-sort) · [Selection](https://github.com/MarynaShavlak/algo-selection-sort) | simple sorts | $O(n^2)$ |
 | [Quick](https://github.com/MarynaShavlak/algo-quick-sort) · [Merge](https://github.com/MarynaShavlak/algo-merge-sort) · [Shell](https://github.com/MarynaShavlak/algo-shell-sort) · [Radix](https://github.com/MarynaShavlak/algo-radix-sort) | efficient sorts | $O(n \log n)$ and better |
 

@@ -47,7 +47,7 @@ This array is chosen so that the middle-element pivot lands close to the median 
 
 ### The base implementation
 
-Here is the base implementation — the one we dissect line by line (the fully documented version is in [`quick_sort/core.py`](quick_sort/core.py)):
+Here is the base implementation — the one we dissect line by line:
 
 ```python
 def quicksort(arr):
@@ -72,7 +72,7 @@ What each line does:
 - `right = [x for x in arr if x > pivot]` — all elements **greater** than the pivot (they go right);
 - `return quicksort(left) + middle + quicksort(right)` — recursively sort `left` and `right` and **glue** the result.
 
-The teaching version [`quicksort_steps`](quick_sort/core.py) repeats this logic **step for step**, but builds a **journal / recursion tree**: each call records its subarray, the pivot, the split and the running comparison count — all the pictures below are assembled from that journal.
+The teaching version `quicksort_steps` repeats this logic **step for step**, but builds a **journal / recursion tree**: each call records its subarray, the pivot, the split and the running comparison count — all the pictures below are assembled from that journal.
 
 ### How to read the tree: the color language
 
@@ -93,7 +93,7 @@ The central image. The root is the whole array; each call picks a pivot (🟣), 
 
 ![Recursion tree of the array [3, 5, 2, 4, 6, 1, 7]](docs/images/en/tree_intro.png)
 
-Because the middle pivot hits the median every time, the tree is **balanced**: depth only 3, and just 13 comparisons. The same trace **by recursion level** (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+Because the middle pivot hits the median every time, the tree is **balanced**: depth only 3, and just 13 comparisons. The same trace **by recursion level**:
 
 ```text
 Level | Call             | Subarray              | Pivot | left      | middle | right
@@ -145,7 +145,7 @@ Once all recursive calls have returned, the root glues the answer together: `qui
 
 ![Concatenation: quicksort(left) + middle + quicksort(right) = the sorted array](docs/images/en/result_intro.png)
 
-The console summary (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+The console summary:
 
 ```text
 Input:  [3, 5, 2, 4, 6, 1, 7]
@@ -155,7 +155,7 @@ Comparisons: 13   Calls: 7   Recursion depth: 3
 
 ## 5. The recursion tree on `[5, 3, 8, 4, 2]`
 
-Let us walk through one more example — the array `[5, 3, 8, 4, 2]`. The trace **by level** (printed by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)):
+Let us walk through one more example — the array `[5, 3, 8, 4, 2]`. The trace **by level**:
 
 ```text
 Level | Call             | Subarray        | Pivot | left         | middle | right
@@ -201,7 +201,7 @@ Concatenating the results of all the calls gives `[2, 3, 4, 5, 8]` — the fully
 
 ## 6. Pivot choice and complexity: balanced vs. degenerate tree
 
-**The shape of the recursion tree — and therefore the complexity — is entirely determined by the pivot choice.** Let us show this on the **same** already sorted array `[1, 2, 3, 4, 5, 6, 7]`, changing only the pivot strategy (printed by [`examples/02_pivot_and_cases.py`](examples/02_pivot_and_cases.py)):
+**The shape of the recursion tree — and therefore the complexity — is entirely determined by the pivot choice.** Let us show this on the **same** already sorted array `[1, 2, 3, 4, 5, 6, 7]`, changing only the pivot strategy:
 
 ```text
 Pivot choice on the already sorted array [1, 2, 3, 4, 5, 6, 7]
@@ -231,11 +231,11 @@ The worst case happens when the pivot turns out to be (close to) the minimum or 
 - **Random pivot** (`random`): makes the worst case practically impossible for any fixed input (an adversary can't guess it);
 - **Introsort**: watches the recursion depth and, if it grows too large (a sign of degeneration), switches to an $O(n\log n)$ heap sort. This is exactly what production implementations do.
 
-All of these strategies are supported by [`quicksort_inplace`](quick_sort/core.py) (the `pivot` parameter).
+All of these strategies are supported by `quicksort_inplace` (the `pivot` parameter).
 
 ## 7. Duplicates and the three-way partition
 
-The three-way partition is especially handy when the array has **many equal** elements. All those equal to the pivot settle into `middle` in **a single step** and are never sorted again. Take "tagged" duplicates, where the subscript shows the original position of a copy (printed by [`examples/03_duplicates.py`](examples/03_duplicates.py)):
+The three-way partition is especially handy when the array has **many equal** elements. All those equal to the pivot settle into `middle` in **a single step** and are never sorted again. Take "tagged" duplicates, where the subscript shows the original position of a copy:
 
 ```text
 Many duplicates: [4₁, 2₁, 4₂, 4₃, 1₁, 4₄, 3₁]
@@ -255,7 +255,7 @@ At the root the pivot is `4`, so **all four fours** go into `middle` (🟪) at o
 
 ## 8. Stability: three-way version vs. in-place
 
-A sort is **stable** if it preserves the relative order of elements with **equal keys**. Let us check both of our implementations on the tagged duplicates (printed by [`examples/03_duplicates.py`](examples/03_duplicates.py)):
+A sort is **stable** if it preserves the relative order of elements with **equal keys**. Let us check both of our implementations on the tagged duplicates:
 
 ```text
 Stability (equal keys — is their order preserved?):
@@ -296,7 +296,7 @@ def partition(arr, lo, hi):
     return i
 ```
 
-The full version in [`quick_sort/core.py`](quick_sort/core.py) also takes a pivot strategy (`'middle'` by default, `'first'`, `'last'`, `'median3'`, `'random'`) — that is exactly what we used to draw the [balanced and degenerate trees](#pivot-cases).
+The full version also takes a pivot strategy (`'middle'` by default, `'first'`, `'last'`, `'median3'`, `'random'`) — that is exactly what we used to draw the [balanced and degenerate trees](#pivot-cases).
 
 **The trade-off between the two implementations:**
 
@@ -313,7 +313,7 @@ In practice the in-place variant is the one used (it is cache-friendly and fast)
 
 The examples above showed the *result* of each call. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the data of the current call. The line color encodes the step: 🟡 choosing the pivot, 🔵/🟪/🟧 the three list comprehensions (`left`/`middle`/`right`), 🟢 the return-concatenation, ⬜ the base case.
 
-We build this for the example array `[5, 3, 8, 4, 2]` (generated by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)). Each grid row is one call of the recursion tree:
+We build this for the example array `[5, 3, 8, 4, 2]`. Each grid row is one call of the recursion tree:
 
 ![Code ↔ data: the array [5, 3, 8, 4, 2]](docs/images/en/code_steps_conspect.png)
 
@@ -323,7 +323,7 @@ We build this for the example array `[5, 3, 8, 4, 2]` (generated by [`examples/0
 
 ## 11. Full step-by-step trace of `[3, 5, 2, 4, 6, 1, 7]`
 
-Below is the same execution, but **in full**: every recursive call (in execution order, pre-order) as a separate code ↔ data frame with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same execution, but **in full**: every recursive call (in execution order, pre-order) as a separate code ↔ data frame with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
 
 #### Step 00
 

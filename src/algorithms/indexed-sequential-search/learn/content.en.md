@@ -52,7 +52,7 @@ We work with a sorted array of 13 elements and an index step `step = 4`:
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **value** | 1 | 3 | 5 | 7 | 9 | 11 | 13 | 15 | 17 | 19 | 21 | 23 | 25 |
 
-`create_index_table` takes every 4th element and stores it as a `(key, position)` pair. The result is a sparse table — "signal pillars" evenly spread across the array (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+`create_index_table` takes every 4th element and stores it as a `(key, position)` pair. The result is a sparse table — "signal pillars" evenly spread across the array:
 
 ```text
 Index table: [(1, 0), (9, 4), (17, 8), (25, 12)]
@@ -62,7 +62,7 @@ Here `(9, 4)` means: the element with key `9` is at position `4` of the main arr
 
 ### The base implementation
 
-Here are the two base functions — the ones we walk through line by line (the fully documented versions are in [`indexed_sequential_search/core.py`](indexed_sequential_search/core.py)):
+Here are the two base functions — the ones we walk through line by line:
 
 ```python
 def create_index_table(array, step):
@@ -112,7 +112,7 @@ What is what:
 - **Choosing the block** — the three `if/elif/else` branches: once the window is empty, `start` tells **between which signal pillars** the target lies. Hence the `search_range` bounds (empty/left block, right tail, or the general block between adjacent pillars).
 - **Phase 2** — `for i in range(...)`: a sequential pass **only** within the block; on a match we return `i`, otherwise `-1`.
 
-The teaching version [`indexed_sequential_search_steps`](indexed_sequential_search/core.py) repeats this code **action by action** but, after every index probe and every sequential comparison, records a snapshot tagged with the **phase** and counters — all the pictures below are built from those snapshots.
+The teaching version `indexed_sequential_search_steps` repeats this code **action by action** but, after every index probe and every sequential comparison, records a snapshot tagged with the **phase** and counters — all the pictures below are built from those snapshots.
 
 ### How to read the frames
 
@@ -138,7 +138,7 @@ We search for `15`. Binary search goes over the four signal pillars `[(1, 0), (9
 
 ![Phase 1, probe 2: 17 > 15 → go left](docs/images/en/step_main_2.png)
 
-The full phase-1 trace (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+The full phase-1 trace:
 
 ```text
 Phase 1 — binary search over the index table:
@@ -199,7 +199,7 @@ The same sequence of frames stacked — you can see the transition from narrowin
 
 ![Done: found at position 7](docs/images/en/result_main.png)
 
-The console summary and the **runnable example** — the very same output (printed by [`examples/01_intro.py`](examples/01_intro.py); the program output line is in Ukrainian):
+The console summary and the **runnable example** — the very same output (the program output line is in Ukrainian):
 
 ```text
 Array:   [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25]
@@ -220,7 +220,7 @@ The hybrid's cost is the sum of **two terms** — one per phase:
 - **Phase 1** — a binary search over an index of `n_idx` entries: `O(log n_idx)` ≈ `O(log n)`;
 - **Phase 2** — a sequential scan of a block of `m` elements: `O(m)`.
 
-Together — **`O(log n + m)`**. When `m` is small (as it is with a good step), `O(log n)` dominates. The counters for various instances (printed by [`examples/02_complexity.py`](examples/02_complexity.py)):
+Together — **`O(log n + m)`**. When `m` is small (as it is with a good step), `O(log n)` dominates. The counters for various instances:
 
 ```text
 Complexity O(log n + m): two terms
@@ -248,7 +248,7 @@ The hybrid loses to pure binary search (it works over a sparse index and then st
 
 The step `step` is the method's main parameter. A small `step` → a large table and tiny blocks (cheap scan, but an expensive index and memory); a large `step` → a small table, but long scans. The balance is in the middle, near **`√n`**.
 
-The experiment: total comparisons vs. step for an array of `n = 100` elements (printed by [`examples/03_step_and_variants.py`](examples/03_step_and_variants.py)):
+The experiment: total comparisons vs. step for an array of `n = 100` elements:
 
 ```text
 Experiment: total comparisons vs. step (n = 100)
@@ -268,7 +268,7 @@ The "comparisons vs. `step`" curve has a clear **minimum near `√n`**:
 
 ## 8. Variants and the Jump Search relative
 
-Phase 1 can be implemented in different ways, and the method itself has a close relative — and they all give **the same result** (printed by [`examples/03_step_and_variants.py`](examples/03_step_and_variants.py)):
+Phase 1 can be implemented in different ways, and the method itself has a close relative — and they all give **the same result**:
 
 ```text
 The phase-1 variants give the same result:
@@ -285,7 +285,7 @@ The phase-1 variants give the same result:
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left both functions with **highlighted active lines**, on the right the two-level schematic at that very moment. **The line color encodes the phase and the branch:** 🟡 the line runs now, 🟦 a phase-1 branch (window narrowing / block choice), 🌸 a phase-2 step (linear in the block), 🟢 "found" → `return`, 🔴 the block is exhausted → `return -1`.
 
-We build it for the main case; generated by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py). Each grid row is one decision (an index probe / a block choice / a sequential comparison):
+We build it for the main case. Each grid row is one decision (an index probe / a block choice / a sequential comparison):
 
 ![Code ↔ data: the two phases of indexed sequential search](docs/images/en/code_steps_main.png)
 
@@ -295,7 +295,7 @@ We build it for the main case; generated by [`examples/05_code_walkthrough.py`](
 
 ## 10. Full step-by-step trace of `[1, 3, …, 25]`, step 4, target 15
 
-Below is the same execution, but **in full**: every index probe, the block choice, and every sequential comparison as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py) script).
+Below is the same execution, but **in full**: every index probe, the block choice, and every sequential comparison as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
 
 #### Step 00
 

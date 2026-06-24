@@ -14,7 +14,7 @@ The most important thing to understand: **`k` is a graph vertex, not a separate 
 
 Imagine the vertices as **airports** and the edges as **direct flights** with their durations. At first the matrix `D` knows only the *direct* flights. We want to find the shortest time between every pair of airports, allowing transfers.
 
-![Airport map: vertices = airports, edges = direct flights](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_map_abcdef.png)
+![Airport map: vertices = airports, edges = direct flights](docs/images/en/airport_map_abcdef.png)
 
 The algorithm "opens" airports as allowed transfer hubs **one at a time**:
 
@@ -24,15 +24,15 @@ The algorithm "opens" airports as allowed transfer hubs **one at a time**:
 
 The check for a single pair is exactly a *relaxation*: we compare the **direct flight** with a **transfer through `k`** and keep the shorter option. That is the whole formula `min(direct, via k)`:
 
-![Direct flight vs. a transfer through hub k](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_relaxation.png)
+![Direct flight vs. a transfer through hub k](docs/images/en/airport_relaxation.png)
 
 By opening hubs one by one, the routes gradually get shorter: at first a pair may have **no** path at all, then some path appears, and with each new allowed hub it becomes ever shorter:
 
-![Hub airports are opened one by one, and the route gets shorter](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_progressive.png)
+![Hub airports are opened one by one, and the route gets shorter](docs/images/en/airport_progressive.png)
 
 ▶️ The same in motion — we open hubs one by one, and the route `i → j` shrinks `∞ → 12 → 6`:
 
-![Animation: opening hubs one by one shortens route i → j](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/airport_progressive.gif)
+![Animation: opening hubs one by one shortens route i → j](docs/images/en/airport_progressive.gif)
 
 Once all vertices have been opened as transfer points, we have tried every possible route — and `D` is left holding the true shortest distances.
 
@@ -64,7 +64,7 @@ That is: the *old distance* versus *the path through the new intermediate vertex
 
 *(In the code we still make a copy before each step — only to highlight which cells changed.)*
 
-**This is the entire algorithm** — the formula above literally becomes a triple loop. Here is its heart, from [`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) (the full code — with path reconstruction via `nxt` and the snapshots for the step-by-step pictures — is in [`floyd_warshall/core.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+**This is the entire algorithm** — the formula above literally becomes a triple loop. Here is its heart, from `floyd_warshall_steps` (the full code — with path reconstruction via `nxt` and the snapshots for the step-by-step pictures):
 
 ```python
 for k in range(n):                      # "open" the intermediate vertices one by one
@@ -119,7 +119,7 @@ We work with a **directed weighted** graph. It is given by an **adjacency matrix
 
 Edges: `A→B (3)`, `B→C (1)`, `C→D (7)`, `C→F (2)`, `E→D (2)`, `E→F (3)`.
 
-![Directed weighted graph A–F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/graph_abcdef.png)
+![Directed weighted graph A–F](docs/images/en/graph_abcdef.png)
 
 ### Step 1. Initializing the distance matrix
 
@@ -128,7 +128,7 @@ We build the starting matrix:
 - `D[i][j] =` the weight of edge $i \to j$, if it exists;
 - `D[i][j] = ∞`, if there is no direct edge.
 
-![Initial distance matrix D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_initial_abcdef.png)
+![Initial distance matrix D](docs/images/en/matrix_initial_abcdef.png)
 
 ### Steps 2–3. Iterations and updates
 
@@ -142,11 +142,11 @@ for k in range(n):            # k = the current intermediate vertex (A, B, C, ..
                 dist[i][j] = dist[i][k] + dist[k][j]
 ```
 
-In the teaching version ([`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)), after each `k` we save a **snapshot** of the matrix and the **set of changed cells** (to highlight them). We also keep a `nxt` matrix to reconstruct the paths themselves: `nxt[i][j]` is the next vertex on the shortest path from `i` to `j`.
+In the teaching version (`floyd_warshall_steps`), after each `k` we save a **snapshot** of the matrix and the **set of changed cells** (to highlight them). We also keep a `nxt` matrix to reconstruct the paths themselves: `nxt[i][j]` is the next vertex on the shortest path from `i` to `j`.
 
 ▶️ And here is exactly how the **two inner loops** iterate over all pairs `(i, j)` for a fixed `k` — using the most productive step `k = C`. The orange frame is the current cell, the blue cross marks the pivot row and column `k`, and green is a just-improved distance (a detailed breakdown of these numbers is below):
 
-![Animation: two inner loops sweep all pairs (i, j) for k = C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/sweep_abcdef_k_C.gif)
+![Animation: two inner loops sweep all pairs (i, j) for k = C](docs/images/en/sweep_abcdef_k_C.gif)
 
 ### Step-by-step walkthrough: the matrix after each intermediate vertex `k`
 
@@ -194,7 +194,7 @@ No distance improved on this step.
   Reason: vertex A has no incoming edges (D[i][A] = ∞).
 ```
 
-![Matrix D after opening vertex A](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_A.png)
+![Matrix D after opening vertex A](docs/images/en/step_abcdef_k_A.png)
 
 #### Intermediate vertex `k = B`
 
@@ -214,7 +214,7 @@ Distances improved: 1
   D[A][C]: ∞ → 4   (since D[A][B] + D[B][C] = 3+1 = 4)
 ```
 
-![Matrix D after opening vertex B](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_B.png)
+![Matrix D after opening vertex B](docs/images/en/step_abcdef_k_B.png)
 
 #### Intermediate vertex `k = C`
 
@@ -240,7 +240,7 @@ Distances improved: 4
   D[B][F]: ∞ → 3   (since D[B][C] + D[C][F] = 1+2 = 3)
 ```
 
-![Matrix D after opening vertex C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_C.png)
+![Matrix D after opening vertex C](docs/images/en/step_abcdef_k_C.png)
 
 #### Intermediate vertex `k = D`
 
@@ -254,7 +254,7 @@ No distance improved on this step.
   Reason: vertex D has no outgoing edges (D[D][j] = ∞).
 ```
 
-![Matrix D after opening vertex D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_D.png)
+![Matrix D after opening vertex D](docs/images/en/step_abcdef_k_D.png)
 
 #### Intermediate vertex `k = E`
 
@@ -268,7 +268,7 @@ No distance improved on this step.
   Reason: vertex E has no incoming edges (D[i][E] = ∞).
 ```
 
-![Matrix D after opening vertex E](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_E.png)
+![Matrix D after opening vertex E](docs/images/en/step_abcdef_k_E.png)
 
 #### Intermediate vertex `k = F`
 
@@ -282,17 +282,17 @@ No distance improved on this step.
   Reason: vertex F has no outgoing edges (D[F][j] = ∞).
 ```
 
-![Matrix D after opening vertex F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_abcdef_k_F.png)
+![Matrix D after opening vertex F](docs/images/en/step_abcdef_k_F.png)
 
 ### The big picture: evolution of the matrix
 
 All snapshots together. You can see that the matrix "matures" already after C is opened, and the remaining steps leave it unchanged.
 
-![Evolution of the distance matrix D (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_abcdef.png)
+![Evolution of the distance matrix D (A → F)](docs/images/en/evolution_abcdef.png)
 
 ▶️ The same evolution as an animation — green "flashes" exactly on the step where a distance improved (all the work is on `k = B` and `k = C`):
 
-![Animation: matrix D matures step by step (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_abcdef.gif)
+![Animation: matrix D matures step by step (A → F)](docs/images/en/evolution_abcdef.gif)
 
 ### Result and path reconstruction
 
@@ -324,7 +324,7 @@ Why `nxt[i][k]` and not `k`? Because the shortest path `i → k` may itself pass
 
 #### Unfolding the path
 
-With `nxt` ready, the full route is built by a simple "follow the pointers until you arrive" loop (this is what [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) does):
+With `nxt` ready, the full route is built by a simple "follow the pointers until you arrive" loop (this is what `reconstruct_path` does):
 
 ```python
 def reconstruct_path(nxt, u, v):
@@ -355,11 +355,11 @@ Shortest path A → F:  A → B → C → F   (length = 6)
 Shortest path A → C:  A → B → C   (length = 4)
 ```
 
-![Shortest path A → D on the graph](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_abcdef_A_to_D.png)
+![Shortest path A → D on the graph](docs/images/en/path_abcdef_A_to_D.png)
 
-▶️ How [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) unfolds the route — step by step, "following the `nxt` pointers" (`A → B → C → D`):
+▶️ How `reconstruct_path` unfolds the route — step by step, "following the `nxt` pointers" (`A → B → C → D`):
 
-![Animation: unfolding path A → D via the nxt matrix](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_abcdef_A_to_D.gif)
+![Animation: unfolding path A → D via the nxt matrix](docs/images/en/path_abcdef_A_to_D.gif)
 
 ## 6. Negative cycles
 
@@ -393,19 +393,19 @@ Consider three vertices `X, Y, Z` where **all** the cycle's edges are negative: 
 
 > **Why without step-by-step frames.** Unlike examples 1 and 3, here we deliberately do not show the matrix "after each `k`": for a negative cycle the values `D[i][j]` do not converge to a meaningful answer (the true one is `−∞`), so step-by-step snapshots would only create the illusion of a correct result. Instead we look at the diagonal of the final matrix — that is enough to diagnose the problem.
 
-![A fully negative cycle X → Y → Z → X](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_graph_xyz.png)
+![A fully negative cycle X → Y → Z → X](docs/images/en/negcycle_graph_xyz.png)
 
 ▶️ Walking the cycle while accumulating weight: every traversed edge adds `−1`, and the sum falls `0, −1, −2, …` with no floor — you can walk forever:
 
-![Animation: walking the negative cycle X → Y → Z → X while accumulating weight](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_walk_xyz.gif)
+![Animation: walking the negative cycle X → Y → Z → X while accumulating weight](docs/images/en/negcycle_walk_xyz.gif)
 
 **Why there is no shortest path here.** Each full traversal `X → Y → Z → X` adds `−3` to the total weight. So the more times you walk the cycle, the "shorter" (smaller in weight) the path — and so on without end: `−3, −6, −9, … → −∞`. There is no minimum, so the notion of "shortest path" loses its meaning.
 
-![The path weight falls without bound → −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_weight_divergence.png)
+![The path weight falls without bound → −∞](docs/images/en/negcycle_weight_divergence.png)
 
 ▶️ The same as an animation — the weight `−3, −6, −9, …` is added traversal by traversal and heads toward `−∞`:
 
-![Animation: with each traversal of the cycle the path weight heads toward −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/negcycle_weight_divergence.gif)
+![Animation: with each traversal of the cycle the path weight heads toward −∞](docs/images/en/negcycle_weight_divergence.gif)
 
 **Why the algorithm cannot handle this.** Floyd–Warshall assumes the shortest distances are finite numbers and returns a finite matrix. But for such a graph those numbers are **wrong** (the true answer is `−∞`). The sign of the problem is the diagonal: if `D[i][i] < 0` after the algorithm, then vertex `i` lies on a reachable negative cycle (it "returns to itself" with negative weight).
 
@@ -423,9 +423,9 @@ Floyd–Warshall, unlike Dijkstra, **works correctly with negative weights** (as
 
 > **Why a new graph and not A–F with negative edges.** In the A–F graph there is **exactly one route** to every vertex (it is tree-like), so a negative edge there would only change some number — and no "race between routes" would arise. But the whole point of negative weights is precisely that **a longer detour can beat a direct edge**: here the direct `P → S = 10` loses to the path `P → Q → R → S = 5`. For this you need a pair of vertices that has *both* a direct edge *and* an alternative detour — so we take a new small graph, built specifically around this contrast.
 
-![Graph P, Q, R, S with a negative edge Q → R = −2](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/graph_pqrs.png)
+![Graph P, Q, R, S with a negative edge Q → R = −2](docs/images/en/graph_pqrs.png)
 
-![Initial matrix D (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_initial_pqrs.png)
+![Initial matrix D (P, Q, R, S)](docs/images/en/matrix_initial_pqrs.png)
 
 ### Step: intermediate vertex `k = P`
 
@@ -439,7 +439,7 @@ No distance improved on this step.
   Reason: vertex P has no incoming edges (D[i][P] = ∞).
 ```
 
-![Matrix D after opening vertex P](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_P.png)
+![Matrix D after opening vertex P](docs/images/en/step_pqrs_k_P.png)
 
 ### Step: intermediate vertex `k = Q`
 
@@ -455,7 +455,7 @@ Distances improved: 1
   D[P][R]: ∞ → 2   (since D[P][Q] + D[Q][R] = 4+(-2) = 2)
 ```
 
-![Matrix D after opening vertex Q](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_Q.png)
+![Matrix D after opening vertex Q](docs/images/en/step_pqrs_k_Q.png)
 
 ### Step: intermediate vertex `k = R`
 
@@ -474,7 +474,7 @@ Distances improved: 2
   D[Q][S]: ∞ → 1   (since D[Q][R] + D[R][S] = -2+3 = 1)
 ```
 
-![Matrix D after opening vertex R](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_R.png)
+![Matrix D after opening vertex R](docs/images/en/step_pqrs_k_R.png)
 
 ### Step: intermediate vertex `k = S`
 
@@ -488,17 +488,17 @@ No distance improved on this step.
   Reason: vertex S has no outgoing edges (D[S][j] = ∞).
 ```
 
-![Matrix D after opening vertex S](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/step_pqrs_k_S.png)
+![Matrix D after opening vertex S](docs/images/en/step_pqrs_k_S.png)
 
 ### The big picture: evolution of the matrix (negative example)
 
 All snapshots of matrix `D` side by side: the start and the state after opening each vertex `P → S`. Blue marks the pivot row/column `k`, green marks the cells that improved on this step (the previous value is in parentheses).
 
-![Evolution of matrix D (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_pqrs.png)
+![Evolution of matrix D (P → S)](docs/images/en/evolution_pqrs.png)
 
 ▶️ The animated evolution — you can clearly see the key moment at `k = R`: `D[P][S]` drops `10 → 5` (the direct edge loses to the path through the negative one):
 
-![Animation: matrix D matures step by step (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/evolution_pqrs.gif)
+![Animation: matrix D matures step by step (P → S)](docs/images/en/evolution_pqrs.gif)
 
 ### Result and path reconstruction (negative example)
 
@@ -516,53 +516,53 @@ Shortest path P → S:  P → Q → R → S   (length = 5)
 Shortest path Q → S:  Q → R → S   (length = 1)
 ```
 
-![Shortest path P → S on the graph](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_pqrs_P_to_S.png)
+![Shortest path P → S on the graph](docs/images/en/path_pqrs_P_to_S.png)
 
 ▶️ Unfolding the route via `nxt`: the red path `P → Q → R → S` (through the negative edge) beats the direct edge `P → S = 10`, which stays gray:
 
-![Animation: unfolding path P → S via the nxt matrix](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/path_pqrs_P_to_S.gif)
+![Animation: unfolding path P → S via the nxt matrix](docs/images/en/path_pqrs_P_to_S.gif)
 
 ### The final matrix of shortest distances
 
 `∞` means there is no path. Note `D[P][S] = 5` (not `10`) — that is the effect of the negative edge.
 
-![Final matrix of shortest distances (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/matrix_final_pqrs.png)
+![Final matrix of shortest distances (P, Q, R, S)](docs/images/en/matrix_final_pqrs.png)
 
 ## 9. Step-by-step code execution: code ↔ matrix panels
 
 The examples above showed the *result* of each step — how the matrix matures. Here is **the code itself in action**: on the left a fragment of the algorithm with its **active lines highlighted**, on the right the state of matrix `D` at exactly that step. **The color of a code line encodes which branch fired:** 🟨 the line is executing now, 🟩 the `if` condition is true → the distance is updated, 🟥 no shorter path → no change.
 
-Both levels of detail are built from a single step journal (`floyd_warshall/walkthrough.py`, the right panel reuses `draw_matrix`); they are generated by [`examples/05_code_walkthrough.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/examples/05_code_walkthrough.py).
+Both levels of detail are built from a single step journal (`floyd_warshall/walkthrough.py`, the right panel reuses `draw_matrix`).
 
 ### Overview: one step per intermediate vertex `k`
 
 The outer `for k` loop opens the vertices one by one; the right panel is the matrix after each `k` (blue cross = the pivot row/column `k`, green = what improved):
 
-![Code ↔ matrix D: overview by k (graph A–F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_steps_abcdef.png)
+![Code ↔ matrix D: overview by k (graph A–F)](docs/images/en/code_steps_abcdef.png)
 
 ### In detail: a step is a single pair `(i, j)`
 
 For the most illustrative step (`k = C`) we unroll **both inner loops**: each step is one `if via_k < dist[i][j]` check. The orange box is the current `(i, j)`; green code lines 8–9 mean the "update" branch fired:
 
-![Code ↔ matrix D cell by cell (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_abcdef_k_C.png)
+![Code ↔ matrix D cell by cell (A–F, k = C)](docs/images/en/code_walk_abcdef_k_C.png)
 
 ▶️ The same in motion — the full sweep of every pair `(i, j)`:
 
-![Animation: code ↔ matrix cell by cell (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_abcdef_k_C.gif)
+![Animation: code ↔ matrix cell by cell (A–F, k = C)](docs/images/en/code_walk_abcdef_k_C.gif)
 
 ### The same on the negative examples
 
 **Negative edge (`P, Q, R, S`), `k = R`:**
 
-![Code ↔ matrix cell by cell (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_pqrs_k_R.png)
+![Code ↔ matrix cell by cell (P–S, k = R)](docs/images/en/code_walk_pqrs_k_R.png)
 
-![Animation: code ↔ matrix cell by cell (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_pqrs_k_R.gif)
+![Animation: code ↔ matrix cell by cell (P–S, k = R)](docs/images/en/code_walk_pqrs_k_R.gif)
 
 **Negative cycle (`X, Y, Z`), `k = Z`** — the diagonal `D[i][i]` goes **negative** (the signature of a cycle), so here even the pivot row/column `k` improves:
 
-![Code ↔ matrix cell by cell (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_xyz_k_Z.png)
+![Code ↔ matrix cell by cell (X–Y–Z, k = Z)](docs/images/en/code_walk_xyz_k_Z.png)
 
-![Animation: code ↔ matrix cell by cell (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en/code_walk_xyz_k_Z.gif)
+![Animation: code ↔ matrix cell by cell (X–Y–Z, k = Z)](docs/images/en/code_walk_xyz_k_Z.gif)
 
 ## 10. Complexity and comparison
 
@@ -589,7 +589,7 @@ What all these problems share is the need for **all pairs** of distances/connect
 
 ## 12. Bonus: a cleaner implementation
 
-In the classic implementation (with the `0 = no edge` convention) an edge of weight `0` cannot be told apart from a missing one (because of the `if graph[i][j] != 0` condition). It is more robust to specify the matrix with $\infty$ for missing edges right away — then zero-weight edges are supported correctly too. The algorithm itself becomes quite short (see [`floyd_warshall`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+In the classic implementation (with the `0 = no edge` convention) an edge of weight `0` cannot be told apart from a missing one (because of the `if graph[i][j] != 0` condition). It is more robust to specify the matrix with $\infty$ for missing edges right away — then zero-weight edges are supported correctly too. The algorithm itself becomes quite short (see `floyd_warshall`):
 
 ```python
 def floyd_warshall(adj):

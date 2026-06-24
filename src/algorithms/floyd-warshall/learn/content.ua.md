@@ -14,7 +14,7 @@
 
 Уявіть вершини як **аеропорти**, а ребра — як **прямі рейси** з їхньою тривалістю. Спочатку матриця `D` знає лише *прямі* перельоти. Ми хочемо знайти найкоротший час між кожною парою аеропортів, дозволяючи пересадки.
 
-![Карта аеропортів: вершини = аеропорти, ребра = прямі рейси](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/airport_map_abcdef.png)
+![Карта аеропортів: вершини = аеропорти, ребра = прямі рейси](docs/images/airport_map_abcdef.png)
 
 Алгоритм «відкриває» аеропорти як дозволені пересадкові вузли **по одному**:
 
@@ -24,15 +24,15 @@
 
 Сам крок перевірки для однієї пари — це і є *релаксація*: порівнюємо **прямий рейс** із **пересадкою через `k`** і лишаємо коротший варіант. У цьому і вся формула `min(пряме, через k)`:
 
-![Прямий рейс проти пересадки через хаб k](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/airport_relaxation.png)
+![Прямий рейс проти пересадки через хаб k](docs/images/airport_relaxation.png)
 
 Відкриваючи хаби по черзі, маршрути поступово коротшають: спершу для пари може не бути **жодного** шляху, потім з'являється бодай якийсь, а з кожним новим дозволеним хабом — дедалі коротший:
 
-![Хаби-аеропорти відкриваються по черзі, і маршрут коротшає](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/airport_progressive.png)
+![Хаби-аеропорти відкриваються по черзі, і маршрут коротшає](docs/images/airport_progressive.png)
 
 ▶️ Те саме в русі — відкриваємо хаби по черзі, і маршрут `i → j` коротшає `∞ → 12 → 6`:
 
-![Анімація: відкриття хабів по черзі вкорочує маршрут i → j](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/airport_progressive.gif)
+![Анімація: відкриття хабів по черзі вкорочує маршрут i → j](docs/images/airport_progressive.gif)
 
 Коли відкрито всі вершини як пересадкові, ми перебрали всі можливі маршрути — і в `D` лишаються справжні найкоротші відстані.
 
@@ -64,7 +64,7 @@ $$D^{(k)}[i][j] = \min\Big(D^{(\text{до } k)}[i][j],\; D^{(\text{до } k)}[i]
 
 *(У коді ми все ж робимо копію перед кожним кроком — лише щоб підсвітити, які клітинки змінилися.)*
 
-**Це і є весь алгоритм** — формула вище буквально стає потрійним циклом. Ось його серце з [`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) (повний код — із відновленням шляху через `nxt` та знімками для покрокових картинок — у [`floyd_warshall/core.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+**Це і є весь алгоритм** — формула вище буквально стає потрійним циклом. Ось його серце з `floyd_warshall_steps` (повний код — із відновленням шляху через `nxt` та знімками для покрокових картинок):
 
 ```python
 for k in range(n):                      # «відкриваємо» проміжні вершини по черзі
@@ -119,7 +119,7 @@ $$D[A][C] = \min(\infty,\; D[A][B] + D[B][C]) = \min(\infty,\; 3 + 1) = 4$$
 
 Ребра: `A→B (3)`, `B→C (1)`, `C→D (7)`, `C→F (2)`, `E→D (2)`, `E→F (3)`.
 
-![Орієнтований зважений граф A–F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/graph_abcdef.png)
+![Орієнтований зважений граф A–F](docs/images/graph_abcdef.png)
 
 ### Крок 1. Ініціалізація матриці відстаней
 
@@ -128,7 +128,7 @@ $$D[A][C] = \min(\infty,\; D[A][B] + D[B][C]) = \min(\infty,\; 3 + 1) = 4$$
 - `D[i][j] =` вага ребра $i \to j$, якщо воно є;
 - `D[i][j] = ∞`, якщо прямого ребра немає.
 
-![Початкова матриця відстаней D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/matrix_initial_abcdef.png)
+![Початкова матриця відстаней D](docs/images/matrix_initial_abcdef.png)
 
 ### Кроки 2–3. Ітерації та оновлення
 
@@ -142,11 +142,11 @@ for k in range(n):            # k = поточна проміжна вершин
                 dist[i][j] = dist[i][k] + dist[k][j]
 ```
 
-У навчальній версії ([`floyd_warshall_steps`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)) після кожного `k` ми зберігаємо **знімок** матриці та **множину змінених клітинок** (щоб їх підсвітити). Додатково ведемо матрицю `nxt` для відновлення самих шляхів: `nxt[i][j]` — наступна вершина на найкоротшому шляху з `i` до `j`.
+У навчальній версії (`floyd_warshall_steps`) після кожного `k` ми зберігаємо **знімок** матриці та **множину змінених клітинок** (щоб їх підсвітити). Додатково ведемо матрицю `nxt` для відновлення самих шляхів: `nxt[i][j]` — наступна вершина на найкоротшому шляху з `i` до `j`.
 
 ▶️ А ось як саме **два внутрішні цикли** перебирають усі пари `(i, j)` за фіксованого `k` — на прикладі найпродуктивнішого кроку `k = C`. Помаранчева рамка — поточна клітинка, синій хрест — опорні рядок і стовпець `k`, зелене — щойно покращена відстань (докладний розбір цих чисел — нижче):
 
-![Анімація: два внутрішні цикли перебирають усі пари (i, j) для k = C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/sweep_abcdef_k_C.gif)
+![Анімація: два внутрішні цикли перебирають усі пари (i, j) для k = C](docs/images/sweep_abcdef_k_C.gif)
 
 ### Покроковий розбір: матриця після кожної проміжної вершини `k`
 
@@ -194,7 +194,7 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   Причина: у вершину A не входить жодне ребро (D[i][A] = ∞).
 ```
 
-![Матриця D після відкриття вершини A](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_A.png)
+![Матриця D після відкриття вершини A](docs/images/step_abcdef_k_A.png)
 
 #### Проміжна вершина `k = B`
 
@@ -214,7 +214,7 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   D[A][C]: ∞ → 4   (бо D[A][B] + D[B][C] = 3+1 = 4)
 ```
 
-![Матриця D після відкриття вершини B](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_B.png)
+![Матриця D після відкриття вершини B](docs/images/step_abcdef_k_B.png)
 
 #### Проміжна вершина `k = C`
 
@@ -240,7 +240,7 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   D[B][F]: ∞ → 3   (бо D[B][C] + D[C][F] = 1+2 = 3)
 ```
 
-![Матриця D після відкриття вершини C](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_C.png)
+![Матриця D після відкриття вершини C](docs/images/step_abcdef_k_C.png)
 
 #### Проміжна вершина `k = D`
 
@@ -254,7 +254,7 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   Причина: з вершини D не виходить жодне ребро (D[D][j] = ∞).
 ```
 
-![Матриця D після відкриття вершини D](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_D.png)
+![Матриця D після відкриття вершини D](docs/images/step_abcdef_k_D.png)
 
 #### Проміжна вершина `k = E`
 
@@ -268,7 +268,7 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   Причина: у вершину E не входить жодне ребро (D[i][E] = ∞).
 ```
 
-![Матриця D після відкриття вершини E](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_E.png)
+![Матриця D після відкриття вершини E](docs/images/step_abcdef_k_E.png)
 
 #### Проміжна вершина `k = F`
 
@@ -282,17 +282,17 @@ for k in range(n):                 # k = 0 → проміжна вершина A
   Причина: з вершини F не виходить жодне ребро (D[F][j] = ∞).
 ```
 
-![Матриця D після відкриття вершини F](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_abcdef_k_F.png)
+![Матриця D після відкриття вершини F](docs/images/step_abcdef_k_F.png)
 
 ### Зведена картина: еволюція матриці
 
 Усі знімки разом. Видно, що матриця «дозріває» вже після відкриття `C`, а решта кроків лишають її без змін.
 
-![Еволюція матриці відстаней D (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/evolution_abcdef.png)
+![Еволюція матриці відстаней D (A → F)](docs/images/evolution_abcdef.png)
 
 ▶️ Та сама еволюція як анімація — зелене «спалахує» рівно на тому кроці, де відстань покращилася (уся робота на `k = B` і `k = C`):
 
-![Анімація: матриця D дозріває крок за кроком (A → F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/evolution_abcdef.gif)
+![Анімація: матриця D дозріває крок за кроком (A → F)](docs/images/evolution_abcdef.gif)
 
 ### Результат і відновлення шляху
 
@@ -324,7 +324,7 @@ if dist[i][k] + dist[k][j] < dist[i][j]:
 
 #### Розгортання шляху
 
-Маючи готову `nxt`, повний маршрут будуємо простим циклом «йди за вказівниками, доки не прийдеш» (це і робить [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+Маючи готову `nxt`, повний маршрут будуємо простим циклом «йди за вказівниками, доки не прийдеш» (це і робить `reconstruct_path`):
 
 ```python
 def reconstruct_path(nxt, u, v):
@@ -355,11 +355,11 @@ def reconstruct_path(nxt, u, v):
 Найкоротший шлях A → C:  A → B → C   (довжина = 4)
 ```
 
-![Найкоротший шлях A → D на графі](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/path_abcdef_A_to_D.png)
+![Найкоротший шлях A → D на графі](docs/images/path_abcdef_A_to_D.png)
 
-▶️ Як [`reconstruct_path`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py) розгортає маршрут — крок за кроком «йдемо за вказівниками» `nxt` (`A → B → C → D`):
+▶️ Як `reconstruct_path` розгортає маршрут — крок за кроком «йдемо за вказівниками» `nxt` (`A → B → C → D`):
 
-![Анімація: розгортання шляху A → D за матрицею nxt](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/path_abcdef_A_to_D.gif)
+![Анімація: розгортання шляху A → D за матрицею nxt](docs/images/path_abcdef_A_to_D.gif)
 
 ## 6. Від'ємні цикли
 
@@ -393,19 +393,19 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
 
 > **Чому без покрокових кадрів.** На відміну від прикладів 1 і 3, тут ми навмисно не показуємо матрицю «після кожного `k`»: для від'ємного циклу значення `D[i][j]` не сходяться до осмисленої відповіді (справжня — `−∞`), тож покрокові знімки лише створювали б ілюзію коректного результату. Натомість дивимось на діагональ підсумкової матриці — цього досить, щоб діагностувати проблему.
 
-![Повністю від'ємний цикл X → Y → Z → X](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/negcycle_graph_xyz.png)
+![Повністю від'ємний цикл X → Y → Z → X](docs/images/negcycle_graph_xyz.png)
 
 ▶️ Обхід циклу з накопиченням ваги: кожне пройдене ребро додає `−1`, і сума падає `0, −1, −2, …` без дна — обходити можна нескінченно:
 
-![Анімація: обхід від'ємного циклу X → Y → Z → X із накопиченням ваги](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/negcycle_walk_xyz.gif)
+![Анімація: обхід від'ємного циклу X → Y → Z → X із накопиченням ваги](docs/images/negcycle_walk_xyz.gif)
 
 **Чому тут немає найкоротшого шляху.** Кожен повний обхід `X → Y → Z → X` додає `−3` до загальної ваги. Тому що більше разів обходити цикл, то «коротший» (менший за вагою) шлях — і так нескінченно: `−3, −6, −9, … → −∞`. Мінімуму не існує, тож поняття «найкоротший шлях» втрачає сенс.
 
-![Вага шляху падає необмежено → −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/negcycle_weight_divergence.png)
+![Вага шляху падає необмежено → −∞](docs/images/negcycle_weight_divergence.png)
 
 ▶️ Те саме як анімація — вага `−3, −6, −9, …` додається обхід за обходом і прямує до `−∞`:
 
-![Анімація: вага шляху з кожним обходом циклу прямує до −∞](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/negcycle_weight_divergence.gif)
+![Анімація: вага шляху з кожним обходом циклу прямує до −∞](docs/images/negcycle_weight_divergence.gif)
 
 **Чому алгоритм не може це обробити.** Флойд–Воршал припускає, що найкоротші відстані — скінченні числа, і повертає скінченну матрицю. Але для такого графа ці числа **неправильні** (справжня відповідь — `−∞`). Ознака проблеми — діагональ: якщо після алгоритму `D[i][i] < 0`, вершина `i` лежить на досяжному від'ємному циклі (вона «повертається в себе» з від'ємною вагою).
 
@@ -423,9 +423,9 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
 
 > **Чому новий граф, а не A–F із від'ємними ребрами.** У графі A–F до кожної вершини веде **рівно один маршрут** (він деревоподібний), тож від'ємне ребро там лише змінило б якесь число — і не виникло б жодної «гонки маршрутів». А весь сенс від'ємних ваг саме в тому, що **довший обхід може обігнати пряме ребро**: тут пряме `P → S = 10` програє шляху `P → Q → R → S = 5`. Для цього потрібна пара вершин, у якої є *і* пряме ребро, *і* альтернативний обхід — тому беремо новий маленький граф, спеціально побудований навколо цього контрасту.
 
-![Граф P, Q, R, S із від'ємним ребром Q → R = −2](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/graph_pqrs.png)
+![Граф P, Q, R, S із від'ємним ребром Q → R = −2](docs/images/graph_pqrs.png)
 
-![Початкова матриця D (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/matrix_initial_pqrs.png)
+![Початкова матриця D (P, Q, R, S)](docs/images/matrix_initial_pqrs.png)
 
 ### Крок: проміжна вершина `k = P`
 
@@ -439,7 +439,7 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
   Причина: у вершину P не входить жодне ребро (D[i][P] = ∞).
 ```
 
-![Матриця D після відкриття вершини P](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_pqrs_k_P.png)
+![Матриця D після відкриття вершини P](docs/images/step_pqrs_k_P.png)
 
 ### Крок: проміжна вершина `k = Q`
 
@@ -455,7 +455,7 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
   D[P][R]: ∞ → 2   (бо D[P][Q] + D[Q][R] = 4+(-2) = 2)
 ```
 
-![Матриця D після відкриття вершини Q](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_pqrs_k_Q.png)
+![Матриця D після відкриття вершини Q](docs/images/step_pqrs_k_Q.png)
 
 ### Крок: проміжна вершина `k = R`
 
@@ -474,7 +474,7 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
   D[Q][S]: ∞ → 1   (бо D[Q][R] + D[R][S] = -2+3 = 1)
 ```
 
-![Матриця D після відкриття вершини R](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_pqrs_k_R.png)
+![Матриця D після відкриття вершини R](docs/images/step_pqrs_k_R.png)
 
 ### Крок: проміжна вершина `k = S`
 
@@ -488,17 +488,17 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
   Причина: з вершини S не виходить жодне ребро (D[S][j] = ∞).
 ```
 
-![Матриця D після відкриття вершини S](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/step_pqrs_k_S.png)
+![Матриця D після відкриття вершини S](docs/images/step_pqrs_k_S.png)
 
 ### Зведена картина: еволюція матриці (від'ємний приклад)
 
 Усі знімки матриці `D` поряд: початок і стан після відкриття кожної вершини `P → S`. Синім — опорний рядок/стовпець `k`, зеленим — клітинки, що покращилися на цьому кроці (у дужках — попереднє значення).
 
-![Еволюція матриці D (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/evolution_pqrs.png)
+![Еволюція матриці D (P → S)](docs/images/evolution_pqrs.png)
 
 ▶️ Анімована еволюція — добре видно ключовий момент на `k = R`: `D[P][S]` падає `10 → 5` (пряме ребро програє шляху через від'ємне):
 
-![Анімація: матриця D дозріває крок за кроком (P → S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/evolution_pqrs.gif)
+![Анімація: матриця D дозріває крок за кроком (P → S)](docs/images/evolution_pqrs.gif)
 
 ### Результат і відновлення шляху (від'ємний приклад)
 
@@ -516,53 +516,53 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
 Найкоротший шлях Q → S:  Q → R → S   (довжина = 1)
 ```
 
-![Найкоротший шлях P → S на графі](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/path_pqrs_P_to_S.png)
+![Найкоротший шлях P → S на графі](docs/images/path_pqrs_P_to_S.png)
 
 ▶️ Розгортання маршруту за `nxt`: червоний шлях `P → Q → R → S` (через від'ємне ребро) виграє в прямого ребра `P → S = 10`, що лишається сірим:
 
-![Анімація: розгортання шляху P → S за матрицею nxt](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/path_pqrs_P_to_S.gif)
+![Анімація: розгортання шляху P → S за матрицею nxt](docs/images/path_pqrs_P_to_S.gif)
 
 ### Підсумкова матриця найкоротших відстаней
 
 `∞` означає, що шляху не існує. Звернімо увагу на `D[P][S] = 5` (а не `10`) — це ефект від'ємного ребра.
 
-![Підсумкова матриця найкоротших відстаней (P, Q, R, S)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/matrix_final_pqrs.png)
+![Підсумкова матриця найкоротших відстаней (P, Q, R, S)](docs/images/matrix_final_pqrs.png)
 
 ## 9. Покрокове виконання коду: панелі «код ↔ матриця»
 
 Приклади вище показували *результат* кожного кроку — як «дозріває» матриця. Тут — **сам код у дії**: ліворуч фрагмент алгоритму з **підсвіченими активними рядками**, праворуч — стан матриці `D` саме на цьому кроці. **Колір рядка коду кодує, яка гілка спрацювала:** 🟨 рядок виконується зараз, 🟩 умова `if` істинна → відстань оновлено, 🟥 коротшого шляху немає → без змін.
 
-Обидва рівні деталізації будуються з одного журналу кроків (`floyd_warshall/walkthrough.py`, права панель — повторно `draw_matrix`); генерує їх приклад [`examples/05_code_walkthrough.py`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/examples/05_code_walkthrough.py).
+Обидва рівні деталізації будуються з одного журналу кроків (`floyd_warshall/walkthrough.py`, права панель — повторно `draw_matrix`).
 
 ### Огляд: один крок на проміжну вершину `k`
 
 Зовнішній цикл `for k` відкриває вершини по черзі; права панель — матриця після кожного `k` (синій хрест — опорні рядок/стовпець `k`, зелене — що покращилося):
 
-![Код ↔ матриця D: огляд по k (граф A–F)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_steps_abcdef.png)
+![Код ↔ матриця D: огляд по k (граф A–F)](docs/images/code_steps_abcdef.png)
 
 ### Детально: крок = одна пара `(i, j)`
 
 Для найпоказовішого кроку (`k = C`) розгортаємо **обидва внутрішні цикли**: кожен крок — одна перевірка `if via_k < dist[i][j]`. Помаранчева рамка — поточна `(i, j)`; зелені рядки коду 8–9 означають, що спрацювала гілка «оновити»:
 
-![Код ↔ матриця D по клітинках (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_abcdef_k_C.png)
+![Код ↔ матриця D по клітинках (A–F, k = C)](docs/images/code_walk_abcdef_k_C.png)
 
 ▶️ Те саме в русі — повний скан усіх пар `(i, j)`:
 
-![Анімація: код ↔ матриця по клітинках (A–F, k = C)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_abcdef_k_C.gif)
+![Анімація: код ↔ матриця по клітинках (A–F, k = C)](docs/images/code_walk_abcdef_k_C.gif)
 
 ### Те саме на від'ємних прикладах
 
 **Від'ємне ребро (`P, Q, R, S`), `k = R`:**
 
-![Код ↔ матриця по клітинках (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_pqrs_k_R.png)
+![Код ↔ матриця по клітинках (P–S, k = R)](docs/images/code_walk_pqrs_k_R.png)
 
-![Анімація: код ↔ матриця по клітинках (P–S, k = R)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_pqrs_k_R.gif)
+![Анімація: код ↔ матриця по клітинках (P–S, k = R)](docs/images/code_walk_pqrs_k_R.gif)
 
 **Від'ємний цикл (`X, Y, Z`), `k = Z`** — діагональ `D[i][i]` стає **від'ємною** (ознака циклу), тож тут покращується навіть рядок/стовпець `k`:
 
-![Код ↔ матриця по клітинках (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_xyz_k_Z.png)
+![Код ↔ матриця по клітинках (X–Y–Z, k = Z)](docs/images/code_walk_xyz_k_Z.png)
 
-![Анімація: код ↔ матриця по клітинках (X–Y–Z, k = Z)](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/code_walk_xyz_k_Z.gif)
+![Анімація: код ↔ матриця по клітинках (X–Y–Z, k = Z)](docs/images/code_walk_xyz_k_Z.gif)
 
 ## 10. Складність і порівняння
 
@@ -589,7 +589,7 @@ print(has_negative_cycle(dist))   # → True  (на діагоналі є від
 
 ## 12. Бонус: чистіша реалізація
 
-У класичній реалізації (з угодою «`0` = немає ребра») ребро з вагою `0` неможливо відрізнити від відсутнього (через умову `if graph[i][j] != 0`). Надійніше задавати матрицю одразу через $\infty$ для відсутніх ребер — тоді коректно підтримуються й ребра нульової ваги. Сам алгоритм стає зовсім коротким (див. [`floyd_warshall`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/floyd_warshall/core.py)):
+У класичній реалізації (з угодою «`0` = немає ребра») ребро з вагою `0` неможливо відрізнити від відсутнього (через умову `if graph[i][j] != 0`). Надійніше задавати матрицю одразу через $\infty$ для відсутніх ребер — тоді коректно підтримуються й ребра нульової ваги. Сам алгоритм стає зовсім коротким (див. `floyd_warshall`):
 
 ```python
 def floyd_warshall(adj):

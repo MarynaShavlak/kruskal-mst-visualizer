@@ -5,7 +5,7 @@ An educational and research-oriented project that solves the **Traveling Salesma
 - **Brute-force search** — generates all `n!` possible routes. It is simple and guaranteed to be exact, but factorially slow: `O(n!)`.
 - **Held–Karp algorithm** — dynamic programming with memoization of subproblems. It finds the same exact optimum, but the complexity decreases to `O(n² · 2ⁿ)`.
 
-The main focus is on **step-by-step visualizations**: the distance matrix, level-by-level filling of the dynamic-programming table, reuse of already computed blocks, and complexity comparison. All figures are reproducible from the code in this repository.
+The main focus is on **step-by-step visualizations**: the distance matrix, level-by-level filling of the dynamic-programming table, reuse of already computed blocks, and complexity comparison.
 
 > **Example result:** both methods return the same optimal route:
 > **A → C → B → D → E → A**, with length ≈ **16.75**.

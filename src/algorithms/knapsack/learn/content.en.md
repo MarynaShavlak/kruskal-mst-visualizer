@@ -6,7 +6,7 @@ It is a classic problem for meeting two strategies at once: **brute force** (hon
 
 > **About the notation.** Items are called **I1, I2, I3**. In the DP table, row `i` means "the first `i` items are allowed", so item I`i` "lives" in row `i`, while in the lists `wt`/`val` it has index `i − 1` (Python counts from zero). That is why the code says `wt[i - 1]` and `val[i - 1]` everywhere.
 
-> **About the code.** The basic implementations are reproduced **verbatim** (comments included; translated here). Conventionally all three approaches share one name — `knapSack`; in the package [`knapsack/core.py`](knapsack/core.py) they must coexist, so the functions got distinct names: [`knapsack_recursive`](knapsack/core.py), [`knapsack_brute_force`](knapsack/core.py), [`knapsack_greedy`](knapsack/core.py), [`knapsack_dp`](knapsack/core.py). The function bodies were not changed.
+> **About the code.** The basic implementations are reproduced **verbatim** (comments included; translated here). Conventionally all three approaches share one name — `knapSack`; they must coexist, so the functions got distinct names: `knapsack_recursive`, `knapsack_brute_force`, `knapsack_greedy`, `knapsack_dp`. The function bodies were not changed.
 
 ## 1. The problem
 
@@ -61,7 +61,7 @@ For our problem: $2^3 = 8$ combinations. The algorithm:
 
 **Answer:** take items **I2 and I3** → weight 50, value **220**.
 
-The same table as a figure — each subset's strip shows its weight against the capacity (dashed line), with the verdict on the right ([`examples/01_brute_force.py`](examples/01_brute_force.py)):
+The same table as a figure — each subset's strip shows its weight against the capacity (dashed line), with the verdict on the right:
 
 ![Brute force: all 8 subsets](docs/images/en/subsets_classic.png)
 
@@ -86,7 +86,7 @@ subset          weight      value  verdict
 
 ## 4. The basic implementation — "take / skip" recursion
 
-Here is the base implementation — the one we dissect line by line (the fully documented version is [`knapsack_recursive`](knapsack/core.py)):
+Here is the base implementation — the one we dissect line by line:
 
 ```python
 # A function that computes the maximum value
@@ -209,7 +209,7 @@ Python evaluates the first argument of `max(...)` before the second, so the func
 
 ## 8. Explicit subset enumeration (`itertools`)
 
-The recursion enumerates combinations implicitly — via the call branching. The same search can be written head-on: generate all index subsets and check each one. Bonus: this version returns not just the value but **the set itself**. The code (full version — [`knapsack_brute_force`](knapsack/core.py)):
+The recursion enumerates combinations implicitly — via the call branching. The same search can be written head-on: generate all index subsets and check each one. Bonus: this version returns not just the value but **the set itself**. The code:
 
 ```python
 from itertools import combinations
@@ -232,7 +232,7 @@ def knapsack_brute_force(W, wt, val):
     return best_value, best_combo
 ```
 
-Both versions give the same answer ([`examples/01_brute_force.py`](examples/01_brute_force.py)):
+Both versions give the same answer:
 
 ```text
 Recursive version: 220
@@ -261,7 +261,7 @@ On a log scale the exponential $2^n$ is a straight line that leaves the polynomi
 
 ![Growth of 2^n versus n·W](docs/images/en/growth_2n.png)
 
-The script [`examples/01_brute_force.py`](examples/01_brute_force.py) honestly runs both approaches on that instance (20 items, `W = 60`, the numbers are pinned in [`examples/_items.py`](examples/_items.py)):
+Both approaches are honestly run on that instance (20 items, `W = 60`, the numbers are pinned in advance):
 
 ```text
 Brute force must inspect 2^20 = 1 048 576 subsets;
@@ -325,7 +325,7 @@ Note: this is **the same** take/skip pair as in the brute-force recursion. The o
 
 ## 12. The basic implementation — table `K[i][w]`
 
-The code (the fully documented version is [`knapsack_dp`](knapsack/core.py)):
+The code:
 
 ```python
 def knapSack(W, wt, val, n):
@@ -384,7 +384,7 @@ When "take" is impossible, only the first term remains in `max` → `K[i][w] = K
 
 ## 14. Filling the table step by step (the small instance)
 
-To fit every cell on screen, we switch to the **small instance**: a knapsack of capacity **4** and items I1 (weight 1, value 6), I2 (weight 2, value 10), I3 (weight 3, value 12). The table is just 4×5. All figures and outputs of this section are produced by [`examples/02_dp_small.py`](examples/02_dp_small.py).
+To fit every cell on screen, we switch to the **small instance**: a knapsack of capacity **4** and items I1 (weight 1, value 6), I2 (weight 2, value 10), I3 (weight 3, value 12). The table is just 4×5.
 
 How to read the visualization:
 
@@ -503,7 +503,7 @@ The key observation: the value `K[i][w]` could only have come **from two places*
 - `K[i][w] == K[i-1][w]` → item `i` was **skipped**; go one row up with the same `w`;
 - `K[i][w] != K[i-1][w]` → such a value could only come from the "take" branch → item `i` is **in the set**; go one row up and **free its weight**: `w -= wt[i-1]`.
 
-The code (full version — [`reconstruct_items`](knapsack/core.py)):
+The code:
 
 ```python
 # Backward pass: reconstruct the set of items
@@ -516,7 +516,7 @@ for i in range(n, 0, -1):
 chosen.reverse()
 ```
 
-> In this fragment the table is called `dp` — it is the same `K` (both names appear in the literature). One more difference: this fragment collects item **names** (`names[i - 1]`), while the package's [`reconstruct_items`](knapsack/core.py) returns **0-based indices** of the chosen items — the examples attach the names afterwards.
+> In this fragment the table is called `dp` — it is the same `K` (both names appear in the literature). One more difference: this fragment collects item **names** (`names[i - 1]`), while the package's `reconstruct_items` returns **0-based indices** of the chosen items — the examples attach the names afterwards.
 
 The run on the small instance — three comparisons, three decisions:
 
@@ -540,7 +540,7 @@ In the figure the path is highlighted in yellow: a green arrow = "item taken" (a
 
 ## 18. The classic instance: a table for W = 50
 
-Back to the original problem (`W = 50`, weights `[10, 20, 30]`). The table here is 4 rows × **51 columns**, but since all weights are multiples of 10, the values only change at capacities that are multiples of 10. So we show the condensed version ([`examples/03_dp_classic.py`](examples/03_dp_classic.py)):
+Back to the original problem (`W = 50`, weights `[10, 20, 30]`). The table here is 4 rows × **51 columns**, but since all weights are multiples of 10, the values only change at capacities that are multiples of 10. So we show the condensed version:
 
 ```text
  i \ w |   0  10  20  30  40  50
@@ -611,7 +611,7 @@ The code did not change by a single character — only the data did (`W = 50`, t
 
 ## 20. Comparing the three approaches
 
-All three methods on **one** classic instance ([`examples/03_dp_classic.py`](examples/03_dp_classic.py)):
+All three methods on **one** classic instance:
 
 ```text
 Brute force (recursion):     220
@@ -643,7 +643,7 @@ The method fills a table of decisions for every item × every capacity: `n` is t
 
 **When to use which:**
 
-- **brute force** — when there are very few items (up to ~20) or you need an indisputable reference to validate other methods (exactly how it is used in this repository's [tests](tests/test_core.py));
+- **brute force** — when there are very few items (up to ~20) or you need an indisputable reference to validate other methods;
 - **DP** — when `n · W` is moderate (thousands to millions of cells): both exact and fast;
 - **greedy** — only as a quick "better than nothing" heuristic, or for the *fractional* problem where it actually is optimal.
 
@@ -657,7 +657,7 @@ Many people's first thought: "grab the items with the best value per unit while 
 
 > ⚠️ **Important.** For the **0/1** problem (an item is taken whole or not at all) the greedy method **does not guarantee the optimal result**. It is optimal only for the **fractional** problem (where items can be taken in parts).
 
-The code (full version — [`knapsack_greedy`](knapsack/core.py)):
+The code:
 
 ```python
 class Item:
@@ -692,7 +692,7 @@ Value density (value / weight):
   I3: 120 / 30 = 4.0
 ```
 
-The order after sorting stays the same: I1 (6.0) → I2 (5.0) → I3 (4.0). Then ([`examples/04_greedy_limitation.py`](examples/04_greedy_limitation.py)):
+The order after sorting stays the same: I1 (6.0) → I2 (5.0) → I3 (4.0). Then:
 
 ```text
 Greedy run (by decreasing ratio):

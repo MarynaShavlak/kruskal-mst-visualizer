@@ -37,7 +37,7 @@ The first is needed when *where* the element lies matters; the second — when o
 
 ### The base implementation
 
-Here is the base implementation — the one we walk through line by line (the fully documented version is in [`linear_search/core.py`](linear_search/core.py)):
+Here is the base implementation — the one we walk through line by line:
 
 ```python
 def linear_search(arr, x):
@@ -64,7 +64,7 @@ What is what:
 
 `exists_in_list` merely calls `linear_search` and turns its result into `True`/`False`.
 
-The teaching version [`linear_search_steps`](linear_search/core.py) repeats this code **action for action**, but after each check it records a snapshot of the state and the check counter — those snapshots are what every picture below is built from.
+The teaching version `linear_search_steps` repeats this code **action for action**, but after each check it records a snapshot of the state and the check counter — those snapshots are what every picture below is built from.
 
 ### How to read the frames
 
@@ -90,7 +90,7 @@ We are searching for `8`. The cursor starts at index `0` and moves right.
 
 ![Check 3: 8 = 8, found](docs/images/en/step_main_2.png)
 
-The full trace of the checks (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+The full trace of the checks:
 
 ```text
 Step-by-step walkthrough: searching for 8 in [5, 3, 8, 1, 4]
@@ -116,7 +116,7 @@ All checks side by side — you can see the cursor "staircase": the pink cell cr
 
 ![Found 8 at index 2](docs/images/en/result_main.png)
 
-The console summary (printed by [`examples/01_intro.py`](examples/01_intro.py)):
+The console summary:
 
 ```text
 Array:   [5, 3, 8, 1, 4]
@@ -124,7 +124,7 @@ Target:  8
 Result: index 2   ·   checks: 3
 ```
 
-And here are the example outputs — on the sorted array `[1, 3, 5, 7, 9, 11]` (also reproduced by [`examples/01_intro.py`](examples/01_intro.py)):
+And here are the example outputs — on the sorted array `[1, 3, 5, 7, 9, 11]`:
 
 ```text
 linear_search([1, 3, 5, 7, 9, 11], 7)  -> 3
@@ -223,7 +223,7 @@ The cursor runs along the still array — comparison by comparison. Two telling 
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the array with the cursor at that exact moment. **The line color encodes what is happening:** 🟡 the line runs now (loop / the `if arr[i] == x` check), 🟢 the condition is true → `return i` (found), 🔴 the loop is exhausted → `return -1` (not found).
 
-We build this for the main case `[5, 3, 8, 1, 4]`, searching for `8`; produced by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py). Each grid row is one check (you see both branches: not-it / match):
+We build this for the main case `[5, 3, 8, 1, 4]`, searching for `8`. Each grid row is one check (you see both branches: not-it / match):
 
 ![Code ↔ array: the array [5, 3, 8, 1, 4]](docs/images/en/code_steps_main.png)
 
@@ -233,7 +233,7 @@ We build this for the main case `[5, 3, 8, 1, 4]`, searching for `8`; produced b
 
 ## 10. Full step-by-step trace of `[5, 3, 8, 1, 4]`
 
-Below is the same step-by-step execution, but **in full**: every check as a separate code ↔ array frame, in the correct order, with a detailed explanation under each. The "intrigue" frame (`arr[i] == x?`) and its resolution (not-it / match) are shown separately. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same step-by-step execution, but **in full**: every check as a separate code ↔ array frame, in the correct order, with a detailed explanation under each. The "intrigue" frame (`arr[i] == x?`) and its resolution (not-it / match) are shown separately. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
 
 #### Step 00
 
