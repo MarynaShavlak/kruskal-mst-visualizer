@@ -133,13 +133,7 @@ export function selectionSortStable(input: readonly number[]): number[] {
   return a
 }
 
-/** Чи впорядкований масив за зростанням? */
-export function isSorted(lst: readonly number[]): boolean {
-  for (let i = 0; i < lst.length - 1; i++) {
-    if (lst[i] > lst[i + 1]) return false
-  }
-  return true
-}
+export { isSorted } from "@/lib/arrayUtils"
 
 /**
  * Інструментована версія для покрокового розбору: повторює `selectionSort`

@@ -69,13 +69,7 @@ export function mergeSortBottomUp(input: readonly number[]): number[] {
   return a
 }
 
-/** Чи впорядкований масив за зростанням? */
-export function isSorted(seq: readonly number[]): boolean {
-  for (let i = 0; i < seq.length - 1; i++) {
-    if (seq[i] > seq[i + 1]) return false
-  }
-  return true
-}
+export { isSorted } from "@/lib/arrayUtils"
 
 // ---------------------------------------------------------------------------
 // Інструментоване злиття (журнал двох вказівників) — «зіркова» панель

@@ -139,17 +139,9 @@ export function branchFor(indexTable: readonly IndexEntry[], start: number): Bra
   return "general"
 }
 
-/**
- * Чи відсортований `arr` за зростанням? ПЕРЕДУМОВА коректності: і двійковий пошук по
- * індексу, і логіка вибору блоку покладаються на впорядкованість. На невідсортованих
- * даних метод може «відкинути» блок, у якому насправді лежить шукане.
- */
-export function isSorted(arr: readonly number[]): boolean {
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i] > arr[i + 1]) return false
-  }
-  return true
-}
+// `isSorted` — ПЕРЕДУМОВА коректності: і двійковий пошук по індексу, і вибір блоку
+// покладаються на впорядкованість. Реалізація — спільна.
+export { isSorted } from "@/lib/arrayUtils"
 
 /** Оптимальний крок ≈ √n (баланс розміру таблиці й довжини блоку). */
 export function optimalStep(n: number): number {
