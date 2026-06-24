@@ -219,24 +219,25 @@ export function buildRabinKarpStringSearchTrace(
   let rolls = 0
   let recomputes = 0
 
-  const blank = {
-    hashTermIndex: null as number | null,
-    hashChar: null as string | null,
-    hashCode: null as number | null,
-    hashPower: null as number | null,
-    hashContribution: null as number | null,
-    offset: -1,
-    windowHash: 0,
-    verdict: null as RkVerdict | null,
-    matched: 0,
-    mismatchJ: null as number | null,
-    roll: null as RkFrame["roll"],
+  // Лише форма опційних полів кадру (значення-дефолти підставляє `push` нижче).
+  type Blank = {
+    hashTermIndex: number | null
+    hashChar: string | null
+    hashCode: number | null
+    hashPower: number | null
+    hashContribution: number | null
+    offset: number
+    windowHash: number
+    verdict: RkVerdict | null
+    matched: number
+    mismatchJ: number | null
+    roll: RkFrame["roll"]
   }
 
   const push = (
     phase: RkPhase,
     panel: "hash" | "search",
-    f: Partial<typeof blank> & {
+    f: Partial<Blank> & {
       hashValue?: number
       lines: readonly number[]
       contextLines: readonly number[]

@@ -88,7 +88,7 @@ function PathResult({
 }) {
   const dist = result.dist[u][v]
   const t = useT()
-  let path: number[] | null = null
+  let path: number[] | null
   try {
     path = reconstructPath(result.nxt, u, v)
   } catch {

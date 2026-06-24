@@ -22,7 +22,7 @@ function timeIt(fn: () => void, minTotalMs = 8): number {
   fn() // прогрів
   const t0 = performance.now()
   let iters = 0
-  let elapsed = 0
+  let elapsed: number
   do {
     fn()
     iters++
