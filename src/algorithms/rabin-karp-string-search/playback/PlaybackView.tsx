@@ -15,9 +15,7 @@ import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { HashBuildPanel } from "@/algorithms/rabin-karp-string-search/playback/HashBuildPanel"
 import { RkStripPanel } from "@/algorithms/rabin-karp-string-search/playback/RkStripPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +29,7 @@ export function PlaybackView() {
   const pattern = useRabinKarpStringSearchStore((s) => s.pattern)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const [mode, setMode] = useState<Mode>("rolling")
   const rolling = mode === "rolling"
 

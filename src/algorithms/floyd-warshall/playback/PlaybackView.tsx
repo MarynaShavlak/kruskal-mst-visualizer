@@ -5,15 +5,13 @@ import {
   buildFloydWarshallTrace,
   type FwResult,
 } from "@/lib/floydWarshallTrace"
-import type { Translate } from "@/lib/translate"
-import type { MessageKey } from "@/i18n/messages"
 import { useDirectedGraphStore } from "@/store/directed-graph-store"
 import { useLangStore } from "@/store/lang-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
-import { useT } from "@/i18n/use-t"
+import { useT, useTr } from "@/i18n/use-t"
 import { GraphView } from "@/algorithms/floyd-warshall/playback/GraphView"
 import { relaxationsUpTo } from "@/algorithms/floyd-warshall/playback/highlight"
 import { MatrixPanel } from "@/algorithms/floyd-warshall/playback/MatrixPanel"
@@ -25,7 +23,7 @@ export function PlaybackView() {
   const positions = useDirectedGraphStore((s) => s.positions)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
 
   // Нарація перебудовується при зміні мови; resetKey плеєра — граф, тож курсор
   // не скидається при перемиканні UA/EN.

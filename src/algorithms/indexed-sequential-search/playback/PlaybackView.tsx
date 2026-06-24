@@ -20,9 +20,7 @@ import {
   TwoLevelPanel,
   type TwoLevelProps,
 } from "@/algorithms/indexed-sequential-search/playback/TwoLevelPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -60,7 +58,7 @@ export function PlaybackView() {
   const step = useIndexedSequentialSearchStore((s) => s.step)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const [mode, setMode] = useState<Mode>("binary")
   const linearIndex = mode === "linear"
 

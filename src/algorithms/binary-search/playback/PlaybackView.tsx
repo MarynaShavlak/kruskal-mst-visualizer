@@ -16,9 +16,7 @@ import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { WindowPanel } from "@/algorithms/binary-search/playback/WindowPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -32,7 +30,7 @@ export function PlaybackView() {
   const target = useBinarySearchStore((s) => s.target)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const [mode, setMode] = useState<Mode>("iterative")
   const recursive = mode === "recursive"
 

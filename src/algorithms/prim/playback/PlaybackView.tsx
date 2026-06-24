@@ -1,15 +1,13 @@
 import { useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { buildPrimTrace } from "@/lib/primTrace"
-import type { Translate } from "@/lib/translate"
-import type { MessageKey } from "@/i18n/messages"
 import { usePrimGraphStore } from "@/store/prim-graph-store"
 import { useLangStore } from "@/store/lang-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
-import { useT } from "@/i18n/use-t"
+import { useT, useTr } from "@/i18n/use-t"
 import { GraphView } from "@/algorithms/prim/playback/GraphView"
 import { QueuePanel } from "@/algorithms/prim/playback/QueuePanel"
 import { MstEdgesPanel } from "@/algorithms/prim/playback/MstEdgesPanel"
@@ -19,7 +17,7 @@ export function PlaybackView() {
   const positions = usePrimGraphStore((s) => s.positions)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
 
   // Нарація перебудовується при зміні мови; resetKey плеєра — граф, тож курсор
   // не скидається при перемиканні UA/EN.

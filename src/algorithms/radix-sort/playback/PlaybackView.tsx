@@ -12,9 +12,7 @@ import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { BucketsPanel } from "@/algorithms/radix-sort/playback/BucketsPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -25,7 +23,7 @@ export function PlaybackView() {
   const values = useRadixSortStore((s) => s.values)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
 
   const sig = values.join(",")
 

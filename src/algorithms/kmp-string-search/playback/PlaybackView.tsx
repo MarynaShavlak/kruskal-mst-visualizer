@@ -14,9 +14,7 @@ import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { LpsTablePanel } from "@/algorithms/kmp-string-search/playback/LpsTablePanel"
 import { KmpStripPanel } from "@/algorithms/kmp-string-search/playback/KmpStripPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -28,7 +26,7 @@ export function PlaybackView() {
   const pattern = useKmpStringSearchStore((s) => s.pattern)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
 
   const sig = `${text}|${pattern}`
 

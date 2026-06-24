@@ -4,9 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { DEFAULT_DSU_OPTIONS, type DsuOptions } from "@/lib/dsu"
 import { kruskalDsu } from "@/lib/kruskalDsu"
 import { kruskalHasPath } from "@/lib/kruskalHasPath"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useGraphStore } from "@/store/graph-store"
 import { useLangStore } from "@/store/lang-store"
 import { CompareView } from "@/algorithms/kruskal/playback/CompareView"
@@ -25,7 +23,7 @@ export function PlaybackView() {
   const [dsuOptions, setDsuOptions] = useState<DsuOptions>(DEFAULT_DSU_OPTIONS)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const modeLabel = (m: Mode): string =>
     m === "dsu" ? "DSU" : m === "hasPath" ? t("play.modeNaive") : t("play.modeCompare")
 

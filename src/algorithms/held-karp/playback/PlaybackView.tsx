@@ -15,9 +15,7 @@ import { CandidatesPanel } from "@/algorithms/held-karp/playback/CandidatesPanel
 import { DpTablePanel } from "@/algorithms/held-karp/playback/DpTablePanel"
 import { MatrixPanel } from "@/algorithms/held-karp/playback/MatrixPanel"
 import { TourMapPanel } from "@/algorithms/held-karp/playback/TourMapPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -33,7 +31,7 @@ export function PlaybackView() {
   const inRange = n >= 2 && n <= MAX_CITIES
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
 
   // Нарація перебудовується при зміні мови; resetKey плеєра — список міст
   // (стабільний при перемиканні UA/EN), тож курсор не скидається.
