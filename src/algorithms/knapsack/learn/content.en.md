@@ -589,7 +589,7 @@ The sections above showed the *result* of every step — how the table "ripens".
 
 > In the code panel the `max(...)` branches are written on separate lines — "take" (line 7) and "skip" (line 8) — so that each one can be highlighted separately.
 
-Both levels of detail are built from a single trace ([`buildKnapsackTrace`](src/lib/knapsackTrace.ts)), the same one that powers the "Algorithm" tab.
+Both levels of detail are built from a single trace, the same one that powers the "Algorithm" tab.
 
 ### Overview: the full run on the small instance
 
