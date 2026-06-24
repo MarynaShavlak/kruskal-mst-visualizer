@@ -4,6 +4,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { BoyerMooreStringSearchDoc } from "@/store/boyer-moore-string-search-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface BmWire {
   readonly version: 1
@@ -22,19 +23,6 @@ function parseWire(raw: unknown): BmWire {
   return o as unknown as BmWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: BoyerMooreStringSearchDoc): BmWire => ({
   version: 1,
   text: doc.text,
@@ -46,16 +34,4 @@ const wireToDoc = (wire: BmWire): BoyerMooreStringSearchDoc => ({
   pattern: wire.pattern,
 })
 
-export const boyerMooreStringSearchCodec = {
-  toJSON: (doc: BoyerMooreStringSearchDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): BoyerMooreStringSearchDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: BoyerMooreStringSearchDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): BoyerMooreStringSearchDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const boyerMooreStringSearchCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

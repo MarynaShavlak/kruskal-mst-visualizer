@@ -5,6 +5,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { RadixSortDoc } from "@/store/radix-sort-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface RadixWire {
   readonly version: 1
@@ -23,19 +24,6 @@ function parseWire(raw: unknown): RadixWire {
   return o as unknown as RadixWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: RadixSortDoc): RadixWire => ({
   version: 1,
   values: doc.values.map((v) => Math.round(v)),
@@ -45,16 +33,4 @@ const wireToDoc = (wire: RadixWire): RadixSortDoc => ({
   values: wire.values.map((v) => Math.max(0, Math.trunc(v))),
 })
 
-export const radixSortCodec = {
-  toJSON: (doc: RadixSortDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): RadixSortDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: RadixSortDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): RadixSortDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const radixSortCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

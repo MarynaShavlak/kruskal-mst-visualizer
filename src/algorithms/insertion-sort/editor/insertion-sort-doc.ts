@@ -6,6 +6,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { InsertionSortDoc } from "@/store/insertion-sort-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface InsertionWire {
   readonly version: 1
@@ -24,19 +25,6 @@ function parseWire(raw: unknown): InsertionWire {
   return o as unknown as InsertionWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: InsertionSortDoc): InsertionWire => ({
   version: 1,
   values: doc.values.map((v) => Math.round(v)),
@@ -46,16 +34,4 @@ const wireToDoc = (wire: InsertionWire): InsertionSortDoc => ({
   values: wire.values.map((v) => Math.max(0, Math.trunc(v))),
 })
 
-export const insertionSortCodec = {
-  toJSON: (doc: InsertionSortDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): InsertionSortDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: InsertionSortDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): InsertionSortDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const insertionSortCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

@@ -4,6 +4,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { KmpStringSearchDoc } from "@/store/kmp-string-search-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface KmpWire {
   readonly version: 1
@@ -22,19 +23,6 @@ function parseWire(raw: unknown): KmpWire {
   return o as unknown as KmpWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: KmpStringSearchDoc): KmpWire => ({
   version: 1,
   text: doc.text,
@@ -46,16 +34,4 @@ const wireToDoc = (wire: KmpWire): KmpStringSearchDoc => ({
   pattern: wire.pattern,
 })
 
-export const kmpStringSearchCodec = {
-  toJSON: (doc: KmpStringSearchDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): KmpStringSearchDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: KmpStringSearchDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): KmpStringSearchDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const kmpStringSearchCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

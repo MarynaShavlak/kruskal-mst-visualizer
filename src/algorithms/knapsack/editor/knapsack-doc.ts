@@ -7,6 +7,7 @@
 import { tr } from "@/i18n/use-t"
 import type { KnapsackItem } from "@/lib/knapsack"
 import type { KnapsackDoc } from "@/store/knapsack-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface KnapsackWire {
   readonly version: 1
@@ -39,19 +40,6 @@ function parseWire(raw: unknown): KnapsackWire {
   return o as unknown as KnapsackWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: KnapsackDoc): KnapsackWire => ({
   version: 1,
   items: doc.items.map(
@@ -69,16 +57,4 @@ const wireToDoc = (wire: KnapsackWire): KnapsackDoc => {
   return { items, capacity: Math.max(0, Math.trunc(wire.capacity)) }
 }
 
-export const knapsackCodec = {
-  toJSON: (doc: KnapsackDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): KnapsackDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: KnapsackDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): KnapsackDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const knapsackCodec = createDocCodec({ docToWire, parseWire, wireToDoc })
