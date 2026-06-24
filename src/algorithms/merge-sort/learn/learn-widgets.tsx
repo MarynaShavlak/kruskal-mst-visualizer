@@ -112,20 +112,20 @@ export function IdeaFigure({
     <Figure caption={caption}>
       <span className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <span className="flex flex-col items-center gap-1">
-          <ArrayRow values={values} />
+          <ArrayRow values={values} size="lg" />
           <span className="text-[11px] text-muted-foreground">{t("learn.msIdeaSplit")}</span>
         </span>
         <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
         <span className="flex flex-col items-center gap-1">
           <span className="inline-flex gap-2">
-            <ArrayRow values={left} tone="left" />
-            <ArrayRow values={right} tone="right" />
+            <ArrayRow values={left} tone="left" size="lg" />
+            <ArrayRow values={right} tone="right" size="lg" />
           </span>
           <span className="text-[11px] text-muted-foreground">{t("learn.msIdeaHalves")}</span>
         </span>
         <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
         <span className="flex flex-col items-center gap-1">
-          <ArrayRow values={merged} tone="merged" />
+          <ArrayRow values={merged} tone="merged" size="lg" />
           <span className="text-[11px] text-emerald-600 dark:text-emerald-400">{t("learn.msIdeaMerge")}</span>
         </span>
       </span>
@@ -156,7 +156,7 @@ export function MergeAnimationFigure({
   return (
     <MiniPlayerShell player={player} frameCount={frames.length} caption={cap}>
       <span className="block overflow-auto">
-        <MergeState left={left} right={right} step={step} />
+        <MergeState left={left} right={right} step={step} size="lg" />
       </span>
       {caption && (
         <span className="mt-2 block text-center text-xs text-muted-foreground">{caption}</span>
@@ -183,6 +183,7 @@ export function TreeFigure({
         revealedMax={tree.nodes.length - 1}
         currentId={null}
         mergedIds={allInternal}
+        scale={1.25}
       />
     </Figure>
   )
@@ -215,6 +216,7 @@ export function TreeAnimationFigure({
           revealedMax={frame.revealedMax}
           currentId={frame.phase === "final" ? null : frame.currentId}
           mergedIds={frame.mergedIds}
+          scale={1.25}
         />
       </span>
       {caption && (
@@ -257,6 +259,7 @@ export function LevelsFigure({
                   key={n.id}
                   values={n.array}
                   tone={n.isBase ? "merged" : gi % 2 === 0 ? "left" : "right"}
+                  size="lg"
                 />
               ))}
             </span>
@@ -298,6 +301,7 @@ export function StepFigure({
             revealedMax={frame.revealedMax}
             currentId={frame.phase === "final" ? null : frame.currentId}
             mergedIds={frame.mergedIds}
+            scale={1.25}
           />
         </span>
         <span className="flex items-center justify-center overflow-auto rounded-md border bg-muted/20 p-2">
@@ -319,26 +323,26 @@ function StepDetail({
   sorted: readonly number[]
 }) {
   if (frame.phase === "merge" && frame.mergeLeft && frame.mergeRight) {
-    return <MergeState left={frame.mergeLeft} right={frame.mergeRight} step={frame.mergeStep} />
+    return <MergeState left={frame.mergeLeft} right={frame.mergeRight} step={frame.mergeStep} size="lg" />
   }
   if (frame.phase === "split" && node) {
     return (
       <span className="flex flex-col items-center gap-2">
-        <ArrayRow values={node.array} mid={node.mid ?? undefined} />
+        <ArrayRow values={node.array} mid={node.mid ?? undefined} size="lg" />
         <span className="inline-flex gap-2">
-          <ArrayRow values={node.leftHalf ?? []} tone="left" />
-          <ArrayRow values={node.rightHalf ?? []} tone="right" />
+          <ArrayRow values={node.leftHalf ?? []} tone="left" size="lg" />
+          <ArrayRow values={node.rightHalf ?? []} tone="right" size="lg" />
         </span>
       </span>
     )
   }
   if (frame.phase === "base" && node) {
-    return <ArrayRow values={node.array} tone="merged" />
+    return <ArrayRow values={node.array} tone="merged" size="lg" />
   }
   if (frame.phase === "final") {
-    return <ArrayRow values={sorted} tone="merged" />
+    return <ArrayRow values={sorted} tone="merged" size="lg" />
   }
-  return <ArrayRow values={node?.array ?? sorted} />
+  return <ArrayRow values={node?.array ?? sorted} size="lg" />
 }
 
 // — Код ↔ дані (міні-плеєр: код | дерево) -------------------------------------
@@ -372,13 +376,14 @@ export function CodeWalkthroughFigure({
         />
         <span className="flex h-[340px] flex-col justify-center overflow-auto rounded-lg border bg-card p-3">
           {frame.phase === "merge" && frame.mergeLeft && frame.mergeRight ? (
-            <MergeState left={frame.mergeLeft} right={frame.mergeRight} step={frame.mergeStep} />
+            <MergeState left={frame.mergeLeft} right={frame.mergeRight} step={frame.mergeStep} size="lg" />
           ) : (
             <MergeTree
               tree={tree}
               revealedMax={frame.revealedMax}
               currentId={frame.phase === "final" ? null : frame.currentId}
               mergedIds={frame.mergedIds}
+              scale={1.25}
             />
           )}
         </span>

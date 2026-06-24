@@ -20,14 +20,19 @@ export function DpGridPanel({
   result,
   frame,
   className,
+  size = "md",
 }: {
   result: KnResult
   frame: KnFrame
   className?: string
+  /** Розмір клітинок: md (плеєр, за замовч.) або lg (навчальна вкладка — крупніший текст). */
+  size?: "md" | "lg"
 }) {
   const t = useT()
   const { table, weights, itemNames, capacity } = result
   const cols = capacity + 1
+  const tableText = size === "lg" ? "text-sm" : "text-[11px]"
+  const cellMin = size === "lg" ? "min-w-[2.1rem]" : "min-w-[1.75rem]"
 
   const isFill = frame.phase === "fill"
   const activeRow = frame.row
@@ -73,7 +78,7 @@ export function DpGridPanel({
       className={className}
       bodyClassName="overflow-auto p-2"
     >
-      <table className="border-collapse text-[11px] tabular-nums">
+      <table className={cn("border-collapse tabular-nums", tableText)}>
         <thead>
           <tr>
             <th className="sticky left-0 z-10 bg-card px-1.5 py-0.5 text-muted-foreground">
@@ -83,7 +88,8 @@ export function DpGridPanel({
               <th
                 key={w}
                 className={cn(
-                  "min-w-[1.75rem] px-1 py-0.5 text-center font-normal text-muted-foreground",
+                  cellMin,
+                  "px-1 py-0.5 text-center font-normal text-muted-foreground",
                   activeCol === w && "text-foreground font-semibold",
                 )}
               >
@@ -118,7 +124,8 @@ export function DpGridPanel({
                     key={w}
                     ref={isActive || isBtCurrent ? activeRef : undefined}
                     className={cn(
-                      "min-w-[1.75rem] border border-border/40 px-1 py-0.5 text-center transition-colors",
+                      cellMin,
+                      "border border-border/40 px-1 py-0.5 text-center transition-colors",
                       !shown && !isActive && "text-transparent",
                       shown && !isActive && "text-foreground",
                       isActive && activeKind === "take" && "bg-emerald-500/20 ring-2 ring-emerald-500/70 font-semibold",

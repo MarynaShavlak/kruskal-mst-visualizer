@@ -26,6 +26,8 @@ export interface InsertionBarsProps {
   readonly shiftAt: number | null
   /** Висота області стовпчиків (px). За замовч. 220. */
   readonly height?: number
+  /** Розмір тексту значень/індексів: "md" (плеєр) або "lg" (навчання). За замовч. "md". */
+  readonly size?: "md" | "lg"
 }
 
 /**
@@ -43,8 +45,11 @@ export function InsertionBars({
   compareAt,
   shiftAt,
   height = 220,
+  size = "md",
 }: InsertionBarsProps) {
   const max = Math.max(1, ...array, keyValue ?? 0)
+  const valueText = size === "lg" ? "text-sm" : "text-[11px]"
+  const idxText = size === "lg" ? "text-xs" : "text-[10px]"
   // Зарезервована зона зверху під плаваючий key (≈ 40% висоти стовпчиків).
   const keyZone = Math.round(height * 0.4)
   return (
@@ -64,7 +69,7 @@ export function InsertionBars({
             <div className="flex w-full flex-col items-center justify-end gap-0.5" style={{ height: keyZone }}>
               {showKey && (
                 <>
-                  <span className="text-[11px] font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300">
+                  <span className={cn("font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300", valueText)}>
                     {keyValue}
                   </span>
                   <div
@@ -79,7 +84,8 @@ export function InsertionBars({
             <div className="flex w-full flex-col items-center justify-end gap-1" style={{ height }}>
               <span
                 className={cn(
-                  "text-[11px] font-medium tabular-nums leading-none",
+                  "font-medium tabular-nums leading-none",
+                  valueText,
                   isHole && "opacity-0",
                   active ? "text-foreground" : "text-muted-foreground",
                 )}
@@ -91,7 +97,7 @@ export function InsertionBars({
                 style={{ height: isHole ? "100%" : `${barHeightPct(v, max)}%` }}
               />
             </div>
-            <span className="text-[10px] tabular-nums text-muted-foreground/70">{i}</span>
+            <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
           </div>
         )
       })}

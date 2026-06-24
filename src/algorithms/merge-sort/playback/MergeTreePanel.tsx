@@ -17,11 +17,20 @@ const MINI = {
   sorted: "bg-emerald-500/75 text-white",
 } as const
 
-function MiniCell({ value, tone }: { value: number; tone: keyof typeof MINI }) {
+function MiniCell({
+  value,
+  tone,
+  big = false,
+}: {
+  value: number
+  tone: keyof typeof MINI
+  big?: boolean
+}) {
   return (
     <span
       className={cn(
-        "inline-flex h-4 min-w-4 items-center justify-center rounded-sm px-0.5 text-[9px] font-semibold leading-none tabular-nums",
+        "inline-flex items-center justify-center rounded-sm px-0.5 font-semibold leading-none tabular-nums",
+        big ? "h-5 min-w-5 text-[11px]" : "h-4 min-w-4 text-[9px]",
         MINI[tone],
       )}
     >
@@ -31,14 +40,14 @@ function MiniCell({ value, tone }: { value: number; tone: keyof typeof MINI }) {
 }
 
 /** Комірки одного вузла: зелені (базовий/злитий) або поділені навпіл (🔵/🟧). */
-function NodeCells({ node, merged }: { node: MsTreeNode; merged: boolean }) {
+function NodeCells({ node, merged, big }: { node: MsTreeNode; merged: boolean; big: boolean }) {
   // Базовий випадок або вже злитий вузол → відсортований зелений підмасив.
   if (node.isBase || merged) {
     const cells = merged ? node.result ?? node.array : node.array
     return (
       <span className="inline-flex gap-0.5">
         {cells.map((v, i) => (
-          <MiniCell key={i} value={v} tone="sorted" />
+          <MiniCell key={i} value={v} tone="sorted" big={big} />
         ))}
       </span>
     )
@@ -48,7 +57,7 @@ function NodeCells({ node, merged }: { node: MsTreeNode; merged: boolean }) {
   return (
     <span className="inline-flex gap-0.5">
       {node.array.map((v, i) => (
-        <MiniCell key={i} value={v} tone={halfRole(i, mid)} />
+        <MiniCell key={i} value={v} tone={halfRole(i, mid)} big={big} />
       ))}
     </span>
   )
@@ -62,6 +71,8 @@ export interface MergeTreeProps {
   readonly currentId: number | null
   /** id вузлів, чий результат злиття вже показано (зелений). */
   readonly mergedIds: readonly number[]
+  /** Множник геометрії дерева (1 — плеєр; >1 — більший образ у навчанні). */
+  readonly scale?: number
 }
 
 /**
@@ -70,14 +81,20 @@ export interface MergeTreeProps {
  * результат готовий). Вузли з id > revealedMax приховані. Спільне для плеєра й
  * навчальних віджетів.
  */
-export function MergeTree({ tree, revealedMax, currentId, mergedIds }: MergeTreeProps) {
+export function MergeTree({ tree, revealedMax, currentId, mergedIds, scale = 1 }: MergeTreeProps) {
   const { nodes, leafCount, maxDepth } = tree
   const mergedSet = new Set(mergedIds)
   const byId = new Map(nodes.map((n) => [n.id, n]))
-  const cx = (n: MsTreeNode) => MARGIN_L + (n.x + 0.5) * COL
-  const top = (n: MsTreeNode) => MARGIN_T + n.depth * ROW
-  const width = MARGIN_L * 2 + Math.max(1, leafCount) * COL
-  const height = MARGIN_T * 2 + maxDepth * ROW + BOX_H + 8
+  const big = scale > 1
+  const col = COL * scale
+  const row = ROW * scale
+  const boxH = BOX_H * scale
+  const marginL = MARGIN_L * scale
+  const marginT = MARGIN_T * scale
+  const cx = (n: MsTreeNode) => marginL + (n.x + 0.5) * col
+  const top = (n: MsTreeNode) => marginT + n.depth * row
+  const width = marginL * 2 + Math.max(1, leafCount) * col
+  const height = marginT * 2 + maxDepth * row + boxH + 8 * scale
 
   interface Edge {
     x1: number; y1: number; x2: number; y2: number; branch: "left" | "right"
@@ -90,7 +107,7 @@ export function MergeTree({ tree, revealedMax, currentId, mergedIds }: MergeTree
       const c = byId.get(cid)
       if (!c) return
       edges.push({
-        x1: cx(n), y1: top(n) + BOX_H,
+        x1: cx(n), y1: top(n) + boxH,
         x2: cx(c), y2: top(c),
         branch: ci === 0 ? "left" : "right",
       })
@@ -105,7 +122,7 @@ export function MergeTree({ tree, revealedMax, currentId, mergedIds }: MergeTree
             key={k}
             x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2}
             className={e.branch === "left" ? "stroke-sky-500/70" : "stroke-orange-400/80"}
-            strokeWidth={1.75}
+            strokeWidth={1.75 * scale}
           />
         ))}
       </svg>
@@ -121,7 +138,7 @@ export function MergeTree({ tree, revealedMax, currentId, mergedIds }: MergeTree
             )}
             style={{ left: cx(n), top: top(n) }}
           >
-            <NodeCells node={n} merged={mergedSet.has(n.id)} />
+            <NodeCells node={n} merged={mergedSet.has(n.id)} big={big} />
           </div>
         ),
       )}

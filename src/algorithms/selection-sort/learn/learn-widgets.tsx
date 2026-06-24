@@ -50,6 +50,7 @@ export function ArrayFigure({
         hole={null}
         keyValue={null}
         height={140}
+        size="lg"
       />
     </Figure>
   )
@@ -87,6 +88,7 @@ export function StepFigure({
         hole={frame.hole}
         keyValue={frame.keyValue}
         height={150}
+        size="lg"
       />
       <span className="mt-1.5 block text-center text-xs tabular-nums text-muted-foreground">
         {t("learn.ssCounters", { comparisons: frame.comparisons, swaps: frame.swaps })}
@@ -124,6 +126,7 @@ export function ResultFigure({
         hole={null}
         keyValue={null}
         height={150}
+        size="lg"
       />
       <span className="mt-2 block text-center text-sm tabular-nums">
         {t("learn.ssResultSummary", {
@@ -217,6 +220,7 @@ export function SortAnimationFigure({
         hole={frame.hole}
         keyValue={frame.keyValue}
         height={170}
+        size="lg"
       />
       {caption && (
         <span className="mt-2 block text-center text-xs text-muted-foreground">{caption}</span>
@@ -269,6 +273,7 @@ export function CodeWalkthroughFigure({
             hole={frame.hole}
             keyValue={frame.keyValue}
             height={210}
+            size="lg"
           />
         </span>
       </span>
@@ -342,7 +347,7 @@ function TaggedBars({ items, max }: { items: readonly Tagged[]; max: number }) {
     <div className="flex items-end justify-center gap-2" style={{ height: 130 }}>
       {items.map((it, i) => (
         <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-          <span className="text-[11px] font-medium leading-none">
+          <span className="text-sm font-medium leading-none">
             {it.value}
             <sub className="text-[9px] text-muted-foreground">{it.tag}</sub>
           </span>

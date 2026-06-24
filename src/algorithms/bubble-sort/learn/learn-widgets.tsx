@@ -40,7 +40,7 @@ export function ArrayFigure({
 }) {
   return (
     <Figure caption={caption}>
-      <ArrayBars array={values} pair={null} swapped={false} sortedFrom={values.length} height={160} />
+      <ArrayBars array={values} pair={null} swapped={false} sortedFrom={values.length} height={160} size="lg" />
     </Figure>
   )
 }
@@ -70,7 +70,7 @@ export function StepFigure({
 
   return (
     <Figure caption={caption}>
-      <ArrayBars array={ev.array} pair={pair} swapped={swapped} sortedFrom={ev.sortedFrom} height={150} />
+      <ArrayBars array={ev.array} pair={pair} swapped={swapped} sortedFrom={ev.sortedFrom} height={150} size="lg" />
       {ev.kind === "compare" && (
         <span className="mt-1.5 block text-center text-xs">
           <span
@@ -114,7 +114,7 @@ export function ResultFigure({
 
   return (
     <Figure caption={caption}>
-      <ArrayBars array={sorted} pair={null} swapped={false} sortedFrom={0} height={150} />
+      <ArrayBars array={sorted} pair={null} swapped={false} sortedFrom={0} height={150} size="lg" />
       <span className="mt-2 block text-center text-sm tabular-nums">
         {t("learn.bsResultSummary", {
           comparisons: last.comparisons,
@@ -206,6 +206,7 @@ export function SortAnimationFigure({
         swapped={frame.swapped}
         sortedFrom={frame.sortedFrom}
         height={170}
+        size="lg"
       />
       {caption && (
         <span className="mt-2 block text-center text-xs text-muted-foreground">{caption}</span>
@@ -254,6 +255,7 @@ export function CodeWalkthroughFigure({
             swapped={frame.swapped}
             sortedFrom={frame.sortedFrom}
             height={230}
+            size="lg"
           />
         </span>
       </span>
@@ -310,7 +312,7 @@ export function StabilityFigure({
       <div className="flex items-end justify-center gap-2" style={{ height: 150 }}>
         {items.map((it, i) => (
           <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-            <span className="text-[11px] font-medium leading-none">
+            <span className="text-sm font-medium leading-none">
               {it.value}
               <sub className="text-[9px] text-muted-foreground">{it.tag}</sub>
             </span>

@@ -17,6 +17,8 @@ export interface ArrayBarsProps {
   readonly sortedFrom: number
   /** Висота області стовпчиків (px). За замовч. 220. */
   readonly height?: number
+  /** Розмір тексту значень/індексів: "md" (плеєр) або "lg" (навчання). За замовч. "md". */
+  readonly size?: "md" | "lg"
 }
 
 /**
@@ -31,8 +33,11 @@ export function ArrayBars({
   swapped,
   sortedFrom,
   height = 220,
+  size = "md",
 }: ArrayBarsProps) {
   const max = Math.max(1, ...array)
+  const valueText = size === "lg" ? "text-sm" : "text-[11px]"
+  const idxText = size === "lg" ? "text-xs" : "text-[10px]"
   return (
     <div className="flex items-end justify-center gap-1.5" style={{ height }}>
       {array.map((v, i) => {
@@ -42,7 +47,8 @@ export function ArrayBars({
           <div key={i} className="flex h-full min-w-[1.25rem] flex-1 flex-col items-center justify-end gap-1">
             <span
               className={cn(
-                "text-[11px] font-medium tabular-nums leading-none",
+                "font-medium tabular-nums leading-none",
+                valueText,
                 isPair ? "text-foreground" : "text-muted-foreground",
               )}
             >
@@ -52,7 +58,7 @@ export function ArrayBars({
               className={cn("w-full rounded-t transition-all", BAR_CLASS[role])}
               style={{ height: `${barHeightPct(v, max)}%` }}
             />
-            <span className="text-[10px] tabular-nums text-muted-foreground/70">{i}</span>
+            <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
           </div>
         )
       })}

@@ -124,6 +124,7 @@ export function BucketsFigure({
         activeIndex={null}
         activeBucket={null}
         gathered={false}
+        chipSize="md"
       />
       <span className="mt-2 block text-center text-[11px] text-muted-foreground">{f.caption}</span>
     </Figure>
@@ -172,7 +173,7 @@ export function EvolutionFigure({ values, caption }: { values: readonly number[]
                   width={width}
                   activeDigit={ri === rows.length - 1 ? null : r.digit}
                   variant={ri === rows.length - 1 ? "gathered" : "idle"}
-                  size="sm"
+                  size="md"
                 />
               ))}
             </span>
@@ -200,6 +201,7 @@ export function AnimationFigure({ values, caption }: { values: readonly number[]
           activeIndex={f.activeIndex}
           activeBucket={f.activeBucket}
           gathered={f.gathered}
+          chipSize="md"
         />
       </span>
       {caption && (
@@ -232,6 +234,7 @@ export function StepFigure({
         activeIndex={f.activeIndex}
         activeBucket={f.activeBucket}
         gathered={f.gathered}
+        chipSize="md"
       />
       <span className="mt-2 block text-center text-[11px] text-muted-foreground">{f.caption}</span>
     </Figure>
@@ -445,6 +448,7 @@ export function CodeWalkthroughFigure({ values, caption }: { values: readonly nu
             activeIndex={f.activeIndex}
             activeBucket={f.activeBucket}
             gathered={f.gathered}
+            chipSize="md"
           />
         </span>
       </span>

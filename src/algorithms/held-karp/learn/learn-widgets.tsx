@@ -65,7 +65,7 @@ export function HkDistanceMatrix() {
   let max = 0
   for (let r = 0; r < N; r++)
     for (let c = 0; c < N; c++) if (dist[r][c] > max) max = dist[r][c]
-  const headCls = "bg-muted/60 px-2 py-1 font-semibold text-muted-foreground"
+  const headCls = "bg-muted/60 px-2 py-1 text-sm font-semibold text-muted-foreground"
 
   return (
     <FigureBox>
@@ -76,9 +76,9 @@ export function HkDistanceMatrix() {
       <span className="block overflow-auto">
         <span
           className="grid w-max gap-px text-center tabular-nums"
-          style={{ gridTemplateColumns: `auto repeat(${N}, minmax(2.8rem, 1fr))` }}
+          style={{ gridTemplateColumns: `auto repeat(${N}, minmax(3.4rem, 1fr))` }}
         >
-          <span className={cn(headCls, "text-xs")}>·</span>
+          <span className={cn(headCls, "text-sm")}>·</span>
           {RESULT.names.map((nm, c) => (
             <span
               key={`c-${nm}`}
@@ -97,7 +97,7 @@ export function HkDistanceMatrix() {
                   return (
                     <span
                       key={c}
-                      className="border border-border/40 px-2 py-1 text-muted-foreground"
+                      className="border border-border/40 px-2 py-1 text-sm text-muted-foreground"
                     >
                       0
                     </span>
@@ -107,7 +107,7 @@ export function HkDistanceMatrix() {
                 return (
                   <span
                     key={c}
-                    className="border border-white/50 px-2 py-1 font-medium dark:border-black/20"
+                    className="border border-white/50 px-2 py-1 text-sm font-medium dark:border-black/20"
                     style={{ backgroundColor: bg, color: fg }}
                   >
                     {fmt(v)}
@@ -126,7 +126,7 @@ export function HkDistanceMatrix() {
 
 const VB = 320
 const PAD = 30
-const NR = 13
+const NR = 15
 
 /**
  * Карта демо-міст. Без `tour` — усі попарні відстані (як «граф міст»); із `tour`
@@ -209,10 +209,10 @@ export function HkCitiesMap({ tour }: { tour?: readonly number[] }) {
                 opacity={onTour ? 1 : 0.7}
               />
               <rect
-                x={mx - 13}
-                y={my - 8}
-                width={26}
-                height={15}
+                x={mx - 15}
+                y={my - 9}
+                width={30}
+                height={17}
                 rx={4}
                 opacity={0.92}
                 style={{ fill: "var(--card)" }}
@@ -222,7 +222,7 @@ export function HkCitiesMap({ tour }: { tour?: readonly number[] }) {
                 y={my}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={10}
+                fontSize={12}
                 fontWeight={600}
                 style={{ fill: "var(--foreground)" }}
               >
@@ -249,7 +249,7 @@ export function HkCitiesMap({ tour }: { tour?: readonly number[] }) {
                 y={py(i)}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={12}
+                fontSize={14}
                 fontWeight={600}
                 fill="#ffffff"
               >
@@ -325,7 +325,7 @@ function CandRow({ c }: { c: LevelCand }) {
   // Кольори рядка — точно як у README: обраний WIN_G, відкинутий LOSE_R.
   return (
     <span
-      className="flex items-center gap-1.5 text-[11px] tabular-nums"
+      className="flex items-center gap-1.5 text-xs tabular-nums"
       style={{ color: c.chosen ? WIN_G : LOSE_R }}
     >
       <span className="font-semibold">{label(c.k)}</span>
@@ -454,7 +454,7 @@ const M_R = 122
 const M_T = 9
 const M_B = 112
 const M_VB = 128
-const NODE_R = 6
+const NODE_R = 8
 const AX = [0, 1, 2, 3, 4, 5] as const
 const fx = (x: number): number => M_L + (x / 5) * (M_R - M_L)
 const fy = (y: number): number => M_B - (y / 5) * (M_B - M_T)
@@ -498,10 +498,10 @@ function MiniMap({
         <Fragment key={`g-${tk}`}>
           <line x1={fx(tk)} y1={M_T} x2={fx(tk)} y2={M_B} stroke="#9ca3af" strokeWidth={0.4} opacity={0.35} />
           <line x1={M_L} y1={fy(tk)} x2={M_R} y2={fy(tk)} stroke="#9ca3af" strokeWidth={0.4} opacity={0.35} />
-          <text x={fx(tk)} y={M_B + 7} textAnchor="middle" fontSize={5} fill="#6b7280">
+          <text x={fx(tk)} y={M_B + 7} textAnchor="middle" fontSize={8} fill="#6b7280">
             {tk}
           </text>
-          <text x={M_L - 3} y={fy(tk)} textAnchor="end" dominantBaseline="central" fontSize={5} fill="#6b7280">
+          <text x={M_L - 3} y={fy(tk)} textAnchor="end" dominantBaseline="central" fontSize={8} fill="#6b7280">
             {tk}
           </text>
         </Fragment>
@@ -543,8 +543,8 @@ function MiniMap({
             <polygon points={arrowTip(fromX, fromY, x2, y2)} fill={e.color} />
             {e.label && (
               <g>
-                <rect x={lx - 9} y={ly - 5} width={18} height={9} rx={2} opacity={0.92} style={{ fill: "#ffffff" }} />
-                <text x={lx} y={ly} textAnchor="middle" dominantBaseline="central" fontSize={6} fontWeight={700} fill={e.color}>
+                <rect x={lx - 12} y={ly - 6.5} width={24} height={13} rx={2} opacity={0.92} style={{ fill: "#ffffff" }} />
+                <text x={lx} y={ly} textAnchor="middle" dominantBaseline="central" fontSize={9} fontWeight={700} fill={e.color}>
                   {e.label}
                 </text>
               </g>
@@ -559,7 +559,7 @@ function MiniMap({
             <circle
               cx={fx(c.x)}
               cy={fy(c.y)}
-              r={on ? NODE_R : 3.4}
+              r={on ? NODE_R : 4.5}
               fill={on ? CITY_FILL[c.name] : CITY_OFF}
               stroke="#ffffff"
               strokeWidth={on ? 1.4 : 1}
@@ -569,7 +569,7 @@ function MiniMap({
               y={fy(c.y)}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={on ? 6.5 : 5}
+              fontSize={on ? 10 : 8}
               fontWeight={700}
               fill={on ? "#ffffff" : CITY_OFF_LABEL}
             >
@@ -617,21 +617,21 @@ function SubproblemPanel({
     >
       {badge && (
         <span
-          className="absolute left-1.5 top-1.5 z-10 rounded px-1 py-px text-[9px] font-bold leading-none text-white"
+          className="absolute left-1.5 top-1.5 z-10 rounded px-1 py-px text-[10px] font-bold leading-none text-white"
           style={{ backgroundColor: accent }}
         >
           {badge}
         </span>
       )}
       <span
-        className="mb-0.5 block text-center font-mono text-[11px] font-semibold"
+        className="mb-0.5 block text-center font-mono text-sm font-semibold"
         style={{ color: accent }}
       >
         {title}
       </span>
       {subtitle && (
         <span
-          className="mb-1 block text-center text-[10px] tabular-nums"
+          className="mb-1 block text-center text-xs tabular-nums"
           style={{ color: BASE_TXT }}
         >
           {subtitle}

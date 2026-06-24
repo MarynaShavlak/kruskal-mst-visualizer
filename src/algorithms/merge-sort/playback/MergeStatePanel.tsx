@@ -17,11 +17,22 @@ const TONE = {
   neutral: "bg-card border-border/70 text-foreground",
 } as const
 
-function Cell({ value, tone }: { value: number; tone: keyof typeof TONE }) {
+type CellSize = "md" | "lg"
+
+function Cell({
+  value,
+  tone,
+  size = "md",
+}: {
+  value: number
+  tone: keyof typeof TONE
+  size?: CellSize
+}) {
   return (
     <span
       className={cn(
-        "inline-flex size-7 items-center justify-center rounded border text-[12px] font-semibold tabular-nums",
+        "inline-flex items-center justify-center rounded border font-semibold tabular-nums",
+        size === "lg" ? "size-8 text-sm" : "size-7 text-[12px]",
         TONE[tone],
       )}
     >
@@ -35,11 +46,13 @@ export function ArrayRow({
   values,
   tone = "neutral",
   mid,
+  size = "md",
 }: {
   values: readonly number[]
   tone?: keyof typeof TONE
   /** Якщо задано — комірки до `mid` сині (ліва половина), решта помаранчеві. */
   mid?: number
+  size?: CellSize
 }) {
   if (values.length === 0) {
     return <span className="px-1 text-sm text-muted-foreground">∅</span>
@@ -51,6 +64,7 @@ export function ArrayRow({
           key={i}
           value={v}
           tone={mid != null ? (i < mid ? "left" : "right") : tone}
+          size={size}
         />
       ))}
     </span>
@@ -75,10 +89,12 @@ export function MergeState({
   left,
   right,
   step,
+  size = "md",
 }: {
   left: readonly number[]
   right: readonly number[]
   step: MergeMicroStep | null
+  size?: CellSize
 }) {
   const t = useT()
   const view = mergeStateView(left, right, step)
@@ -101,6 +117,7 @@ export function MergeState({
               key={i}
               value={c.value}
               tone={c.role === "pending" ? baseTone : HALF_TONE[c.role]}
+              size={size}
             />
           ))}
           {cells.length === 0 && <span className="text-sm text-muted-foreground">∅</span>}
@@ -129,7 +146,7 @@ export function MergeState({
         </span>
         <span className="inline-flex gap-1">
           {view.merged.map((m, i) => (
-            <Cell key={i} value={m.value} tone={m.head ? "head" : "merged"} />
+            <Cell key={i} value={m.value} tone={m.head ? "head" : "merged"} size={size} />
           ))}
           {view.merged.length === 0 && <span className="text-sm text-muted-foreground">∅</span>}
         </span>

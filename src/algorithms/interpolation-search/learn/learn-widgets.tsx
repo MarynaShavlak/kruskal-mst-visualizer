@@ -146,7 +146,7 @@ export function LineModelFigure({
         </span>
       </span>
       <span className="mt-2 block">
-        <WindowView {...frameView(f)} size="sm" />
+        <WindowView {...frameView(f)} size="md" />
       </span>
       <span className="mt-2 block text-center text-[11px] text-muted-foreground">{f.caption}</span>
     </Figure>
@@ -240,7 +240,7 @@ export function EvolutionFigure({
             <span className="w-28 shrink-0 text-right text-[11px] font-medium text-muted-foreground">
               {t("learn.ipEvolStep", { k: ri + 1, low: f.low, high: f.high, index: f.index ?? 0 })}
             </span>
-            <WindowView {...frameView(f)} size="sm" />
+            <WindowView {...frameView(f)} size="md" />
           </span>
         ))}
       </span>
@@ -269,7 +269,7 @@ export function AnimationFigure({
       </span>
       <span className="grid gap-3 lg:grid-cols-2">
         <span className="block overflow-auto">
-          <WindowView {...frameView(f)} size="sm" />
+          <WindowView {...frameView(f)} size="md" />
         </span>
         <span className="block h-[210px]">
           <LineModelView {...lineView(f)} />
@@ -495,7 +495,7 @@ export function CodeWalkthroughFigure({
         />
         <span className="flex h-[320px] flex-col items-center justify-center gap-2 overflow-auto rounded-lg border bg-card p-3">
           <TargetBadge target={target} />
-          <WindowView {...frameView(f)} size="sm" />
+          <WindowView {...frameView(f)} size="md" />
           <span className="block h-[170px] w-full">
             <LineModelView {...lineView(f)} />
           </span>

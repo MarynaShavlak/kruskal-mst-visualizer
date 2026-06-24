@@ -136,7 +136,7 @@ export function ScanStaircaseFigure({
             <CellsView
               key={r}
               array={values}
-              size="sm"
+              size="md"
               cursor={r}
               checking={!isMatch}
               matches={isMatch ? [r] : []}

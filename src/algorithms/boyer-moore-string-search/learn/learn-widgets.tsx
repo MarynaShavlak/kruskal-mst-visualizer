@@ -115,7 +115,7 @@ export function SearchStepFigure({
     <Figure caption={caption}>
       <PatternBadge pattern={pattern} />
       <span className="block">
-        <StripView {...stripView(frame)} size="sm" />
+        <StripView {...stripView(frame)} size="md" />
       </span>
       <span className="mt-2 block text-xs text-muted-foreground">{frame.caption}</span>
     </Figure>
@@ -140,7 +140,7 @@ export function TableStepFigure({
     <Figure caption={caption}>
       <TableBadge pattern={pattern} />
       <span className="block">
-        <ShiftTableView {...tableView(frame)} size="sm" />
+        <ShiftTableView {...tableView(frame)} size="md" />
       </span>
       <span className="mt-2 block text-xs text-muted-foreground">{frame.caption}</span>
     </Figure>
@@ -156,7 +156,7 @@ export function ShiftTableFigure({ pattern, caption }: { pattern: string; captio
     <Figure caption={caption}>
       <TableBadge pattern={pattern} />
       <span className="block">
-        <ShiftTableView {...tableView(frame)} size="sm" />
+        <ShiftTableView {...tableView(frame)} size="md" />
       </span>
     </Figure>
   )
@@ -183,14 +183,14 @@ export function AnimationFigure({
           <>
             <TableBadge pattern={pattern} />
             <span className="block">
-              <ShiftTableView {...tableView(frame)} size="sm" />
+              <ShiftTableView {...tableView(frame)} size="md" />
             </span>
           </>
         ) : (
           <>
             <PatternBadge pattern={pattern} />
             <span className="block">
-              <StripView {...stripView(frame)} size="sm" />
+              <StripView {...stripView(frame)} size="md" />
             </span>
           </>
         )}
@@ -210,7 +210,7 @@ export function TableAnimationFigure({ pattern, caption }: { pattern: string; ca
       <MiniPlayerShell player={player} frameCount={frames.length} caption={frame.caption}>
         <TableBadge pattern={pattern} />
         <span className="block">
-          <ShiftTableView {...tableView(frame)} size="sm" />
+          <ShiftTableView {...tableView(frame)} size="md" />
         </span>
       </MiniPlayerShell>
     </Figure>
@@ -246,12 +246,12 @@ export function CodeWalkthroughFigure({
             {isTable ? (
               <>
                 <TableBadge pattern={pattern} />
-                <ShiftTableView {...tableView(frame)} size="sm" />
+                <ShiftTableView {...tableView(frame)} size="md" />
               </>
             ) : (
               <>
                 <PatternBadge pattern={pattern} />
-                <StripView {...stripView(frame)} size="sm" />
+                <StripView {...stripView(frame)} size="md" />
               </>
             )}
           </span>

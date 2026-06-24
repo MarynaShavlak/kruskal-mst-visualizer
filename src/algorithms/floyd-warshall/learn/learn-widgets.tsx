@@ -274,7 +274,7 @@ export function FwMatrixSnapshot({
         {frame.caption}
       </span>
       <span className="block overflow-auto">
-        <MiniMatrix order={result.order} frame={frame} />
+        <MiniMatrix order={result.order} frame={frame} large />
       </span>
     </span>
   )
@@ -545,7 +545,7 @@ export function FwGraphWidget({
                 y={my}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize={11}
+                fontSize={12}
                 fontWeight={600}
                 style={{ fill: e.weight < 0 ? "#ef4444" : "var(--foreground)" }}
               >

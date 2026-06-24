@@ -101,7 +101,7 @@ export function LpsTableFigure({ pattern, caption }: { pattern: string; caption?
     <Figure caption={caption}>
       <LpsBadge pattern={pattern} />
       <span className="block">
-        <LpsTable state={finalFrame.lpsState} size="sm" />
+        <LpsTable state={finalFrame.lpsState} size="md" />
       </span>
     </Figure>
   )
@@ -129,7 +129,7 @@ export function LpsStepFigure({
       <LpsBadge pattern={pattern} />
       {state ? (
         <span className="block">
-          <LpsTable state={state} size="sm" />
+          <LpsTable state={state} size="md" />
         </span>
       ) : (
         <span className="block text-xs text-muted-foreground">lps[0] = 0</span>
@@ -152,7 +152,7 @@ export function LpsAnimationFigure({ pattern, caption }: { pattern: string; capt
       <MiniPlayerShell player={player} frameCount={frames.length} caption={frame.caption}>
         <LpsBadge pattern={pattern} />
         <span className="block">
-          {frame.lpsState ? <LpsTable state={frame.lpsState} size="sm" /> : <span className="text-xs text-muted-foreground">lps[0] = 0</span>}
+          {frame.lpsState ? <LpsTable state={frame.lpsState} size="md" /> : <span className="text-xs text-muted-foreground">lps[0] = 0</span>}
         </span>
       </MiniPlayerShell>
     </Figure>
@@ -182,7 +182,7 @@ export function SearchStepFigure({
     <Figure caption={caption}>
       <SearchBadge pattern={pattern} monotonic={frame.iMonotonic} i={state.i} />
       <span className="block">
-        <StripView text={text} pattern={pattern} state={state} size="sm" />
+        <StripView text={text} pattern={pattern} state={state} size="md" />
       </span>
       <span className="mt-2 block text-xs text-muted-foreground">{frame.caption}</span>
     </Figure>
@@ -211,7 +211,7 @@ export function SearchAnimationFigure({
       <MiniPlayerShell player={player} frameCount={frames.length} caption={frame.caption}>
         <SearchBadge pattern={pattern} monotonic={frame.iMonotonic} i={state.i} />
         <span className="block">
-          <StripView text={text} pattern={pattern} state={state} size="sm" />
+          <StripView text={text} pattern={pattern} state={state} size="md" />
         </span>
       </MiniPlayerShell>
     </Figure>
@@ -248,12 +248,12 @@ export function FullWalkthroughFigure({
             {frame.lpsState ? (
               <>
                 <LpsBadge pattern={pattern} />
-                <LpsTable state={frame.lpsState} size="sm" />
+                <LpsTable state={frame.lpsState} size="md" />
               </>
             ) : (
               <>
                 <SearchBadge pattern={pattern} monotonic={frame.iMonotonic} i={frame.searchState?.i ?? 0} />
-                {frame.searchState && <StripView text={text} pattern={pattern} state={frame.searchState} size="sm" />}
+                {frame.searchState && <StripView text={text} pattern={pattern} state={frame.searchState} size="md" />}
               </>
             )}
           </span>

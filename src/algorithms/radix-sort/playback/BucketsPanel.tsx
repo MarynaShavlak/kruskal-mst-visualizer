@@ -74,6 +74,8 @@ export interface BucketsProps {
   readonly activeIndex: number | null
   readonly activeBucket: number | null
   readonly gathered: boolean
+  /** Розмір фішок у кошиках («sm» — плеєр; «md» — більший образ у навчанні). */
+  readonly chipSize?: "sm" | "md"
 }
 
 /**
@@ -90,6 +92,7 @@ export function BucketsView({
   activeIndex,
   activeBucket,
   gathered,
+  chipSize = "sm",
 }: BucketsProps) {
   return (
     <div className="flex flex-col items-center gap-4">
@@ -137,7 +140,7 @@ export function BucketsView({
                       width={maxDigits}
                       activeDigit={digitIndex}
                       variant={justLanded ? "landed" : "bucket"}
-                      size="sm"
+                      size={chipSize}
                     />
                   )
                 })}

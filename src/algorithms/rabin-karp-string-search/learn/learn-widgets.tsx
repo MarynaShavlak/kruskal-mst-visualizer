@@ -132,7 +132,7 @@ export function SearchStepFigure({
         <HashBadges windowHash={frame.windowHash} patternHash={frame.patternHash} offset={frame.offset} />
       </span>
       <span className="block">
-        <StripView {...stripView(frame)} size="sm" />
+        <StripView {...stripView(frame)} size="md" />
       </span>
       <span className="mt-2 block text-xs text-muted-foreground">{frame.caption}</span>
     </Figure>
@@ -167,7 +167,7 @@ export function AnimationFigure({
               <PatternBadge pattern={pattern} />
               <HashBadges windowHash={frame.windowHash} patternHash={frame.patternHash} offset={frame.offset} />
             </span>
-            <StripView {...stripView(frame)} size="sm" />
+            <StripView {...stripView(frame)} size="md" />
           </span>
         )}
       </MiniPlayerShell>
@@ -205,7 +205,7 @@ export function CodeWalkthroughFigure({
                   <PatternBadge pattern={pattern} />
                   <HashBadges windowHash={frame.windowHash} patternHash={frame.patternHash} offset={frame.offset} />
                 </span>
-                <StripView {...stripView(frame)} size="sm" />
+                <StripView {...stripView(frame)} size="md" />
               </>
             )}
           </span>
@@ -324,7 +324,7 @@ export function RollingFigure({ caption }: { caption?: string }) {
   return (
     <Figure caption={caption}>
       <span className="block">
-        <StripView {...stripView(rollFrame)} size="sm" />
+        <StripView {...stripView(rollFrame)} size="md" />
       </span>
       <span className="mt-2 inline-flex flex-wrap items-center gap-2 text-xs">
         <span className="font-medium text-sky-700 dark:text-sky-300">{t("play.rkRollLabel")}</span>

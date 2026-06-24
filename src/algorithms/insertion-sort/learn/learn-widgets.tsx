@@ -48,6 +48,7 @@ export function ArrayFigure({
         compareAt={null}
         shiftAt={null}
         height={140}
+        size="lg"
       />
     </Figure>
   )
@@ -83,6 +84,7 @@ export function StepFigure({
         compareAt={frame.compareAt}
         shiftAt={frame.shiftAt}
         height={150}
+        size="lg"
       />
       <span className="mt-1.5 block text-center text-xs tabular-nums text-muted-foreground">
         {t("learn.isCounters", { comparisons: frame.comparisons, shifts: frame.shifts })}
@@ -118,6 +120,7 @@ export function ResultFigure({
         compareAt={null}
         shiftAt={null}
         height={150}
+        size="lg"
       />
       <span className="mt-2 block text-center text-sm tabular-nums">
         {t("learn.isResultSummary", {
@@ -212,6 +215,7 @@ export function SortAnimationFigure({
         compareAt={frame.compareAt}
         shiftAt={frame.shiftAt}
         height={170}
+        size="lg"
       />
       {caption && (
         <span className="mt-2 block text-center text-xs text-muted-foreground">{caption}</span>
@@ -262,6 +266,7 @@ export function CodeWalkthroughFigure({
             compareAt={frame.compareAt}
             shiftAt={frame.shiftAt}
             height={230}
+            size="lg"
           />
         </span>
       </span>
@@ -320,7 +325,7 @@ export function StabilityFigure({
       <div className="flex items-end justify-center gap-2" style={{ height: 150 }}>
         {items.map((it, i) => (
           <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-            <span className="text-[11px] font-medium leading-none">
+            <span className="text-sm font-medium leading-none">
               {it.value}
               <sub className="text-[9px] text-muted-foreground">{it.tag}</sub>
             </span>

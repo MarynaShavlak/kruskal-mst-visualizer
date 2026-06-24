@@ -123,7 +123,7 @@ export function TreeFigure({
   )
   return (
     <Figure caption={caption}>
-      <QuickTree tree={tree} revealedMax={tree.nodes.length - 1} currentId={null} />
+      <QuickTree tree={tree} revealedMax={tree.nodes.length - 1} currentId={null} scale={1.25} />
     </Figure>
   )
 }
@@ -156,6 +156,7 @@ export function TreeAnimationFigure({
           tree={tree}
           revealedMax={frame.revealedMax}
           currentId={frame.phase === "done" ? null : frame.currentId}
+          scale={1.25}
         />
       </span>
       {caption && (
@@ -300,7 +301,7 @@ export function StepFigure({
     <Figure caption={caption}>
       <span className="grid gap-3 lg:grid-cols-2">
         <span className="block overflow-auto rounded-md border bg-muted/20 p-2">
-          <QuickTree tree={tree} revealedMax={idx} currentId={idx} />
+          <QuickTree tree={tree} revealedMax={idx} currentId={idx} scale={1.25} />
         </span>
         <span className="flex items-center justify-center rounded-md border bg-muted/20 p-2">
           {node.isBase ? (
@@ -405,6 +406,7 @@ export function CodeWalkthroughFigure({
             tree={tree}
             revealedMax={frame.revealedMax}
             currentId={frame.phase === "done" ? null : frame.currentId}
+            scale={1.25}
           />
         </span>
       </span>

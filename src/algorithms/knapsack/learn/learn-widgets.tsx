@@ -179,7 +179,7 @@ export function DpTableFigure({
 
   return (
     <Figure caption={caption}>
-      <table className="border-collapse text-[11px] tabular-nums">
+      <table className="border-collapse text-sm tabular-nums">
         <thead>
           <tr>
             <th className="px-1.5 py-0.5 text-muted-foreground">i\w</th>
@@ -482,7 +482,7 @@ export function CodeWalkthroughFigure({
           contextLines={frame.contextLines}
           className="h-[320px]"
         />
-        <DpGridPanel result={result} frame={frame} className="h-[320px]" />
+        <DpGridPanel result={result} frame={frame} className="h-[320px]" size="lg" />
       </span>
       {caption && (
         <span className="mt-2 block text-center text-xs text-muted-foreground">

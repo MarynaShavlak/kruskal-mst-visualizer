@@ -71,6 +71,8 @@ export interface QuickTreeProps {
   readonly revealedMax: number
   /** id поточного вузла (кільце-підсвітка) або null. */
   readonly currentId: number | null
+  /** Множник геометрії дерева (1 — плеєр; >1 — більший образ у навчанні). */
+  readonly scale?: number
 }
 
 /**
@@ -79,12 +81,17 @@ export interface QuickTreeProps {
  * `left`, помаранчеві — до `right`. Вузли з id > revealedMax приховані (дерево
  * росте в порядку обходу). Спільний для плеєра й навчальних віджетів.
  */
-export function QuickTree({ tree, revealedMax, currentId }: QuickTreeProps) {
+export function QuickTree({ tree, revealedMax, currentId, scale = 1 }: QuickTreeProps) {
   const { nodes, leafCount, maxDepth } = tree
-  const cx = (n: QsTreeNode) => MARGIN_L + (n.x + 0.5) * COL
-  const top = (n: QsTreeNode) => MARGIN_T + n.depth * ROW
-  const width = MARGIN_L * 2 + Math.max(1, leafCount) * COL
-  const height = MARGIN_T * 2 + maxDepth * ROW + BOX_H + 24
+  const col = COL * scale
+  const row = ROW * scale
+  const boxH = BOX_H * scale
+  const marginL = MARGIN_L * scale
+  const marginT = MARGIN_T * scale
+  const cx = (n: QsTreeNode) => marginL + (n.x + 0.5) * col
+  const top = (n: QsTreeNode) => marginT + n.depth * row
+  const width = marginL * 2 + Math.max(1, leafCount) * col
+  const height = marginT * 2 + maxDepth * row + boxH + 24 * scale
 
   interface Edge {
     x1: number; y1: number; x2: number; y2: number; branch: "left" | "right"
@@ -96,7 +103,7 @@ export function QuickTree({ tree, revealedMax, currentId }: QuickTreeProps) {
       if (cid > revealedMax) continue
       const c = nodes[cid]
       edges.push({
-        x1: cx(n), y1: top(n) + BOX_H,
+        x1: cx(n), y1: top(n) + boxH,
         x2: cx(c), y2: top(c),
         branch: c.branch === "left" ? "left" : "right",
       })
@@ -111,7 +118,7 @@ export function QuickTree({ tree, revealedMax, currentId }: QuickTreeProps) {
             key={k}
             x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2}
             className={e.branch === "left" ? "stroke-sky-500/70" : "stroke-orange-400/80"}
-            strokeWidth={1.75}
+            strokeWidth={1.75 * scale}
           />
         ))}
       </svg>
@@ -132,7 +139,7 @@ export function QuickTree({ tree, revealedMax, currentId }: QuickTreeProps) {
               pivot={n.pivot}
               pivotIndex={n.pivotIndex}
               mode={n.isBase ? "sorted" : "partition"}
-              size="xs"
+              size={scale > 1 ? "sm" : "xs"}
             />
           </div>
         ),

@@ -196,7 +196,7 @@ export function EvolutionFigure({
             <span className="mb-1 block text-[11px] font-medium text-muted-foreground">
               {t("learn.issEvolStep", { k: ri + 1 })}
             </span>
-            <TwoLevelView {...toView(f, "sm")} />
+            <TwoLevelView {...toView(f, "md")} />
           </span>
         ))}
       </span>
@@ -263,7 +263,7 @@ export function CodeWalkthroughFigure({
         />
         <span className="flex h-[360px] flex-col items-center justify-center gap-2 overflow-auto rounded-lg border bg-card p-3">
           <Badges target={target} step={step} />
-          <TwoLevelView {...toView(f, "sm")} />
+          <TwoLevelView {...toView(f, "md")} />
         </span>
       </span>
       {caption && (

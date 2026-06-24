@@ -89,7 +89,7 @@ export function StepFigure({
     <Figure caption={caption}>
       <PatternBadge pattern={pattern} />
       <span className="block">
-        <StripView {...frameView(frame)} size="sm" />
+        <StripView {...frameView(frame)} size="md" />
       </span>
       <span className="mt-2 block text-xs text-muted-foreground">{frame.caption}</span>
     </Figure>
@@ -116,7 +116,7 @@ export function AnimationFigure({
       <MiniPlayerShell player={player} frameCount={trace.frames.length} caption={frame.caption}>
         <PatternBadge pattern={pattern} />
         <span className="block">
-          <StripView {...frameView(frame)} size="sm" />
+          <StripView {...frameView(frame)} size="md" />
         </span>
       </MiniPlayerShell>
     </Figure>
@@ -156,7 +156,7 @@ export function CodeWalkthroughFigure({
           </span>
           <span className="block min-w-0">
             <PatternBadge pattern={pattern} />
-            <StripView {...frameView(frame)} size="sm" />
+            <StripView {...frameView(frame)} size="md" />
           </span>
         </span>
       </MiniPlayerShell>
@@ -184,7 +184,7 @@ export function EvolutionFigure({
       <span className="flex flex-col gap-2">
         {rows.map((f) => (
           <span key={f.i} className="block">
-            <StripView {...frameView(f)} size="sm" />
+            <StripView {...frameView(f)} size="md" />
           </span>
         ))}
       </span>

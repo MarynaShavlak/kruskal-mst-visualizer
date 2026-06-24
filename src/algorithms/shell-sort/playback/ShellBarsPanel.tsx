@@ -32,6 +32,8 @@ export interface ShellBarsProps {
   readonly insertAt: number | null
   readonly sortedAll: boolean
   readonly height?: number
+  /** Розмір тексту значень/індексів: "md" (плеєр) або "lg" (навчання). За замовч. "md". */
+  readonly size?: "md" | "lg"
 }
 
 /**
@@ -52,9 +54,12 @@ export function ShellBars({
   insertAt,
   sortedAll,
   height = 220,
+  size = "md",
 }: ShellBarsProps) {
   const max = Math.max(1, ...array, keyValue ?? 0)
   const keyZone = Math.round(height * 0.4)
+  const valueText = size === "lg" ? "text-sm" : "text-[11px]"
+  const idxText = size === "lg" ? "text-xs" : "text-[10px]"
   return (
     <div className="flex items-end justify-center gap-1.5" style={{ height: height + keyZone }}>
       {array.map((v, i) => {
@@ -73,7 +78,7 @@ export function ShellBars({
             <div className="flex w-full flex-col items-center justify-end gap-0.5" style={{ height: keyZone }}>
               {showKey && (
                 <>
-                  <span className="text-[11px] font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300">
+                  <span className={cn("font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300", valueText)}>
                     {keyValue}
                   </span>
                   <div
@@ -88,7 +93,8 @@ export function ShellBars({
             <div className="flex w-full flex-col items-center justify-end gap-1" style={{ height }}>
               <span
                 className={cn(
-                  "text-[11px] font-medium tabular-nums leading-none",
+                  "font-medium tabular-nums leading-none",
+                  valueText,
                   isHole && "opacity-0",
                   active ? "text-foreground" : "text-muted-foreground",
                 )}
@@ -103,7 +109,8 @@ export function ShellBars({
             {/* Індекс: підпослідовність поточного gap — фіолетовий чип. */}
             <span
               className={cn(
-                "rounded px-1 text-[10px] tabular-nums",
+                "rounded px-1 tabular-nums",
+                idxText,
                 grouped
                   ? "bg-violet-500/20 font-semibold text-violet-700 dark:text-violet-300 ring-1 ring-violet-400/50"
                   : "text-muted-foreground/70",

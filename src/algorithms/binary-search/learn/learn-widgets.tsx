@@ -180,7 +180,7 @@ export function EvolutionFigure({
             <span className="w-24 shrink-0 text-right text-[11px] font-medium text-muted-foreground">
               {t("learn.binEvolStep", { k: ri + 1, low: f.low, high: f.high })}
             </span>
-            <WindowView {...frameView(f)} size="sm" />
+            <WindowView {...frameView(f)} size="md" />
           </span>
         ))}
       </span>

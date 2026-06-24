@@ -51,12 +51,12 @@ function ArrayBars({
     <div className="flex items-end justify-center gap-1.5" style={{ height }}>
       {values.map((v, i) => (
         <div key={i} className="flex h-full min-w-[1.5rem] flex-1 flex-col items-center justify-end gap-1">
-          <span className="text-[11px] font-medium tabular-nums leading-none text-muted-foreground">{v}</span>
+          <span className="text-sm font-medium tabular-nums leading-none text-muted-foreground">{v}</span>
           <div
             className={cn("w-full rounded-t", sorted ? "bg-emerald-500/75" : "bg-slate-400/60 dark:bg-slate-500/50")}
             style={{ height: `${barHeightPct(v, max)}%` }}
           />
-          <span className="text-[10px] tabular-nums text-muted-foreground/70">{i}</span>
+          <span className="text-xs tabular-nums text-muted-foreground/70">{i}</span>
         </div>
       ))}
     </div>
@@ -217,6 +217,7 @@ export function AnimationFigure({
           insertAt={f.insertAt}
           sortedAll={f.sortedAll}
           height={180}
+          size="lg"
         />
       </span>
       {caption && (
@@ -259,6 +260,7 @@ export function StepFigure({
         insertAt={f.insertAt}
         sortedAll={f.sortedAll}
         height={170}
+        size="lg"
       />
       <span className="mt-2 block text-center text-[11px] text-muted-foreground">{f.caption}</span>
     </Figure>
@@ -386,7 +388,7 @@ function TaggedRow({ items }: { items: readonly Tagged[] }) {
     <div className="flex items-end justify-center gap-2" style={{ height: 110 }}>
       {items.map((it, i) => (
         <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-          <span className="text-[11px] font-medium leading-none">
+          <span className="text-sm font-medium leading-none">
             {it.value}
             <sub className="text-[9px] text-muted-foreground">{it.tag}</sub>
           </span>
@@ -452,6 +454,7 @@ export function CodeWalkthroughFigure({ values, caption }: { values: readonly nu
             insertAt={f.insertAt}
             sortedAll={f.sortedAll}
             height={150}
+            size="lg"
           />
         </span>
       </span>
