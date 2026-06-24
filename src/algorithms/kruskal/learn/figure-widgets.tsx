@@ -12,18 +12,28 @@ import {
   ExchangeArgumentWidget,
 } from "@/algorithms/kruskal/learn/proofs"
 
+/** viewBox SVG, що тісно охоплює всі точки з рівномірним відступом pad. */
+function computeViewBox(
+  points: ReadonlyArray<{ x: number; y: number }>,
+  pad: number,
+): string {
+  const xs = points.map((p) => p.x)
+  const ys = points.map((p) => p.y)
+  const minX = Math.min(...xs)
+  const minY = Math.min(...ys)
+  const w = Math.max(...xs) - minX
+  const h = Math.max(...ys) - minY
+  return `${minX - pad} ${minY - pad} ${w + pad * 2} ${h + pad * 2}`
+}
+
 /** Живий міні-граф прикладу (опційно з підсвіченою МОД). */
 function MiniGraph({ highlightMst = false }: { highlightMst?: boolean }) {
   const { graph, positions } = examplePreset()
   const mst = new Set(REFERENCE_MST_EDGE_IDS)
-  const xs = graph.vertices.map((v) => positions[v].x)
-  const ys = graph.vertices.map((v) => positions[v].y)
-  const pad = 34
-  const minX = Math.min(...xs) - pad
-  const maxX = Math.max(...xs) + pad
-  const minY = Math.min(...ys) - pad
-  const maxY = Math.max(...ys) + pad
-  const viewBox = `${minX} ${minY} ${maxX - minX} ${maxY - minY}`
+  const viewBox = computeViewBox(
+    graph.vertices.map((v) => positions[v]),
+    34,
+  )
 
   return (
     <span className="not-prose my-4 block rounded-lg border bg-card p-2">
@@ -89,12 +99,7 @@ function ComponentsExampleWidget() {
     ["F", "G"],
     ["G", "H"],
   ]
-  const xs = Object.values(nodes).map((n) => n.x)
-  const ys = Object.values(nodes).map((n) => n.y)
-  const pad = 34
-  const viewBox = `${Math.min(...xs) - pad} ${Math.min(...ys) - pad} ${
-    Math.max(...xs) - Math.min(...xs) + pad * 2
-  } ${Math.max(...ys) - Math.min(...ys) + pad * 2}`
+  const viewBox = computeViewBox(Object.values(nodes), 34)
 
   return (
     <span className="not-prose my-4 block rounded-lg border bg-card p-2">
@@ -165,12 +170,10 @@ function MiniTree({
   onSelect: (id: string) => void
 }) {
   const ids = Object.keys(parent)
-  const xs = ids.map((id) => pos[id].x)
-  const ys = ids.map((id) => pos[id].y)
-  const pad = 24
-  const viewBox = `${Math.min(...xs) - pad} ${Math.min(...ys) - pad} ${
-    Math.max(...xs) - Math.min(...xs) + pad * 2
-  } ${Math.max(...ys) - Math.min(...ys) + pad * 2}`
+  const viewBox = computeViewBox(
+    ids.map((id) => pos[id]),
+    24,
+  )
 
   return (
     <svg viewBox={viewBox} className="h-[180px] w-full" preserveAspectRatio="xMidYMid meet">
