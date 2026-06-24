@@ -2,18 +2,10 @@
 // імпорт/експорт/шаринг. Як редактори пошуку — БЕЗ React Flow: масив цілих + ціль +
 // крок індексу прямо у Zustand-сторі.
 
-import { useCallback, useEffect, type ChangeEvent } from "react"
-import { readGraphParam } from "@/algorithms/shared/editor/use-graph-editor"
+import { type ChangeEvent } from "react"
+import { useDocEditorActions } from "@/algorithms/shared/editor/use-doc-editor-actions"
 import { indexedSequentialSearchCodec } from "@/algorithms/indexed-sequential-search/editor/indexed-sequential-search-doc"
-import { setHash } from "@/hooks/use-route"
-import { tr } from "@/i18n/use-t"
-import { toast } from "@/store/toast-store"
 import { useIndexedSequentialSearchStore } from "@/store/indexed-sequential-search-store"
-
-const EXPORT_FILENAME = "indexed-sequential-search.json"
-const ROUTE_PATH = "indexed-sequential-search/editor"
-
-const loadedRoutes = new Set<string>()
 
 export interface IndexedSequentialSearchEditorController {
   readonly onLoadIntro: () => void
@@ -39,65 +31,20 @@ export function useIndexedSequentialSearchEditor(): IndexedSequentialSearchEdito
   const loadDoc = useIndexedSequentialSearchStore((s) => s.loadDoc)
   const toDoc = useIndexedSequentialSearchStore((s) => s.toDoc)
 
-  useEffect(() => {
-    if (loadedRoutes.has(ROUTE_PATH)) return
-    loadedRoutes.add(ROUTE_PATH)
-    const param = readGraphParam(window.location.hash)
-    if (!param) return
-    const doc = indexedSequentialSearchCodec.decodeHash(param)
-    if (doc) loadDoc(doc)
-  }, [loadDoc])
-
-  const onExport = useCallback(() => {
-    const blob = new Blob([indexedSequentialSearchCodec.toJSON(toDoc())], {
-      type: "application/json",
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = EXPORT_FILENAME
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [toDoc])
-
-  const onImportFile = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      e.target.value = ""
-      if (!file) return
-      file
-        .text()
-        .then((text) => loadDoc(indexedSequentialSearchCodec.fromJSON(text)))
-        .catch((err: unknown) => {
-          toast({
-            title: tr("editor.importFailed"),
-            description: err instanceof Error ? err.message : String(err),
-            variant: "destructive",
-          })
-        })
-    },
-    [loadDoc],
-  )
-
-  const onShare = useCallback(() => {
-    const hash = indexedSequentialSearchCodec.encodeHash(toDoc())
-    const route = `${ROUTE_PATH}?g=${hash}`
-    const url = `${window.location.origin}${window.location.pathname}#${route}`
-    setHash(route)
-    void navigator.clipboard?.writeText(url).then(
-      () => toast({ description: tr("editor.linkCopied") }),
-      () => undefined,
-    )
-  }, [toDoc])
+  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+    codec: indexedSequentialSearchCodec,
+    toDoc,
+    loadDoc,
+    loadRandom,
+    filename: "indexed-sequential-search.json",
+    routePath: "indexed-sequential-search/editor",
+  })
 
   return {
     onLoadIntro: loadIntro,
     onLoadInIndex: loadInIndex,
     onLoadAbsent: loadAbsent,
-    onLoadRandom: useCallback(
-      () => loadRandom(Math.floor(Math.random() * 1e9)),
-      [loadRandom],
-    ),
+    onLoadRandom,
     onAddValue: addValue,
     onSort: sortValues,
     onClear: clear,
