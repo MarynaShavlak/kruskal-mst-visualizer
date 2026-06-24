@@ -9,6 +9,7 @@ import { type GapSequence } from "@/lib/shellSort"
 import { useShellSortStore } from "@/store/shell-sort-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -88,7 +89,7 @@ export function PlaybackView() {
       player={player}
       headerExtra={switcher}
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -150,24 +151,15 @@ export function PlaybackView() {
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: ShPhase }) {
-  const t = useT()
-  const map: Record<ShPhase, { text: string; cls: string }> = {
-    init: { text: t("play.shPhaseInit"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    gap: { text: t("play.shPhaseGap"), cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
-    take: { text: t("play.shPhaseTake"), cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
-    compare: { text: t("play.shPhaseCompare"), cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
-    shift: { text: t("play.shPhaseShift"), cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
-    insert: { text: t("play.shPhaseInsert"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.shPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<ShPhase, PhaseStyle> = {
+    init: { labelKey: "play.shPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    gap: { labelKey: "play.shPhaseGap", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+    take: { labelKey: "play.shPhaseTake", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+    compare: { labelKey: "play.shPhaseCompare", cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
+    shift: { labelKey: "play.shPhaseShift", cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+    insert: { labelKey: "play.shPhaseInsert", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.shPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({
   result,

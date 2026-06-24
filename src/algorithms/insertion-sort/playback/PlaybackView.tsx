@@ -8,6 +8,7 @@ import {
 import { useInsertionSortStore } from "@/store/insertion-sort-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -90,7 +91,7 @@ export function PlaybackView() {
       player={player}
       headerExtra={switcher}
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -151,21 +152,12 @@ export function PlaybackView() {
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: InsPhase }) {
-  const t = useT()
-  const map = {
-    key: { text: t("play.isPhaseKey"), cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
-    scan: { text: t("play.isPhaseScan"), cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
-    insert: { text: t("play.isPhaseInsert"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.isPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<InsPhase, PhaseStyle> = {
+    key: { labelKey: "play.isPhaseKey", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+    scan: { labelKey: "play.isPhaseScan", cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
+    insert: { labelKey: "play.isPhaseInsert", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.isPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({
   result,

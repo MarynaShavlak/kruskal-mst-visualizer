@@ -9,6 +9,7 @@ import type { MergeMode } from "@/lib/mergeSort"
 import { useMergeSortStore } from "@/store/merge-sort-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -87,7 +88,7 @@ export function PlaybackView() {
       player={player}
       headerExtra={switcher}
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -169,22 +170,13 @@ export function PlaybackView() {
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: MsPhase }) {
-  const t = useT()
-  const map: Record<MsPhase, { text: string; cls: string }> = {
-    init: { text: t("play.msPhaseInit"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    split: { text: t("play.msPhaseSplit"), cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
-    base: { text: t("play.msPhaseBase"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    merge: { text: t("play.msPhaseMerge"), cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
-    final: { text: t("play.msPhaseFinal"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<MsPhase, PhaseStyle> = {
+    init: { labelKey: "play.msPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    split: { labelKey: "play.msPhaseSplit", cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
+    base: { labelKey: "play.msPhaseBase", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    merge: { labelKey: "play.msPhaseMerge", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+    final: { labelKey: "play.msPhaseFinal", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({
   result,

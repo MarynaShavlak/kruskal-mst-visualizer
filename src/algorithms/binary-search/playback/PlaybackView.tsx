@@ -10,6 +10,7 @@ import { isSorted } from "@/lib/binarySearch"
 import { useBinarySearchStore } from "@/store/binary-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -95,7 +96,7 @@ export function PlaybackView() {
         </div>
       }
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -170,22 +171,13 @@ const windowLabel = (f: { low: number; high: number }): string =>
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: BsPhase }) {
-  const t = useT()
-  const map: Record<BsPhase, { text: string; cls: string }> = {
-    init: { text: t("play.binPhaseInit"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    probe: { text: t("play.binPhaseProbe"), cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
-    discard: { text: t("play.binPhaseDiscard"), cls: "bg-red-500/15 text-red-700 dark:text-red-300" },
-    found: { text: t("play.binPhaseFound"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.binPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<BsPhase, PhaseStyle> = {
+    init: { labelKey: "play.binPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    probe: { labelKey: "play.binPhaseProbe", cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+    discard: { labelKey: "play.binPhaseDiscard", cls: "bg-red-500/15 text-red-700 dark:text-red-300" },
+    found: { labelKey: "play.binPhaseFound", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.binPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
   const t = useT()

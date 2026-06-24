@@ -9,6 +9,7 @@ import {
 import { useRabinKarpStringSearchStore } from "@/store/rabin-karp-string-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -95,7 +96,7 @@ export function PlaybackView() {
       player={player}
       headerExtra={switcher}
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -188,25 +189,16 @@ type Run =
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: RkPhase }) {
-  const t = useT()
-  const map: Record<RkPhase, { text: string; cls: string }> = {
-    hashInit: { text: t("play.rkPhaseHash"), cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
-    hashTerm: { text: t("play.rkPhaseHash"), cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
-    hashDone: { text: t("play.rkPhaseHashDone"), cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
-    searchInit: { text: t("play.rkPhaseSearch"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    window: { text: t("play.rkPhaseWindow"), cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
-    collision: { text: t("play.rkPhaseCollision"), cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
-    found: { text: t("play.rkPhaseFound"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.rkPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<RkPhase, PhaseStyle> = {
+    hashInit: { labelKey: "play.rkPhaseHash", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+    hashTerm: { labelKey: "play.rkPhaseHash", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+    hashDone: { labelKey: "play.rkPhaseHashDone", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+    searchInit: { labelKey: "play.rkPhaseSearch", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    window: { labelKey: "play.rkPhaseWindow", cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
+    collision: { labelKey: "play.rkPhaseCollision", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+    found: { labelKey: "play.rkPhaseFound", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.rkPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({ result, done }: { result: RkResult; done: boolean }) {
   const t = useT()
