@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest"
+import { isValidElement } from "react"
 import { LEARN_CONTENT, parseToc } from "@/algorithms/kruskal/learn/learn-content"
+import { figureForSrc } from "@/algorithms/kruskal/learn/figure-widgets"
+import { FigureCard } from "@/algorithms/shared/learn/FigureCard"
 
 describe("parseToc", () => {
   it("парсить 18 нумерованих секцій (UA та EN)", () => {
@@ -46,5 +49,51 @@ describe("stripReadmeChrome (GitHub-хром README)", () => {
     // Сам H1-заголовок лишається (без emoji).
     expect(LEARN_CONTENT.ua).toMatch(/^#\s+Алгоритм Краскала/m)
     expect(LEARN_CONTENT.en).toMatch(/^#\s+Kruskal/m)
+  })
+})
+
+describe("figureForSrc: мапінг фігур на живі віджети", () => {
+  const isFallback = (node: unknown): boolean =>
+    isValidElement(node) && node.type === FigureCard
+
+  it("відомі стеми (вкл. EN-префікс) дають живі віджети, а не картку", () => {
+    const known = [
+      "docs/images/graph.png",
+      "docs/images/spanning_tree_example.png",
+      "docs/images/mst_result.png",
+      "docs/images/components_example.png",
+      "docs/images/chain_vs_flat.png",
+      "docs/images/cut_property.png",
+      "docs/images/exchange_argument.png",
+      "docs/images/dsu_build.gif",
+      "docs/images/dsu_step8.png",
+      "docs/images/dsu_step8_build.gif",
+      "docs/images/has_path_steps.png",
+      "docs/images/dsu_steps.png",
+      "docs/images/steps_grid.png",
+      "docs/images/bc_cycle_step8.png",
+      "docs/images/bfs_found.gif",
+      "docs/images/bfs_notfound.gif",
+      "docs/images/compare_step8.png",
+      // EN-markdown веде на en/-префікс; мапінг — за іменем файлу (.split('/').pop()).
+      "docs/images/en/graph.png",
+      "docs/images/en/dsu_steps.png",
+    ]
+    for (const src of known) {
+      expect(isFallback(figureForSrc(src, "alt"))).toBe(false)
+    }
+  })
+
+  it("невідомий стем → запасна картка", () => {
+    expect(isFallback(figureForSrc("docs/images/unknown_xyz.png", "alt"))).toBe(true)
+  })
+
+  it("стем benchmark → картка з кнопкою на вкладку бенчмарку", () => {
+    const node = figureForSrc("docs/images/benchmark.png", "alt")
+    expect(isValidElement(node)).toBe(true)
+    const cta = isValidElement(node)
+      ? (node.props as { cta?: { route?: string } }).cta
+      : undefined
+    expect(cta?.route).toBe("kruskal/benchmark")
   })
 })
