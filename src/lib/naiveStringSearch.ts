@@ -132,7 +132,7 @@ export function naiveSearchSteps(
   let comparisons = 0
   let alignments = 0
   let shifts = 0
-  let result = -1
+  let result: number
 
   const snap = (
     kind: NaiveEventKind,
