@@ -94,7 +94,7 @@ function EditorCanvas() {
 
       <div className="flex flex-col gap-3 lg:flex-row">
         <div
-          className="h-[600px] flex-1 overflow-hidden rounded-lg border bg-muted/20"
+          className="h-[600px] lg:flex-1 overflow-hidden rounded-lg border bg-muted/20"
           onDoubleClick={ctrl.onPaneDoubleClick}
         >
           <ReactFlow
