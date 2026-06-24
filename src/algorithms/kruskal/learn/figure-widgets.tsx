@@ -26,22 +26,26 @@ function computeViewBox(
   return `${minX - pad} ${minY - pad} ${w + pad * 2} ${h + pad * 2}`
 }
 
+// Приклад-граф статичний — рахуємо його, набір ребер МОД і viewBox РАЗ на модуль,
+// а не на кожен рендер (MiniGraph лише читає й інстанціюється кількома фігурами).
+const EXAMPLE = examplePreset()
+const EXAMPLE_MST = new Set(REFERENCE_MST_EDGE_IDS)
+const EXAMPLE_VIEWBOX = computeViewBox(
+  EXAMPLE.graph.vertices.map((v) => EXAMPLE.positions[v]),
+  34,
+)
+
 /** Живий міні-граф прикладу (опційно з підсвіченою МОД). */
 function MiniGraph({ highlightMst = false }: { highlightMst?: boolean }) {
-  const { graph, positions } = examplePreset()
-  const mst = new Set(REFERENCE_MST_EDGE_IDS)
-  const viewBox = computeViewBox(
-    graph.vertices.map((v) => positions[v]),
-    34,
-  )
+  const { graph, positions } = EXAMPLE
 
   return (
     <span className="not-prose my-4 block rounded-lg border bg-card p-2">
-      <svg viewBox={viewBox} className="h-[300px] w-full" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox={EXAMPLE_VIEWBOX} className="h-[300px] w-full" preserveAspectRatio="xMidYMid meet">
         {graph.edges.map((e) => {
           const a = positions[e.u]
           const b = positions[e.v]
-          const inMst = highlightMst && mst.has(e.id)
+          const inMst = highlightMst && EXAMPLE_MST.has(e.id)
           const mx = (a.x + b.x) / 2
           const my = (a.y + b.y) / 2
           return (
