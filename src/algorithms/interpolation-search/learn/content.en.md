@@ -2,7 +2,7 @@
 
 **Interpolation search** is the "smart" relative of [binary search](https://github.com/MarynaShavlak/algo-binary-search) on a **sorted** array. The skeleton is the same: keep a window `[low..high]`, look at one probe, and drop the part that cannot contain the target. The difference is **where** to place the probe. Binary search always takes the **middle**. Interpolation search **guesses** the position from the key's value: it computes it with a **linear-interpolation formula** — closer to the upper bound for large keys, closer to the lower bound for small ones. It is like looking up a word in a dictionary: for a word starting with "Z" you do not open the book in the middle, you flip straight to the end.
 
-That cleverness has a price and conditions. First, the array **must be sorted** (just like for binary search — a direct bridge to [sorting](#series)). Second, the method is best when the keys are distributed **uniformly**: then it finds the answer in **$O(\log \log n)$** probes — often 1–2 regardless of size. On **clustered** (non-uniform) data the formula misses systematically, and the method **degrades** all the way to $O(n)$ — slower than binary. So this is an honest, two-sided walkthrough: both the strength and the weakness.
+That cleverness has a price and conditions. First, the array **must be sorted** (just like for binary search — a direct bridge to sorting). Second, the method is best when the keys are distributed **uniformly**: then it finds the answer in **$O(\log \log n)$** probes — often 1–2 regardless of size. On **clustered** (non-uniform) data the formula misses systematically, and the method **degrades** all the way to $O(n)$ — slower than binary. So this is an honest, two-sided walkthrough: both the strength and the weakness.
 
 ## 1. Intuition: searching a dictionary
 
@@ -47,14 +47,14 @@ We keep a **window** `[low..high]` of possible positions. At each step:
 4. if `arr[index] < key` → the key is on the **right**, move `low = index + 1`, repeat from step 2;
 5. if `arr[index] > key` → the key is on the **left**, move `high = index - 1`, repeat from step 2.
 
-The skeleton is exactly like binary search (a window, narrowing by comparison), but instead of the middle `mid = (low + high) // 2` there is an **interpolated probe** based on the value. The loop runs while the window is non-empty **and** the key lies within the current value range — for the second condition (the guard) see the [pitfalls](#pitfalls).
+The skeleton is exactly like binary search (a window, narrowing by comparison), but instead of the middle `mid = (low + high) // 2` there is an **interpolated probe** based on the value. The loop runs while the window is non-empty **and** the key lies within the current value range — for the second condition (the guard) see the pitfalls.
 
 ## 4. Preconditions: sortedness and uniformity
 
 The method has **two** conditions — and these are its limitations:
 
-1. **The array is sorted ascending.** Just like for binary search: only then can the comparison of `arr[index]` with `key` confidently drop a part of the array. This is a direct link to [sorting](#series) — it is sorting that prepares the data. The `is_sorted` utility helps check it.
-2. **The keys are distributed uniformly.** The formula guesses accurately only when the data lies close to a straight line. On **clustered** data (for example, one huge "outlier") the probe misses systematically, and the method [degrades](#vs-binary).
+1. **The array is sorted ascending.** Just like for binary search: only then can the comparison of `arr[index]` with `key` confidently drop a part of the array. This is a direct link to sorting — it is sorting that prepares the data. The `is_sorted` utility helps check it.
+2. **The keys are distributed uniformly.** The formula guesses accurately only when the data lies close to a straight line. On **clustered** data (for example, one huge "outlier") the probe misses systematically, and the method degrades.
 
 | | Binary search | Interpolation search |
 |---|---|---|
@@ -352,7 +352,7 @@ We build this for demo 2 (with correction). Each grid row is one decision:
 
 ## 14. Full step-by-step trace of `25`
 
-Below is the same execution of demo 2, but **in full**: every computation of `index` by formula, every comparison and bound shift as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution of demo 2, but **in full**: every computation of `index` by formula, every comparison and bound shift as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The cell colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

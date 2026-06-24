@@ -2,7 +2,7 @@
 
 **Naive string search** is the simplest substring-search algorithm: to find a **pattern** `pattern` inside a **text** `main_string`, we **slide** the pattern along the text and, at every alignment (offset `i`), compare characters left to right. As soon as all pattern characters match — we return the position `i`; on the very first mismatch we shift the pattern **one position to the right** and restart the comparison from `j = 0`. If no alignment matches — we return `-1`. No preprocessing: the method works on any string (text, DNA, a log) and needs no sorting or other precondition.
 
-This is the **first string algorithm** in the series — a new problem domain: the data here is not a numeric array but **sequences of characters** (text + pattern), and the operation is character-by-character **equality** (`==`). In spirit it is a direct analogue of [linear search](https://github.com/MarynaShavlak/algo-linear-search) for arrays: brute force, zero preprocessing. The algorithm's "cost" is the **number of character comparisons**; its defining trait is **wasted work**: after a partial match and a mismatch, the naive method throws everything away and shifts by only 1, **re-comparing** already-checked characters. This is exactly what the smarter successors remove — [KMP](#series), Boyer–Moore, Rabin–Karp.
+This is the **first string algorithm** in the series — a new problem domain: the data here is not a numeric array but **sequences of characters** (text + pattern), and the operation is character-by-character **equality** (`==`). In spirit it is a direct analogue of [linear search](https://github.com/MarynaShavlak/algo-linear-search) for arrays: brute force, zero preprocessing. The algorithm's "cost" is the **number of character comparisons**; its defining trait is **wasted work**: after a partial match and a mismatch, the naive method throws everything away and shifts by only 1, **re-comparing** already-checked characters. This is exactly what the smarter successors remove — KMP, Boyer–Moore, Rabin–Karp.
 
 ## 1. Intuition: searching for a word by hand
 
@@ -166,7 +166,7 @@ This is the **heart of the lesson**. Look at alignment `i = 0`: the pattern matc
 
 ![Wasted work: re-comparisons after a shift](docs/images/en/wasted_work.png)
 
-This very redundancy is what makes the naive method slow on "structured" texts. Smarter algorithms ([KMP](#series), Boyer–Moore) use the information about the already-checked prefix so as **not** to compare these characters twice — and shift by several positions at once. The naive method cannot do this: it starts each alignment "from a blank slate".
+This very redundancy is what makes the naive method slow on "structured" texts. Smarter algorithms (KMP, Boyer–Moore) use the information about the already-checked prefix so as **not** to compare these characters twice — and shift by several positions at once. The naive method cannot do this: it starts each alignment "from a blank slate".
 
 ## 10. (In)efficiency: the "not found" case
 
@@ -255,7 +255,7 @@ We build this for the canonical example. Each grid row is one alignment (its ver
 
 ## 16. Full step-by-step trace of the canonical example
 
-Below is the same execution **in full**: each alignment as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each (and in the explanation — all the character comparisons: `i`, `j`, characters, the decision, the counter). The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution **in full**: each alignment as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each (and in the explanation — all the character comparisons: `i`, `j`, characters, the decision, the counter). The cell colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

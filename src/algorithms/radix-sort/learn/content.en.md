@@ -2,7 +2,7 @@
 
 **Radix sort** is the first algorithm in this series that **does not compare elements with one another**. Instead of asking "which is larger, $a$ or $b$?" it looks at the **digits** of the numbers themselves: it distributes numbers into 10 buckets (`0–9`) by the digit of the current place and gathers them back — and repeats from the least significant digit to the most significant (ones → tens → hundreds…). That is exactly why it sidesteps the $\Omega(n\log n)$ lower bound that binds comparison sorts, and runs **linearly** — $O(d\cdot(n+k))$, where $d$ is the number of digits and $k$ is the base (10 here).
 
-The key to correctness is **stability**: each digit pass uses a stable [counting sort](#counting), and it is exactly that which preserves the order achieved on the previous digits. Stability here is not a nice bonus but the **linchpin** of the whole method.
+The key to correctness is **stability**: each digit pass uses a stable counting sort, and it is exactly that which preserves the order achieved on the previous digits. Stability here is not a nice bonus but the **linchpin** of the whole method.
 
 ## 1. Intuition: buckets, not comparisons
 
@@ -28,9 +28,9 @@ The key idea: **after sorting by one digit, the relative order is preserved for 
 
 Why is it enough to sort "digit by digit" without comparing the numbers as a whole? Because each pass is **stable**: among numbers with the same digit of the current place, their relative order does not change. So when we sort by the tens, numbers with the same tens digit stay in the order the previous pass (by the ones) put them in. This way the higher digits are "in charge" and the lower ones break ties — exactly as when comparing numbers normally.
 
-Remove stability and everything breaks: sorting by the tens could shuffle numbers with equal tens, destroying the work of the ones pass. That is why the stable [counting sort](#counting) is the **linchpin** of all of radix.
+Remove stability and everything breaks: sorting by the tens could shuffle numbers with equal tens, destroying the work of the ones pass. That is why the stable counting sort is the **linchpin** of all of radix.
 
-And, crucially: we **never compare two elements with each other**. The algorithm uses the **structure of the numbers themselves** (their digits), not answers to "$a < b$?". That is exactly what lets it bypass the $\Omega(n\log n)$ lower bound — [more below](#linear).
+And, crucially: we **never compare two elements with each other**. The algorithm uses the **structure of the numbers themselves** (their digits), not answers to "$a < b$?". That is exactly what lets it bypass the $\Omega(n\log n)$ lower bound — more below.
 
 ## 4. Example — the array `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
 
@@ -96,7 +96,7 @@ print("Відсортований масив:", arr)  # [3, 4, 9, 21, 62, 67, 89
 - `counting_sort(arr, position)` — **stably** sort by the current digit;
 - `position *= 10` — move to the next (higher) digit.
 
-`counting_sort` itself (three phases: frequencies → prefix sums → stable build) is detailed in the [Counting sort](#counting) section.
+`counting_sort` itself (three phases: frequencies → prefix sums → stable build) is detailed in the Counting sort section.
 
 ### The visual bucket version
 
@@ -291,7 +291,7 @@ We build this for the example array (its bucket distributions match the walkthro
 
 ## 9. Full step-by-step trace of `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
 
-Below is the same step-by-step execution, but **in full**: the start of each digit pass, the distribution of each number into a bucket, and the gathered array after each digit — each as a separate code ↔ data frame, in the right order, with a detailed explanation under each. The colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step execution, but **in full**: the start of each digit pass, the distribution of each number into a bucket, and the gathered array after each digit — each as a separate code ↔ data frame, in the right order, with a detailed explanation under each. The colours are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 
@@ -526,7 +526,7 @@ Compare the growth of the number of operations: linear $d\cdot(n+k)$ vs. the com
 
 ![Graph: d·(n+k) vs. n·log n](docs/images/en/growth.png)
 
-For integers with a bounded number of digits, radix beats even $n\log n$ sorts. But there is no "free lunch" — there are [limitations](#limitations).
+For integers with a bounded number of digits, radix beats even $n\log n$ sorts. But there is no "free lunch" — there are limitations.
 
 ## 12. Limitations: where radix does not win
 

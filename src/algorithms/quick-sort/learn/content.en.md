@@ -20,7 +20,7 @@ The algorithm has three steps:
 2. **Pick the pivot.** Take a pivot — in our implementation it is the **middle** element `pivot = arr[len(arr) // 2]`.
 3. **Three-way partition + recursion.** In one pass split the array into three lists — `left` (`< pivot`), `middle` (`== pivot`), `right` (`> pivot`) — recursively sort `left` and `right`, then **concatenate**: `quicksort(left) + middle + quicksort(right)`.
 
-`middle` holds **all** elements equal to the pivot (not just the pivot itself), so equal values land in place **immediately** and never take part in the recursion again — that is the strength of the three-way split on [duplicates](#duplicates).
+`middle` holds **all** elements equal to the pivot (not just the pivot itself), so equal values land in place **immediately** and never take part in the recursion again — that is the strength of the three-way split on duplicates.
 
 ## 3. Why it works: recursion and concatenation
 
@@ -296,7 +296,7 @@ def partition(arr, lo, hi):
     return i
 ```
 
-The full version also takes a pivot strategy (`'middle'` by default, `'first'`, `'last'`, `'median3'`, `'random'`) — that is exactly what we used to draw the [balanced and degenerate trees](#pivot-cases).
+The full version also takes a pivot strategy (`'middle'` by default, `'first'`, `'last'`, `'median3'`, `'random'`) — that is exactly what we used to draw the balanced and degenerate trees.
 
 **The trade-off between the two implementations:**
 
@@ -323,7 +323,7 @@ We build this for the example array `[5, 3, 8, 4, 2]`. Each grid row is one call
 
 ## 11. Full step-by-step trace of `[3, 5, 2, 4, 6, 1, 7]`
 
-Below is the same execution, but **in full**: every recursive call (in execution order, pre-order) as a separate code ↔ data frame with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution, but **in full**: every recursive call (in execution order, pre-order) as a separate code ↔ data frame with a detailed explanation under each. The colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

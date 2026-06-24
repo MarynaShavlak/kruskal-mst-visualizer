@@ -27,7 +27,7 @@ Correctness follows from a simple **invariant**: *after the $k$-th pass the $k$ 
 
 Why is the maximum guaranteed to reach the end in a single pass? As the inner loop moves rightward it "carries" the largest value it has met so far: as soon as the current element turns out to be smaller than its right neighbour, they swap, and the larger one keeps moving. The array's maximum never "loses" a swap, so it rolls all the way to the end. After $n-1$ passes everything is in place — the array is sorted.
 
-Because a swap happens only on a **strict** inequality (`>`, not `>=`), equal elements never swap places — and that makes the sort [**stable**](#stability).
+Because a swap happens only on a **strict** inequality (`>`, not `>=`), equal elements never swap places — and that makes the sort **stable**.
 
 ## 4. Example — the array `[5, 1, 4, 2, 8, 3]`
 
@@ -128,7 +128,7 @@ Pass i = 4
   → array after the pass: [1, 2, 3, 4, 5, 8];  swaps: 0;  bubbled up: 2 (index 1)
 ```
 
-Notice **passes 3 and 4**: the array became sorted already after pass 2, yet the naive implementation still "spins" two more passes without a single swap. That is wasted work — and exactly what the [optimization](#optimization) below removes.
+Notice **passes 3 and 4**: the array became sorted already after pass 2, yet the naive implementation still "spins" two more passes without a single swap. That is wasted work — and exactly what the optimization below removes.
 
 ### The big picture: evolution by passes
 
@@ -241,7 +241,7 @@ We build this for the example array `[5, 3, 8, 4, 2]` (its line-by-line trace ma
 
 ## 8. Full step-by-step trace of `[5, 1, 4, 2, 8, 3]`
 
-Below is the same step-by-step execution, but **in full**: every comparison and the end of every pass as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step execution, but **in full**: every comparison and the end of every pass as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

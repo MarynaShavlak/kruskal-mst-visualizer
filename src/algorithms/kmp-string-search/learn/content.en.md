@@ -257,7 +257,7 @@ The examples above showed the *result* of each step. Here is **the code in actio
 
 ## 7. Full step-by-step trace of the example
 
-Below is the same execution, but **fully** and in two phases: first the build of the `lps` table for the pattern «алг», then the search itself in the example text. Each step is a separate code ↔ data frame with a detailed explanation under it. The colours are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event journals.
+Below is the same execution, but **fully** and in two phases: first the build of the `lps` table for the pattern «алг», then the search itself in the example text. Each step is a separate code ↔ data frame with a detailed explanation under it. The colours are the same as in the legend above. The block is generated automatically from the event journals.
 
 ### Phase 1 — preprocessing: the `lps` table of pattern «алг»
 
@@ -347,7 +347,7 @@ Phase 2 — **search**. We look for «алг» in the text (table `lps = [0, 0, 
 - **The text index `i` never decreases** — the defining advantage over the naive method: no text character is re-read.
 - **Preprocessing does not depend on the text:** the same `lps` table can be built once and used to search the pattern in many texts.
 
-Edge cases (verified in [`tests/`](tests)):
+Edge cases (verified by tests):
 
 | Case | Behaviour |
 |---|---|

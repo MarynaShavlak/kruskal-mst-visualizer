@@ -7,7 +7,7 @@ Two defining new features of this walkthrough:
 1. **Right-to-left comparison.** The inner loop starts at the **last** character of the pattern and moves toward the start. The matched **suffix** grows until a mismatch occurs.
 2. **The bad-character table (shift table).** Preprocessing builds a «symbol → shift» dictionary: when a text symbol does not match, the pattern **leaps** forward — by its whole length if that symbol is absent from the pattern. The **rarer** the pattern's symbols are in the text, the **bigger** the jumps and the more **skipped** (never compared) text symbols there are.
 
-> 💡 This walkthrough deliberately covers **only one** component — the bad-character table. It skips the **good-suffix** table (leaving it for self-study); here it is likewise only [mentioned](#good-suffix) as the second component that the full Boyer-Moore combines via `max` of the two shifts.
+> 💡 This walkthrough deliberately covers **only one** component — the bad-character table. It skips the **good-suffix** table (leaving it for self-study); here it is likewise only mentioned as the second component that the full Boyer-Moore combines via `max` of the two shifts.
 
 The algorithm has **two phases**:
 
@@ -321,7 +321,7 @@ The examples above showed the *result* of each step. Here is **the code in actio
 
 ## 7. Full step-by-step trace of the example
 
-Below is the same execution, but **in full** and in two phases: first the construction of the shift table for `developer`, then the search itself in our text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs.
+Below is the same execution, but **in full** and in two phases: first the construction of the shift table for `developer`, then the search itself in our text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the legend above. The block is generated automatically from the event logs.
 
 ### Phase 1 — preprocessing: the shift table of pattern «developer»
 
@@ -478,7 +478,7 @@ We shift by the **window-end** symbol. `text[8] = «d»`, `table[«d»] = 8` →
 - **Skipping text** is the payoff: big jumps leave whole chunks of text never compared.
 - **Preprocessing is text-independent:** one shift table can be built once and reused to search many texts.
 
-Edge cases (verified in [`tests/`](tests)):
+Edge cases (verified by tests):
 
 | Case | Behavior |
 |---|---|

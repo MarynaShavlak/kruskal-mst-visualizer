@@ -33,7 +33,7 @@ Correctness follows from a simple **invariant**: *before each iteration `i` the 
 - **Step.** The inner loop shifts right every prefix element larger than `key` and inserts `key` right before the first element that is `<= key`. So after the iteration `lst[0..i]` is sorted and consists of the same elements.
 - **End.** When `i` reaches `n-1`, the invariant gives that `lst[0..n-1]` is sorted — that is the whole array.
 
-Because a shift happens only under a **strict** inequality (`key < lst[j]`), an equal element does not satisfy the condition: `key` stops **to the right** of an element equal to it and never jumps over it. That is what makes the sort [**stable**](#stability).
+Because a shift happens only under a **strict** inequality (`key < lst[j]`), an equal element does not satisfy the condition: `key` stops **to the right** of an element equal to it and never jumps over it. That is what makes the sort **stable**.
 
 ## 4. Example — the array `[5, 2, 4, 6, 1, 3]`
 
@@ -151,7 +151,7 @@ Iteration i = 5
   → array after the iteration: [1, 2, 3, 4, 5, 6];  shifts: 3;  key 3 inserted at index 2
 ```
 
-Notice **iteration 3** (`key = 6`): `6` is already larger than the whole prefix, so the body of `while` **never runs** — 0 shifts. And **iteration 4** (`key = 1`) is the costliest: `1` is the smallest, so it “squeezes” through the entire prefix, causing 4 shifts. The cheapness of ordered runs and the expense of “the smallest one at the back” are the essence of [adaptivity](#adaptive).
+Notice **iteration 3** (`key = 6`): `6` is already larger than the whole prefix, so the body of `while` **never runs** — 0 shifts. And **iteration 4** (`key = 1`) is the costliest: `1` is the smallest, so it “squeezes” through the entire prefix, causing 4 shifts. The cheapness of ordered runs and the expense of “the smallest one at the back” are the essence of adaptivity.
 
 ### The big picture: evolution by iterations
 
@@ -260,7 +260,7 @@ We build this for the example array `[5, 3, 8, 4, 2]` (its line-by-line trace ma
 
 ## 9. The full step-by-step trace of `[5, 2, 4, 6, 1, 3]`
 
-Below is the same step-by-step execution, but **in full**: taking each key, every comparison/shift, every insertion — each as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step execution, but **in full**: taking each key, every comparison/shift, every insertion — each as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 
@@ -423,7 +423,7 @@ Other properties:
 - **Adaptive:** on “nearly sorted” data it finishes in nearly $O(n)$ — *without any flag*.
 - **Online:** it can sort data as it arrives — each new element is inserted into the sorted prefix right away.
 
-The number of comparisons in the worst case is $\frac{n(n-1)}{2}$, i.e. it grows like $n^2$. **Binary insertion** brings comparisons down to $\approx n\log_2 n$, but the shifts stay $O(n^2)$ (the plot is [above](#binary)).
+The number of comparisons in the worst case is $\frac{n(n-1)}{2}$, i.e. it grows like $n^2$. **Binary insertion** brings comparisons down to $\approx n\log_2 n$, but the shifts stay $O(n^2)$ (the plot is above).
 
 ## 11. Limitations: why $O(n^2)$ is impractical for large `n`
 

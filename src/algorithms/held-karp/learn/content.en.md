@@ -10,8 +10,6 @@ The main focus is on **step-by-step visualizations**: the distance matrix, level
 > **Example result:** both methods return the same optimal route:
 > **A → C → B → D → E → A**, with length ≈ **16.75**.
 
-> technical reference — [project.en.md](project.en.md).
-
 ## 1. Traveling Salesman Problem — brute-force method
 
 The salesman must visit five cities exactly once and return home. The goal is to find the shortest route. The brute-force method generates **all** possible routes and chooses the route with the smallest total distance.
@@ -842,5 +840,4 @@ Both brute force and Held–Karp find the exact optimal route. The difference is
 - The distance matrix makes repeated distance lookups fast and keeps the algorithm clean.
 - `frozenset` is a convenient way to represent subsets as dictionary keys because it is immutable, hashable, and order-independent.
 - The example with five cities clearly shows that both methods return the same route: **A → C → B → D → E → A**, length ≈ **16.75**.
-
 

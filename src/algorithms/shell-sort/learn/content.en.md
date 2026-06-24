@@ -73,7 +73,7 @@ shell_sort(numbers)
 What's what:
 
 - `gap = n // 2` — the **initial gap** (half the array length);
-- `while gap > 0` — the **outer phase loop**: each iteration halves `gap` (`gap //= 2`) until it hits 0. This is just *one* gap sequence — see [below](#gap-sequences) for others;
+- `while gap > 0` — the **outer phase loop**: each iteration halves `gap` (`gap //= 2`) until it hits 0. This is just *one* gap sequence — see below for others;
 - `for i in range(gap, n)` — this is **insertion sort with step `gap`**: we walk the elements that need to be placed within their subsequence;
 - `temp = arr[i]` — take the current element "into hand"; `j = i` — where we start moving left **with step `gap`** (`j -= gap`);
 - `while j >= gap and arr[j - gap] > temp` — check the element `arr[j - gap]`, which sits `gap` positions to the left: if it is larger than `temp`, it must be shifted;
@@ -107,7 +107,7 @@ Now `j = 0`, there is nowhere further to go — we insert `temp = 6` into the fr
 
 ![gap = 4: insert temp = 6](docs/images/en/step_intro_03.png)
 
-Such far-apart moves are Shell's main advantage: a single shift carries a large element halfway across the array. The rest of the phase (`i = 5, 6, 7`) is shown in the [animation](#evolution) and the [full trace](#full-walkthrough).
+Such far-apart moves are Shell's main advantage: a single shift carries a large element halfway across the array. The rest of the phase (`i = 5, 6, 7`) is shown in the animation and the full trace.
 
 ### Phases `gap = 2` and `gap = 1`
 
@@ -307,7 +307,7 @@ j: 4, temp: 8, gap: 1
 
 ## 8. Full step-by-step trace of `[8, 5, 3, 7, 6, 1, 4, 2]`
 
-Below is the same step-by-step execution, but **in full**: every journal event (the start of a `gap` phase, taking `temp`, every comparison a `gap` apart, every gap-shift, an insert, the end of a phase) as a separate "code ↔ array" frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step execution, but **in full**: every journal event (the start of a `gap` phase, taking `temp`, every comparison a `gap` apart, every gap-shift, an insert, the end of a phase) as a separate "code ↔ array" frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00 · start
 
@@ -778,7 +778,7 @@ How much work Shell sort does depends on the **gap sequence** and on how ordered
 Other properties:
 
 - **Extra memory — $O(1)$:** the sort happens *in place*, only a slot for `temp` is needed. **No recursion** (unlike quicksort/merge sort).
-- **Unstable:** gap-shifts can leap over equal keys ([see above](#stability)).
+- **Unstable:** gap-shifts can leap over equal keys (see above).
 - **Adaptive:** on "almost sorted" data the phases do fewer shifts; at `gap = 1` the final insertion pass is cheap.
 - **A generalization of insertion sort:** at `gap = 1` the algorithm coincides with plain insertion sort — Shell merely "boosts" it with large leaps in the early phases.
 

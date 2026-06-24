@@ -23,7 +23,7 @@ The algorithm has two phases:
 1. **Phase 1 — binary search over the index.** We keep a window `[start, end]` over the index-table entries and look at the middle signal pillar `mid`. Comparing its key with the target, we drop half of the window (just like ordinary binary search). The result is **which block** of the main array to scan. If a pillar's key equals the target — the answer is found right here.
 2. **Phase 2 — sequential search in the block.** We linearly scan **only** the chosen block of the main array and return the index of the first match (or `-1` if the block is exhausted).
 
-The index sparsity is set by the **step** `step`: every `step`-th element becomes a signal pillar. This is the classic trade-off: the denser the pillars (a smaller `step`), the shorter the blocks — but the larger the table; the sparser they are (a larger `step`), the smaller the table — but the longer the scans. The optimum is near `√n` (see [below](#step)).
+The index sparsity is set by the **step** `step`: every `step`-th element becomes a signal pillar. This is the classic trade-off: the denser the pillars (a smaller `step`), the shorter the blocks — but the larger the table; the sparser they are (a larger `step`), the smaller the table — but the longer the scans. The optimum is near `√n` (see below).
 
 ## 3. Precondition: the array must be sorted
 
@@ -295,7 +295,7 @@ We build it for the main case. Each grid row is one decision (an index probe / a
 
 ## 10. Full step-by-step trace of `[1, 3, …, 25]`, step 4, target 15
 
-Below is the same execution, but **in full**: every index probe, the block choice, and every sequential comparison as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution, but **in full**: every index probe, the block choice, and every sequential comparison as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

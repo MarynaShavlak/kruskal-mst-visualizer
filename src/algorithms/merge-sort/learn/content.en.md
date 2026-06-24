@@ -284,7 +284,7 @@ The static grid — splits, base cases and one completed merge per node:
 
 ## 9. Full step-by-step trace of `[8, 4, 6, 2, 7, 1, 5, 3]`
 
-Below is the same execution, but **in full**: every node split, every base case and every completed merge as a separate code ↔ data frame, in the right order (splits top-down, merges bottom-up), with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution, but **in full**: every node split, every base case and every completed merge as a separate code ↔ data frame, in the right order (splits top-down, merges bottom-up), with a detailed explanation under each. The colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

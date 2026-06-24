@@ -31,7 +31,7 @@ At each step the window `[low..high]` halves. That is exactly why there are only
 
 The whole correctness of the method rests on one condition: **the array is sorted in ascending order**. Only then can the comparison of `arr[mid]` with `x` reliably tell which half to search and which to drop. On unordered data binary search may "throw away" the half that actually contains the target and return `-1` for a present element.
 
-This is the method's main **price** — and the direct link to [sorting](#series): it is what prepares the data for fast search. This is where the boundary with [linear search](https://github.com/MarynaShavlak/algo-linear-search) lies:
+This is the method's main **price** — and the direct link to sorting: it is what prepares the data for fast search. This is where the boundary with [linear search](https://github.com/MarynaShavlak/algo-linear-search) lies:
 
 | | Linear search | Binary search |
 |---|---|---|
@@ -282,7 +282,7 @@ We build this for the main instance (searching for 15). Each row of the grid is 
 
 ## 12. Full step-by-step trace of `15`
 
-Below is the same execution, but **in full**: every `mid` computation, every comparison and half-dropping as a separate "code ↔ array" frame, in the correct order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same execution, but **in full**: every `mid` computation, every comparison and half-dropping as a separate "code ↔ array" frame, in the correct order, with a detailed explanation under each. The cell colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

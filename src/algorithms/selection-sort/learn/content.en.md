@@ -27,7 +27,7 @@ Correctness follows from a simple **invariant**: *after the $k$-th pass the firs
 
 Why? On pass $i$ the inner loop scans the **whole** suffix and is guaranteed to find its minimum. That minimum is not smaller than any element of the already-sorted prefix (those were minima of earlier, wider suffixes), so once it lands at position $i$ it is exactly in its place. After $n-1$ passes the prefix covers almost the whole array, and the last element is automatically the largest — the array is sorted.
 
-Notice: the search scans the suffix **fully** regardless of how ordered it already is. That is exactly why the number of comparisons does not depend on the input — the method is [**not adaptive**](#non-adaptive). And the single swap at the end of a pass may “jump over” equal keys — which makes standard selection [**unstable**](#stability).
+Notice: the search scans the suffix **fully** regardless of how ordered it already is. That is exactly why the number of comparisons does not depend on the input — the method is **not adaptive**. And the single swap at the end of a pass may “jump over” equal keys — which makes standard selection **unstable**.
 
 ## 4. Example — the array `[5, 3, 8, 4, 2, 7]`
 
@@ -273,7 +273,7 @@ We build this for the example array `[5, 3, 8, 4, 2]` (its line-by-line trace ma
 
 ## 9. Full step-by-step trace of `[5, 3, 8, 4, 2, 7]`
 
-Below is the same step-by-step run, but **in full**: the start of each pass, every comparison and every swap as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step run, but **in full**: the start of each pass, every comparison and every swap as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

@@ -64,7 +64,7 @@ if v not in visited:   # vertex still outside? → accept the edge
 # otherwise the edge is stale — silently skip it
 ```
 
-This very line is the heart of the basic implementation. In Example 1 no stale edges will appear (the graph is small), but in [Example 2](#lazy-example) the algorithm will skip **three** stale edges in a row.
+This very line is the heart of the basic implementation. In Example 1 no stale edges will appear (the graph is small), but in Example 2 the algorithm will skip **three** stale edges in a row.
 
 ## 5. Example 1 — graph `A–F`
 
@@ -182,7 +182,7 @@ C is NOT in the tree yet → accept: C joins via edge B–C (1).
 
 #### Step 3: edge `C–F (2)` — the first real choice
 
-For the first time the queue holds **two** candidates: `(2, C, F)` and `(7, C, D)`. This is exactly the cut "tree `{A, B, C}` vs. `{D, E, F}`" from the [theory section](#cut): precisely these two edges cross it, and Prim takes the cheapest — `C–F (2)`. The pricier `C–D (7)` keeps waiting in the queue.
+For the first time the queue holds **two** candidates: `(2, C, F)` and `(7, C, D)`. This is exactly the cut "tree `{A, B, C}` vs. `{D, E, F}`" from the theory section: precisely these two edges cross it, and Prim takes the cheapest — `C–F (2)`. The pricier `C–D (7)` keeps waiting in the queue.
 
 ```text
 ============================================================
@@ -338,7 +338,7 @@ The whole evolution at a glance — skips are marked with ✗:
 
 ![Evolution of the MST on graph A–G: three stale edges in a row](docs/images/en/evolution_abcdefg.png)
 
-**The moral of the example.** Lazy deletion is a trade-off: the queue holds up to $O(E)$ entries and occasionally hands out garbage, but every operation is a plain `heappush`/`heappop` with no extra bookkeeping. The garbage-free alternative is the [eager version](#eager) below.
+**The moral of the example.** Lazy deletion is a trade-off: the queue holds up to $O(E)$ entries and occasionally hands out garbage, but every operation is a plain `heappush`/`heappop` with no extra bookkeeping. The garbage-free alternative is the eager version below.
 
 ## 7. A limitation: disconnected graphs
 
@@ -358,7 +358,7 @@ Running the basic prim_mst on a disconnected graph…
 
 The mechanics of the failure: the tree quickly absorbs the entire start component (`M, N, O`), no new edges arrive in the queue, the queue runs dry — while the loop `while visited != set(graph.nodes())` still waits for `P` and `Q`. The next `heappop` crashes with an `IndexError`.
 
-> **The sneakier variant.** The [eager version](#eager) does not crash here — it **silently** returns the tree of one component; the result looks plausible but is not a spanning tree. A loud error beats a silent one: check connectivity up front.
+> **The sneakier variant.** The eager version does not crash here — it **silently** returns the tree of one component; the result looks plausible but is not a spanning tree. A loud error beats a silent one: check connectivity up front.
 
 The honest ways out:
 
@@ -422,7 +422,7 @@ Both build the same MST, but they look at the graph differently (a separate step
 
 ### Same result, different path (graph `A–G`)
 
-On the [`A–G` graph](#lazy-example) both algorithms build an MST of weight **39**, but accept the edges in a different order:
+On the `A–G` graph both algorithms build an MST of weight **39**, but accept the edges in a different order:
 
 | # | Prim (grows from `A`) | Kruskal (global sort) |
 |---|---|---|

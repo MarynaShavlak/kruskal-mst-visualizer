@@ -164,7 +164,7 @@ Linear search is $O(n)$: the number of checks grows **linearly** with the array 
 
 ![Chart: linear O(n) vs. binary O(log n)](docs/images/en/growth.png)
 
-On a sorted array of a million elements, linear search would in the worst case do up to **a million** checks, while binary search — about **twenty**. This is exactly the bridge to the [next step](#series) — binary search.
+On a sorted array of a million elements, linear search would in the worst case do up to **a million** checks, while binary search — about **twenty**. This is exactly the bridge to the next step — binary search.
 
 ## 6. Duplicates: the first match and `find_all`
 
@@ -233,7 +233,7 @@ We build this for the main case `[5, 3, 8, 1, 4]`, searching for `8`. Each grid 
 
 ## 10. Full step-by-step trace of `[5, 3, 8, 1, 4]`
 
-Below is the same step-by-step execution, but **in full**: every check as a separate code ↔ array frame, in the correct order, with a detailed explanation under each. The "intrigue" frame (`arr[i] == x?`) and its resolution (not-it / match) are shown separately. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal.
+Below is the same step-by-step execution, but **in full**: every check as a separate code ↔ array frame, in the correct order, with a detailed explanation under each. The "intrigue" frame (`arr[i] == x?`) and its resolution (not-it / match) are shown separately. The cell colors are the same as in the legend above. The block is generated automatically from the event journal.
 
 #### Step 00
 

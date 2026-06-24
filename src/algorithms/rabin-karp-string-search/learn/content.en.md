@@ -285,7 +285,7 @@ The examples above showed the *result* of each step. Here is **the code itself i
 
 ## 8. Full step-by-step trace of the example
 
-Below is the same execution, but **in full** and in two phases: first the computation of the hash of the pattern «developer», then the search itself in the example text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs.
+Below is the same execution, but **in full** and in two phases: first the computation of the hash of the pattern «developer», then the search itself in the example text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the legend above. The block is generated automatically from the event logs.
 
 ### Phase 1 — hashing: the polynomial hash of pattern «developer»
 
@@ -423,7 +423,7 @@ The window `i = 8` is «developer», hash **35 = 35**, and the check: «develope
 - **A hash instead of characters:** the algorithm compares **numbers**; the character check only **confirms** a hash match. This reduces comparing strings to comparing integers.
 - **Great for many occurrences:** `rabin_karp_search_all` finds all positions in a single pass, keeping hash comparisons cheap.
 
-Edge cases (covered in [`tests/`](tests)):
+Edge cases (covered by tests):
 
 | Case | Behavior |
 |---|---|
