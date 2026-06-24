@@ -101,13 +101,7 @@ export function bubbleSortOptimized(input: readonly number[]): number[] {
   return lst
 }
 
-/** Чи впорядкований масив за зростанням? */
-export function isSorted(lst: readonly number[]): boolean {
-  for (let i = 0; i < lst.length - 1; i++) {
-    if (lst[i] > lst[i + 1]) return false
-  }
-  return true
-}
+export { isSorted } from "@/lib/arrayUtils"
 
 /**
  * Інструментована бульбашка для покрокового розбору: повторює `bubbleSort`
