@@ -5,6 +5,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { IndexedSequentialSearchDoc } from "@/store/indexed-sequential-search-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface IxsWire {
   readonly version: 1
@@ -27,19 +28,6 @@ function parseWire(raw: unknown): IxsWire {
   return o as unknown as IxsWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: IndexedSequentialSearchDoc): IxsWire => ({
   version: 1,
   values: doc.values.map((v) => Math.round(v)),
@@ -53,16 +41,4 @@ const wireToDoc = (wire: IxsWire): IndexedSequentialSearchDoc => ({
   step: Math.max(1, Math.trunc(wire.step)),
 })
 
-export const indexedSequentialSearchCodec = {
-  toJSON: (doc: IndexedSequentialSearchDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): IndexedSequentialSearchDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: IndexedSequentialSearchDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): IndexedSequentialSearchDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const indexedSequentialSearchCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

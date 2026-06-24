@@ -7,6 +7,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { GraphLike, GraphStoreDoc, XY } from "@/store/create-graph-store"
+import { createDocCodec } from "./doc-codec"
 
 /** Як кодек читає й будує конкретну graph-модель. */
 export interface GraphDocModel<G extends GraphLike> {
@@ -74,19 +75,6 @@ function parseWire(raw: unknown): WireDoc {
   return o as unknown as WireDoc
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 /** Будує кодек документа (JSON + URL-хеш) для заданої graph-моделі. */
 export function createGraphDocCodec<G extends GraphLike>(
   model: GraphDocModel<G>,
@@ -114,16 +102,5 @@ export function createGraphDocCodec<G extends GraphLike>(
     return { graph: g, positions }
   }
 
-  return {
-    toJSON: (doc) => JSON.stringify(docToWire(doc), null, 2),
-    fromJSON: (json) => wireToDoc(parseWire(JSON.parse(json))),
-    encodeHash: (doc) => toBase64Url(JSON.stringify(docToWire(doc))),
-    decodeHash: (s) => {
-      try {
-        return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-      } catch {
-        return null
-      }
-    },
-  }
+  return createDocCodec({ docToWire, parseWire, wireToDoc })
 }

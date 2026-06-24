@@ -6,6 +6,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { QuickSortDoc } from "@/store/quick-sort-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface QuickWire {
   readonly version: 1
@@ -24,19 +25,6 @@ function parseWire(raw: unknown): QuickWire {
   return o as unknown as QuickWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: QuickSortDoc): QuickWire => ({
   version: 1,
   values: doc.values.map((v) => Math.round(v)),
@@ -46,16 +34,4 @@ const wireToDoc = (wire: QuickWire): QuickSortDoc => ({
   values: wire.values.map((v) => Math.max(0, Math.trunc(v))),
 })
 
-export const quickSortCodec = {
-  toJSON: (doc: QuickSortDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): QuickSortDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: QuickSortDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): QuickSortDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const quickSortCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

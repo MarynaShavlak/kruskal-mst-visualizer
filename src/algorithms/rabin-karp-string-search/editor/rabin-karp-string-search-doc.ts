@@ -4,6 +4,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { RabinKarpStringSearchDoc } from "@/store/rabin-karp-string-search-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface RkWire {
   readonly version: 1
@@ -22,19 +23,6 @@ function parseWire(raw: unknown): RkWire {
   return o as unknown as RkWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: RabinKarpStringSearchDoc): RkWire => ({
   version: 1,
   text: doc.text,
@@ -46,16 +34,4 @@ const wireToDoc = (wire: RkWire): RabinKarpStringSearchDoc => ({
   pattern: wire.pattern,
 })
 
-export const rabinKarpStringSearchCodec = {
-  toJSON: (doc: RabinKarpStringSearchDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): RabinKarpStringSearchDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: RabinKarpStringSearchDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): RabinKarpStringSearchDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const rabinKarpStringSearchCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

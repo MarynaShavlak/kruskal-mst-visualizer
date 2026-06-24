@@ -7,6 +7,7 @@
 import { tr } from "@/i18n/use-t"
 import type { TspCity } from "@/lib/tsp"
 import type { TspDoc } from "@/store/tsp-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface TspWire {
   readonly version: 1
@@ -39,19 +40,6 @@ function parseWire(raw: unknown): TspWire {
   return o as unknown as TspWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: TspDoc): TspWire => ({
   version: 1,
   cities: doc.cities.map(
@@ -69,16 +57,4 @@ const wireToDoc = (wire: TspWire): TspDoc => {
   return { cities, start }
 }
 
-export const tspCodec = {
-  toJSON: (doc: TspDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): TspDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: TspDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): TspDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const tspCodec = createDocCodec({ docToWire, parseWire, wireToDoc })

@@ -5,6 +5,7 @@
 
 import { tr } from "@/i18n/use-t"
 import type { BinarySearchDoc } from "@/store/binary-search-store"
+import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
 interface BinaryWire {
   readonly version: 1
@@ -25,19 +26,6 @@ function parseWire(raw: unknown): BinaryWire {
   return o as unknown as BinaryWire
 }
 
-function toBase64Url(s: string): string {
-  const bytes = new TextEncoder().encode(s)
-  let bin = ""
-  for (const b of bytes) bin += String.fromCharCode(b)
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
-}
-
-function fromBase64Url(s: string): string {
-  const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"))
-  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
 const docToWire = (doc: BinarySearchDoc): BinaryWire => ({
   version: 1,
   values: doc.values.map((v) => Math.round(v)),
@@ -49,16 +37,4 @@ const wireToDoc = (wire: BinaryWire): BinarySearchDoc => ({
   target: Math.trunc(wire.target),
 })
 
-export const binarySearchCodec = {
-  toJSON: (doc: BinarySearchDoc): string => JSON.stringify(docToWire(doc), null, 2),
-  fromJSON: (json: string): BinarySearchDoc => wireToDoc(parseWire(JSON.parse(json))),
-  encodeHash: (doc: BinarySearchDoc): string =>
-    toBase64Url(JSON.stringify(docToWire(doc))),
-  decodeHash: (s: string): BinarySearchDoc | null => {
-    try {
-      return wireToDoc(parseWire(JSON.parse(fromBase64Url(s))))
-    } catch {
-      return null
-    }
-  },
-}
+export const binarySearchCodec = createDocCodec({ docToWire, parseWire, wireToDoc })
