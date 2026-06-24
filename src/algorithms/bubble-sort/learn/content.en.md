@@ -4,17 +4,7 @@
 
 The method is slow for large arrays (time is $O(n^2)$), but its simplicity makes it a great **teaching** example: it clearly shows what stability is, the pass invariant, early exit, and why quadratic complexity is impractical.
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, how to run the examples and the tests, and a minimal library-usage snippet are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: why "bubble"
+## 1. Intuition: why "bubble"
 
 Picture the array as vertical **bars**, where the height is the element's value. In one left-to-right pass the method compares every adjacent pair and "pushes" the larger element to the right. As a result **the largest element of the whole array rolls all the way to the right edge** — like a big bubble surfacing:
 
@@ -22,7 +12,7 @@ Picture the array as vertical **bars**, where the height is the element's value.
 
 The next pass lifts the second-largest element to the second-to-last spot, the next one — the third, and so on. So the **sorted "tail" grows from the right**, and each pass has to check one element fewer.
 
-## 4. The idea: compare neighbours and swap
+## 2. The idea: compare neighbours and swap
 
 The algorithm is two nested loops:
 
@@ -31,7 +21,7 @@ The algorithm is two nested loops:
 
 After pass $i$ the last $i+1$ elements are already in their final spots (the largest values bubbled there), so the inner loop gets shorter every time — hence the bound `n-i-1`.
 
-## 5. Why it works: the pass invariant
+## 3. Why it works: the pass invariant
 
 Correctness follows from a simple **invariant**: *after the $k$-th pass the $k$ largest elements sit in their final spots at the end of the array and never move again.*
 
@@ -39,7 +29,7 @@ Why is the maximum guaranteed to reach the end in a single pass? As the inner lo
 
 Because a swap happens only on a **strict** inequality (`>`, not `>=`), equal elements never swap places — and that makes the sort [**stable**](#stability).
 
-## 6. Example — the array `[5, 1, 4, 2, 8, 3]`
+## 4. Example — the array `[5, 1, 4, 2, 8, 3]`
 
 ### The array
 
@@ -150,8 +140,6 @@ All states of the array side by side — you can see the green "tail" grow from 
 
 ![Animation: sorting the array comparison by comparison](docs/images/en/sort_intro.gif)
 
-🎬 *MP4 version:* [`sort_intro.mp4`](docs/images/en/sort_intro.mp4)
-
 ### Result
 
 ![The sorted array [1, 2, 3, 4, 5, 8]](docs/images/en/result_intro.png)
@@ -166,7 +154,7 @@ Comparisons: 15   Swaps: 7   Passes: 5
 
 The naive version always makes all $n-1 = 5$ passes and all $\frac{n(n-1)}{2} = 15$ comparisons — regardless of how early the array actually became ordered.
 
-## 7. Optimization: the `swapped` flag and early exit
+## 5. Optimization: the `swapped` flag and early exit
 
 The key observation: **if a whole pass makes no swaps, the array is already sorted**, and the remaining passes change nothing. Add a single `swapped` flag and break out early:
 
@@ -203,8 +191,6 @@ Early exit saves 10 comparisons on already sorted input.
 
 ![Animation: best case, early exit](docs/images/en/sort_sorted.gif)
 
-🎬 *MP4 version:* [`sort_sorted.mp4`](docs/images/en/sort_sorted.mp4)
-
 **Worst case — a reverse sorted array.** Every adjacent pair is in the wrong order, so **every** comparison triggers a swap: maximum work, $O(n^2)$. Early exit does not help here — there are swaps in every pass until the very end:
 
 ![Worst case: reverse array, maximum swaps](docs/images/en/evolution_reversed.png)
@@ -220,9 +206,7 @@ On reverse input the optimization does not help: 15 comparisons either way.
 
 ![Animation: worst case, maximum swaps](docs/images/en/sort_reversed.gif)
 
-🎬 *MP4 version:* [`sort_reversed.mp4`](docs/images/en/sort_reversed.mp4)
-
-## 8. Stability: an array with duplicates
+## 6. Stability: an array with duplicates
 
 A sort is **stable** if it preserves the relative order of elements with **equal keys**. Bubble sort is stable because a swap happens only on a **strict** inequality `a[j] > a[j+1]`: equal elements do not satisfy the condition and never swap.
 
@@ -243,7 +227,7 @@ After sorting, the triple `3₁, 3₂, 3₃` stayed in exactly this order (rathe
 
 Stability matters when elements carry extra data (you sort records by one field without destroying a previous ordering by another).
 
-## 9. Executing the code step by step: code ↔ array panels
+## 7. Executing the code step by step: code ↔ array panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the array at that very moment. **The colour of a code line encodes what is happening:** 🟡 the line runs now (a loop / the condition check), 🔴 the condition `if lst[j] > lst[j+1]` is true → the pair swaps, 🟢 the loops finished → the array is sorted.
 
@@ -255,9 +239,7 @@ We build this for the array from the notes `[5, 3, 8, 4, 2]` (its line-by-line t
 
 ![Animation: code ↔ array](docs/images/en/code_walk_conspect.gif)
 
-🎬 *MP4 version:* [`code_walk_conspect.mp4`](docs/images/en/code_walk_conspect.mp4)
-
-## 10. Full step-by-step trace of `[5, 1, 4, 2, 8, 3]`
+## 8. Full step-by-step trace of `[5, 1, 4, 2, 8, 3]`
 
 Below is the same step-by-step execution, but **in full**: every comparison and the end of every pass as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -393,7 +375,7 @@ End of pass `i = 4`. The largest of the remaining elements bubbled up to index 1
 
 Result: the array is sorted — `[1, 2, 3, 4, 5, 8]`. In total 15 comparisons and 7 swaps over 5 pass(es). `return lst` is highlighted.
 
-## 11. Complexity and properties
+## 9. Complexity and properties
 
 How much work bubble sort does depends on how ordered the input is:
 
@@ -413,7 +395,7 @@ The number of comparisons in the naive version is always $\frac{n(n-1)}{2}$, i.e
 
 ![Plot: n² vs n·log n](docs/images/en/growth.png)
 
-## 12. Limitations: why bubble sort is impractical for large `n`
+## 10. Limitations: why bubble sort is impractical for large `n`
 
 Quadratic complexity means that as the array grows, the number of operations grows **catastrophically fast**. Compare the number of comparisons in the worst case ($\frac{n(n-1)}{2}$) with efficient sorts ($\approx n\log_2 n$):
 
@@ -442,7 +424,7 @@ That is why bubble sort is **not used** for real data in practice — it is disp
 
 **Educational value vs. performance.** Despite its impracticality, bubble sort remains the first algorithm in many courses — and for good reason: it is the easiest way to show a loop invariant, the notion of stability, the early-exit idea, and the very method of complexity analysis. Once you understand "why it is slow", it is easier to appreciate *why* smarter algorithms are faster.
 
-## 13. Where it fits
+## 11. Where it fits
 
 The rare situations where plain bubble sort is still justified:
 
@@ -453,7 +435,7 @@ The rare situations where plain bubble sort is still justified:
 
 In any more serious task you reach for the built-in `sorted()` / `list.sort()` (Timsort) — stable, adaptive and $O(n\log n)$.
 
-## 14. Summary
+## 12. Summary
 
 - **Bubble sort** compares adjacent elements and swaps them when they are in the wrong order; each pass bubbles the largest element to the end.
 - It runs on an **array, in place** ($O(1)$ memory) and is **stable** (a swap happens only on a strict inequality).
@@ -461,8 +443,4 @@ In any more serious task you reach for the built-in `sorted()` / `list.sort()` (
 - **The optimization** is the `swapped` flag: if a pass makes no swaps, the array is sorted, and we exit early. It changes nothing in the result, removing only the wasteful passes.
 - On the array `[5, 1, 4, 2, 8, 3]` the sort costs **15 comparisons and 7 swaps**; on the already sorted `[1..6]` the optimized version makes only **5 comparisons in 1 pass**, and on the reverse `[6..1]` — the maximum: **15 swaps**.
 - For **large** arrays the method is impractical — it is displaced by $O(n\log n)$ algorithms (merge sort, quicksort, Timsort). Bubble sort's value is **educational**.
-
-## 15. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

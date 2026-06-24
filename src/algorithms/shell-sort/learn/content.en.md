@@ -4,19 +4,9 @@
 
 This makes Shell sort an excellent **teaching** example: it shows how a tiny change (a step `gap` instead of 1) turns a quadratic algorithm into a sub-quadratic one, how the array decomposes into **subsequences with step `gap`**, why the choice of **gap sequence** decides the complexity, and why the far-apart shifts make the method **unstable**.
 
-This repository is a learning resource: a clean implementation of the algorithm plus detailed visualizations of every step. Everything below is reproduced by the code in [`examples/`](examples); the figures live in [`docs/images/`](docs/images).
-
 > 📚 Shell sort **generalizes** insertion sort. If you haven't seen the base method, start with the [**algo-insertion-sort**](https://github.com/MarynaShavlak/algo-insertion-sort) walkthrough — it covers the "key in hand", the shift, and stability that we keep referring to here.
 
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation, how to run the examples and the tests, and a minimal library-usage snippet are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: insertion sort, but "across a step"
+## 1. Intuition: insertion sort, but "across a step"
 
 Picture the array as vertical **bars** whose height is the element's value. Insertion sort takes each element and "drags" it leftwards, comparing it with its **neighbour** (`gap = 1`). If a small value ends up at the end of the array, it reaches the front only after many tiny steps — that's slow.
 
@@ -26,7 +16,7 @@ Shell sort looks at the same array **through a step `gap`**: it compares and shi
 
 A large `gap` removes **far-apart** disorder in a single leap (an element flies across half the array). By shrinking `gap` to 1, each phase leaves the array more ordered, so the final insertion pass has almost nothing to do.
 
-## 4. The idea: subsequences with step `gap`
+## 2. The idea: subsequences with step `gap`
 
 This is the **signature** image of Shell sort. For a given `gap` the array splits into `gap` interleaved **subsequences**: indices `0, gap, 2·gap, …` are one group, `1, gap+1, …` are another, and so on. Each group is **insertion-sorted independently** (colour = group `i mod gap`, arcs link elements `gap` apart):
 
@@ -37,7 +27,7 @@ The algorithm has two nested parts:
 1. The **outer loop `while gap > 0`** counts the *phases*: it starts with `gap = n//2` and halves it each time, until `gap` becomes 0.
 2. **For each `gap`** it is an insertion sort with step `gap`: we take `temp = arr[i]` "into hand" and shift right (by `gap` positions) every element of its subsequence that is larger than `temp`, until a slot frees up.
 
-## 5. Why it works: `gap`-sortedness
+## 3. Why it works: `gap`-sortedness
 
 Correctness follows from the notion of **`k`-sortedness**: an array is `k`-sorted if every subsequence with step `k` is sorted. After a phase with gap `gap` the array becomes `gap`-sorted — and, crucially, it **stays** `gap`-sorted through the later phases with smaller gaps. So by the time we reach `gap = 1` the array is already `2`-sorted (and `4`-sorted, …), i.e. "almost sorted".
 
@@ -45,7 +35,7 @@ And the last pass at `gap = 1` is plain insertion sort, which on an almost-order
 
 > Because the final phase is always `gap = 1` (plain insertion sort), the result is **guaranteed** sorted — regardless of which gaps came before. The gap sequence only affects **speed**, not correctness.
 
-## 6. Example — array `[8, 5, 3, 7, 6, 1, 4, 2]`
+## 4. Example — array `[8, 5, 3, 7, 6, 1, 4, 2]`
 
 ### The example array
 
@@ -171,8 +161,6 @@ All the array states side by side — you can see how the array is gradually ord
 
 ![Animation: Shell sort by gap phase](docs/images/en/sort_intro.gif)
 
-🎬 *MP4 version:* [`sort_intro.mp4`](docs/images/en/sort_intro.mp4)
-
 ### Result
 
 ![The sorted array [1, 2, 3, 4, 5, 6, 7, 8]](docs/images/en/result_intro.png)
@@ -185,7 +173,7 @@ Output: [1, 2, 3, 4, 5, 6, 7, 8]
 Comparisons: 23   Shifts: 11   Gap phases: 3
 ```
 
-## 7. Gap sequences: `n//2` vs Knuth vs Ciura
+## 5. Gap sequences: `n//2` vs Knuth vs Ciura
 
 This is the **key lesson specific to Shell sort** (an analogue of pivot choice in quicksort): the **gap sequence** itself decides the complexity. The base implementation uses `n//2, n//4, …, 1` — but that is just one option:
 
@@ -224,7 +212,7 @@ The choice of sequence "slides" Shell between the complexity curves: a poor `n//
 
 > 🧮 The exact asymptotics of Shell sort for many sequences is **still an open mathematical problem**. For Ciura's sequence there isn't even a proven upper bound — its advantages are established only experimentally.
 
-## 8. Instability: an array with duplicates
+## 6. Instability: an array with duplicates
 
 A sort is **stable** if it preserves the relative order of elements with **equal keys**. Insertion sort is stable (only *strictly* larger neighbours are shifted). Shell sort, however, is **unstable**: a gap-shift moves an element `gap` positions at once and can "leap over" an equal key, ending up in front of it.
 
@@ -245,7 +233,7 @@ All three pairs of equal keys came out in reversed internal order (`…₂` befo
 
 This is a consequence of the far-apart leaps: across a distance of `gap` the algorithm "does not see" that it is jumping over an equal key. If stability is critical (sorting records by one field without destroying a previous ordering by another), use a stable method — for example [insertion sort](https://github.com/MarynaShavlak/algo-insertion-sort) or `Timsort` (`sorted`).
 
-## 9. Code execution step by step: "code ↔ array" panels
+## 7. Code execution step by step: "code ↔ array" panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the array at that very moment. **The colour of the code line encodes what is happening:** 🟡 the line runs now (gap phase / taking `temp` / a condition check), 🔴 the condition `arr[j-gap] > temp` is true → a gap-shift, 🟢 inserting `temp` / shrinking the gap.
 
@@ -256,8 +244,6 @@ We build this for the array from the notes `[5, 3, 8, 4, 2]` (phases `gap = 2`, 
 ▶️ The animated version — between the "decisions" there are intermediate frames "is `arr[j-gap] > temp`?":
 
 ![Animation: code ↔ array](docs/images/en/code_walk_conspect.gif)
-
-🎬 *MP4 version:* [`code_walk_conspect.mp4`](docs/images/en/code_walk_conspect.mp4)
 
 The same array also gives the **instrumented trace from the notes** — the verbatim terminal output of the `print` version (printed by the same [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)). It is kept exactly as in the notes (Ukrainian print messages):
 
@@ -319,7 +305,7 @@ j: 4, temp: 8, gap: 1
 [2, 3, 4, 5, 8]
 ```
 
-## 10. Full step-by-step trace of `[8, 5, 3, 7, 6, 1, 4, 2]`
+## 8. Full step-by-step trace of `[8, 5, 3, 7, 6, 1, 4, 2]`
 
 Below is the same step-by-step execution, but **in full**: every journal event (the start of a `gap` phase, taking `temp`, every comparison a `gap` apart, every gap-shift, an insert, the end of a phase) as a separate "code ↔ array" frame, in the right order, with a detailed explanation under each. The bar colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -779,7 +765,7 @@ Phase `gap = 1` is complete — the array is now 1-sorted (every subsequence wit
 
 Result: the array is sorted — `[1, 2, 3, 4, 5, 6, 7, 8]`. In total 23 comparisons and 11 shifts over 3 gap phases. `return arr` is highlighted.
 
-## 11. Complexity and properties
+## 9. Complexity and properties
 
 How much work Shell sort does depends on the **gap sequence** and on how ordered the input is:
 
@@ -796,7 +782,7 @@ Other properties:
 - **Adaptive:** on "almost sorted" data the phases do fewer shifts; at `gap = 1` the final insertion pass is cheap.
 - **A generalization of insertion sort:** at `gap = 1` the algorithm coincides with plain insertion sort — Shell merely "boosts" it with large leaps in the early phases.
 
-## 12. Limitations
+## 10. Limitations
 
 - **The complexity is hard to analyze and depends on the gap sequence.** The exact asymptotics for many sequences is still an open problem; there is no simple formula for "how much Shell costs".
 - **The plain `n//2` version is still $O(n^2)$ in the worst case** — to get sub-quadratic behaviour you must deliberately pick a better sequence (Knuth, Ciura).
@@ -805,7 +791,7 @@ Other properties:
 
 **BUT** Shell sort has a real niche. It is **simple** (a few lines of code), works **in place** with $O(1)$ memory, **without recursion** (no call stack), and behaves well on **medium** arrays. That's why it is valued in **embedded and constrained systems**, where small code size and the absence of recursion matter, and as a fast "good enough" sort when pulling in a full $O(n\log n)$ algorithm would be overkill.
 
-## 13. Where it fits
+## 11. Where it fits
 
 - **Embedded / constrained systems:** small code, $O(1)$ memory, no recursion — Shell sort was historically used in kernels, bootloaders, and the `uClibc` library.
 - **Medium arrays**, where an $O(n\log n)$ algorithm with its overhead (recursion, extra memory) is not justified, and plain $O(n^2)$ ones are already too slow.
@@ -813,7 +799,7 @@ Other properties:
 
 For most general-purpose tasks you'd reach for the built-in `sorted()` / `list.sort()` (Timsort) — stable, adaptive and $O(n\log n)$.
 
-## 14. Place in the sorting series
+## 12. Place in the sorting series
 
 Shell sort is a "clever improvement on a simple sort": a bridge from $O(n^2)$ (insertion sort) to sub-quadratic complexity, still without divide-and-conquer (as in quicksort/merge sort).
 
@@ -827,7 +813,7 @@ Shell sort is a "clever improvement on a simple sort": a bridge from $O(n^2)$ (i
 | [Merge sort](https://github.com/MarynaShavlak/algo-merge-sort) | $O(n\log n)$ | $O(n)$ | yes | guaranteed $O(n\log n)$ |
 | Timsort (Python `sorted`) | $O(n\log n)$ | $O(n)$ | yes | a hybrid of insertion and merge — the real-world standard |
 
-## 15. Summary
+## 13. Summary
 
 - **Shell sort** is insertion sort with a step `gap`: we compare and shift elements that are **a `gap` apart**, gradually shrinking `gap` to 1.
 - For a given `gap` the array splits into `gap` **subsequences**, each insertion-sorted; large gaps remove far-apart disorder in a single leap, and the final pass (`gap = 1`) is plain insertion sort on an almost-ordered array.
@@ -835,8 +821,4 @@ Shell sort is a "clever improvement on a simple sort": a bridge from $O(n^2)$ (i
 - It runs **in place** ($O(1)$ memory), **without recursion**, is **adaptive**, but **unstable** (gap-shifts leap over equal keys).
 - On the array `[8, 5, 3, 7, 6, 1, 4, 2]` the sort costs **23 comparisons and 11 shifts** over **3 phases** (`gap = 4, 2, 1`).
 - Its real niche is **simple, in-place, recursion-free** sorting of medium arrays (embedded/constrained systems); on large `n` it is displaced by $O(n\log n)$ algorithms.
-
-## 16. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

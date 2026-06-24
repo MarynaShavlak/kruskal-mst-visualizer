@@ -11,7 +11,7 @@ describe("parseToc (Боєра-Мура)", () => {
   it("парсить нумеровані секції UA та EN з однаковою кількістю (id secN)", () => {
     const ua = parseToc(LEARN_CONTENT.ua)
     const en = parseToc(LEARN_CONTENT.en)
-    expect(ua.length).toBe(13)
+    expect(ua.length).toBe(10)
     expect(en.length).toBe(ua.length)
     expect(ua[0].id).toBe("sec1")
     expect(ua[ua.length - 1].id).toBe(`sec${ua.length}`)

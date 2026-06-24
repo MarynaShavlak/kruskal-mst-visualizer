@@ -4,8 +4,6 @@
 
 This is a classic example of **dynamic programming**: the distances between pairs of vertices are gradually refined by adding one "allowed intermediate vertex" at a time.
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/examples), and the figures live in [`docs/images/en/`](https://github.com/MarynaShavlak/algo-floyd-warshall/blob/main/docs/images/en).
-
 > **About vertex names.** Graph vertices are usually numbered `0–5`. So that their names don't get confused with the loop variable `k`, the vertices here are named with **letters `A–F`** (`A=0, B=1, C=2, D=3, E=4, F=5`).
 
 ## 1. Intuition: what `k` is and why the steps
@@ -626,3 +624,4 @@ The same graph `A–F`, but now with `∞` instead of `0` for missing edges, giv
 - Only "internal" intermediate vertices are useful; in our graph all the work happened at `k = B` and `k = C`.
 - Complexity $O(n^3)$ time and $O(n^2)$ memory; negative cycles are forbidden (they can be detected by `D[i][i] < 0`).
 - Routes are reconstructed via the next-vertex matrix `nxt`.
+

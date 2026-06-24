@@ -4,17 +4,7 @@
 
 The key to correctness is **stability**: each digit pass uses a stable [counting sort](#counting), and it is exactly that which preserves the order achieved on the previous digits. Stability here is not a nice bonus but the **linchpin** of the whole method.
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The signature image of the walkthrough is **buckets `0–9` and number-chips with the current digit highlighted** (not bars, as in comparison sorts). The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, how to run the examples and the tests, and a minimal library-usage snippet are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: buckets, not comparisons
+## 1. Intuition: buckets, not comparisons
 
 Picture a postal sorter. They do not compare letters with one another — they simply drop them into **boxes by the last digit** of the ZIP code, then collect the boxes in order. Then they repeat by the second-to-last digit — and so on. After a few such passes the letters are ordered.
 
@@ -24,7 +14,7 @@ Radix sort does the same with numbers: on each digit it scatters the numbers int
 
 Each number is a **chip made of its own digits**; what matters is not the height but the specific **digit** of the current place (highlighted in the figures). Smaller numbers are padded with zeros on the left — `3` is treated as `003` on the hundreds pass.
 
-## 4. The idea: digit by digit (LSD)
+## 2. The idea: digit by digit (LSD)
 
 The algorithm works **from the least significant digit to the most significant** (LSD — Least Significant Digit first):
 
@@ -34,7 +24,7 @@ The algorithm works **from the least significant digit to the most significant**
 
 The key idea: **after sorting by one digit, the relative order is preserved for the next digits** — thanks to the stable sort. So by the time we reach the most significant digit, we get a fully ordered array.
 
-## 5. Why it works: stability as the linchpin
+## 3. Why it works: stability as the linchpin
 
 Why is it enough to sort "digit by digit" without comparing the numbers as a whole? Because each pass is **stable**: among numbers with the same digit of the current place, their relative order does not change. So when we sort by the tens, numbers with the same tens digit stay in the order the previous pass (by the ones) put them in. This way the higher digits are "in charge" and the lower ones break ties — exactly as when comparing numbers normally.
 
@@ -42,7 +32,7 @@ Remove stability and everything breaks: sorting by the tens could shuffle number
 
 And, crucially: we **never compare two elements with each other**. The algorithm uses the **structure of the numbers themselves** (their digits), not answers to "$a < b$?". That is exactly what lets it bypass the $\Omega(n\log n)$ lower bound — [more below](#linear).
 
-## 6. Example — the array `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
+## 4. Example — the array `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
 
 ### The array
 
@@ -210,8 +200,6 @@ All the states of the array side by side — you can see how order "matures" fro
 
 ![Animation: sorting through buckets](docs/images/en/sort_buckets.gif)
 
-🎬 *MP4 version:* [`sort_buckets.mp4`](docs/images/en/sort_buckets.mp4)
-
 ### Result
 
 ![The sorted array [3, 4, 9, 21, 62, 67, 89, 185, 254]](docs/images/en/result_conspect.png)
@@ -226,7 +214,7 @@ Digit passes: 3   Distributions: 27   Element comparisons: 0
 
 Three digit passes, $3\times9 = 27$ distributions — and **not a single** comparison of elements with one another.
 
-## 7. Counting sort: the inner workings
+## 5. Counting sort: the inner workings
 
 What exactly does `counting_sort` do for one digit? This is the stable subroutine that radix rests on. Three phases (using the ones digit of the main array):
 
@@ -252,11 +240,9 @@ The same line by line, with code highlighting and the `count[]`/`output` state (
 
 ![Animation: counting sort](docs/images/en/counting_units.gif)
 
-🎬 *MP4 version:* [`counting_units.mp4`](docs/images/en/counting_units.mp4)
-
 The complexity of one phase is $O(n+k)$, where $k$ is the base (10 here). There are $d$ digits in total, so radix costs $O(d\cdot(n+k))$.
 
-## 8. Stability: an array with duplicates
+## 6. Stability: an array with duplicates
 
 Stability is not cosmetics but a **correctness condition** of radix. To see it, take "tagged" duplicates — each copy of an equal value carries a subscript that shows its original position (`52₁`, `52₂`):
 
@@ -277,7 +263,7 @@ Follow the evolution: after the ones pass `52₁` stands before `52₂`; the ten
 
 If the per-digit sort were unstable, the pair `52₁, 52₂` could be shuffled — and the whole method would give a wrong result. That is exactly why radix's subroutine must be a **stable** sort.
 
-## 9. Choosing the base: passes vs. memory
+## 7. Choosing the base: passes vs. memory
 
 We worked in base `10` (decimal digits, 10 buckets). But the base is a **parameter**. In a larger base $b$ (for example, `256` $= 2^8$) each "digit" holds more information, so there are **fewer digits** ($d = \lceil \log_b(\max) \rceil$), and therefore fewer passes. We pay for this with a **larger `count` array** (the number of buckets becomes $k = b$).
 
@@ -291,7 +277,7 @@ This is the classic **"passes vs. memory"** trade-off:
 
 The visual implementation takes the base as a parameter (`radix_sort_buckets(lst, base=256)`) — the result is the same, only the number of passes and buckets changes. In practice, for machine integers people often pick base $2^8$ or $2^{16}$: a handful of passes instead of a dozen, at the cost of a moderate counter array.
 
-## 10. Executing the code step by step: code ↔ data panels
+## 8. Executing the code step by step: code ↔ data panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left, the visual `radix_sort_buckets` implementation with **highlighted active lines**, on the right — the source array and the buckets at that very moment. **The colour of the code line encodes what is happening:** 🟡 the line runs now, 🟠 digit computation and distribution into a bucket (`buckets[...].append(x)`), 🟢 buckets gathered into the array.
 
@@ -303,9 +289,7 @@ We build this for the array from the notes (its bucket distributions match the n
 
 ![Animation: code ↔ data](docs/images/en/code_walk_conspect.gif)
 
-🎬 *MP4 version:* [`code_walk_conspect.mp4`](docs/images/en/code_walk_conspect.mp4)
-
-## 11. Full step-by-step trace of `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
+## 9. Full step-by-step trace of `[3, 89, 67, 254, 9, 21, 185, 4, 62]`
 
 Below is the same step-by-step execution, but **in full**: the start of each digit pass, the distribution of each number into a bucket, and the gathered array after each digit — each as a separate code ↔ data frame, in the right order, with a detailed explanation under each. The colours are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -519,7 +503,7 @@ The hundreds digit is done: we concatenate the buckets in order `0→9` into one
 
 Result: the array is sorted — `[3, 4, 9, 21, 62, 67, 89, 185, 254]`. In total 3 digit passes and 27 distributions, with **0 element-to-element comparisons**. Radix sort is linear — `O(d·(n+k))` — which is exactly how it sidesteps the `Ω(n·log n)` lower bound of comparison sorts. `return a` is highlighted.
 
-## 12. Complexity and properties
+## 10. Complexity and properties
 
 Unlike comparison sorts, radix has no "worst case" caused by an unlucky arrangement — the work depends only on the number of digits $d$ and the array size $n$:
 
@@ -534,7 +518,7 @@ Other properties:
 - **Not in-place:** it needs $O(n+k)$ **extra** memory (the `output` array and the `count` counters).
 - **Linear for a fixed width:** if $d$ and $k$ are constants (e.g. 32-bit integers), the time is $O(n)$.
 
-## 13. Why it is linear: how the n·log n bound is bypassed
+## 11. Why it is linear: how the n·log n bound is bypassed
 
 Any sort that relies **only on comparisons** between elements cannot be faster than $\Omega(n\log n)$ in the worst case — this is a proven lower bound (a decision tree with $n!$ leaves has depth $\ge \log_2 n! \approx n\log_2 n$). Radix does **not violate** this bound — it **bypasses** it, because it does not compare elements at all. Instead of "$a < b$?" questions it reads the **structure of the numbers** (their digits), and a number has a fixed number of digits.
 
@@ -544,7 +528,7 @@ Compare the growth of the number of operations: linear $d\cdot(n+k)$ vs. the com
 
 For integers with a bounded number of digits, radix beats even $n\log n$ sorts. But there is no "free lunch" — there are [limitations](#limitations).
 
-## 14. Limitations: where radix does not win
+## 12. Limitations: where radix does not win
 
 - **Integers / fixed-length keys only.** Radix works with things that have "digits": integers, fixed-width strings, tuples. For arbitrary objects with a "less/greater" order (say, a custom comparator) it is not suitable — those need comparisons.
 - **The base version handles non-negative integers only.** Negative and fractional numbers need special handling (range shift / sorting the sign separately / radix over mantissa bits).
@@ -553,7 +537,7 @@ For integers with a bounded number of digits, radix beats even $n\log n$ sorts. 
 
 The honest conclusion: radix shines on **large arrays of integers with a small width** (and on fixed-width strings, suffix arrays, etc.), not as a universal sort.
 
-## 15. Place in the series: the first non-comparison sort
+## 13. Place in the series: the first non-comparison sort
 
 This is the **seventh** algorithm in the series — and the first that is **not comparison-based**. The previous six ordered elements by asking "which is larger?"; radix makes a conceptual leap: it uses the **structure of the keys** and a **stable counting sort** as a subroutine (stability, important throughout the series, becomes the linchpin here).
 
@@ -571,7 +555,7 @@ This is the **seventh** algorithm in the series — and the first that is **not 
 
 All comparison methods hit the $\Omega(n\log n)$ wall; radix goes past it because it pays with something else — a restriction on the data type and extra memory.
 
-## 16. Where it fits
+## 14. Where it fits
 
 - **Large arrays of integers** with a small number of digits (IDs, codes, fixed-width keys) — radix is often faster than $O(n\log n)$.
 - **Sorting strings** of equal length (LSD-radix over characters) and **suffix arrays** in text processing/bioinformatics.
@@ -580,7 +564,7 @@ All comparison methods hit the $\Omega(n\log n)$ wall; radix goes past it becaus
 
 For arbitrary data with a comparator, use `sorted()` / `list.sort()` (Timsort) — stable, adaptive, $O(n\log n)$.
 
-## 17. Summary
+## 15. Summary
 
 - **Radix sort** does not compare elements — it distributes them into 10 buckets (`0–9`) by the digit of the current place and gathers them back, from the least significant digit to the most significant (LSD).
 - Each digit pass uses a **stable counting sort** (`count[]` frequencies → prefix sums → building `output` from the end). **Stability is the linchpin**: without it the method breaks.
@@ -589,8 +573,4 @@ For arbitrary data with a comparator, use `sorted()` / `list.sort()` (Timsort) �
 - On the array `[3, 89, 67, 254, 9, 21, 185, 4, 62]` the sort costs **3 digit passes and 27 distributions — 0 element comparisons**.
 - **Choosing the base** is a "passes vs. memory" trade-off: a larger base → fewer passes, but a bigger `count`.
 - This is the **first non-comparison** algorithm in the series — a conceptual leap beyond comparison sorts.
-
-## 18. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

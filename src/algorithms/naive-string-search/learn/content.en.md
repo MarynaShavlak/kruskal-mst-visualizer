@@ -4,17 +4,7 @@
 
 This is the **first string algorithm** in the series — a new problem domain: the data here is not a numeric array but **sequences of characters** (text + pattern), and the operation is character-by-character **equality** (`==`). In spirit it is a direct analogue of [linear search](https://github.com/MarynaShavlak/algo-linear-search) for arrays: brute force, zero preprocessing. The algorithm's "cost" is the **number of character comparisons**; its defining trait is **wasted work**: after a partial match and a mismatch, the naive method throws everything away and shifts by only 1, **re-comparing** already-checked characters. This is exactly what the smarter successors remove — [KMP](#series), Boyer–Moore, Rabin–Karp.
 
-This repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step (the sliding "text ↔ pattern" alignment). Every section below is reproduced by code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules live in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, how to run the examples and tests, and a minimal library-usage example are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: searching for a word by hand
+## 1. Intuition: searching for a word by hand
 
 Imagine searching for a word in a text "by hand": you run your **finger** along the line and check letter by letter. If some letter does not match — you shift the word **one position** to the right and start the comparison from the beginning again. That is exactly how naive search works: the pattern slides along the text, and at each alignment the characters are compared left to right.
 
@@ -26,7 +16,7 @@ First we place the pattern at the start of the text and begin comparing characte
 
 The current pair of compared characters is joined by a "text ↔ pattern" **bridge**. A character match is marked **green**, a mismatch — **red**. No match — shift by 1 and try again; this way we reach the position where the whole word matches (here — position 6).
 
-## 4. The idea: slide the pattern
+## 2. The idea: slide the pattern
 
 The core principle (from the notes): compare each character of the main string with the first character of the pattern; if they match — compare the next characters to the end of the pattern. The steps for each character of the main string:
 
@@ -38,7 +28,7 @@ We place the pattern under the text at offset `i`; pattern character `j` ends up
 
 ![Pattern ABABCABAB at offset i = 0](docs/images/en/intro_align_i0.png)
 
-## 5. Two indices: `i` (alignment) and `j` (position in the pattern)
+## 3. Two indices: `i` (alignment) and `j` (position in the pattern)
 
 The method's work is described by **two** indices:
 
@@ -47,7 +37,7 @@ The method's work is described by **two** indices:
 
 At each alignment `i` the inner loop runs `j = 0, 1, 2, …` and compares `main_string[i + j]` with `pattern[j]` while the characters match. On a mismatch — `break`, and the outer loop shifts the pattern (`i + 1`), restarting the comparison from `j = 0`.
 
-## 6. Base implementation (the code from the notes)
+## 4. Base implementation (the code from the notes)
 
 Here is the implementation from the notes — the one we walk through line by line (the full, documented version is in [`naive_string_search/core.py`](naive_string_search/core.py)):
 
@@ -99,7 +89,7 @@ Running the driver from the notes prints exactly:
 Substring found at position 10
 ```
 
-## 7. How to read the frames
+## 5. How to read the frames
 
 - the top row is the **text** (all `N` characters), the bottom one is the **pattern**, shifted by the offset `i`;
 - 🟢 **green cell** — a pattern character that **matched** a text character;
@@ -109,7 +99,7 @@ Substring found at position 10
 - 🟠 **amber cell** — a character compared **again** after a shift (wasted work);
 - at the top — the **"looking for pattern: …"** badge, below the frame — the **verdict** and the **counters** (comparisons · alignments · shifts).
 
-## 8. Trace: alignment by alignment
+## 6. Trace: alignment by alignment
 
 We search for `ABABCABAB` in `ABABDABACDABABCABAB` (`N = 19`, `M = 9`). The first alignment `i = 0` gives a **partial match**: the prefix `ABAB` matches (four greens), but at `j = 4` there is a mismatch — `D ≠ C`:
 
@@ -146,7 +136,7 @@ Note alignments `i = 0`, `i = 2`, `i = 5`, `i = 7` — there the pattern matches
 
 ![The sliding ladder: all alignments one under another](docs/images/en/intro_evolution.png)
 
-## 9. The alignment grid: a bird's-eye view
+## 7. The alignment grid: a bird's-eye view
 
 If we look at all the work from a bird's-eye view — a matrix whose rows are the alignments `i = 0..N-M` and whose columns are the text positions `0..N-1`. Each cell is colored: 🟢 match, 🔴 mismatch, 🔵 inside the window but not compared (broke earlier). You can see that the same text column is compared at **several** alignments — that is the redundant work:
 
@@ -154,7 +144,7 @@ If we look at all the work from a bird's-eye view — a matrix whose rows are th
 
 A total of **29** character comparisons — and that with only **19** text positions. The naive method keeps returning to already-seen characters again and again.
 
-## 10. Result
+## 8. Result
 
 At alignment `i = 10` all nine pattern characters match — a full match, return `10`:
 
@@ -170,7 +160,7 @@ Result: found at position 10   ·   comparisons: 29
 Substring found at position 10
 ```
 
-## 11. Wasted work: re-comparisons and the bridge to KMP
+## 9. Wasted work: re-comparisons and the bridge to KMP
 
 This is the **heart of the lesson**. Look at alignment `i = 0`: the pattern matched the prefix `ABAB` (text positions 0–3) and then stumbled on `D ≠ C`. What does the naive method do? It throws away that **whole** partial match and shifts the pattern by only **one** position — to `i = 1`. And now text characters `1, 2, 3` are compared **again** (amber), even though it saw them a moment ago:
 
@@ -178,7 +168,7 @@ This is the **heart of the lesson**. Look at alignment `i = 0`: the pattern matc
 
 This very redundancy is what makes the naive method slow on "structured" texts. Smarter algorithms ([KMP](#series), Boyer–Moore) use the information about the already-checked prefix so as **not** to compare these characters twice — and shift by several positions at once. The naive method cannot do this: it starts each alignment "from a blank slate".
 
-## 12. (In)efficiency: the "not found" case
+## 10. (In)efficiency: the "not found" case
 
 When the pattern is absent from the text, the naive method honestly tries **all** alignments to the end and returns `-1` (the `else` branch prints the line from the notes). Text `ABABABABAB`, pattern `ABABB` — the repeated prefix `ABAB` produces a partial match at every other alignment, all in vain:
 
@@ -190,7 +180,7 @@ Substring not found in the main string.
   → comparisons: 18, alignments: 6, shifts: 6
 ```
 
-## 13. The worst case and complexity
+## 11. The worst case and complexity
 
 How many comparisons does the naive method make? In the **best** case (a mismatch on the very first character of each alignment) — about `N-M+1` (one comparison per alignment). In the **worst** — a pathological counterexample: text `AAAAAAAAAA`, pattern `AAAAB`. At **every** alignment the whole prefix `AAAA` matches (four greens), and only the last character `B` gives a mismatch — that is nearly `M` comparisons at each of `N-M+1` alignments:
 
@@ -206,7 +196,7 @@ Hence the complexity of naive search is $O(n \cdot m)$ (where $n$ is the text le
 
 ![Complexity curves: n / n·m / n²](docs/images/en/complexity.png)
 
-## 14. Variants: all occurrences with `naive_search_all`
+## 12. Variants: all occurrences with `naive_search_all`
 
 The base `naive_search` returns the **first** occurrence and stops immediately. If you need **all** occurrences (including overlapping ones), you have to keep sliding to the end of the text — that is what `naive_search_all` does. In `ABABAB` the pattern `AB` occurs three times:
 
@@ -219,7 +209,7 @@ Multiple occurrences: naive_search returns the FIRST, naive_search_all — all
   all occurrences (naive_search_all): [0, 2, 4]
 ```
 
-## 15. The Pythonic variant via slices
+## 13. The Pythonic variant via slices
 
 The same idea can be written idiomatically — via Python **slices**: instead of the manual inner loop we take a text slice the length of the pattern and compare it with the pattern using a single `==` operator:
 
@@ -235,7 +225,7 @@ def naive_search_slices(main_string, pattern):
 
 This is the **same** set of offsets `i` and the **same** result as the base version — only the character-by-character comparison is hidden inside the string `==` operator (Python does it for you). To count the "cost" (character comparisons), use `count_comparisons` on the base version — on the canonical example it is **29**.
 
-## 16. Search in motion: animations
+## 14. Search in motion: animations
 
 The pattern slides along the text — comparison by comparison; on a mismatch a shift by 1 and a restart from `j = 0`, on a full match — green and stop. Three telling clips:
 
@@ -251,7 +241,7 @@ The pattern slides along the text — comparison by comparison; on a mismatch a 
 
 ![Animation: pattern not found](docs/images/en/search_not_found.gif)
 
-## 17. Stepping through the code: code ↔ data panels
+## 15. Stepping through the code: code ↔ data panels
 
 The examples above showed the *result* of each step. Here is the **code itself in action**: on the left, a fragment of the algorithm with **highlighted active lines**; on the right, the "text ↔ pattern" alignment at that very moment. **The line color encodes what is happening:** 🟡 a line running now (the loop / the `main_string[i+j] != pattern[j]` check / `j += 1`), 🟢 `j == M` → `return i` (found), 🔴 a mismatch (`break`, shift) or exhaustion (`return -1`).
 
@@ -263,7 +253,7 @@ We build this for the canonical example; generated by [`examples/05_code_walkthr
 
 ![Animation: code ↔ data](docs/images/en/code_walk.gif)
 
-## 18. Full step-by-step trace of the canonical example
+## 16. Full step-by-step trace of the canonical example
 
 Below is the same execution **in full**: each alignment as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each (and in the explanation — all the character comparisons: `i`, `j`, characters, the decision, the counter). The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py) example).
 
@@ -345,7 +335,7 @@ Alignment **i = 10**: all 9 pattern characters matched (`main_string[10:19] = «
 
 Result: the pattern `ABABCABAB` is found at position **10** in **29** character comparisons (with 11 alignments and 10 shifts). `return i` is highlighted.
 
-## 19. Complexity and properties
+## 17. Complexity and properties
 
 How much work the naive search does depends on how well the pattern "partially matches" the text:
 
@@ -363,7 +353,7 @@ Other properties:
 - **First occurrence on duplicates:** `naive_search` returns the leftmost occurrence; `naive_search_all` returns all of them.
 - **Case sensitivity:** `==` distinguishes `A` from `a` — the search is case-sensitive.
 
-## 20. Limitations and edge cases
+## 18. Limitations and edge cases
 
 The main limitation is **wasted work**: the naive method does not remember already-checked characters and, after a partial match, shifts by only 1, comparing them again. For **long**, structured texts this is expensive. Honestly about the edge cases (the method handles them correctly):
 
@@ -375,7 +365,7 @@ The main limitation is **wasted work**: the naive method does not remember alrea
 | **Single-character pattern** | a plain single-character search |
 | **Different case** | `A` ≠ `a` → the search will not confuse them |
 
-## 21. Where it fits
+## 19. Where it fits
 
 Despite its worst-case inefficiency, the naive method is perfectly fine where its simplicity pays off:
 
@@ -384,7 +374,7 @@ Despite its worst-case inefficiency, the naive method is perfectly fine where it
 - **Any alphabet without preprocessing** — text, DNA, binary data: nothing needs to be indexed or sorted.
 - **Simplicity and transparency** — a correctness reference against which the more complex algorithms are checked.
 
-## 22. Place in the series: the first step into string search
+## 20. Place in the series: the first step into string search
 
 This is the **first string algorithm** in the series — it **opens the string-search subseries**. Before it came sorting and search algorithms over **arrays** of numbers; now the problem domain is **strings of characters**. The link is direct: naive search for strings is the same thing as **linear search** for arrays (brute force, zero preprocessing):
 
@@ -411,7 +401,7 @@ This is the **first string algorithm** in the series — it **opens the string-s
 | **Boyer–Moore** | $O(n / m)$ at best | compares from the end of the pattern; the "bad character" and "good suffix" heuristics give big jumps |
 | **Rabin–Karp** | $O(n + m)$ on average | a rolling hash of the window: compares hashes first, and characters only when the hashes match |
 
-## 23. Summary
+## 21. Summary
 
 - **Naive search** slides the pattern along the text and, at each alignment, compares characters left to right; on a mismatch it shifts the pattern by 1 and restarts from `j = 0`; on a full match it returns the position, otherwise `-1`.
 - **Two indices:** the outer `i` — the alignment offset (the outer `for`), the inner `j` — the position in the pattern (the inner `while`).
@@ -420,8 +410,4 @@ This is the **first string algorithm** in the series — it **opens the string-s
 - **Complexity:** $O(n \cdot m)$, in the worst case ($m \approx n$) — $O(n^2)$; at best — $\approx n - m + 1$. On the canonical example the search costs **29** comparisons (a match at position 10), and the pathological `AAAAAAAAAA` / `AAAAB` — exactly $(N-M+1)\cdot M = 30$.
 - **Good enough** for short texts and rare matches; for long strings it loses to KMP, Boyer–Moore, Rabin–Karp.
 - This is the **first string algorithm** in the series — a direct analogue of linear search for arrays that opens the string-search subseries.
-
-## 24. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

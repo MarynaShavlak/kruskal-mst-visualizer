@@ -4,17 +4,7 @@
 
 The metaphor is a book with **tab dividers**: first you roughly jump to the right section by the tabs (the index), then you flip through its pages in order. Like binary search, the method requires a **sorted** array; like linear search, it ends with a plain scan. So it is a natural **synthesis** of the two earlier search walkthroughs.
 
-This repository is educational material: a clean implementation of the algorithm (verbatim from the notes) plus detailed visualizations of every step of both phases. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation, how to run the examples and the tests, and a minimal library usage example are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: a book with tab dividers
+## 1. Intuition: a book with tab dividers
 
 Imagine a thick sorted book with **tab dividers** on its edge. To find a page you do not flip through everything from the start (that is linear search) — first you roughly jump to the **right section** by the tabs, and only there do you flip pages in order.
 
@@ -26,7 +16,7 @@ First a **binary** search over the tabs narrows the area to a single section (bl
 
 ![A tabbed book: roughly by the tabs, then flip through the section](docs/images/en/intuition.png)
 
-## 4. The idea: two phases over two data levels
+## 2. The idea: two phases over two data levels
 
 The algorithm has two phases:
 
@@ -35,13 +25,13 @@ The algorithm has two phases:
 
 The index sparsity is set by the **step** `step`: every `step`-th element becomes a signal pillar. This is the classic trade-off: the denser the pillars (a smaller `step`), the shorter the blocks — but the larger the table; the sparser they are (a larger `step`), the smaller the table — but the longer the scans. The optimum is near `√n` (see [below](#step)).
 
-## 5. Precondition: the array must be sorted
+## 3. Precondition: the array must be sorted
 
 Like [binary search](https://github.com/MarynaShavlak/algo-binary-search), indexed sequential search is correct **only on a sorted array**: both the binary search over the index and the block-choice logic rely on ordering. On unsorted data the method may "discard" the block that actually contains the target.
 
 This is a direct link to **sorting**: it is sorting that orders the data and enables such fast search. In the code the precondition is checked by the `is_sorted` utility, and all teaching instances (`examples/_searches.py`) are sorted by construction (`assert is_sorted(...)`).
 
-## 6. Synthesis: linear + binary search
+## 4. Synthesis: linear + binary search
 
 This method literally **combines** the two earlier walkthroughs of the series — it is their synthesis on sorted data:
 
@@ -52,7 +42,7 @@ This method literally **combines** the two earlier walkthroughs of the series �
 
 Phase 1 is a binary search, but not over the whole array — over its sparse "map" (the index). Phase 2 is a linear search, but not over the whole array — over a single short block. Their combination yields a speed in between.
 
-## 7. Example — array `[1, 3, …, 25]`, step 4, searching for 15
+## 5. Example — array `[1, 3, …, 25]`, step 4, searching for 15
 
 ### The array and the index table
 
@@ -205,8 +195,6 @@ The same sequence of frames stacked — you can see the transition from narrowin
 
 ![Animation: indexed sequential search for 15](docs/images/en/search_main.gif)
 
-🎬 *MP4 version:* [`search_main.mp4`](docs/images/en/search_main.mp4)
-
 ### Result
 
 ![Done: found at position 7](docs/images/en/result_main.png)
@@ -225,7 +213,7 @@ index_table = [(1, 0), (9, 4), (17, 8), (25, 12)]
 
 Searching for `15` cost only **2 index probes** (phase 1) + **4 sequential comparisons** in the block (phase 2) = **6** in total. Had we searched for `9` (a signal-pillar key), the answer would have been found already in phase 1 — in **1 probe, 0** sequential comparisons.
 
-## 8. Complexity `O(log n + m)`: two terms
+## 6. Complexity `O(log n + m)`: two terms
 
 The hybrid's cost is the sum of **two terms** — one per phase:
 
@@ -256,7 +244,7 @@ Contrast on this array (n = 13):
 
 The hybrid loses to pure binary search (it works over a sparse index and then still scans a block), but it greatly outpaces linear search — and, unlike binary search, it naturally fits structures where the index is built separately from the data (databases, file systems).
 
-## 9. Choosing the step and the optimum ≈ √n
+## 7. Choosing the step and the optimum ≈ √n
 
 The step `step` is the method's main parameter. A small `step` → a large table and tiny blocks (cheap scan, but an expensive index and memory); a large `step` → a small table, but long scans. The balance is in the middle, near **`√n`**.
 
@@ -278,7 +266,7 @@ The "comparisons vs. `step`" curve has a clear **minimum near `√n`**:
 
 > **A bridge to Jump Search.** The sum `n/step + step` is minimized exactly at `step = √n` — the same balance as in **block search with jumps** (Jump Search): it makes **linear jumps** of length `√n` over the blocks instead of a binary search in the index. A binary search over the index makes the first part even cheaper (`≈ log(n/step)`), but the table size `n/step` (memory) still pushes toward the same optimal step.
 
-## 10. Variants and the Jump Search relative
+## 8. Variants and the Jump Search relative
 
 Phase 1 can be implemented in different ways, and the method itself has a close relative — and they all give **the same result** (printed by [`examples/03_step_and_variants.py`](examples/03_step_and_variants.py)):
 
@@ -293,7 +281,7 @@ The phase-1 variants give the same result:
 - **`indexed_sequential_search_linear_index`** — phase 1 is a **linear** pass over the index (simpler to grasp), `O(n/step)`. The block-choice logic and phase 2 are identical to the base.
 - **`jump_search`** — a relative with jumps: the "narrowing" phase is linear (jumps of `√n` directly over the array), and no separate table is stored. The optimal step is `√n`.
 
-## 11. Stepping through the code: code ↔ data panels
+## 9. Stepping through the code: code ↔ data panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left both functions from the notes with **highlighted active lines**, on the right the two-level schematic at that very moment. **The line color encodes the phase and the branch:** 🟡 the line runs now, 🟦 a phase-1 branch (window narrowing / block choice), 🌸 a phase-2 step (linear in the block), 🟢 "found" → `return`, 🔴 the block is exhausted → `return -1`.
 
@@ -305,9 +293,7 @@ We build it for the main case; generated by [`examples/05_code_walkthrough.py`](
 
 ![Animation: code ↔ data](docs/images/en/code_walk_main.gif)
 
-🎬 *MP4 version:* [`code_walk_main.mp4`](docs/images/en/code_walk_main.mp4)
-
-## 12. Full step-by-step trace of `[1, 3, …, 25]`, step 4, target 15
+## 10. Full step-by-step trace of `[1, 3, …, 25]`, step 4, target 15
 
 Below is the same execution, but **in full**: every index probe, the block choice, and every sequential comparison as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py) script).
 
@@ -401,7 +387,7 @@ Phase 1 is done. Branch `general` fired: the target lies between adjacent pillar
 
 Result: `15` is found at position **7**. In total **2** index probes (phase 1) + **4** sequential block comparisons (phase 2) = **6**. That is the `O(log n + m)` hybrid.
 
-## 13. Properties, pros and cons
+## 11. Properties, pros and cons
 
 | Property | Value |
 |---|---|
@@ -427,7 +413,7 @@ Result: `15` is found at position **7**. In total **2** index probes (phase 1) +
 
 So the method's niche is **rare updates + frequent search** over large sorted sets: the index is built once and then speeds up search many times over.
 
-## 14. Place in the series: search over sorted data
+## 12. Place in the series: search over sorted data
 
 This is the **third and final** search algorithm in the series — the point where linear and binary search over sorted data (which [sorting](https://github.com/MarynaShavlak/algo-bubble-sort) provides) converge:
 
@@ -439,7 +425,7 @@ This is the **third and final** search algorithm in the series — the point whe
 
 Indexed sequential search is the **synthesis** of the first two: it takes the `O(log n)` narrowing from [binary](https://github.com/MarynaShavlak/algo-binary-search) and the `O(m)` scan from [linear](https://github.com/MarynaShavlak/algo-linear-search), applying each where it fits best.
 
-## 15. Summary
+## 13. Summary
 
 - **Indexed sequential search** is a hybrid two-phase method over two data levels: a **binary** search over a sparse index table (phase 1) + a **sequential** search in the chosen block (phase 2).
 - **Precondition** — a sorted array (a link to sorting and binary search). The array is **not modified**.
@@ -447,8 +433,4 @@ Indexed sequential search is the **synthesis** of the first two: it takes the `O
 - The **step `step`** balances table size against block length; the optimum is near `√n` (a bridge to **Jump Search**).
 - On the array `[1, 3, …, 25]` searching for `15` costs **2 index probes + 4 block comparisons = 6**; searching for the pillar key `9` — just **1 probe**.
 - The **niche** is large sorted sets with **rare updates and frequent search** (databases, file systems): the index is built once and speeds up search many times over.
-
-## 16. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

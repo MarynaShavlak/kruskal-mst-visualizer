@@ -11,7 +11,7 @@ describe("parseToc (порозрядне сортування)", () => {
   it("парсить нумеровані секції UA та EN (id secN у порядку)", () => {
     const ua = parseToc(LEARN_CONTENT.ua)
     const en = parseToc(LEARN_CONTENT.en)
-    expect(ua.length).toBe(18)
+    expect(ua.length).toBe(15)
     expect(en.length).toBe(ua.length)
     expect(ua[0].id).toBe("sec1")
     expect(ua[ua.length - 1].id).toBe(`sec${ua.length}`)

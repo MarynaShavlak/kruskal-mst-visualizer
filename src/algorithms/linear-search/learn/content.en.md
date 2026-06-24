@@ -4,17 +4,7 @@
 
 Unlike sorting, there are no swaps or shifts here: the only "cost" of the algorithm is the **number of checks** (comparisons `arr[i] == x`). What stands out instead is how clearly the cases differ: best — when the element is at the front (one check, $O(1)$); worst — when it is at the end or absent (a full scan, $O(n)$).
 
-This repository is teaching material: a clean implementation of the algorithm plus detailed visualizations of every step (a still array + a running cursor). Everything below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, how to run the examples and tests, and a minimal library-usage example are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: a bookshelf
+## 1. Intuition: a bookshelf
 
 Imagine looking for a particular book on a shelf, **scanning it left to right** — one by one, until you hit the one you want (or reach the end of the shelf). That is exactly how linear search works: a running cursor moves along the still array and checks every cell in turn.
 
@@ -22,7 +12,7 @@ Imagine looking for a particular book on a shelf, **scanning it left to right** 
 
 The current cell (the one we are checking *right now*) is marked **pink** — as in the notes. As soon as we find a match the cell turns **green** and the search stops: there is no need to look at the rest of the array.
 
-## 4. The idea: check one by one
+## 2. The idea: check one by one
 
 We work with an array of 5 elements. It is **still** — the search never rearranges it:
 
@@ -34,7 +24,7 @@ We work with an array of 5 elements. It is **still** — the search never rearra
 
 The algorithm is a single loop: for each index `i` from `0` to `len(arr)-1` we check whether `arr[i] == x`. If so — we immediately return `i` (no point searching further). If the loop reaches the end and no check matched — the element is not in the array, and we return `-1`.
 
-## 5. Two outputs: index or existence
+## 3. Two outputs: index or existence
 
 Linear search naturally yields **two modes**:
 
@@ -43,7 +33,7 @@ Linear search naturally yields **two modes**:
 
 The first is needed when *where* the element lies matters; the second — when only the *fact of presence* matters.
 
-## 6. Example — the array `[5, 3, 8, 1, 4]`, searching for `8`
+## 4. Example — the array `[5, 3, 8, 1, 4]`, searching for `8`
 
 ### The base implementation (code from the notes)
 
@@ -122,8 +112,6 @@ All checks side by side — you can see the cursor "staircase": the pink cell cr
 
 ![Animation: searching for 8 in the array](docs/images/en/search_main.gif)
 
-🎬 *MP4 version:* [`search_main.mp4`](docs/images/en/search_main.mp4)
-
 ### The result
 
 ![Found 8 at index 2](docs/images/en/result_main.png)
@@ -146,7 +134,7 @@ exists_in_list([1, 3, 5, 7, 9, 11], 2) -> False
 
 `linear_search` returns `3` because the number `7` is in the 4th position (remember, indexing starts at `0`); `exists_in_list` returns `True` for the present `7` and `False` for the absent `2`.
 
-## 7. Case analysis — the main focus
+## 5. Case analysis — the main focus
 
 How many checks linear search performs depends on **where** (and whether) the target element lies. For search this difference is much more vivid than for sorting:
 
@@ -178,7 +166,7 @@ Linear search is $O(n)$: the number of checks grows **linearly** with the array 
 
 On a sorted array of a million elements, linear search would in the worst case do up to **a million** checks, while binary search — about **twenty**. This is exactly the bridge to the [next step](#series) — binary search.
 
-## 8. Duplicates: the first match and `find_all`
+## 6. Duplicates: the first match and `find_all`
 
 If the target element appears **several times**, the base `linear_search` returns the **first** match and stops right away — it says nothing about the rest:
 
@@ -194,7 +182,7 @@ Duplicates: linear_search returns the FIRST match, find_all — all
   all occurrences (find_all): [1, 3, 5]
 ```
 
-## 9. The sentinel as a micro-optimization
+## 7. The sentinel as a micro-optimization
 
 In the base loop, every iteration really does **two** checks: whether we have run off the end of the array (a service check, implicit in `for`) and whether this is the target (`arr[i] == x` — the useful one). The classic micro-optimization is the **sentinel**: we append `x` to the end as a "guard", so a match is **guaranteed** at the latest there. Now the bounds check can be dropped — only the useful comparison remains:
 
@@ -219,7 +207,7 @@ Sentinel vs. the base search — same index, fewer service checks
 
 This does not change the asymptotics (still $O(n)$), but it removes one service comparison from each iteration of the hot loop.
 
-## 10. Search in motion: animations
+## 8. Search in motion: animations
 
 The cursor runs along the still array — comparison by comparison. Two telling modes:
 
@@ -227,15 +215,11 @@ The cursor runs along the still array — comparison by comparison. Two telling 
 
 ![Animation: found early](docs/images/en/search_main.gif)
 
-🎬 *MP4:* [`search_main.mp4`](docs/images/en/search_main.mp4)
-
 ▶️ **Absent element** — the cursor scans the **whole** array down to `-1` (the worst case, a full pass):
 
 ![Animation: absent element, full scan](docs/images/en/search_absent.gif)
 
-🎬 *MP4:* [`search_absent.mp4`](docs/images/en/search_absent.mp4)
-
-## 11. Code execution step by step: code ↔ array panels
+## 9. Code execution step by step: code ↔ array panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the array with the cursor at that exact moment. **The line color encodes what is happening:** 🟡 the line runs now (loop / the `if arr[i] == x` check), 🟢 the condition is true → `return i` (found), 🔴 the loop is exhausted → `return -1` (not found).
 
@@ -247,9 +231,7 @@ We build this for the main case `[5, 3, 8, 1, 4]`, searching for `8`; produced b
 
 ![Animation: code ↔ array](docs/images/en/code_walk_main.gif)
 
-🎬 *MP4 version:* [`code_walk_main.mp4`](docs/images/en/code_walk_main.mp4)
-
-## 12. Full step-by-step trace of `[5, 3, 8, 1, 4]`
+## 10. Full step-by-step trace of `[5, 3, 8, 1, 4]`
 
 Below is the same step-by-step execution, but **in full**: every check as a separate code ↔ array frame, in the correct order, with a detailed explanation under each. The "intrigue" frame (`arr[i] == x?`) and its resolution (not-it / match) are shown separately. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -301,7 +283,7 @@ Check 3 — the cursor moves to index 2 (the pink cell). We compare `arr[2] = 8`
 
 Result: `8` is found at index **2** in **3** checks. The base `linear_search` returns the first match and does not scan the array any further. `return i` is highlighted.
 
-## 13. Complexity and properties
+## 11. Complexity and properties
 
 How much work linear search does depends on the position of the target element:
 
@@ -318,7 +300,7 @@ Other properties:
 - **The metric is the number of checks** (comparisons `arr[i] == x`); there are no swaps or shifts as in sorting.
 - **First match on duplicates:** `linear_search` returns the leftmost match; all occurrences are given by `find_all`.
 
-## 14. Limitations: when linear search loses
+## 12. Limitations: when linear search loses
 
 Linear complexity means that for **large** arrays the search becomes slow: to find an element among a million, in the worst case you make a million checks. If the data is **sorted**, binary search is dramatically faster:
 
@@ -337,7 +319,7 @@ But this gain comes with a **precondition-cost**: the array must be kept sorted.
 | Binary search | $O(\log n)$ | a sorted array | fast, but needs prior sorting |
 | Hash table | $O(1)$ on average | a built hash structure | the fastest access, at the cost of memory and preprocessing |
 
-## 15. Where it fits
+## 13. Where it fits
 
 Linear search's niche is exactly where binary search's preconditions do not hold or do not pay off:
 
@@ -347,7 +329,7 @@ Linear search's niche is exactly where binary search's preconditions do not hold
 - **Streaming / one-off searches.** Data arrives one item at a time, or we search just once — sorting for a single query does not pay off.
 - **Search by a complex condition** (`find_all`, the first element satisfying a predicate) — where there simply is no "ordering by key".
 
-## 16. Place in the series: the first step into search
+## 14. Place in the series: the first step into search
 
 This is the **first search algorithm** in the series — after several **sorting** algorithms. And the link between them is direct: linear search works on any data but slowly ($O(n)$); binary works fast ($O(\log n)$) but only on **sorted** data. So the earlier sorting walkthroughs are exactly what **enables** fast search:
 
@@ -363,7 +345,7 @@ This is the **first search algorithm** in the series — after several **sorting
 
 **Where next:** binary search ($O(\log n)$ on sorted data) is the natural next step, completing the "sort first, then search fast" pairing.
 
-## 17. Summary
+## 15. Summary
 
 - **Linear search** checks every element left to right until it finds `x` (returning its index) or reaches the end (returning `-1`).
 - It works **in place and read-only** ($O(1)$ memory) and **needs no sorted data** — the main advantage over binary search.
@@ -372,8 +354,4 @@ This is the **first search algorithm** in the series — after several **sorting
 - **The sentinel** is a classic micro-optimization: it removes the bounds check from every iteration without changing the result.
 - On the array `[5, 3, 8, 1, 4]` searching for `8` costs **3 checks** (a match at index 2); the best case is **1 check**, the worst and the absent — **5** (a full scan).
 - For **large sorted** arrays linear search loses to binary ($O(n)$ vs $O(\log n)$), but for **unsorted** data, small sets, linked lists, and one-off searches it is the only sensible choice.
-
-## 18. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

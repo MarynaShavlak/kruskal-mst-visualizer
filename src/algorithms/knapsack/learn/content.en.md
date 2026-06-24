@@ -4,21 +4,11 @@
 
 It is a classic problem for meeting two strategies at once: **brute force** (honestly check all $2^n$ variants) and **dynamic programming** (solve every subproblem once and write it into a table). Both give the same exact answer, but at completely different costs — $O(2^n)$ versus $O(n \cdot W)$. As a bonus, the problem provides a textbook counterexample: the "obvious" greedy approach **does not work** here.
 
-This repository is teaching material: clean implementations from the lecture notes + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
 > **About the notation.** Items are called **I1, I2, I3**. In the DP table, row `i` means "the first `i` items are allowed", so item I`i` "lives" in row `i`, while in the lists `wt`/`val` it has index `i − 1` (Python counts from zero). That is why the code says `wt[i - 1]` and `val[i - 1]` everywhere.
 
 > **About the code.** The basic implementations are taken from the lecture notes **verbatim** (comments included; translated here). In the notes all three approaches share one name — `knapSack`; in the package [`knapsack/core.py`](knapsack/core.py) they must coexist, so the functions got distinct names: [`knapsack_recursive`](knapsack/core.py), [`knapsack_brute_force`](knapsack/core.py), [`knapsack_greedy`](knapsack/core.py), [`knapsack_dp`](knapsack/core.py). The function bodies were not changed.
 
-## 1. Repository structure
-
-The directory tree and the responsibilities of each module live in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation, running the examples and the tests, plus a minimal library-usage example — in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. The problem
+## 1. The problem
 
 The knapsack holds at most **50** units of weight. There are 3 items:
 
@@ -41,7 +31,7 @@ Two **instances** work throughout this walkthrough (both from the lecture notes)
 
 ![The small instance: items and the knapsack capacity](docs/images/en/items_small.png)
 
-## 4. The idea of brute force
+## 2. The idea of brute force
 
 Brute force is the simplest strategy: we **consider every possible candidate solution**, check each for feasibility and pick the best one.
 
@@ -56,7 +46,7 @@ For our problem: $2^3 = 8$ combinations. The algorithm:
 3. Discard those with weight > capacity.
 4. Among the feasible ones, pick the subset with the largest value.
 
-## 5. All combinations for our problem
+## 3. All combinations for our problem
 
 | Combination      | Weight | Value | Fits? |
 |------------------|--------|-------|-------|
@@ -79,8 +69,6 @@ The same table as a figure — each subset's strip shows its weight against the 
 
 ![Animation: brute-force subset enumeration](docs/images/en/subsets_classic.gif)
 
-🎬 *MP4 version:* [`subsets_classic.mp4`](docs/images/en/subsets_classic.mp4)
-
 And here is the console output of the enumeration — `★` marks subsets that became the new leader at the moment they were examined (smaller subsets go first, so the leader changes often; the final one is `{I2, I3}`):
 
 ```text
@@ -96,7 +84,7 @@ subset          weight      value  verdict
 {I1, I2, I3}       60        280  does not fit (60 > 50)
 ```
 
-## 6. The basic implementation — "take / skip" recursion
+## 4. The basic implementation — "take / skip" recursion
 
 Here is the code from the lecture notes — the one we dissect line by line (the fully documented version is [`knapsack_recursive`](knapsack/core.py)):
 
@@ -148,7 +136,7 @@ Look at the current item (its index is `n - 1`, since indexing starts at 0). If 
 
 **`else:` → `max(...)`** — the most important branch, dissected separately.
 
-## 7. The `else:` → `max(...)` branch in detail
+## 5. The `else:` → `max(...)` branch in detail
 
 The code reaches this branch when the item **fits** into the knapsack (`wt[n - 1] <= W`). In the 0/1 problem there are exactly **two things** you can do with an item: take it whole or skip it entirely. So we honestly evaluate **both** scenarios and keep the one with the larger value — that is what `max(...)` does.
 
@@ -178,7 +166,7 @@ What changes in the two options:
 
 `max(220, 160) = 220` → it pays to **take I3** (paired with I2).
 
-## 8. The recursion tree
+## 6. The recursion tree
 
 The same "take or not?" question repeats for item 2, then for item 1 — the branches double, and a tree emerges. Each **level** decides the fate of one item: the root — I3, below it — I2, the leaves — single-item subproblems with I1:
 
@@ -206,7 +194,7 @@ How to read the tree:
 
 ![The recursion tree of brute force](docs/images/en/tree_classic.png)
 
-## 9. Execution order (a trace)
+## 7. Execution order (a trace)
 
 Python evaluates the first argument of `max(...)` before the second, so the function always tries the "take" branch first, descends to the base case, and computes `max` on the way back:
 
@@ -219,7 +207,7 @@ Python evaluates the first argument of `max(...)` before the second, so the func
 7. Now "skip I3" → `knapSack(50, 2) = 160` (the right part of the tree).
 8. Root: `max(220, 160) = 220` — the answer. I3 and I2 end up in the knapsack.
 
-## 10. Explicit subset enumeration (`itertools`)
+## 8. Explicit subset enumeration (`itertools`)
 
 The recursion enumerates combinations implicitly — via the call branching. The same search can be written head-on: generate all index subsets and check each one. Bonus: this version returns not just the value but **the set itself**. The code from the lecture notes (full version — [`knapsack_brute_force`](knapsack/core.py)):
 
@@ -255,7 +243,7 @@ That is, the set {I2, I3}: weight 50, value 220.
 
 > The indices `(1, 2)` are positions in the `weight`/`value` lists (zero-based), i.e. items **I2** and **I3**.
 
-## 11. Why it explodes: the price of 2ⁿ
+## 9. Why it explodes: the price of 2ⁿ
 
 No branch of the tree is ever skipped — the function checks **absolutely all** combinations (8 here). That is why the method is called brute force. Therein lie its strength (the answer is guaranteed exact) and its curse: every new item **doubles** the number of branches.
 
@@ -295,7 +283,7 @@ On the test machine the brute force takes **about a second** for this instance, 
 - **Unusable on large inputs.** With a few dozen items the computation already becomes infeasible in reasonable time.
 - **Wastefulness.** Many variants are recomputed "from scratch" although they share subproblems (this is exactly what dynamic programming fixes).
 
-## 12. Dynamic programming: a cheat sheet of subproblems
+## 10. Dynamic programming: a cheat sheet of subproblems
 
 Dynamic programming (DP) is a way to solve a hard problem by splitting it into smaller subproblems, solving each **only once** and **storing** the results so they are never recomputed.
 
@@ -320,7 +308,7 @@ That is exactly **`K[i][w]`**. The point is not to attack the big question at on
 
 **The whole trick:** brute force re-answers the same sub-questions over and over (hence slow). Dynamic programming answers every sub-question **once**, writes it into the table — and then simply **looks it up** instead of recomputing.
 
-## 13. The transition formula
+## 11. The transition formula
 
 For every item `i` and capacity `w`:
 
@@ -335,7 +323,7 @@ otherwise:         K[i][w] = max( K[i-1][w] ,  val[i-1] + K[i-1][w - wt[i-1]] )
 
 Note: this is **the same** take/skip pair as in the brute-force recursion. The only difference is that the answers to subproblems are no longer recomputed — they are **read from the row above**.
 
-## 14. The basic implementation — table `K[i][w]`
+## 12. The basic implementation — table `K[i][w]`
 
 The code from the lecture notes (the fully documented version is [`knapsack_dp`](knapsack/core.py)):
 
@@ -370,7 +358,7 @@ def knapSack(W, wt, val, n):
 
 > **Why `i - 1` as the index:** `i` is the *count* of items under consideration, while the lists `wt`/`val` are 0-indexed, so the `i`-th item has index `i - 1`.
 
-## 15. Why "does not fit" copies the value from above
+## 13. Why "does not fit" copies the value from above
 
 **The point:** if the item does not fit, the only possible move is to skip it — and that is exactly the ready-made answer for a set one item smaller.
 
@@ -394,7 +382,7 @@ When "take" is impossible, only the first term remains in `max` → `K[i][w] = K
 
 **An example from the table below.** `K[2][1]`: item I2 weighs 2, but the capacity is only 1. Since 2 > 1, I2 does not fit. Then "the best of {I1, I2} with capacity 1" = "the best of {I1} with capacity 1" = **6**. That very value sits above, in `K[1][1]`. The new item did not fit — the answer did not change.
 
-## 16. Filling the table step by step (the small instance)
+## 14. Filling the table step by step (the small instance)
 
 To fit every cell on screen, we switch to the **small instance**: a knapsack of capacity **4** and items I1 (weight 1, value 6), I2 (weight 2, value 10), I3 (weight 3, value 12). The table is just 4×5. All figures and outputs of this section are produced by [`examples/02_dp_small.py`](examples/02_dp_small.py).
 
@@ -457,7 +445,7 @@ K[3][4]: weight 3 <= 4 -> fits -> max(skip=16, take 12+K[2][1]=18)  =>  18
 
 ![The table after row i=3](docs/images/en/dp_row_small_3.png)
 
-## 17. The most interesting cells — the formula in the frame
+## 15. The most interesting cells — the formula in the frame
 
 Four "landmark" cells in close-up: the table is filled exactly up to the current cell, arrows come from the sources, the transition formula with the actual numbers sits below.
 
@@ -481,9 +469,7 @@ Four "landmark" cells in close-up: the table is filled exactly up to the current
 
 ![Animation: filling the table cell by cell](docs/images/en/dp_fill_small.gif)
 
-🎬 *MP4 version:* [`dp_fill_small.mp4`](docs/images/en/dp_fill_small.mp4)
-
-## 18. The big picture: evolution of the table
+## 16. The big picture: evolution of the table
 
 All states side by side: each row "inherits" the previous one and improves it in places. Numbers grow left to right within a row (more space is never worse) and top to bottom within a column (more items are never worse):
 
@@ -492,8 +478,6 @@ All states side by side: each row "inherits" the previous one and improves it in
 ▶️ The same in motion:
 
 ![Animation: evolution of table K](docs/images/en/dp_evolution_small.gif)
-
-🎬 *MP4 version:* [`dp_evolution_small.mp4`](docs/images/en/dp_evolution_small.mp4)
 
 The final table and the answer in text form:
 
@@ -510,7 +494,7 @@ ANSWER = K[3][4] = 18
 
 ![The filled table with the answer](docs/images/en/dp_table_small.png)
 
-## 19. The answer and reconstructing the set by a backward pass
+## 17. The answer and reconstructing the set by a backward pass
 
 The table only says **how much** the optimum is worth (`K[3][4] = 18`), not **what it consists of**. To extract the set itself, walk the table **bottom-up** — the analogue of path reconstruction in graph algorithms, except the table `K` itself plays the role of the predecessor matrix.
 
@@ -554,9 +538,7 @@ In the figure the path is highlighted in yellow: a green arrow = "item taken" (a
 
 ![Animation: reconstructing the set by the backward pass](docs/images/en/backtrack_small.gif)
 
-🎬 *MP4 version:* [`backtrack_small.mp4`](docs/images/en/backtrack_small.mp4)
-
-## 20. The classic instance: a table for W = 50
+## 18. The classic instance: a table for W = 50
 
 Back to the original problem (`W = 50`, weights `[10, 20, 30]`). The table here is 4 rows × **51 columns**, but since all weights are multiples of 10, the values only change at capacities that are multiples of 10. So we show the condensed version ([`examples/03_dp_classic.py`](examples/03_dp_classic.py)):
 
@@ -601,7 +583,7 @@ Total value: 220
 
 The very same **220** the brute force produced — for just 204 cell operations instead of inspecting every subset (for 3 items the difference is negligible, but it grows exponentially with `n`).
 
-## 21. Step-by-step code execution: code ↔ table panels
+## 19. Step-by-step code execution: code ↔ table panels
 
 The sections above showed the *result* of every step — how the table "ripens". Here is **the code itself in action**: on the left, the algorithm fragment with **highlighted active lines** (🟨 the line executing now; dimmer — the enclosing `for` loops); on the right, the state of table `K` at that very step. **The color of the active table cell encodes which branch fired:** 🟩 the "take" branch won, 🟦 "skip" (value from above), ⬜ the item does not fit, grey — the base case. Press ▶ or "step" to walk through the execution yourself.
 
@@ -627,7 +609,7 @@ The code did not change by a single character — only the data did (`W = 50`, t
 
 ![Code ↔ table: full run (the classic instance)](docs/images/en/code_steps_classic.png)
 
-## 22. Comparing the three approaches
+## 20. Comparing the three approaches
 
 All three methods on **one** classic instance ([`examples/03_dp_classic.py`](examples/03_dp_classic.py)):
 
@@ -665,7 +647,7 @@ The method fills a table of decisions for every item × every capacity: `n` is t
 - **DP** — when `n · W` is moderate (thousands to millions of cells): both exact and fast;
 - **greedy** — only as a quick "better than nothing" heuristic, or for the *fractional* problem where it actually is optimal.
 
-## 23. Limitation 1: greedy does not solve the 0/1 problem
+## 21. Limitation 1: greedy does not solve the 0/1 problem
 
 Many people's first thought: "grab the items with the best value per unit while they fit". That is the **greedy strategy**:
 
@@ -745,7 +727,7 @@ Greedy looks only at the current item's density and fails to notice that giving 
 - **Hostage to local choices** — never reconsiders past decisions.
 - Optimal only for the **fractional** knapsack.
 
-## 24. Limitation 2: a huge W (pseudo-polynomiality)
+## 22. Limitation 2: a huge W (pseudo-polynomiality)
 
 $O(n \cdot W)$ looks polynomial — but it is a polynomial in the **number** `W`, not in the **size of the input**. The number `W` occupies only $\log_2 W$ bits of the input, so relative to the input length the complexity is actually exponential: $O(n \cdot 2^{\text{bits of } W})$. That is why it is called **pseudo-polynomial**.
 
@@ -760,7 +742,7 @@ This is not an accidental implementation flaw: the 0/1 knapsack problem is **NP-
 
 > The rule of thumb: small `n` → brute force; moderate `n · W` → DP; both `n` and `W` large → exact-and-fast is off the table, pick your compromise.
 
-## 25. Where this is used
+## 23. Where this is used
 
 The "knapsack" is the template for any selection under a resource constraint, so the same table `K[i][w]` appears in very different domains:
 
@@ -772,7 +754,7 @@ The "knapsack" is the template for any selection under a resource constraint, so
 
 The common trait: a single integer resource, indivisible items, and the need for an **exact** optimum — precisely the knapsack-DP profile.
 
-## 26. Wrap-up
+## 24. Wrap-up
 
 - The 0/1 problem: every item is **taken whole or not at all** — hence the $2^n$ variants and the failure of greedy.
 - **Brute force** checks all subsets: guaranteed exact, transparent, but $O(2^n)$ — every item doubles the work (20 items — a million variants, 30 — a billion).
@@ -781,8 +763,4 @@ The common trait: a single integer resource, indivisible items, and the need for
 - **The set of items** is reconstructed by the backward pass: `K[i][w] != K[i-1][w]` ⇔ item `i` was taken.
 - On the classic instance brute force and DP both give **220** (I2 + I3); greedy gives only 160: the "best per unit" I1 blocks the optimal pair.
 - $O(n \cdot W)$ is a **pseudo-polynomial** complexity: for huge or fractional `W` the table is unliftable — not a bug, but a consequence of the problem's NP-completeness.
-
-## 27. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

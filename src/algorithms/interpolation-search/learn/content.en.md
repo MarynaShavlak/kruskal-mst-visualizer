@@ -4,17 +4,7 @@
 
 That cleverness has a price and conditions. First, the array **must be sorted** (just like for binary search — a direct bridge to [sorting](#series)). Second, the method is best when the keys are distributed **uniformly**: then it finds the answer in **$O(\log \log n)$** probes — often 1–2 regardless of size. On **clustered** (non-uniform) data the formula misses systematically, and the method **degrades** all the way to $O(n)$ — slower than binary. So this is an honest, two-sided walkthrough: both the strength and the weakness.
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every probe. The central image is the **straight-line model and the key's projection**: an `index ↔ value` chart, a line between the window's endpoints and the horizontal `y = key` that projects down onto the probe. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, how to run the examples and tests, and a minimal library-usage snippet are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: searching a dictionary
+## 1. Intuition: searching a dictionary
 
 Imagine looking up a word in a paper dictionary. You do **not** open it exactly in the middle every time (as binary search would). For a word starting with "A" you flip straight to the beginning, and for a word starting with "Z" — straight to the end. Intuitively you **project** the value (the letter) onto a position (a page), assuming the letters are spread through the book more or less uniformly.
 
@@ -22,7 +12,7 @@ Imagine looking up a word in a paper dictionary. You do **not** open it exactly 
 
 That is interpolation search. On a sorted array with uniform values we build a **straight-line model** of "position ↔ value" and drop the key's projection onto it — getting the approximate probe position. If the data really is uniform, the very first guess is almost exact.
 
-## 4. The formula: the heart of the method
+## 2. The formula: the heart of the method
 
 All the "cleverness" of the method is in one formula that estimates the probe position `pos`:
 
@@ -47,7 +37,7 @@ In words: **whatever fraction of the value range `key` makes up, we lay off the 
 > ```
 > It is the same expression with the factors reordered, and `int(...)` rounds the estimate down to an integer index.
 
-## 5. The idea: guess a probe, check, adjust
+## 3. The idea: guess a probe, check, adjust
 
 We keep a **window** `[low..high]` of possible positions. At each step (from the notes):
 
@@ -59,7 +49,7 @@ We keep a **window** `[low..high]` of possible positions. At each step (from the
 
 The skeleton is exactly like binary search (a window, narrowing by comparison), but instead of the middle `mid = (low + high) // 2` there is an **interpolated probe** based on the value. The loop runs while the window is non-empty **and** the key lies within the current value range — for the second condition (the guard) see the [pitfalls](#pitfalls).
 
-## 6. Preconditions: sortedness and uniformity
+## 4. Preconditions: sortedness and uniformity
 
 The method has **two** conditions — and these are its limitations:
 
@@ -73,7 +63,7 @@ The method has **two** conditions — and these are its limitations:
 | **Expected** | $O(\log n)$ | $O(\log \log n)$ (uniform) |
 | **Worst** | $O(\log n)$ | $O(n)$ (clustered — degradation) |
 
-## 7. Demo 1 — `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19]`, searching for 15
+## 5. Demo 1 — `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19]`, searching for 15
 
 ### The example array
 
@@ -175,7 +165,7 @@ index = interpolation_search(arr, 15)   # 7
 print(arr[index])                          # 15
 ```
 
-## 8. Demo 2 — `[1, 3, 5, 7, 9, 11, 14, 16, 18, 20, 22, 25, 28, 30]`, searching for 25
+## 6. Demo 2 — `[1, 3, 5, 7, 9, 11, 14, 16, 18, 20, 22, 25, 28, 30]`, searching for 25
 
 ### Two probes: guess, check, correct
 
@@ -223,7 +213,7 @@ Both probes one below the other — you can see the window `[low..high]` narrows
 
 ![Window evolution: two probes, asymmetric narrowing](docs/images/en/evolution_demo2.png)
 
-## 9. Complexity: `O(log log n)` vs `O(n)`
+## 7. Complexity: `O(log log n)` vs `O(n)`
 
 The expected complexity of interpolation search on **uniformly** distributed data is **$O(\log \log n)$**. That is incredibly small: the double logarithm grows so slowly that in practice the number of probes barely depends on the array's size (often 1–2 even on a million elements). Printed by [`examples/04_complexity.py`](examples/04_complexity.py):
 
@@ -254,7 +244,7 @@ But this is the **expected** case. In the **worst** one (clustered, non-uniform 
 
 The array here is `[1, 2, …, n-1, 1000000000]`: one huge "outlier" skews the straight-line model so that the formula keeps pointing almost at the start, and the method crawls one element at a time — pure $O(n)$. Binary, indifferent to values, stays $O(\log n)$.
 
-## 10. Interpolation vs binary: who wins when
+## 8. Interpolation vs binary: who wins when
 
 A direct contrast with [binary search](https://github.com/MarynaShavlak/algo-binary-search) — **the middle vs the interpolated position** — on the same array. Printed by [`examples/03_vs_binary.py`](examples/03_vs_binary.py):
 
@@ -273,7 +263,7 @@ On **clustered** data (one outlier `1000`) the formula misses systematically —
 
 **Conclusion:** interpolation search wins on large **uniform** data and loses on **clustered** data. Binary is the more reliable "all-rounder": its $O(\log n)$ does not depend on the value distribution.
 
-## 11. Recursive variant
+## 9. Recursive variant
 
 The same logic is naturally written with **recursion** — reducing the problem to a smaller subrange each time (a parallel to recursive binary search, only the probe is computed by formula):
 
@@ -294,7 +284,7 @@ def interpolation_search_recursive(arr, x, low=0, high=None):
 
 The result **matches verbatim** the iterative `interpolation_search` (both the examples and the tests verify this).
 
-## 12. Pitfalls: division by zero and out-of-range probe
+## 10. Pitfalls: division by zero and out-of-range probe
 
 The textbook code from the notes has a **latent bug**:
 
@@ -304,7 +294,7 @@ The textbook code from the notes has a **latent bug**:
 
 - **Out-of-range probe.** The full form of the guard keeps `index` within `[low, high]` **as long as** the denominator is positive. But weaker variants of the algorithm (where the guard is only `while low <= high`, without the value check) can produce an `index` outside the window — and crash on `arr[index]` or loop forever.
 
-## 13. Safe version
+## 11. Safe version
 
 [`interpolation_search_safe`](interpolation_search/core.py) closes both pitfalls — an honest fix of the textbook code:
 
@@ -328,7 +318,7 @@ def interpolation_search_safe(arr, x):
 
 Two changes: explicit handling of `arr[high] == arr[low]` (return `low` if the key is there, otherwise `-1`) and a **clamp** of `index` to `[low, high]`. On correct (distinct-bounds) data the result **matches** the base version — the tests verify this too.
 
-## 14. Animations
+## 12. Animations
 
 The same in motion — the probe "jumps" to the interpolated position, the window narrows asymmetrically, and on the straight-line model you can see the key's projection move.
 
@@ -336,27 +326,19 @@ The same in motion — the probe "jumps" to the interpolated position, the windo
 
 ![Animation: searching for 15 in one step](docs/images/en/search_demo1.gif)
 
-🎬 *MP4 version:* [`search_demo1.mp4`](docs/images/en/search_demo1.mp4)
-
 ▶️ Demo 2 — with correction: probe `10` (too small) → correction → probe `11` (generated by [`examples/02_adjusting.py`](examples/02_adjusting.py)):
 
 ![Animation: searching for 25 with correction](docs/images/en/search_adjust.gif)
-
-🎬 *MP4 version:* [`search_adjust.mp4`](docs/images/en/search_adjust.mp4)
 
 ▶️ Degradation — on clustered data the probe crawls one element at a time (generated by [`examples/03_vs_binary.py`](examples/03_vs_binary.py)):
 
 ![Animation: degradation on clustered data](docs/images/en/search_degrade.gif)
 
-🎬 *MP4 version:* [`search_degrade.mp4`](docs/images/en/search_degrade.mp4)
-
 ▶️ Absent element — the key is within the range, but it is not there → `-1`:
 
 ![Animation: absent element](docs/images/en/search_absent.gif)
 
-🎬 *MP4 version:* [`search_absent.mp4`](docs/images/en/search_absent.mp4)
-
-## 15. Code execution step by step: code ↔ data panels
+## 13. Code execution step by step: code ↔ data panels
 
 The examples above showed the *result* of each probe. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, in the middle the **straight-line model** with the key's projection, on the right the window with the shifted probe at that very moment. **The color of a code line encodes what is happening:** 🟡 the line runs now (the loop / `index = …` by formula / a check), 🟦 a bound-shift branch fired (`low = index + 1` / `high = index - 1`), 🟢 `arr[index] == x` → `return index`, 🔴 exit → `return -1`.
 
@@ -368,9 +350,7 @@ We build this for demo 2 (with correction); generated by [`examples/05_code_walk
 
 ![Animation: code ↔ data](docs/images/en/code_walk_demo2.gif)
 
-🎬 *MP4 version:* [`code_walk_demo2.mp4`](docs/images/en/code_walk_demo2.mp4)
-
-## 16. Full step-by-step trace of `25`
+## 14. Full step-by-step trace of `25`
 
 Below is the same execution of demo 2, but **in full**: every computation of `index` by formula, every comparison and bound shift as a separate "code ↔ data" frame, in the right order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -410,7 +390,7 @@ Probe 2. Window `[low=11, high=13]`, boundary values `arr[11]=25`, `arr[13]=30`.
 
 Result: `25` is found at index `11` in 2 probes. `return index` is highlighted.
 
-## 17. Complexity and properties
+## 15. Complexity and properties
 
 How much work interpolation search does depends on the **distribution** of the data:
 
@@ -427,20 +407,20 @@ Other properties:
 - **Requires random access** to `arr[index]` in $O(1)$: a method for arrays, not for linked lists.
 - **The cost metric** is the number of **probes** (computations of `index`): `count_probes` counts it, and `count_binary_probes` counts the binary one (for contrast).
 
-## 18. Limitations: when the method does not fit
+## 16. Limitations: when the method does not fit
 
 - **Data is not sorted.** Then either sort first ($O(n \log n)$) or search [linearly](https://github.com/MarynaShavlak/algo-linear-search).
 - **Data is distributed non-uniformly** (clustered, exponential, with outliers). Here interpolation degrades to $O(n)$ — the more reliable [binary search](https://github.com/MarynaShavlak/algo-binary-search) gives $O(\log n)$.
 - **Small arrays.** The overhead of the formula does not pay off — binary is simpler and no slower.
 - **A structure without random access** (a linked list): there is no fast access to `arr[index]`.
 
-## 19. Where it is useful
+## 17. Where it is useful
 
 - **Databases and uniformly distributed keys:** numeric indices, phone books, uniform identifiers — wherever values lie close to a straight line.
 - **Large sorted uniform arrays:** the larger the array, the more noticeable the advantage of $O(\log \log n)$ over $O(\log n)$.
 - **"Dictionary-style search":** anywhere the human intuition "for 'Z' flip to the end" works — that is exactly what interpolation formalizes.
 
-## 20. Place in the series: search and sorting
+## 18. Place in the series: search and sorting
 
 This is the **fourth** search algorithm in the series — the "smart" development of [binary search](https://github.com/MarynaShavlak/algo-binary-search) on sorted data. [Linear search](https://github.com/MarynaShavlak/algo-linear-search) works on any data in $O(n)$; binary requires a sorted input and gives $O(\log n)$; [indexed sequential search](https://github.com/MarynaShavlak/algo-indexed-sequential-search) adds a sparse index; and interpolation, on **uniform** data, makes even fewer probes — $O(\log \log n)$. And it is the sorting walkthroughs that prepare the sorted data:
 
@@ -455,7 +435,7 @@ This is the **fourth** search algorithm in the series — the "smart" developmen
 
 The summary picture of search: **unordered — $O(n)$ (linear), sorted — $O(\log n)$ (binary), and sorted-and-uniform — $O(\log \log n)$ (interpolation).**
 
-## 21. Summary
+## 19. Summary
 
 - **Interpolation search** on a sorted array **guesses** the probe position with a linear-interpolation formula (rather than taking the middle, like binary), checks it and adjusts the window.
 - **The formula** $pos = lo + \frac{key - arr[lo]}{arr[hi] - arr[lo]} \times (hi - lo)$: whatever fraction of the value range the key makes up, we lay off the same fraction of the index range.
@@ -464,8 +444,4 @@ The summary picture of search: **unordered — $O(n)$ (linear), sorted — $O(\l
 - **Preconditions** — the array is **sorted** (a link to sorting) and preferably **uniform**.
 - **Variants:** iterative, recursive (the same answer) and **safe** (a fix for division by zero when `arr[high] == arr[low]` + a probe clamp).
 - On the demo `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19]` searching for `15` costs **1 probe** (index 7); on `[…, 22, 25, 28, 30]` searching for `25` — **2 probes** (index 11, with correction).
-
-## 22. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

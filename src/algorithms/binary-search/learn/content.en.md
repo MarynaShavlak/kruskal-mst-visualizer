@@ -4,17 +4,7 @@
 
 That speed has a price: the array **must be sorted**. This is a direct bridge to sorting (it is what makes fast search possible) and a clear contrast with [linear search](https://github.com/MarynaShavlak/algo-linear-search): linear search works on any data, even unordered, but in $O(n)$ — while binary search on sorted data gives $O(\log n)$.
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, running the examples and tests, and a minimal library usage example are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: the "guess the number" game
+## 1. Intuition: the "guess the number" game
 
 Imagine a game: your opponent picked a number from 1 to 100, you have to guess it, and for each guess you only hear "higher" or "lower". The smartest strategy is to always name the **middle** of the current range: the "higher/lower" answer immediately **drops half** of the candidates. This way 7 guesses (since $2^7 = 128 > 100$) suffice for any number — instead of 100 one-by-one guesses.
 
@@ -22,7 +12,7 @@ Imagine a game: your opponent picked a number from 1 to 100, you have to guess i
 
 Binary search is that same strategy applied to a **sorted array**: the "middle" is the element `arr[mid]`, and the "higher/lower" answer is given to us precisely by the **orderedness** of the data (if `arr[mid]` is smaller than the target, the target is definitely on the right, because everything on the left is even smaller).
 
-## 4. The idea: look at the middle, drop a half
+## 2. The idea: look at the middle, drop a half
 
 We keep a **range** (window) of possible positions — from `low` to `high`. At each step:
 
@@ -37,7 +27,7 @@ We keep a **range** (window) of possible positions — from `low` to `high`. At 
 
 At each step the window `[low..high]` halves. That is exactly why there are only about $\log_2 n$ steps, not $n$.
 
-## 5. Precondition: the array MUST be sorted
+## 3. Precondition: the array MUST be sorted
 
 The whole correctness of the method rests on one condition: **the array is sorted in ascending order**. Only then can the comparison of `arr[mid]` with `x` reliably tell which half to search and which to drop. On unordered data binary search may "throw away" the half that actually contains the target and return `-1` for a present element.
 
@@ -51,7 +41,7 @@ This is the method's main **price** — and the direct link to [sorting](#series
 
 The `is_sorted` helper in [`binary_search/core.py`](binary_search/core.py) checks the precondition.
 
-## 6. Example — array `[1, 3, 5, 8, 10, 12, 15, 18, 20, 22, 24]`, searching for 15
+## 4. Example — array `[1, 3, 5, 8, 10, 12, 15, 18, 20, 22, 24]`, searching for 15
 
 ### The example array
 
@@ -182,7 +172,7 @@ step | low | high | mid | arr[mid] |  x | found?
    4 |   7 |    7 |   7 |       18 | 18 |    yes
 ```
 
-## 7. Logarithm: how many times to halve
+## 5. Logarithm: how many times to halve
 
 Why exactly $\log_2 n$ steps? Because each step shrinks the window by half: $n \to n/2 \to n/4 \to \dots \to 1$. The **logarithm** $\log_2 n$ is precisely the answer to "how many times do we halve $n$ to reach 1" (equivalently: "to what power must we raise 2 to get $n$", since $2^{\log_2 n} = n$).
 
@@ -192,7 +182,7 @@ A few examples: $\log_2 8 = 3$ (since $2^3 = 8$), $\log_2 16 = 4$ (since $2^4 = 
 
 That same binary logarithm answers "how many **bits** do we need": 1 bit encodes 2 states, 2 bits — $2^2 = 4$, 8 bits (a byte) — $2^8 = 256$ combinations. Halving is a universal way to thin out a space of options, and binary search is its cleanest example.
 
-## 8. `O(log n)` complexity and the chart vs linear search
+## 6. `O(log n)` complexity and the chart vs linear search
 
 The main consequence: **doubling $n$ adds only ONE step**. Printed by [`examples/02_complexity.py`](examples/02_complexity.py):
 
@@ -211,7 +201,7 @@ Comparing the efficiency of the two search algorithms gives this chart (a reprod
 
 For linear search every extra element is one extra step (hence the straight diagonal). For binary search, as the data grows the number of steps increases **negligibly** — that is exactly what $O(\log n)$ means. This is why on large **sorted** data binary search is unreachably faster than [linear](https://github.com/MarynaShavlak/algo-linear-search).
 
-## 9. Recursive variant
+## 7. Recursive variant
 
 The same logic is naturally written with **recursion** — each time reducing the problem to a half-sized subrange (a clear example of the [divide-and-conquer](https://github.com/MarynaShavlak/algo-quick-sort) strategy, as in quicksort or [merge sort](https://github.com/MarynaShavlak/algo-merge-sort)):
 
@@ -232,7 +222,7 @@ def binary_search_recursive(arr, x, low=0, high=None):
 
 The result is **byte-for-byte** the same as the iterative `binary_search` (verified by both the example and the tests).
 
-## 10. Bounds `lower_bound` / `upper_bound` and duplicates
+## 8. Bounds `lower_bound` / `upper_bound` and duplicates
 
 If the array has **duplicates**, the base `binary_search` returns **some** matching index — not necessarily the first one. To find the **first** or **last** occurrence (or the spot to insert `x` while keeping order), one uses **bound** searches in the spirit of the standard [`bisect`](https://docs.python.org/3/library/bisect.html) module:
 
@@ -252,7 +242,7 @@ Duplicates [1, 2, 2, 2, 3, 4], searching for 2:
 
 ![Duplicates: binary_search, lower_bound, upper_bound](docs/images/en/variants_duplicates.png)
 
-## 11. Pitfalls: off-by-one and `mid` overflow
+## 9. Pitfalls: off-by-one and `mid` overflow
 
 Binary search is notorious for being easy to get wrong — despite the simplicity of the idea. The most typical pitfalls:
 
@@ -262,7 +252,7 @@ Binary search is notorious for being easy to get wrong — despite the simplicit
 
 > A general tip: keep the **invariant** in mind — "if `x` is in the array, it is in the current window `[low..high]`". Every step must preserve this invariant and **strictly shrink** the window; then neither off-by-one nor an infinite loop will happen.
 
-## 12. Animations
+## 10. Animations
 
 The same thing in motion — the window `[low..high]` halves, the probe `mid` jumps to the new middle, the discarded halves fade out (generated by [`examples/04_animations.py`](examples/04_animations.py)).
 
@@ -270,21 +260,15 @@ The same thing in motion — the window `[low..high]` halves, the probe `mid` ju
 
 ![Animation: searching for 15](docs/images/en/search_intro.gif)
 
-🎬 *MP4 version:* [`search_intro.mp4`](docs/images/en/search_intro.mp4)
-
 ▶️ The best case — `12` is the very first `mid` (1 step, $O(1)$):
 
 ![Animation: best case](docs/images/en/search_best.gif)
-
-🎬 *MP4 version:* [`search_best.mp4`](docs/images/en/search_best.mp4)
 
 ▶️ An absent element — a full $\log n$ descent until the window empties (`low > high`) → `-1`:
 
 ![Animation: absent element](docs/images/en/search_absent.gif)
 
-🎬 *MP4 version:* [`search_absent.mp4`](docs/images/en/search_absent.mp4)
-
-## 13. Stepping through the code: "code ↔ array" panels
+## 11. Stepping through the code: "code ↔ array" panels
 
 The examples above showed the *result* of each step. Here is **the code itself in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the window at that exact moment. **The color of a code line encodes what is happening:** 🟡 the line runs now (loop / `mid = …` / a check), 🟦 the half-dropping branch fired (`low = mid + 1` / `high = mid - 1`), 🟢 `arr[mid] == x` → `return mid`, 🔴 the window emptied → `return -1`.
 
@@ -296,9 +280,7 @@ We build this for the main instance (searching for 15); generated by [`examples/
 
 ![Animation: code ↔ array](docs/images/en/code_walk_intro.gif)
 
-🎬 *MP4 version:* [`code_walk_intro.mp4`](docs/images/en/code_walk_intro.mp4)
-
-## 14. Full step-by-step trace of `15`
+## 12. Full step-by-step trace of `15`
 
 Below is the same execution, but **in full**: every `mid` computation, every comparison and half-dropping as a separate "code ↔ array" frame, in the correct order, with a detailed explanation under each. The cell colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -350,7 +332,7 @@ Step 3. Window `[low=6, high=7]`. We compute the middle `mid = (high + low) // 2
 
 Result: `15` is found at index `6` in 3 steps. `return mid` is highlighted.
 
-## 15. Complexity and properties
+## 13. Complexity and properties
 
 How much work binary search does depends on where (and whether) the target lies:
 
@@ -369,20 +351,20 @@ Other properties:
 - **Random access required** to `arr[mid]` in $O(1)$: the method is great for arrays but **not for linked lists** (where you cannot reach the middle in $O(1)$).
 - **The number of steps** in the worst case is exactly $\lfloor \log_2 n \rfloor + 1$.
 
-## 16. Limitations: when binary search does not fit
+## 14. Limitations: when binary search does not fit
 
 - **The data is not sorted.** Then either sort it first (which is $O(n \log n)$), or search [linearly](https://github.com/MarynaShavlak/algo-linear-search) in $O(n)$.
 - **A single search on unordered data.** Sorting an array for **one** answer is not worth it: $O(n \log n)$ for sorting is more expensive than $O(n)$ for a linear scan. Binary search wins when **many** searches are done over the same sorted data — then the one-off cost of sorting pays off.
 - **A structure without random access** (a linked list): there is no fast access to the middle — the advantage disappears.
 
-## 17. Where it is appropriate
+## 15. Where it is appropriate
 
 - **Many searches over the same data:** sort once — and every subsequent query is $O(\log n)$ (dictionaries, database indexes, reference tables).
 - **Bounds and ranges:** `lower_bound` / `upper_bound` (the `bisect` module) — order-preserving insertion, counting occurrences, "how many elements $\le x$" queries.
 - **Binary search on the answer:** when the answer is monotone in a parameter — we search for it binary-style, even without an explicit array.
 - **Everywhere the "drop half" principle works:** from guessing a number to debugging (`git bisect`).
 
-## 18. Place in the series: search and sorting
+## 16. Place in the series: search and sorting
 
 This is the **second** search algorithm in the series — the "reward for sorting". [Linear search](https://github.com/MarynaShavlak/algo-linear-search) works on any data in $O(n)$; binary search requires a **sorted** input but gives $O(\log n)$. And that sorted data is prepared precisely by the sorting walkthroughs:
 
@@ -395,7 +377,7 @@ This is the **second** search algorithm in the series — the "reward for sortin
 
 The summary picture of search: **unordered data — $O(n)$ (linear), sorted — $O(\log n)$ (binary).** Sorting is an investment that makes every subsequent search nearly instant.
 
-## 19. Summary
+## 17. Summary
 
 - **Binary search** on a sorted array looks at the middle of the range and drops a half; it repeats until it finds the value or the window empties.
 - **The precondition** is a **sorted** array; this is the method's main price and the direct link to sorting.
@@ -404,8 +386,4 @@ The summary picture of search: **unordered data — $O(n)$ (linear), sorted — 
 - **Variants:** iterative and recursive (the same answer); the bounds `lower_bound` / `upper_bound` for duplicates (the standard `bisect`).
 - **Pitfalls:** off-by-one (`<=` / `mid ± 1`) and overflow — the safe idiom `mid = low + (high - low) // 2`.
 - On the array `[1, 3, 5, 8, 10, 12, 15, 18, 20, 22, 24]` searching for `15` costs **3 steps** (index 6), searching for `18` — **4 steps** (index 7), and the best case (`12`) — **1 step**.
-
-## 20. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

@@ -4,17 +4,7 @@
 
 The method is slow for large arrays (time — $O(n^2)$), but it has two instructive features that bubble and insertion sort do not: it makes the **minimum number of swaps** ($\le n-1$, i.e. $O(n)$ writes) and yet it is **not adaptive** — the number of comparisons is the same for any input. It is also **unstable** in its standard form — a perfect way to show the classic stability “trap”.
 
-This repository is a learning resource: a clean implementation of the algorithm plus detailed visualizations of every step. The whole walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/`](docs/images).
-
-## 1. Repository structure
-
-The directory tree and the split of responsibilities between modules are in a separate file — **[PROJECT_STRUCTURE.en.md](PROJECT_STRUCTURE.en.md)**.
-
-## 2. Quick start
-
-Installation commands, running the examples and tests, and a minimal library usage example are in **[USAGE.en.md](USAGE.en.md)**.
-
-## 3. Intuition: pick the smallest
+## 1. Intuition: pick the smallest
 
 Picture the array as vertical **bars**, where the height is the element's value. On each pass we look only at the **unsorted part** (on the right) and search it for the smallest element. Once found, we swap it with the first unsorted element — and the smallest one lands at its final spot on the boundary of the sorted prefix:
 
@@ -22,7 +12,7 @@ Picture the array as vertical **bars**, where the height is the element's value.
 
 The next pass finds the next smallest element and puts it in the second place, the one after — in the third, and so on. So the **sorted “prefix” grows left to right**, while the unsorted suffix gets one element shorter each time.
 
-## 4. The idea: prefix, scanning the suffix, one swap
+## 2. The idea: prefix, scanning the suffix, one swap
 
 The algorithm consists of two nested loops:
 
@@ -31,7 +21,7 @@ The algorithm consists of two nested loops:
 
 After the full scan — **exactly one swap** `arr[i] ↔ arr[min_idx]`: the minimum found takes the prefix boundary. This is the key difference from the other simple sorts: not a swap of every adjacent pair (as in bubble sort) and not a shift of a whole run (as in insertion sort), but **one swap per pass** after looking through the rest.
 
-## 5. Why it works: the prefix invariant
+## 3. Why it works: the prefix invariant
 
 Correctness follows from a simple **invariant**: *after the $k$-th pass the first $k$ elements of the array are the $k$ smallest values, already placed in the right order, and they no longer move.*
 
@@ -39,7 +29,7 @@ Why? On pass $i$ the inner loop scans the **whole** suffix and is guaranteed to 
 
 Notice: the search scans the suffix **fully** regardless of how ordered it already is. That is exactly why the number of comparisons does not depend on the input — the method is [**not adaptive**](#non-adaptive). And the single swap at the end of a pass may “jump over” equal keys — which makes standard selection [**unstable**](#stability).
 
-## 6. Example — the array `[5, 3, 8, 4, 2, 7]`
+## 4. Example — the array `[5, 3, 8, 4, 2, 7]`
 
 ### The example array
 
@@ -167,8 +157,6 @@ All the array states side by side — you can see the green prefix growing left 
 
 ![Animation: selection sort step by step](docs/images/en/sort_intro.gif)
 
-🎬 *MP4 version:* [`sort_intro.mp4`](docs/images/en/sort_intro.mp4)
-
 ### Result
 
 ![The sorted array [2, 3, 4, 5, 7, 8]](docs/images/en/result_intro.png)
@@ -183,7 +171,7 @@ Comparisons: 15   Swaps: 4   Passes: 6
 
 Selection sort always makes all $\frac{n(n-1)}{2} = 15$ comparisons, but only **4 real swaps** (on passes 1 and 5 the minimum was already in place).
 
-## 7. Non-adaptivity: best and worst cases
+## 5. Non-adaptivity: best and worst cases
 
 The main feature of selection sort among the simple sorts — it is **not adaptive**. The inner loop always scans the suffix **in full**, so the number of comparisons is always exactly $\frac{n(n-1)}{2}$, **regardless of the input**. Let's compare an already sorted array (best case) and a reverse-sorted one (worst case):
 
@@ -205,8 +193,6 @@ Swaps differ: 0 (sorted) vs. 3 (reversed) — but both ≤ n−1 = 5.
 
 ![Animation: best case, non-adaptivity](docs/images/en/sort_sorted.gif)
 
-🎬 *MP4 version:* [`sort_sorted.mp4`](docs/images/en/sort_sorted.mp4)
-
 **Worst case — the reverse sorted array.** The same number of comparisons, but now the minimum sits at the end of the suffix each time, so there are more swaps (still $\le n-1$, though):
 
 ![Worst case: reverse array, more swaps](docs/images/en/evolution_reversed.png)
@@ -215,11 +201,9 @@ Swaps differ: 0 (sorted) vs. 3 (reversed) — but both ≤ n−1 = 5.
 
 ![Animation: worst case](docs/images/en/sort_reversed.gif)
 
-🎬 *MP4 version:* [`sort_reversed.mp4`](docs/images/en/sort_reversed.mp4)
-
 This is a fundamental difference from [insertion sort](https://github.com/MarynaShavlak/algo-insertion-sort) (best case $O(n)$) and [bubble sort with an early exit](https://github.com/MarynaShavlak/algo-bubble-sort): on already ordered input selection sort **does not get any faster**.
 
-## 8. Minimum swaps: why selection saves writes
+## 6. Minimum swaps: why selection saves writes
 
 The flip side of non-adaptivity is the method's main **advantage**: over the whole algorithm there are **at most $n-1$ swaps** (one per pass, and only when `min_idx != i`). That is the fewest among comparison sorts: $O(n)$ writes to memory versus $O(n^2)$ for bubble or insertion sort.
 
@@ -229,7 +213,7 @@ Look at the plot: the red curve (comparisons) grows like $n^2$, while the green 
 
 This matters where **writing to memory is expensive** while comparing is cheap: for example, when the elements are very large (copying them is costly) or when it is flash memory or EEPROM with a limited rewrite budget. In that niche selection sort, with its $O(n)$ swaps, can beat “faster” algorithms.
 
-## 9. Stability: an array with duplicates
+## 7. Stability: an array with duplicates
 
 A sort is **stable** if it keeps the relative order of elements with **equal keys**. And here is the classic “trap”: standard selection sort is **unstable**. The single swap `arr[i] ↔ arr[min_idx]` may “jump over” an equal key and change its order — unlike bubble and insertion sort, which are stable.
 
@@ -275,7 +259,7 @@ Shifting preserves the relative order of the rest of the elements, so equal keys
 
 This mirrors bubble and insertion sort: there stability was a “free” property, whereas here you have to pay for it with writes — or live with instability.
 
-## 10. Running the code step by step: code ↔ array panels
+## 8. Running the code step by step: code ↔ array panels
 
 The examples above showed the *result* of each step. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the array at that very moment. **The color of a code line encodes what happens:** 🟡 the line runs now (a loop / resetting `min_idx` / the condition check), 🟠 the condition `arr[j] < arr[min_idx]` is true → a new minimum `min_idx = j`, 🔴 the swap at the end of a pass, 🟢 the loops finished → the array is sorted.
 
@@ -287,9 +271,7 @@ We build this for the array from the notes `[5, 3, 8, 4, 2]` (its line-by-line t
 
 ![Animation: code ↔ array](docs/images/en/code_walk_conspect.gif)
 
-🎬 *MP4 version:* [`code_walk_conspect.mp4`](docs/images/en/code_walk_conspect.mp4)
-
-## 11. Full step-by-step trace of `[5, 3, 8, 4, 2, 7]`
+## 9. Full step-by-step trace of `[5, 3, 8, 4, 2, 7]`
 
 Below is the same step-by-step run, but **in full**: the start of each pass, every comparison and every swap as a separate code ↔ array frame, in the right order, with a detailed explanation under each. The bar colors are the same as in the [legend above](#how-to-read). The block is generated automatically from the event journal (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
@@ -467,7 +449,7 @@ End of pass `i = 5`. The suffix minimum already sits at position 5 (`min_idx == 
 
 Result: the array is sorted — `[2, 3, 4, 5, 7, 8]`. In total 15 comparisons (exactly n(n−1)/2 — the same for any input) and only 4 swaps over 6 pass(es). `return arr` is highlighted.
 
-## 12. Complexity and properties
+## 10. Complexity and properties
 
 How much work selection sort does — and, crucially, what does **not** depend on the input:
 
@@ -488,7 +470,7 @@ The number of comparisons grows like $n^2$ regardless of the input, while there 
 
 ![Plot: n² comparisons vs. n swaps](docs/images/en/growth.png)
 
-## 13. Limitations: why selection sort is impractical for large `n`
+## 11. Limitations: why selection sort is impractical for large `n`
 
 Quadratic complexity **in comparisons** means that as the array grows, the work grows catastrophically fast. Compare the number of comparisons ($\frac{n(n-1)}{2}$) with efficient sorts ($\approx n\log_2 n$):
 
@@ -509,7 +491,7 @@ On top of the quadratic complexity there are two more drawbacks:
 
 **Educational value vs. performance.** Despite being impractical, selection sort is the cleanest illustration of the “selection” paradigm (at each step take the best of the rest) and a classic stability “trap”. It is the most convenient place to show what adaptivity is (and its absence), why “few swaps” does not save you from $O(n^2)$, and when stability is expensive.
 
-## 14. Three simple sorts side by side
+## 12. Three simple sorts side by side
 
 Selection sort is best understood next to the two other simple $O(n^2)$ sorts:
 
@@ -524,7 +506,7 @@ Selection sort is best understood next to the two other simple $O(n^2)$ sorts:
 
 In short: **bubble** is the easiest to explain; **insertion** is best on short or nearly ordered arrays (adaptive and stable); **selection** wins only where it is critical to have few writes to memory — at the cost of non-adaptivity and instability. Detailed walkthroughs of the first two: [bubble sort](https://github.com/MarynaShavlak/algo-bubble-sort) and [insertion sort](https://github.com/MarynaShavlak/algo-insertion-sort).
 
-## 15. Where it fits
+## 13. Where it fits
 
 The rare situations where selection sort is justified:
 
@@ -534,7 +516,7 @@ The rare situations where selection sort is justified:
 
 For everything more serious, use the built-in `sorted()` / `list.sort()` (Timsort) — stable, adaptive and $O(n\log n)$.
 
-## 16. Summary
+## 14. Summary
 
 - **Selection sort** scans the whole unsorted suffix each pass, finds its minimum and puts it on the boundary of the sorted prefix with **a single swap**; the prefix grows left to right.
 - It works on an **array, in place** ($O(1)$ memory).
@@ -542,8 +524,4 @@ For everything more serious, use the built-in `sorted()` / `list.sort()` (Timsor
 - **Standard selection is unstable:** a swap jumps over equal keys. Stability comes from the **shifting variant** — at the cost of $O(n^2)$ writes.
 - On the array `[5, 3, 8, 4, 2, 7]` the sort costs **15 comparisons and 4 swaps**; on the already sorted `[1..6]` — the same **15 comparisons** but **0 swaps**; on the reverse `[6..1]` — again 15 comparisons and 3 swaps.
 - Its main advantage is the **minimum number of swaps** (useful when writing is expensive); its main drawbacks are **non-adaptivity** and **instability**. The method's value is mostly **educational**.
-
-## 17. License
-
-[MIT](LICENSE) © 2026 Maryna Shavlak
 

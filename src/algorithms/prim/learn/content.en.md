@@ -4,8 +4,6 @@
 
 It is a classic example of a **greedy algorithm**: the tree grows from a single vertex, and at every step the **cheapest** edge leading outside joins the tree. Here the locally best choice provably adds up to the globally optimal answer — and below we will see why (the cut property).
 
-The repository is educational material: a clean implementation of the algorithm + detailed visualizations of every step. The entire walkthrough below is reproduced by the code in [`examples/`](examples), and the figures live in [`docs/images/en/`](docs/images/en).
-
 ## 1. Intuition: a cable network
 
 Picture the vertices as **cities** and the edges as **possible cable routes** with a cost to lay each one. The task: every city must be connected to every other (transit through other cities is fine), and the total cost of the laid cable must be **as small as possible**.
