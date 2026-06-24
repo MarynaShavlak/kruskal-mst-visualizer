@@ -1,5 +1,7 @@
-// Навчальний контент Флойда–Воршала: markdown згенеровано з READMEs Python-
-// репозиторію і збережено поруч як raw-рядки (див. transform-fw-readme).
+// Навчальний контент Флойда–Воршала: markdown перенесено з README Python-проєкту
+// algo-floyd-warshall і збережено поруч як raw-рядки content.*.md, що ведуться
+// вручну (GitHub-«хром» зрізано, секції нумеровано `## N.` під спільні parseToc/
+// LearnView). Фігури README → живі віджети у figure-widgets.
 import uaRaw from "./content.ua.md?raw"
 import enRaw from "./content.en.md?raw"
 import { makeLearnContent } from "@/algorithms/shared/learn/learn-content"

@@ -1,7 +1,7 @@
 // Навчальний контент Хелда–Карпа: markdown перенесено з README Python-проєкту
-// tsp-held-karp і збережено поруч як raw-рядки (трансформер
-// scripts/transform-held-karp-readme.mjs прибирає GitHub-«хром» і нумерує секції
-// під спільні parseToc/LearnView). Фігури README → живі віджети у figure-widgets.
+// tsp-held-karp і збережено поруч як raw-рядки content.*.md, що ведуться вручну
+// (GitHub-«хром» зрізано, секції нумеровано `## N.` під спільні parseToc/
+// LearnView). Фігури README → живі віджети у figure-widgets.
 import uaRaw from "./content.ua.md?raw"
 import enRaw from "./content.en.md?raw"
 import { makeLearnContent } from "@/algorithms/shared/learn/learn-content"
