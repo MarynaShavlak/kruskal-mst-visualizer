@@ -45,7 +45,7 @@ The `is_sorted` helper in [`binary_search/core.py`](binary_search/core.py) check
 
 ### The example array
 
-We work with a sorted array of 11 elements and search it for the value `x = 15` (the same example as in the notes):
+We work with a sorted array of 11 elements and search it for the value `x = 15`:
 
 | index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -55,9 +55,9 @@ We work with a sorted array of 11 elements and search it for the value `x = 15` 
 
 At the start the window spans the whole array: `low = 0`, `high = 10`. The badge on top reminds us what we are searching for.
 
-### The base implementation (code from the notes)
+### The base implementation
 
-Here is the implementation from the notes — the one we walk through line by line (the fully documented version is in [`binary_search/core.py`](binary_search/core.py)):
+Here is the base implementation — the one we walk through line by line (the fully documented version is in [`binary_search/core.py`](binary_search/core.py)):
 
 ```python
 def binary_search(arr, x):
@@ -133,7 +133,7 @@ step | low | high | mid | arr[mid] |  x | found?
    3 |   6 |    7 |   6 |       15 | 15 |    yes
 ```
 
-> **A note about indices.** In the notes the table renumbers indices from zero for each subarray — so steps 2 and 3 there are shown as `low=0, high=4, mid=2` and `low=0, high=1, mid=0`, and the match is at "relative" index 0 in the sublist `[15, 18]`. Our instrumented version keeps **absolute** indices into the original array, so the match is at index **6** (the true position of the value 15). Both descriptions are about the same search, just with a different frame of reference.
+> **A note about indices.** A common variant of the table renumbers indices from zero for each subarray — then steps 2 and 3 are shown as `low=0, high=4, mid=2` and `low=0, high=1, mid=0`, and the match is at "relative" index 0 in the sublist `[15, 18]`. Our instrumented version keeps **absolute** indices into the original array, so the match is at index **6** (the true position of the value 15). Both descriptions are about the same search, just with a different frame of reference.
 
 ### The big picture: window evolution
 
@@ -153,7 +153,7 @@ Target:  15
 Result: index 6   ·   steps: 3
 ```
 
-The same algorithm on the base example from the notes (`binary_search([2, 3, 4, 10, 40], 10)`) prints:
+The same algorithm on the base example (`binary_search([2, 3, 4, 10, 40], 10)`) prints:
 
 ```text
 Element is present at index 3
@@ -161,7 +161,7 @@ Element is present at index 3
 
 ### One more: searching for 18 (4 steps)
 
-The notes hint: if we searched the same array for `18`, it would take **4** steps. Let us check — `18` is at index 7, so after three narrowings the window shrinks to a single cell only on the fourth step:
+Note: if we searched the same array for `18`, it would take **4** steps. Let us check — `18` is at index 7, so after three narrowings the window shrinks to a single cell only on the fourth step:
 
 ```text
 step | low | high | mid | arr[mid] |  x | found?
@@ -195,7 +195,7 @@ The main consequence: **doubling $n$ adds only ONE step**. Printed by [`examples
   n =   1000000 → up to 20 steps (binary) vs 1000000 (linear)
 ```
 
-Comparing the efficiency of the two search algorithms gives this chart (a reproduction of the figure from the notes): linear search is a straight line $\approx n$ (blue), binary search is an almost flat curve $\approx \log_2 n$ (green).
+Comparing the efficiency of the two search algorithms gives this chart: linear search is a straight line $\approx n$ (blue), binary search is an almost flat curve $\approx \log_2 n$ (green).
 
 ![Comparison of linear and binary search](docs/images/en/linear_vs_binary.png)
 
@@ -248,7 +248,7 @@ Binary search is notorious for being easy to get wrong — despite the simplicit
 
 - **Loop bounds `<=` vs `<`.** In the base version the condition is `while low <= high` with `high = len(arr) - 1` (an inclusive bound). If you write `while low < high`, you must move the bounds differently — otherwise you can "skip over" a single-element window and miss the match.
 - **The `mid ± 1` is mandatory.** After a probe we move `low = mid + 1` or `high = mid - 1` — exactly `±1`, because we have already checked and discarded `arr[mid]`. If you leave `low = mid` or `high = mid`, the window may stop shrinking — and the loop will hang.
-- **Overflow of `(low + high)`.** In languages with bounded integers (C, Java) the sum `low + high` may overflow on large arrays. The safe idiom is to compute the middle as `mid = low + (high - low) // 2`: the same result, but without overflow. In Python integers are unbounded, so the notes' formula `(high + low) // 2` is safe — but the idiom is worth knowing.
+- **Overflow of `(low + high)`.** In languages with bounded integers (C, Java) the sum `low + high` may overflow on large arrays. The safe idiom is to compute the middle as `mid = low + (high - low) // 2`: the same result, but without overflow. In Python integers are unbounded, so the formula `(high + low) // 2` is safe — but the idiom is worth knowing.
 
 > A general tip: keep the **invariant** in mind — "if `x` is in the array, it is in the current window `[low..high]`". Every step must preserve this invariant and **strictly shrink** the window; then neither off-by-one nor an infinite loop will happen.
 

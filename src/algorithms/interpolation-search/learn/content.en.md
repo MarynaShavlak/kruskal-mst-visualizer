@@ -39,7 +39,7 @@ In words: **whatever fraction of the value range `key` makes up, we lay off the 
 
 ## 3. The idea: guess a probe, check, adjust
 
-We keep a **window** `[low..high]` of possible positions. At each step (from the notes):
+We keep a **window** `[low..high]` of possible positions. At each step:
 
 1. determine `low`, `high`, `key`;
 2. compute the probe `index` with the **formula**;
@@ -67,7 +67,7 @@ The method has **two** conditions — and these are its limitations:
 
 ### The example array
 
-We work with a sorted array of 10 elements (a uniform step of 2) and search for `key = 15` (the same example as in the notes):
+We work with a sorted array of 10 elements (a uniform step of 2) and search for `key = 15`:
 
 | index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -77,9 +77,9 @@ We work with a sorted array of 10 elements (a uniform step of 2) and search for 
 
 At the start the window spans the whole array: `low = 0`, `high = 9`. The badge on top is a reminder of what we are searching for.
 
-### Base implementation (code from the notes)
+### Base implementation
 
-Here is the implementation from the notes — the one we walk through line by line (the full documented version is in [`interpolation_search/core.py`](interpolation_search/core.py)):
+Here is the base implementation — the one we walk through line by line (the full documented version is in [`interpolation_search/core.py`](interpolation_search/core.py)):
 
 ```python
 def interpolation_search(arr, x):
@@ -200,7 +200,7 @@ Target:  25
 Result: index 11   ·   probes: 2
 ```
 
-The verbatim driver example from the notes prints `25`:
+The verbatim driver example prints `25`:
 
 ```text
 index = interpolation_search(arr, 25)   # 11
@@ -286,7 +286,7 @@ The result **matches verbatim** the iterative `interpolation_search` (both the e
 
 ## 10. Pitfalls: division by zero and out-of-range probe
 
-The textbook code from the notes has a **latent bug**:
+The textbook code has a **latent bug**:
 
 - **Division by zero.** The formula's denominator is `arr[high] - arr[low]`. If all elements of the window are **equal** (for example the array `[7, 7, 7, 7]`, searching for `7`), then `arr[high] == arr[low]`, the denominator is zero, and the code raises `ZeroDivisionError`. The same trap fires on an array of **one element** (there `low == high`, so the bounds are equal too).
 

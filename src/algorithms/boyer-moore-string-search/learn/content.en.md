@@ -7,7 +7,7 @@ Two defining new features of this walkthrough:
 1. **Right-to-left comparison.** The inner loop starts at the **last** character of the pattern and moves toward the start. The matched **suffix** grows until a mismatch occurs.
 2. **The bad-character table (shift table).** Preprocessing builds a «symbol → shift» dictionary: when a text symbol does not match, the pattern **leaps** forward — by its whole length if that symbol is absent from the pattern. The **rarer** the pattern's symbols are in the text, the **bigger** the jumps and the more **skipped** (never compared) text symbols there are.
 
-> 💡 The source notes deliberately cover **only one** component — the bad-character table. They skip the **good-suffix** table (leaving it for self-study); here it is likewise only [mentioned](#good-suffix) as the second component that the full Boyer-Moore combines via `max` of the two shifts.
+> 💡 This walkthrough deliberately covers **only one** component — the bad-character table. It skips the **good-suffix** table (leaving it for self-study); here it is likewise only [mentioned](#good-suffix) as the second component that the full Boyer-Moore combines via `max` of the two shifts.
 
 The algorithm has **two phases**:
 
@@ -22,7 +22,7 @@ They don't match. But here's the trick: the symbol `d` **is** in the pattern `de
 
 ![Boyer-Moore idea: scan from the end and leap over](docs/images/en/intuition.png)
 
-To make such jumps instantly, Boyer-Moore precomputes the **bad-character table** — for each symbol it stores how far to shift the pattern. The rarer the pattern's symbols are in the text, the bigger the jumps. Here is how many symbols the notes' example **skips without comparing at all**:
+To make such jumps instantly, Boyer-Moore precomputes the **bad-character table** — for each symbol it stores how far to shift the pattern. The rarer the pattern's symbols are in the text, the bigger the jumps. Here is how many symbols our example **skips without comparing at all**:
 
 ![Skipped text symbols](docs/images/en/intro_skipped.png)
 
@@ -48,9 +48,9 @@ The **bad-character table** is a «symbol → shift» dictionary. For each symbo
 
 Hence the shift formula for each pattern symbol (except the last): `shift = length − index − 1` — the distance from the symbol to the end of the pattern. For the **last** symbol we use `setdefault(pattern[-1], length)`: if the symbol isn't in the table yet, add the full length; if it already is (i.e. the symbol repeats), keep the existing value.
 
-### The `build_shift_table` code (from the notes)
+### The `build_shift_table` code
 
-Here is the implementation from the notes — the one we walk through line by line (the full documented version is in [`boyer_moore_string_search/core.py`](boyer_moore_string_search/core.py)):
+Here is the base implementation — the one we walk through line by line (the full documented version is in [`boyer_moore_string_search/core.py`](boyer_moore_string_search/core.py)):
 
 ```python
 def build_shift_table(pattern):
@@ -65,18 +65,18 @@ def build_shift_table(pattern):
     return table
 ```
 
-Construction logic (from the notes):
+Construction logic:
 
 1. Create an empty dictionary `table` and take the pattern length `length`.
 2. For each symbol `char` at position `index` (for **all but the last**) write `table[char] = length − index − 1`.
 3. If a symbol **repeats**, a later occurrence **overwrites** the earlier one — i.e. the one **closer to the end** wins (a smaller shift).
 4. For the **last** symbol call `setdefault(pattern[-1], length)`: add the full length only if the key isn't there yet.
 
-> **The example from the notes.** For the pattern `ABC` and text `XBC`: when `X` doesn't match `A`, we can shift by `3` (the length of `ABC`), because `X` isn't in the pattern. But when `B` doesn't match `A`, we can shift only by `2`, because `B` **is** in the pattern, 1 position from the end.
+> **The example.** For the pattern `ABC` and text `XBC`: when `X` doesn't match `A`, we can shift by `3` (the length of `ABC`), because `X` isn't in the pattern. But when `B` doesn't match `A`, we can shift only by `2`, because `B` **is** in the pattern, 1 position from the end.
 
 ### The table for `developer` and the `'e'` overwrite
 
-Consider the pattern `developer` (`length = 9`) — the main example of the notes. It is interesting because the symbol `e` appears **three times**, so it gets **overwritten** in the table. The columnar table is printed by [`examples/01_shift_table.py`](examples/01_shift_table.py):
+Consider the pattern `developer` (`length = 9`) — the main example. It is interesting because the symbol `e` appears **three times**, so it gets **overwritten** in the table. The columnar table is printed by [`examples/01_shift_table.py`](examples/01_shift_table.py):
 
 ```text
   index | Symbol | length-index-1 | Table entry
@@ -131,7 +131,7 @@ Construction frames (the active line is highlighted; on the right is the diction
 
 ### More table examples
 
-The minimal example of the notes — `ABC`:
+The minimal example — `ABC`:
 
 ```text
   index | Symbol | length-index-1 | Table entry
@@ -143,8 +143,8 @@ The minimal example of the notes — `ABC`:
 
 | Pattern | Shift table | Feature |
 |---|---|---|
-| `developer` | `{'d': 8, 'e': 1, 'v': 6, 'l': 4, 'o': 3, 'p': 2, 'r': 9}` | the notes' example (overwrite of `'e'`) |
-| `ABC` | `{'A': 2, 'B': 1, 'C': 3}` | the notes' example |
+| `developer` | `{'d': 8, 'e': 1, 'v': 6, 'l': 4, 'o': 3, 'p': 2, 'r': 9}` | the canonical example (overwrite of `'e'`) |
+| `ABC` | `{'A': 2, 'B': 1, 'C': 3}` | the canonical example |
 | `AABA` | `{'A': 2, 'B': 1}` | the last occurrence wins (`'A'`: 3 → 2) |
 | `CAAAA` | `{'C': 4, 'A': 1}` | pathological — the window-end symbol `'A'` gives shift 1 |
 
@@ -153,7 +153,7 @@ The minimal example of the notes — `ABC`:
 
 ## 4. Phase 2 — search
 
-### The `boyer_moore_search` code (from the notes)
+### The `boyer_moore_search` code
 
 ```python
 def boyer_moore_search(text, pattern):
@@ -176,7 +176,7 @@ def boyer_moore_search(text, pattern):
     return -1
 ```
 
-Search logic (from the notes):
+Search logic:
 
 - the inner loop starts at the end of the pattern (`j = len(pattern) - 1`) and goes **left** while symbols match (`j -= 1`);
 - if `j < 0` — the whole pattern matched, return position `i`;
@@ -184,9 +184,9 @@ Search logic (from the notes):
 
 > **An honest detail.** The shift is taken by `text[i + len(pattern) - 1]` — the text symbol aligned with the **last** position of the pattern (the end of the window), and **not** necessarily by the symbol at which the mismatch occurred. This is a simplified form of the bad-character rule (the Horspool form); it is a touch simpler than «classic» Boyer-Moore but works on the same principle.
 
-### The notes' example: searching for «developer» → 8
+### The example: searching for «developer» → 8
 
-Let's reproduce the main example of the notes. The text and pattern are **data** (kept as in the notes in both languages):
+Let's reproduce the main example. The text and pattern are **data** (kept unchanged in both languages):
 
 ```python
 text = "Being a developer is not easy"
@@ -231,7 +231,7 @@ Result: found at position 8   ·   comparisons: 10
 ![Pattern jumps by 8 and skipped symbols](docs/images/en/search_konspekt_jump.png)
 ![Full match at position 8](docs/images/en/search_konspekt_match.png)
 
-▶️ The notes' search in motion (windowed — the search reads only the start of the text):
+▶️ The search in motion (windowed — the search reads only the start of the text):
 
 ![Animation: searching for developer](docs/images/en/search_konspekt.gif)
 
@@ -251,7 +251,7 @@ The pattern was found at position 20 having made only **9** comparisons and skip
 
 ### Comparison count: the contrast triangle
 
-The three string algorithms of the series solve one problem differently. Let's compare the number of character comparisons on the main example of the notes (printed by [`examples/03_complexity.py`](examples/03_complexity.py)):
+The three string algorithms of the series solve one problem differently. Let's compare the number of character comparisons on the main example (printed by [`examples/03_complexity.py`](examples/03_complexity.py)):
 
 ```text
 Input: text «Being a developer is not easy», pattern «developer»
@@ -299,13 +299,13 @@ That is an honest limit: the naive method here sees the mismatch on the first sy
 
 ### Bad-character only; good-suffix for later
 
-This walkthrough (like the notes) implements **only** the **bad-character** rule. The full Boyer-Moore algorithm has a **second** component — the **good-suffix** rule: when part of the suffix has already matched, it suggests its own shift that accounts for the matched chunk. The full Boyer-Moore takes the **`max`** of the two shifts on each mismatch:
+This walkthrough implements **only** the **bad-character** rule. The full Boyer-Moore algorithm has a **second** component — the **good-suffix** rule: when part of the suffix has already matched, it suggests its own shift that accounts for the matched chunk. The full Boyer-Moore takes the **`max`** of the two shifts on each mismatch:
 
 ```text
 shift = max(bad_character_shift, good_suffix_shift)
 ```
 
-The good-suffix table is deliberately skipped by the notes, left for self-study — so it is only mentioned here (no implementation). Even the bad-character component alone already produces the characteristic big jumps.
+The good-suffix table is deliberately skipped in this walkthrough, left for self-study — so it is only mentioned here (no implementation). Even the bad-character component alone already produces the characteristic big jumps.
 
 ## 6. Code execution step by step: «code ↔ data» panels
 
@@ -319,9 +319,9 @@ The examples above showed the *result* of each step. Here is **the code in actio
 
 ![Code ↔ alignment](docs/images/en/code_search_grid.png)
 
-## 7. Full step-by-step trace of the notes' example
+## 7. Full step-by-step trace of the example
 
-Below is the same execution, but **in full** and in two phases: first the construction of the shift table for `developer`, then the search itself in the notes' text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same execution, but **in full** and in two phases: first the construction of the shift table for `developer`, then the search itself in our text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs (example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
 ### Phase 1 — preprocessing: the shift table of pattern «developer»
 
@@ -391,7 +391,7 @@ Phase 1 — **preprocessing**. We build the bad-character table of the pattern �
 
 The shift table is built: `{'d': 8, 'e': 1, 'v': 6, 'l': 4, 'o': 3, 'p': 2, 'r': 9}`. The repeated «e» kept its **last** occurrence (7 → 5 → 1), and «r» was added via `setdefault` (9). This very table drives the jumps in the search phase.
 
-### Phase 2 — searching for «developer» in the konspekt text
+### Phase 2 — searching for «developer» in our text
 
 #### Step S00
 
@@ -490,7 +490,7 @@ Edge cases (verified in [`tests/`](tests)):
 | **multiple** occurrences | `boyer_moore_search` returns the first; `boyer_moore_search_all` returns all (including overlapping) |
 | **worst** (`CAAAA` in `AAAAAAAAAA`) | shift of 1 → $O(n \cdot m)$, nothing skipped |
 
-> **About the empty pattern.** The code from the notes is kept **verbatim** on purpose, so on an empty pattern `pattern[-1]` raises `IndexError` right away (still inside `build_shift_table`, before the loop). That is an honest limit of the verbatim implementation; the teaching-instrumented versions handle it safely.
+> **About the empty pattern.** The code is kept **verbatim** on purpose, so on an empty pattern `pattern[-1]` raises `IndexError` right away (still inside `build_shift_table`, before the loop). That is an honest limit of the verbatim implementation; the teaching-instrumented versions handle it safely.
 
 ## 9. Place in the string-algorithm series
 
@@ -512,5 +512,5 @@ Boyer-Moore is the **third** string algorithm of the series. It builds a contras
 - **Two phases:** preprocessing `build_shift_table` ($O(m+\sigma)$, doesn't touch the text) and search `boyer_moore_search` (best case $O(n)$).
 - **Complexity** best $O(n)$ / worst $O(n \cdot m)$: on natural text usually the fastest of the three, but without KMP's guarantee (the trap is the shift of 1 on `CAAAA`/`AAAA…`).
 - Only the **bad-character** rule is implemented; the good-suffix is the second component that the full Boyer-Moore combines via `max`.
-- The notes' example `print(boyer_moore_search("Being a developer is not easy", "developer"))` gives **8**, and the driver prints `Substring found at index 8`.
+- The example `print(boyer_moore_search("Being a developer is not easy", "developer"))` gives **8**, and the driver prints `Substring found at index 8`.
 

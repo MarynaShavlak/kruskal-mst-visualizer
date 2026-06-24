@@ -2,7 +2,7 @@
 
 **Quick Sort** (Hoare's sort) is one of the fastest sorting methods in practice. It works by the **divide-and-conquer** principle: it picks a **pivot** element, splits the array into "smaller than the pivot" and "greater than the pivot", and then **recursively** sorts each part. It is the **first** non-quadratic algorithm in this series of walkthroughs: on average it does $O(n\log n)$ work — a leap from the $O(n^2)$ of the simple sorts (bubble, insertion, selection).
 
-Our implementation (from the lecture notes) splits the array into **three** parts: `left` (elements `< pivot`), `middle` (equal to the pivot) and `right` (elements `> pivot`), then returns `quicksort(left) + middle + quicksort(right)`. This **three-way** split is elegant, visual, and handles duplicates beautifully.
+Our base implementation splits the array into **three** parts: `left` (elements `< pivot`), `middle` (equal to the pivot) and `right` (elements `> pivot`), then returns `quicksort(left) + middle + quicksort(right)`. This **three-way** split is elegant, visual, and handles duplicates beautifully.
 
 ## 1. Intuition: divide and conquer
 
@@ -45,9 +45,9 @@ We work with an array of 7 elements:
 
 This array is chosen so that the middle-element pivot lands close to the median every time — then the recursion tree comes out **balanced** and nicely illustrates the best case.
 
-### The base implementation (code from the notes)
+### The base implementation
 
-Here is the implementation from the notes — the one we dissect line by line (the fully documented version is in [`quick_sort/core.py`](quick_sort/core.py)):
+Here is the base implementation — the one we dissect line by line (the fully documented version is in [`quick_sort/core.py`](quick_sort/core.py)):
 
 ```python
 def quicksort(arr):
@@ -153,9 +153,9 @@ Output: [1, 2, 3, 4, 5, 6, 7]
 Comparisons: 13   Calls: 7   Recursion depth: 3
 ```
 
-## 5. The recursion tree from the notes `[5, 3, 8, 4, 2]`
+## 5. The recursion tree on `[5, 3, 8, 4, 2]`
 
-Let us walk through the example **from the notes** — the array `[5, 3, 8, 4, 2]`. The trace **by level** (printed by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)):
+Let us walk through one more example — the array `[5, 3, 8, 4, 2]`. The trace **by level** (printed by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)):
 
 ```text
 Level | Call             | Subarray        | Pivot | left         | middle | right
@@ -181,7 +181,7 @@ quicksort([5, 3, 8, 4, 2]) pivot = 8
 |-- quicksort([]) No pivot (empty array)
 ```
 
-> **A note.** In the notes themselves the tree is drawn as if even single-element subarrays had two empty `quicksort([])` calls underneath. That is just a way to draw the tree "all the way down": in the code the base case is `len(arr) <= 1`, so the call `quicksort([3])` returns **immediately**, spawning no children. For full fidelity to the notes, the same example also prints the "textbook" variant with the empty branches drawn in:
+> **A note.** This tree is often drawn as if even single-element subarrays had two empty `quicksort([])` calls underneath. That is just a way to draw the tree "all the way down": in the code the base case is `len(arr) <= 1`, so the call `quicksort([3])` returns **immediately**, spawning no children. For completeness, the same example also prints the fully expanded variant with the empty branches drawn in:
 
 ```text
 quicksort([5, 3, 8, 4, 2]) pivot = 8
@@ -197,7 +197,7 @@ quicksort([5, 3, 8, 4, 2]) pivot = 8
 |-- quicksort([]) No pivot (empty array)
 ```
 
-Concatenating the results of all the calls gives `[2, 3, 4, 5, 8]` — exactly as in the notes.
+Concatenating the results of all the calls gives `[2, 3, 4, 5, 8]` — the fully sorted array.
 
 ## 6. Pivot choice and complexity: balanced vs. degenerate tree
 
@@ -269,11 +269,11 @@ Stability (equal keys — is their order preserved?):
 - **The three-way version (list comprehensions) is stable.** Each list (`left`, `middle`, `right`) is built by a comprehension that **preserves the order** of the original array; values equal to the pivot land in `middle` in their original order and are never rearranged again. So the fours come out as `4₁, 4₂, 4₃, 4₄`.
 - **The classic in-place version (Lomuto partition) is NOT stable.** Partitioning in place makes swaps "across the whole array" that can "leapfrog" an equal key: the fours come out reordered (`4₃, 4₄, 4₂, 4₁`). This is the **expected** property of classic in-place quicksort — we do not promise stability where there is none.
 
-> **The honest takeaway.** The version from the notes (three-way, on list comprehensions) is **stable**, but works **out of place** — it needs $O(n)$ extra memory for the new lists. Classic in-place quicksort is cheaper on memory but **unstable**. That is the main trade-off between the two implementations.
+> **The honest takeaway.** The three-way version (on list comprehensions) is **stable**, but works **out of place** — it needs $O(n)$ extra memory for the new lists. Classic in-place quicksort is cheaper on memory but **unstable**. That is the main trade-off between the two implementations.
 
 ## 9. The second implementation: classic in-place quicksort
 
-The version from the notes is visual, but it creates new lists at every level — that is $O(n)$ extra memory. **Classic** quicksort sorts **in place**, rearranging elements within the array itself with two indices (**Lomuto partition**):
+The three-way version is visual, but it creates new lists at every level — that is $O(n)$ extra memory. **Classic** quicksort sorts **in place**, rearranging elements within the array itself with two indices (**Lomuto partition**):
 
 ```python
 def quicksort_inplace(arr, lo=0, hi=None):
@@ -300,7 +300,7 @@ The full version in [`quick_sort/core.py`](quick_sort/core.py) also takes a pivo
 
 **The trade-off between the two implementations:**
 
-| | Three-way (from the notes) | Classic in-place (Lomuto) |
+| | Three-way | Classic in-place (Lomuto) |
 |---|---|---|
 | **Memory** | $O(n)$ (new lists) | $O(\log n)$ stack on average |
 | **Stability** | ✅ stable | ❌ unstable |
@@ -313,7 +313,7 @@ In practice the in-place variant is the one used (it is cache-friendly and fast)
 
 The examples above showed the *result* of each call. Here is **the code in action**: on the left a fragment of the algorithm with **highlighted active lines**, on the right the data of the current call. The line color encodes the step: 🟡 choosing the pivot, 🔵/🟪/🟧 the three list comprehensions (`left`/`middle`/`right`), 🟢 the return-concatenation, ⬜ the base case.
 
-We build this for the array from the notes `[5, 3, 8, 4, 2]` (generated by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)). Each grid row is one call of the recursion tree:
+We build this for the example array `[5, 3, 8, 4, 2]` (generated by [`examples/05_code_walkthrough.py`](examples/05_code_walkthrough.py)). Each grid row is one call of the recursion tree:
 
 ![Code ↔ data: the array [5, 3, 8, 4, 2]](docs/images/en/code_steps_conspect.png)
 
@@ -379,8 +379,8 @@ How much work quick sort does depends on how well the pivot is chosen:
 
 Other properties:
 
-- **Memory:** the classic in-place version is $O(\log n)$ on average (the recursion stack depth); the version from the notes is $O(n)$ (new lists at every level).
-- **Stability:** the three-way version from the notes is **stable**; the classic in-place one is **not**.
+- **Memory:** the classic in-place version is $O(\log n)$ on average (the recursion stack depth); the three-way version is $O(n)$ (new lists at every level).
+- **Stability:** the three-way version is **stable**; the classic in-place one is **not**.
 - **Divide and conquer:** the first algorithm in this series that achieves $O(n\log n)$ instead of $O(n^2)$.
 
 Let us compare the growth of the comparison count in the balanced ($\approx n\log_2 n$) and degenerate ($\approx n^2/2$) cases:
@@ -428,6 +428,6 @@ When **stability** or a **guaranteed** $O(n\log n)$ is required — use merge so
 - **The central image is the recursion tree**: the shape of the tree determines the complexity. A balanced tree → $O(n\log n)$ (average/best case), a degenerate one (a chain) → $O(n^2)$ (worst case).
 - **The pivot choice is the key decision.** The middle pivot on a sorted input gives perfect balance (the median!), while the first/last pivot gives a degenerate tree. Randomization / median-of-three / introsort make the worst case practically impossible.
 - **The three-way split** gathers everything equal to the pivot into `middle` at once — a large number of duplicates actually speeds up the sort (the Dutch-national-flag motivation).
-- **Two implementations, one trade-off:** the three-way one from the notes is stable but $O(n)$ memory; the classic in-place one is $O(\log n)$ memory but unstable.
+- **Two implementations, one trade-off:** the three-way one is stable but $O(n)$ memory; the classic in-place one is $O(\log n)$ memory but unstable.
 - This is the **first non-quadratic** algorithm of the series — a vivid bridge from the simple $O(n^2)$ sorts to $O(n\log n)$ and to the related **merge sort**.
 

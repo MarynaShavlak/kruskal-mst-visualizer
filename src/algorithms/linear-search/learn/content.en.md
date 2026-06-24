@@ -10,7 +10,7 @@ Imagine looking for a particular book on a shelf, **scanning it left to right** 
 
 ![Left-to-right scan searching for 8](docs/images/en/scan_intuition.png)
 
-The current cell (the one we are checking *right now*) is marked **pink** — as in the notes. As soon as we find a match the cell turns **green** and the search stops: there is no need to look at the rest of the array.
+The current cell (the one we are checking *right now*) is marked **pink**. As soon as we find a match the cell turns **green** and the search stops: there is no need to look at the rest of the array.
 
 ## 2. The idea: check one by one
 
@@ -35,9 +35,9 @@ The first is needed when *where* the element lies matters; the second — when o
 
 ## 4. Example — the array `[5, 3, 8, 1, 4]`, searching for `8`
 
-### The base implementation (code from the notes)
+### The base implementation
 
-Here is the implementation from the notes — the one we walk through line by line (the fully documented version is in [`linear_search/core.py`](linear_search/core.py)):
+Here is the base implementation — the one we walk through line by line (the fully documented version is in [`linear_search/core.py`](linear_search/core.py)):
 
 ```python
 def linear_search(arr, x):
@@ -124,7 +124,7 @@ Target:  8
 Result: index 2   ·   checks: 3
 ```
 
-And here are the example outputs from the notes — on the sorted array `[1, 3, 5, 7, 9, 11]` (also reproduced by [`examples/01_intro.py`](examples/01_intro.py)):
+And here are the example outputs — on the sorted array `[1, 3, 5, 7, 9, 11]` (also reproduced by [`examples/01_intro.py`](examples/01_intro.py)):
 
 ```text
 linear_search([1, 3, 5, 7, 9, 11], 7)  -> 3

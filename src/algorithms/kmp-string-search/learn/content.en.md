@@ -34,9 +34,9 @@ Together that is $O(n+m)$, linear. Below we take each phase separately.
 
 `lps[i]` is the length of the longest **proper** prefix of the segment `pattern[0..i]` that is **also its suffix** (proper means not equal to the whole segment). The table tells how far to "roll back" the pattern index `j` on a mismatch during the search, so we never go back to the start of the pattern.
 
-### The `compute_lps` code (from the notes)
+### The `compute_lps` code
 
-Here is the implementation from the source notes — the very one we walk through line by line (the fully documented version is in [`knuth_morris_pratt_search/core.py`](knuth_morris_pratt_search/core.py)):
+Here is the base implementation — the very one we walk through line by line (the fully documented version is in [`knuth_morris_pratt_search/core.py`](knuth_morris_pratt_search/core.py)):
 
 ```python
 def compute_lps(pattern):
@@ -57,7 +57,7 @@ def compute_lps(pattern):
     return lps
 ```
 
-The build algorithm (from the notes):
+The build algorithm:
 
 1. Initialise the longest-prefix length to `0` (`length = 0`). Start iterating from index `1` (because `lps[0] = 0` always: a single character has no proper prefix-suffix).
 2. Compare the character at the current position `i` with the character at position `length`.
@@ -114,7 +114,7 @@ Build frames (blue is the matched **prefix**, purple is the **suffix**, with the
 
 | Pattern | `lps` | Notable for |
 |---|---|---|
-| `ABAB` | `[0, 0, 1, 2]` | the notes example |
+| `ABAB` | `[0, 0, 1, 2]` | the example |
 | `AABAA` | `[0, 1, 0, 1, 2]` | showcase of the fall-back step |
 | `ABABCABAB` | `[0, 0, 1, 2, 0, 1, 2, 3, 4]` | the naive-example pattern |
 | `AAAAB` | `[0, 1, 2, 3, 0]` | the pathological pattern |
@@ -128,7 +128,7 @@ Build frames (blue is the matched **prefix**, purple is the **suffix**, with the
 
 ## 4. Phase 2 — search
 
-### The `kmp_search` code (from the notes)
+### The `kmp_search` code
 
 ```python
 def kmp_search(main_string, pattern):
@@ -149,16 +149,16 @@ def kmp_search(main_string, pattern):
     return -1  # if the substring is not found
 ```
 
-The search logic (from the notes): compare `pattern[j]` and `main_string[i]`:
+The search logic: compare `pattern[j]` and `main_string[i]`:
 - **match** → advance both indices (`i += 1`, `j += 1`);
 - **mismatch** and `j != 0` → roll back **only the pattern** (`j = lps[j - 1]`), keeping the text index `i` **in place** — this is a forward jump of the pattern by `j - lps[j-1]` positions;
 - **mismatch** and `j == 0` → advance `i` (compare the pattern from the start);
 - when `j == M` — all pattern characters matched; return the start position `i - j`;
 - if the pass finishes — return `-1`.
 
-### The notes example: searching for «алг» → 4
+### The example: searching for «алг» → 4
 
-Let us reproduce the main example from the notes. The pattern and the text are **data** (they stay in Cyrillic in both languages):
+Let us reproduce the main example. The pattern and the text are **data** (they stay in Cyrillic in both languages):
 
 ```python
 raw = "Цей алгоритм часто використовується в текстових редакторах та системах пошуку для ефективного знаходження підрядка в тексті."
@@ -198,7 +198,7 @@ Here is where KMP shines. Take the canonical example from the naive walkthrough:
 
 That is why the text index `i` in KMP **grows monotonically**, whereas in the naive method the comparison position `i+j` "rolls back" after every mismatch (the "saw" in the chart above).
 
-▶️ The notes-example search in motion (windowed — the search reads only the beginning of the text):
+▶️ The example search in motion (windowed — the search reads only the beginning of the text):
 
 ![Animation: searching for «алг»](docs/images/en/search_konspekt.gif)
 
@@ -255,9 +255,9 @@ The examples above showed the *result* of each step. Here is **the code in actio
 
 ![Code ↔ alignment](docs/images/en/code_search_grid.png)
 
-## 7. Full step-by-step trace of the notes example
+## 7. Full step-by-step trace of the example
 
-Below is the same execution, but **fully** and in two phases: first the build of the `lps` table for the pattern «алг», then the search itself in the notes text. Each step is a separate code ↔ data frame with a detailed explanation under it. The colours are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event journals (by [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same execution, but **fully** and in two phases: first the build of the `lps` table for the pattern «алг», then the search itself in the example text. Each step is a separate code ↔ data frame with a detailed explanation under it. The colours are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event journals (by [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
 ### Phase 1 — preprocessing: the `lps` table of pattern «алг»
 
@@ -285,7 +285,7 @@ Step `i = 2`, `length = 0`. `pattern[2] = «г»` ≠ `pattern[0] = «а»`, and
 
 The `lps` table is built: `[0, 0, 0]` — in 2 character comparisons. For «алг» it is trivial (all characters differ), yet it is exactly what drives the jumps in the search phase.
 
-### Phase 2 — searching for «алг» in the konspekt text
+### Phase 2 — searching for «алг» in the example text
 
 #### Step S00
 
@@ -357,7 +357,7 @@ Edge cases (verified in [`tests/`](tests)):
 | **empty** pattern | the verbatim `kmp_search` raises `IndexError` (because of `pattern[0]` on an empty pattern)! Safe handling (`0`) is provided by `kmp_search_all` and `kmp_search_steps` |
 | **multiple** occurrences | `kmp_search` returns the first; `kmp_search_all` returns all (including overlapping ones) |
 
-> **About the empty pattern.** The notes code is kept **verbatim** on purpose, so on an empty pattern `pattern[j]` (i.e. `pattern[0]`) immediately raises `IndexError`. This is an honest limit of the verbatim implementation; the instrumented versions handle it safely.
+> **About the empty pattern.** The code is kept **verbatim** on purpose, so on an empty pattern `pattern[j]` (i.e. `pattern[0]`) immediately raises `IndexError`. This is an honest limit of the verbatim implementation; the instrumented versions handle it safely.
 
 ## 9. Place in the series of string algorithms
 
@@ -370,7 +370,7 @@ KMP is the **second** string algorithm in the series and the **direct successor*
 | Boyer–Moore | $O(n \cdot m)$, but fast in practice | tables in $O(m + \sigma)$ | compare **from the end**, big jumps by the "bad character" |
 | Rabin–Karp | $O(n + m)$ on average | hashing | a rolling **hash** instead of char-by-char comparison |
 
-**KMP's niche** (from the notes): text editors and search systems — for efficiently finding a substring in text, especially when guaranteed linearity matters.
+**KMP's niche**: text editors and search systems — for efficiently finding a substring in text, especially when guaranteed linearity matters.
 
 ## 10. Summary
 
@@ -379,5 +379,5 @@ KMP is the **second** string algorithm in the series and the **direct successor*
 - **Two phases:** the preprocessing `compute_lps` ($O(m)$, never touches the text) and the search `kmp_search` ($O(n)$, one pass).
 - On a mismatch KMP does `j = lps[j-1]` — a **forward jump of the pattern** without re-reading the text; the text index `i` **never rolls back** (unlike the naive method).
 - Against the naive $O(n\cdot m)$/$O(n^2)$ on pathological inputs KMP stays linear; on the same inputs it makes **substantially fewer** character comparisons in the text.
-- The notes example `print(kmp_search(raw, "алг"))` prints **4**.
+- The example `print(kmp_search(raw, "алг"))` prints **4**.
 

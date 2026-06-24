@@ -36,7 +36,7 @@ Polynomial hashing treats each character of a string as a **polynomial coefficie
 
 $$h(s) = \sum_{i=0}^{n-1} s[i]\cdot b^{\,n-i-1} \bmod m,$$
 
-where $s[i]$ is the numeric code of the character (`ord`), $b$ is the base, and $m$ is the modulus (here the prime 101). Here is the implementation from the synopsis — the one we walk through line by line (the fully documented version is in [`rabin_karp_string_search/core.py`](rabin_karp_string_search/core.py)):
+where $s[i]$ is the numeric code of the character (`ord`), $b$ is the base, and $m$ is the modulus (here the prime 101). Here is the base implementation — the one we walk through line by line (the fully documented version is in [`rabin_karp_string_search/core.py`](rabin_karp_string_search/core.py)):
 
 ```python
 def polynomial_hash(s, base=256, modulus=101):
@@ -62,7 +62,7 @@ The number `6382179` is already sizable — and on long strings it grows exponen
 
 $$6382179 \bmod 101 = 90.$$
 
-The hashes are printed by [`examples/01_polynomial_hash.py`](examples/01_polynomial_hash.py) — exactly as in the synopsis:
+The hashes are printed by [`examples/01_polynomial_hash.py`](examples/01_polynomial_hash.py):
 
 ```text
 polynomial_hash("abc") = 90
@@ -97,7 +97,7 @@ Step-by-step Horner accumulation for «developer»:
 
 ## 4. Phase 2 — search
 
-### The `rabin_karp_search` code (from the synopsis)
+### The `rabin_karp_search` code
 
 ```python
 def rabin_karp_search(main_string, substring):
@@ -125,7 +125,7 @@ def rabin_karp_search(main_string, substring):
     return -1
 ```
 
-The search logic (from the synopsis):
+The search logic:
 
 1. Compute the hash of the **pattern** (`substring_hash`) and the hash of the **first window** of the text (`current_slice_hash`).
 2. Compare the window's and the pattern's hashes:
@@ -134,9 +134,9 @@ The search logic (from the synopsis):
 3. While shifting the window, **recompute the hash** by subtracting the old (left) character and adding the new (right) one — this is the rolling hash, instead of recomputing from scratch.
 4. If no window yields a confirmed match — return `-1`.
 
-### The synopsis example: searching for «developer» → 8
+### The example: searching for «developer» → 8
 
-Let us reproduce the main example of the synopsis. The driver, verbatim:
+Let us reproduce the main example. The driver, verbatim:
 
 ```python
 main_string = "Being a developer is not easy"
@@ -174,7 +174,7 @@ The substring «developer» begins at position 8. The pattern's hash is `35`. He
 
 Note **offset 6**: the window `"a develop"` has hash `35` — **the same** as the pattern! But the character check shows that `"a develop" ≠ "developer"` — this is a **collision**, and the algorithm slides on. The real match comes only at offset 8. In total: 9 hash comparisons, yet only **2** character checks (one of which is a collision).
 
-▶️ The synopsis search in motion (the window slides, the hash "rolls"):
+▶️ The search in motion (the window slides, the hash "rolls"):
 
 ![Animation: searching for «developer»](docs/images/en/search_konspekt.gif)
 
@@ -283,9 +283,9 @@ The examples above showed the *result* of each step. Here is **the code itself i
 
 ![Code ↔ sliding window](docs/images/en/code_search_grid.png)
 
-## 8. Full step-by-step trace of the synopsis example
+## 8. Full step-by-step trace of the example
 
-Below is the same execution, but **in full** and in two phases: first the computation of the hash of the pattern «developer», then the search itself in the synopsis text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
+Below is the same execution, but **in full** and in two phases: first the computation of the hash of the pattern «developer», then the search itself in the example text. Each step is a separate «code ↔ data» frame with a detailed explanation beneath it. The colors are the same as in the [legend above](#code-walkthrough). The block is generated automatically from the event logs (the example [`examples/06_full_walkthrough.py`](examples/06_full_walkthrough.py)).
 
 ### Phase 1 — hashing: the polynomial hash of pattern «developer»
 
@@ -355,7 +355,7 @@ Step `i = 8`: character «r» (code `ord = 114`). Power `pow(256, 0) % 101 = 1`,
 
 The hash of pattern «developer» is computed: **35**. This is the number we will compare against every window's hash — instead of comparing characters.
 
-### Phase 2 — searching for «developer» in the konspekt text
+### Phase 2 — searching for «developer» in the example text
 
 #### Step S00
 
@@ -452,7 +452,7 @@ Let us compare the number of **character** comparisons across all four on the sa
 ```text
   input                            |  naive  |  KMP  | Boyer-Moore | Rabin-Karp (char + hash)
   -------------------------------------------------------------------------------------------
-  konspekt «developer»             |   29    |  25   |     10      | 10 char + 9 hash
+  example «developer»              |   29    |  25   |     10      | 10 char + 9 hash
   pathological «aaaa…» / «aaaaab»  |   114   |  52   |     19      | 0 char + 19 hash
 ```
 
@@ -469,5 +469,5 @@ Rabin-Karp does the **fewest character** comparisons — because it mostly compa
 - **Rolling hash** updates the window hash in $O(1)$ (subtract the left character, add the right one) — instead of recomputing from scratch in $O(m)$.
 - **Collisions** — equal hashes ≠ equal strings (`for` and `jar` → both `35`); hence a character check is mandatory on a hash match. A modulus and a prime reduce collisions.
 - **Complexity:** $O(n+m)$ on average, $O(n\cdot m)$ in the worst case; the algorithm shines when matches are few and when occurrences are many.
-- The synopsis example `rabin_karp_search("Being a developer is not easy", "developer")` prints **Substring found at index 8**.
+- The example `rabin_karp_search("Being a developer is not easy", "developer")` prints **Substring found at index 8**.
 

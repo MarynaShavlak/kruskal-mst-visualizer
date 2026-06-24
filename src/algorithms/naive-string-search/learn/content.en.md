@@ -18,7 +18,7 @@ The current pair of compared characters is joined by a "text ↔ pattern" **brid
 
 ## 2. The idea: slide the pattern
 
-The core principle (from the notes): compare each character of the main string with the first character of the pattern; if they match — compare the next characters to the end of the pattern. The steps for each character of the main string:
+The core principle: compare each character of the main string with the first character of the pattern; if they match — compare the next characters to the end of the pattern. The steps for each character of the main string:
 
 1. Compare this character and the following ones with the pattern characters.
 2. If **all** pattern characters matched — the substring is found.
@@ -37,9 +37,9 @@ The method's work is described by **two** indices:
 
 At each alignment `i` the inner loop runs `j = 0, 1, 2, …` and compares `main_string[i + j]` with `pattern[j]` while the characters match. On a mismatch — `break`, and the outer loop shifts the pattern (`i + 1`), restarting the comparison from `j = 0`.
 
-## 4. Base implementation (the code from the notes)
+## 4. Base implementation
 
-Here is the implementation from the notes — the one we walk through line by line (the full, documented version is in [`naive_string_search/core.py`](naive_string_search/core.py)):
+Here is the base implementation — the one we walk through line by line (the full, documented version is in [`naive_string_search/core.py`](naive_string_search/core.py)):
 
 ```python
 def naive_search(main_string, pattern):
@@ -83,7 +83,7 @@ What is what:
 
 The teaching version [`naive_search_steps`](naive_string_search/core.py) repeats this code **step for step** but, after each comparison, records a state snapshot and the counters (comparisons, alignments, shifts) — all the pictures below are assembled from those snapshots.
 
-Running the driver from the notes prints exactly:
+Running the driver prints exactly:
 
 ```text
 Substring found at position 10
@@ -170,7 +170,7 @@ This very redundancy is what makes the naive method slow on "structured" texts. 
 
 ## 10. (In)efficiency: the "not found" case
 
-When the pattern is absent from the text, the naive method honestly tries **all** alignments to the end and returns `-1` (the `else` branch prints the line from the notes). Text `ABABABABAB`, pattern `ABABB` — the repeated prefix `ABAB` produces a partial match at every other alignment, all in vain:
+When the pattern is absent from the text, the naive method honestly tries **all** alignments to the end and returns `-1` (the `else` branch prints the corresponding line). Text `ABABABABAB`, pattern `ABABB` — the repeated prefix `ABAB` produces a partial match at every other alignment, all in vain:
 
 ![Alignment grid for the "not found" case](docs/images/en/not_found_grid.png)
 
@@ -392,7 +392,7 @@ This is the **first string algorithm** in the series — it **opens the string-s
 | Shell sort | [algo-shell-sort](https://github.com/MarynaShavlak/algo-shell-sort) |
 | Radix sort | [algo-radix-sort](https://github.com/MarynaShavlak/algo-radix-sort) |
 
-**Where to next.** The naive method wastes work on re-comparisons — and that is exactly what the smarter successors remove (the notes name them directly):
+**Where to next.** The naive method wastes work on re-comparisons — and that is exactly what the smarter successors remove:
 
 | Algorithm | Time | Idea |
 |---|---|---|
