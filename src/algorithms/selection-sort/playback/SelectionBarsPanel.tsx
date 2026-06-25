@@ -1,11 +1,8 @@
-import { ArrowDown, ArrowLeftRight } from "lucide-react"
+import { ArrowLeftRight } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
-import {
-  barRole,
-  barHeightPct,
-  type BarRole,
-} from "@/algorithms/selection-sort/playback/highlight"
+import { KeyedBars } from "@/algorithms/shared/playback/KeyedBars"
+import { barRole, type BarRole } from "@/algorithms/selection-sort/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -61,78 +58,40 @@ export function SelectionBars({
   height = 220,
   size = "md",
 }: SelectionBarsProps) {
-  const max = Math.max(1, ...array, keyValue ?? 0)
-  const valueText = size === "lg" ? "text-sm" : "text-[11px]"
-  const idxText = size === "lg" ? "text-xs" : "text-[10px]"
-  // Зарезервована зона зверху під плаваючий мінімум / стрілку обміну (≈ 40%).
-  const keyZone = Math.round(height * 0.4)
   // Стандартний обмін: обидва кінці задані → показуємо ↔ над парою.
   const showSwapArrow = placedAt !== null && swapAt !== null
   return (
-    <div className="flex items-end justify-center gap-1.5" style={{ height: height + keyZone + 16 }}>
-      {array.map((v, i) => {
-        const role = barRole(i, { sortedTo, minIdx, placedAt, swapAt, hole })
-        const isHole = role === "hole"
-        const active = role === "swap" || role === "placed" || role === "min"
-        const showKey = hole !== null && i === hole && keyValue !== null
-        const isSwapEnd = showSwapArrow && (i === placedAt || i === swapAt)
-        const isCursor = cursor !== null && i === cursor
-        return (
-          <div
-            key={i}
-            className="flex min-w-[1.5rem] flex-1 flex-col items-center justify-end gap-1"
-            style={{ height: height + keyZone + 16 }}
+    <KeyedBars
+      array={array}
+      roleAt={(i) => barRole(i, { sortedTo, minIdx, placedAt, swapAt, hole })}
+      classMap={BAR_CLASS}
+      hole={hole}
+      keyValue={keyValue}
+      isActive={(role) => role === "swap" || role === "placed" || role === "min"}
+      height={height}
+      size={size}
+      extraBottom={16}
+      keyZoneOverlay={(i) =>
+        showSwapArrow && (i === placedAt || i === swapAt) ? (
+          <ArrowLeftRight className="size-4 text-rose-600 dark:text-rose-400" />
+        ) : null
+      }
+      renderIndex={(i, idxText) => (
+        <>
+          <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
+          {/* Курсор j: фіолетовий ▲ під стовпчиком. */}
+          <span
+            className={cn(
+              "leading-none text-violet-600 dark:text-violet-400",
+              idxText,
+              cursor !== null && i === cursor ? "opacity-100" : "opacity-0",
+            )}
           >
-            {/* Зона зверху: вийнятий мінімум «у руці» або стрілка обміну ↔. */}
-            <div className="flex w-full flex-col items-center justify-end gap-0.5" style={{ height: keyZone }}>
-              {showKey && (
-                <>
-                  <span className={cn("font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300", valueText)}>
-                    {keyValue}
-                  </span>
-                  <div
-                    className="w-full rounded-t bg-amber-400/80 dark:bg-amber-400/70"
-                    style={{ height: `${Math.max(8, ((keyValue ?? 0) / max) * (keyZone - 28))}px` }}
-                  />
-                  <ArrowDown className="size-3 text-amber-600 dark:text-amber-400" />
-                </>
-              )}
-              {!showKey && isSwapEnd && (
-                <ArrowLeftRight className="size-4 text-rose-600 dark:text-rose-400" />
-              )}
-            </div>
-            {/* Сам стовпчик / порожня «дірка». */}
-            <div className="flex w-full flex-col items-center justify-end gap-1" style={{ height }}>
-              <span
-                className={cn(
-                  "font-medium tabular-nums leading-none",
-                  valueText,
-                  isHole && "opacity-0",
-                  active ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                {v}
-              </span>
-              <div
-                className={cn("w-full rounded-t transition-all", BAR_CLASS[role])}
-                style={{ height: isHole ? "100%" : `${barHeightPct(v, max)}%` }}
-              />
-            </div>
-            <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
-            {/* Курсор j: фіолетовий ▲ під стовпчиком. */}
-            <span
-              className={cn(
-                "leading-none text-violet-600 dark:text-violet-400",
-                idxText,
-                isCursor ? "opacity-100" : "opacity-0",
-              )}
-            >
-              ▲
-            </span>
-          </div>
-        )
-      })}
-    </div>
+            ▲
+          </span>
+        </>
+      )}
+    />
   )
 }
 
