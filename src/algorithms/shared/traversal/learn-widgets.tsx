@@ -89,7 +89,7 @@ export function TraversalWalkthrough({
     >
       {variant === "full" ? (
         <>
-          <span className="grid gap-3 lg:grid-cols-3">
+          <span className="grid gap-3 lg:grid-cols-2">
             <GraphView
               graph={graph}
               positions={positions}
@@ -103,10 +103,10 @@ export function TraversalWalkthrough({
               contextLines={frame.contextLines}
               className="h-[260px]"
             />
-            <FrontierPanel frame={frame} className="h-[260px]" />
           </span>
-          <span className="mt-3 block">
-            <VisitOrderPanel frame={frame} />
+          <span className="mt-3 grid gap-3 sm:grid-cols-2">
+            <FrontierPanel frame={frame} className="h-[120px]" />
+            <VisitOrderPanel frame={frame} className="h-[120px]" />
           </span>
         </>
       ) : (

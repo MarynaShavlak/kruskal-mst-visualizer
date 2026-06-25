@@ -50,30 +50,38 @@ export function DijkstraWalkthrough({
       frameCount={trace.frames.length}
       caption={frame.caption}
     >
-      <span
-        className={
-          variant === "full"
-            ? "grid gap-3 lg:grid-cols-3"
-            : "grid gap-3 sm:grid-cols-2"
-        }
-      >
-        <GraphView
-          graph={graph}
-          positions={positions}
-          frame={frame}
-          className="h-[280px]"
-        />
-        {variant === "full" && (
-          <CodePanel
-            code={trace.code}
-            title={t("play.dijkCode")}
-            activeLines={frame.lines}
-            contextLines={frame.contextLines}
+      {variant === "full" ? (
+        <>
+          <span className="grid gap-3 lg:grid-cols-2">
+            <GraphView
+              graph={graph}
+              positions={positions}
+              frame={frame}
+              className="h-[280px]"
+            />
+            <CodePanel
+              code={trace.code}
+              title={t("play.dijkCode")}
+              activeLines={frame.lines}
+              contextLines={frame.contextLines}
+              className="h-[280px]"
+            />
+          </span>
+          <span className="mt-3 block">
+            <DistanceTablePanel graph={graph} frame={frame} />
+          </span>
+        </>
+      ) : (
+        <span className="grid gap-3 sm:grid-cols-2">
+          <GraphView
+            graph={graph}
+            positions={positions}
+            frame={frame}
             className="h-[280px]"
           />
-        )}
-        <DistanceTablePanel graph={graph} frame={frame} className="h-[280px]" />
-      </span>
+          <DistanceTablePanel graph={graph} frame={frame} className="h-[280px]" />
+        </span>
+      )}
     </MiniPlayerShell>
   )
 }
