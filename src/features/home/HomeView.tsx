@@ -2,7 +2,11 @@ import { useState } from "react"
 import { ArrowRight, Table2 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FilterChip } from "@/components/filter-chip"
-import { COMPLEXITY_CLASSES, algorithmsByFamily } from "@/algorithms/registry"
+import {
+  COMPLEXITY_CLASSES,
+  algorithmsByFamily,
+  bridgeTo,
+} from "@/algorithms/registry"
 import { navigateTo, navigateToPage } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
@@ -76,6 +80,73 @@ function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
   )
 }
 
+/**
+ * Rail «Навчальні шляхи»: для кожної родини показує її алгоритми у порядку
+ * курсу (з ланцюга `BRIDGES`) як клікабельні чипи, з'єднані стрілками. Дає
+ * оглядову мапу рекомендованої послідовності перед зануренням у картки.
+ */
+function PathsRail({ lang }: { lang: Lang }) {
+  const t = useT()
+  const groups = algorithmsByFamily()
+
+  return (
+    <section
+      className="space-y-3 rounded-xl border bg-muted/20 p-4"
+      aria-labelledby="paths-rail-heading"
+    >
+      <div className="space-y-1">
+        <h3 id="paths-rail-heading" className="text-base font-semibold">
+          {t("home.pathsHeading")}
+        </h3>
+        <p className="text-sm text-muted-foreground">{t("home.pathsIntro")}</p>
+      </div>
+      <div className="space-y-3">
+        {groups.map((g) => (
+          <div key={g.family.id} className="space-y-1.5">
+            <span className="text-xs font-medium text-muted-foreground">
+              {g.family.label[lang]}
+            </span>
+            <ol className="flex flex-wrap items-center gap-x-1 gap-y-2">
+              {g.items.map((algo, i) => {
+                const ready = algo.status === "ready"
+                // Стрілка перед елементом, якщо до нього веде місток від
+                // попереднього алгоритму ТІЄЇ Ж родини (ланцюг не рветься).
+                const prev = i > 0 ? g.items[i - 1] : undefined
+                const linked =
+                  prev != null && bridgeTo(algo.id)?.from === prev.id
+                return (
+                  <li key={algo.id} className="flex items-center gap-1">
+                    {i > 0 && (
+                      <ArrowRight
+                        className={
+                          linked
+                            ? "size-3.5 text-muted-foreground/70"
+                            : "size-3.5 text-muted-foreground/30"
+                        }
+                        aria-hidden
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigateTo(algo.id, ready ? algo.defaultTab : null)
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1 text-xs font-medium transition outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <algo.icon className="size-3.5 text-foreground/70" />
+                      {algo.shortName[lang]}
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 /** Каталог: картки за родиною + дві фасети-фільтри (родина / клас складності). */
 export function HomeView() {
   const t = useT()
@@ -111,6 +182,8 @@ export function HomeView() {
           {t("compare.title")}
         </button>
       </div>
+
+      <PathsRail lang={lang} />
 
       {/* Липка панель фасет: родина (зверху) + клас складності (знизу). */}
       <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b bg-background/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/70">

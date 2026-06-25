@@ -76,6 +76,12 @@ const ua = {
   "home.complexityHint": "Часова складність",
   "home.complexityTypical": "типова",
   "home.complexityWorst": "найгірша",
+  "home.pathsHeading": "Навчальні шляхи",
+  "home.pathsIntro":
+    "Рекомендована послідовність: кожен алгоритм природно веде до наступного.",
+
+  "shell.prevAlgo": "Попередній",
+  "shell.nextAlgo": "Наступний",
 
   "compare.title": "Матриця складності",
   "compare.intro":
@@ -108,6 +114,10 @@ const ua = {
   "learn.quizWhy": "Чому:",
   "learn.quizReset": "Спробувати ще раз",
   "learn.quizPickHint": "Обери варіант, щоб перевірити себе.",
+  // Місточки «Звідки/Куди» — навчальні шляхи між алгоритмами (дані в BRIDGES).
+  "learn.bridgeFromTitle": "Звідки",
+  "learn.bridgeToTitle": "Куди далі",
+  "learn.bridgeGoLabel": "Відкрити",
   "toc.title": "Зміст",
   // Крупний план клітинки ДП (навчальний віджет).
   "learn.knapCellTake": "взяти",
@@ -2082,6 +2092,12 @@ const en: Record<MessageKey, string> = {
   "home.complexityHint": "Time complexity",
   "home.complexityTypical": "typical",
   "home.complexityWorst": "worst",
+  "home.pathsHeading": "Learning paths",
+  "home.pathsIntro":
+    "A recommended sequence: each algorithm naturally leads to the next.",
+
+  "shell.prevAlgo": "Previous",
+  "shell.nextAlgo": "Next",
 
   "compare.title": "Complexity matrix",
   "compare.intro":
@@ -2114,6 +2130,10 @@ const en: Record<MessageKey, string> = {
   "learn.quizWhy": "Why:",
   "learn.quizReset": "Try again",
   "learn.quizPickHint": "Pick an option to check yourself.",
+  // Bridges "From/Where next" — learning paths between algorithms (data in BRIDGES).
+  "learn.bridgeFromTitle": "From",
+  "learn.bridgeToTitle": "Where next",
+  "learn.bridgeGoLabel": "Open",
   "toc.title": "Contents",
   // DP cell close-up (learn widget).
   "learn.knapCellTake": "take",

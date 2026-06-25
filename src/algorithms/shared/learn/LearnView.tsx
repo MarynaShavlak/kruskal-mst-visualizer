@@ -11,6 +11,7 @@ import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
 import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
+import { BridgeNav } from "@/algorithms/shared/learn/BridgeNav"
 
 /**
  * Спільна навчальна вкладка: README через react-markdown із TOC, scroll-spy,
@@ -21,9 +22,12 @@ import { TableOfContents } from "@/algorithms/shared/learn/TableOfContents"
 export function LearnView({
   content,
   figureForSrc,
+  bridgeAlgoId,
 }: {
   content: Record<Lang, string>
   figureForSrc: (src: string | undefined, alt: string | undefined) => ReactNode
+  /** Перевизначити алгоритм для місточків (інакше береться з роутера). */
+  bridgeAlgoId?: string
 }) {
   const lang = useLangStore((s) => s.lang)
   const setLang = useLangStore((s) => s.setLang)
@@ -152,6 +156,7 @@ export function LearnView({
           >
             {md}
           </Markdown>
+          <BridgeNav bridgeAlgoId={bridgeAlgoId} />
         </article>
       </div>
     </div>

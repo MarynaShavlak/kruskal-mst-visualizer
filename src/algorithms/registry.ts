@@ -165,3 +165,226 @@ export function getAlgorithm(
 export function isAlgorithmId(id: string): boolean {
   return ALGORITHMS.some((a) => a.id === id)
 }
+
+/**
+ * Місток «Звідки → Куди»: спрямоване ребро навчального шляху між двома
+ * алгоритмами з двомовною нотаткою «чому саме це наступне». Декларативний масив
+ * `BRIDGES` — єдине джерело правди для трьох тонких вставок: rail «Шляхи» на
+ * головній, footer «← попередній / наступний →» у розділі та `BridgeNav` у
+ * навчальній вкладці. Нотатки написані СВІЖО (не скопійовані з taglines, які
+ * непослідовні за напрямком).
+ */
+export interface Bridge {
+  /** id алгоритму-джерела (звідки прийшли). */
+  readonly from: string
+  /** id алгоритму-призначення (куди веде логіка курсу). */
+  readonly to: string
+  /** Двомовна нотатка містка: «чому from природно веде до to». */
+  readonly note: Localized
+}
+
+/**
+ * Навчальні містки в порядку курсу. Лінійний ланцюг (один наступник на алгоритм)
+ * — простий і покриває послідовність, у якій родини вивчаються на платформі.
+ */
+export const BRIDGES: readonly Bridge[] = [
+  // Графи: остовні дерева → найкоротші шляхи.
+  {
+    from: "kruskal",
+    to: "prim",
+    note: {
+      ua: "Та сама МОД, інша стратегія: Краскал росте по найлегших ребрах усього графа, Прим — нарощує одне дерево від вершини.",
+      en: "Same MST, different strategy: Kruskal grows from the globally lightest edges, Prim expands a single tree from one vertex.",
+    },
+  },
+  {
+    from: "prim",
+    to: "floyd-warshall",
+    note: {
+      ua: "Від остовного дерева — до найкоротших шляхів: Флойд–Воршал рахує відстані між УСІМА парами вершин.",
+      en: "From spanning trees to shortest paths: Floyd–Warshall computes distances between ALL pairs of vertices.",
+    },
+  },
+  {
+    from: "floyd-warshall",
+    to: "bfs",
+    note: {
+      ua: "Перш ніж зважувати ребра — навчись просто обходити граф: BFS відвідує вершини шарами завширшки.",
+      en: "Before weighting edges, learn to traverse a graph: BFS visits vertices in breadth-first layers.",
+    },
+  },
+  {
+    from: "bfs",
+    to: "dfs",
+    note: {
+      ua: "Той самий обхід, інша черга: DFS іде вглиб стеком, а не шарами, як BFS.",
+      en: "Same traversal, different frontier: DFS dives deep with a stack instead of BFS layers.",
+    },
+  },
+  {
+    from: "dfs",
+    to: "dijkstra",
+    note: {
+      ua: "Додай ваги до обходу — і отримаєш Дейкстру: найкоротші шляхи з однієї вершини за пріоритетною чергою.",
+      en: "Add weights to traversal and you get Dijkstra: single-source shortest paths via a priority queue.",
+    },
+  },
+  // Графи → динамічне програмування.
+  {
+    from: "dijkstra",
+    to: "held-karp",
+    note: {
+      ua: "Коли треба обійти ВСІ вершини й повернутися — це вже комівояжер: Хелд–Карп розв'язує його динамічним програмуванням по бітмасках.",
+      en: "When you must visit ALL vertices and return, it becomes the TSP: Held–Karp solves it with bitmask dynamic programming.",
+    },
+  },
+  {
+    from: "held-karp",
+    to: "knapsack",
+    note: {
+      ua: "Ще одна класична ДП-задача, але простіша за станом: рюкзак 0/1 максимізує вартість за обмеженням ваги.",
+      en: "Another classic DP problem with a simpler state: the 0/1 knapsack maximises value under a weight limit.",
+    },
+  },
+  // ДП → сортування.
+  {
+    from: "knapsack",
+    to: "bubble-sort",
+    note: {
+      ua: "Тепер — фундамент: упорядкування масиву. Бульбашка найпростіша — сусідні обміни, доки масив не впорядкується.",
+      en: "Now the fundamentals: ordering an array. Bubble sort is the simplest — adjacent swaps until the array is sorted.",
+    },
+  },
+  {
+    from: "bubble-sort",
+    to: "insertion-sort",
+    note: {
+      ua: "Замість обмінів сусідів — вставляй кожен елемент на місце у вже впорядкований префікс.",
+      en: "Instead of swapping neighbours, insert each element into its place within the already-sorted prefix.",
+    },
+  },
+  {
+    from: "insertion-sort",
+    to: "selection-sort",
+    note: {
+      ua: "Інша квадратична ідея: щоразу знаходь мінімум решти й став його на початок.",
+      en: "A different quadratic idea: each pass finds the minimum of the rest and places it at the front.",
+    },
+  },
+  {
+    from: "selection-sort",
+    to: "quick-sort",
+    note: {
+      ua: "Перший крок за межі O(n²): «розділяй і володарюй» навколо опорного елемента.",
+      en: "The first step beyond O(n²): divide and conquer around a pivot element.",
+    },
+  },
+  {
+    from: "quick-sort",
+    to: "merge-sort",
+    note: {
+      ua: "Той самий «розділяй і володарюй», але з гарантованим O(n·log n): поділ навпіл і злиття двома вказівниками.",
+      en: "The same divide and conquer but with guaranteed O(n·log n): split in half and merge with two pointers.",
+    },
+  },
+  {
+    from: "merge-sort",
+    to: "heap-sort",
+    note: {
+      ua: "Ще одне гарантоване O(n·log n), але на місці: масив як двійкова купа, з якої щоразу витягуємо корінь.",
+      en: "Another guaranteed O(n·log n), but in place: treat the array as a binary heap and repeatedly extract the root.",
+    },
+  },
+  {
+    from: "heap-sort",
+    to: "shell-sort",
+    note: {
+      ua: "Повертаємось до вставок, але «через крок» gap — субквадратичне узагальнення, що зменшує далекі зсуви.",
+      en: "Back to insertion, but across a gap — a sub-quadratic generalisation that cuts down long-distance shifts.",
+    },
+  },
+  {
+    from: "shell-sort",
+    to: "radix-sort",
+    note: {
+      ua: "А якщо взагалі не порівнювати? Порозрядне сортування розкладає числа по кошиках за цифрами — лінійний час.",
+      en: "What if we never compare at all? Radix sort buckets numbers by their digits — linear time.",
+    },
+  },
+  // Сортування → пошук («винагорода за сортування»).
+  {
+    from: "radix-sort",
+    to: "linear-search",
+    note: {
+      ua: "Масив упорядковано — час шукати в ньому. Найпростіше: лінійний скан зліва направо.",
+      en: "The array is ordered — now search it. The simplest way: a linear scan from left to right.",
+    },
+  },
+  {
+    from: "linear-search",
+    to: "binary-search",
+    note: {
+      ua: "Винагорода за сортування: на впорядкованому масиві дивись у середину й відкидай половину — O(log n).",
+      en: "The reward for sorting: on a sorted array, probe the middle and discard half — O(log n).",
+    },
+  },
+  {
+    from: "binary-search",
+    to: "indexed-sequential-search",
+    note: {
+      ua: "Гібрид двох попередніх: двійковий пошук по розрідженому індексу → потрібний блок → лінійний скан усередині.",
+      en: "A hybrid of the previous two: binary search over a sparse index → the right block → a linear scan inside it.",
+    },
+  },
+  {
+    from: "indexed-sequential-search",
+    to: "interpolation-search",
+    note: {
+      ua: "Та сама ідея «звузити вікно», але пробу обчислюємо формулою інтерполяції — як шукають слово у словнику.",
+      en: "Same window-narrowing idea, but the probe is computed by an interpolation formula — like finding a word in a dictionary.",
+    },
+  },
+  // Пошук → пошук у рядку.
+  {
+    from: "interpolation-search",
+    to: "naive-string-search",
+    note: {
+      ua: "Від числа у масиві — до шаблону в тексті: наївний пошук ставить шаблон на кожне вирівнювання й звіряє посимвольно.",
+      en: "From a number in an array to a pattern in text: naive search slides the pattern over every alignment, comparing char by char.",
+    },
+  },
+  {
+    from: "naive-string-search",
+    to: "kmp-string-search",
+    note: {
+      ua: "Прибираємо марну повторну роботу: таблиця LPS дає шаблону «пам'ять про себе», і індекс тексту ніколи не відкочується.",
+      en: "Cut out the wasted re-work: the LPS table gives the pattern a memory of itself, so the text index never backs up.",
+    },
+  },
+  {
+    from: "kmp-string-search",
+    to: "boyer-moore-string-search",
+    note: {
+      ua: "Інший трюк проти повторів: звіряй СПРАВА НАЛІВО й стрибай уперед за таблицею поганого символу.",
+      en: "A different trick against repeats: compare RIGHT to LEFT and jump ahead via the bad-character table.",
+    },
+  },
+  {
+    from: "boyer-moore-string-search",
+    to: "rabin-karp-string-search",
+    note: {
+      ua: "Замість символів — числа: порівнюй поліноміальні хеші вікон (ковзний хеш за O(1)), а збіг хешів доперевіряй.",
+      en: "Numbers instead of characters: compare polynomial hashes of windows (rolling hash in O(1)), verifying on a hash match.",
+    },
+  },
+]
+
+/** Місток, що ВІДХОДИТЬ від алгоритму (куди він веде далі), або `undefined`. */
+export function bridgeFrom(id: string): Bridge | undefined {
+  return BRIDGES.find((b) => b.from === id)
+}
+
+/** Місток, що ПРИХОДИТЬ до алгоритму (звідки до нього прийшли), або `undefined`. */
+export function bridgeTo(id: string): Bridge | undefined {
+  return BRIDGES.find((b) => b.to === id)
+}

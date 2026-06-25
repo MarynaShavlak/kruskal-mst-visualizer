@@ -10,20 +10,32 @@ describe("Оболонка платформи", () => {
     useLangStore.getState().setLang("ua")
   })
 
+  /** Картка алгоритму в каталозі (role="button" із назвою + описом). Назва
+   * алгоритму тепер з'являється і в rail «Навчальні шляхи», тож звужуємо запит
+   * саме до клікабельної картки. */
+  const algoCard = (shortName: string) =>
+    screen
+      .getAllByRole("button")
+      .find(
+        (el) =>
+          el.getAttribute("role") === "button" &&
+          el.textContent?.includes(shortName),
+      )!
+
   it("за замовчуванням показує каталог алгоритмів", () => {
     render(<App />)
     expect(
       screen.getByRole("heading", { name: "Оберіть алгоритм" }),
     ).toBeInTheDocument()
-    expect(screen.getByText("Краскал (МОД)")).toBeInTheDocument()
-    expect(screen.getByText("Флойд–Воршал")).toBeInTheDocument()
+    expect(algoCard("Краскал (МОД)")).toBeInTheDocument()
+    expect(algoCard("Флойд–Воршал")).toBeInTheDocument()
   })
 
   it("клік по картці Краскала відкриває вкладки розділу й оновлює хеш", async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByText("Краскал (МОД)"))
+    await user.click(algoCard("Краскал (МОД)"))
 
     expect(window.location.hash).toBe("#kruskal/learn")
     for (const name of ["Навчання", "Редактор", "Алгоритм", "Бенчмарк"]) {
@@ -35,12 +47,23 @@ describe("Оболонка платформи", () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByText("Флойд–Воршал"))
+    await user.click(algoCard("Флойд–Воршал"))
 
     expect(window.location.hash).toBe("#floyd-warshall/learn")
     for (const name of ["Навчання", "Редактор", "Алгоритм"]) {
       expect(screen.getByRole("tab", { name })).toBeInTheDocument()
     }
+  })
+
+  it("розділ показує footer-місточки навчального шляху (Попередній/Наступний)", async () => {
+    // binary-search має й попередній (linear), і наступний (indexed-sequential).
+    window.location.hash = "#binary-search/learn"
+    render(<App />)
+
+    expect(
+      await screen.findByText("Попередній", undefined, { timeout: 5000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByText("Наступний")).toBeInTheDocument()
   })
 
   it("глибоке посилання на вкладку відкриває її напряму", async () => {
