@@ -23,10 +23,10 @@ export function EditorView() {
             <BookOpen /> {t("editor.bsIntro")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadBest}>
-            <ArrowDownAZ /> {t("editor.bsBest")}
+            <ArrowDownAZ /> {t("editor.arrBest")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadWorst}>
-            <ArrowUpZA /> {t("editor.bsWorst")}
+            <ArrowUpZA /> {t("editor.arrWorst")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}

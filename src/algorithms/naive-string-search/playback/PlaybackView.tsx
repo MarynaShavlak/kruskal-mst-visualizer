@@ -98,7 +98,7 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.nssStatComparisons")} value={String(frame.comparisons)} />
             <Stat label={t("play.nssStatAlignments")} value={String(frame.alignments)} />
-            <Stat label={t("play.nssStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.statShifts")} value={String(frame.shifts)} />
             {findAll ? (
               <Stat label={t("play.nssStatMatches")} value={String(frame.matches.length)} />
             ) : (

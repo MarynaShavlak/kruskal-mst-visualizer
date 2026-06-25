@@ -26,7 +26,7 @@ export function EditorView() {
             <Equal /> {t("editor.rxEqual")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.rxDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadBig}>
             <Maximize2 /> {t("editor.rxBig")}

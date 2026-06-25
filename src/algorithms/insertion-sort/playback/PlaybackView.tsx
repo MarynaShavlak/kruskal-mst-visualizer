@@ -48,7 +48,7 @@ export function PlaybackView() {
 
   const switcher = (
     <ModeSwitch
-      label={t("play.isMethod")}
+      label={t("play.arrMethod")}
       value={mode}
       onChange={setMode}
       options={[
@@ -96,7 +96,7 @@ export function PlaybackView() {
         <>
           <StatsBar>
             <Stat label={t("play.isStatComparisons")} value={String(frame.comparisons)} />
-            <Stat label={t("play.isStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.statShifts")} value={String(frame.shifts)} />
             <Stat
               label={t("play.isStatPass")}
               value={frame.pass !== null ? String(frame.pass) : "—"}

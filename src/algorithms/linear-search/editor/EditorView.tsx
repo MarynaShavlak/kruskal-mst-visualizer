@@ -23,7 +23,7 @@ export function EditorView() {
             <BookOpen /> {t("editor.lsMain")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.lsDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadSorted}>
             <ListOrdered /> {t("editor.lsSorted")}

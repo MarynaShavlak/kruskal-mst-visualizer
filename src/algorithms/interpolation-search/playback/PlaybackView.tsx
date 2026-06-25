@@ -216,7 +216,7 @@ function ResultCard({ result, done }: { result: IpResult; done: boolean }) {
           <ResultVerdict
             done={done}
             found={found}
-            foundContent={t("play.ipResultIndex", { i: result.result })}
+            foundContent={t("play.searchResultIndex", { i: result.result })}
             absentText={t("play.ipResultAbsent")}
           />
         </div>

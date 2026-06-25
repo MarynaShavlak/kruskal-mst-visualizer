@@ -94,7 +94,7 @@ export function PlaybackView() {
         <>
           <StatsBar>
             <Stat label={t("play.shStatComparisons")} value={String(frame.comparisons)} />
-            <Stat label={t("play.shStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.statShifts")} value={String(frame.shifts)} />
             <Stat label={t("play.shStatPhases")} value={String(trace.result.gapPhases)} />
             <Stat label={t("play.shStatGaps")} value={`[${trace.result.gaps.join(", ")}]`} />
             <Stat label={t("play.statSize")} value={String(trace.result.size)} />

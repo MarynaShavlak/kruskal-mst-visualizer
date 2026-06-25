@@ -31,7 +31,7 @@ export function EditorView() {
             <Flame /> {t("editor.nssWorst")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadNotFound}>
-            <X /> {t("editor.nssNotFoundPreset")}
+            <X /> {t("editor.strNotFoundPreset")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadOverlap}>
             <Layers /> {t("editor.nssOverlap")}

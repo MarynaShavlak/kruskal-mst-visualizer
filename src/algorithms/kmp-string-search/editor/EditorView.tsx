@@ -34,7 +34,7 @@ export function EditorView() {
             <Flame /> {t("editor.kmpWorst")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadNotFound}>
-            <X /> {t("editor.kmpNotFoundPreset")}
+            <X /> {t("editor.strNotFoundPreset")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}

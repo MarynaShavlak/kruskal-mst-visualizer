@@ -26,7 +26,7 @@ export function EditorView() {
             <Layers /> {t("editor.qsSorted")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.qsDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}

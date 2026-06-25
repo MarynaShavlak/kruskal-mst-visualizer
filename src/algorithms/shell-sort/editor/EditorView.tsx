@@ -29,7 +29,7 @@ export function EditorView() {
             <ArrowDownWideNarrow /> {t("editor.shReversed")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.shDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}

@@ -29,7 +29,7 @@ export function ArrayEditor({ className }: { className?: string }) {
           value: target,
           onCommit: setTarget,
           label: t("editor.lsTargetLabel"),
-          aria: t("editor.lsAriaTarget"),
+          aria: t("editor.searchAriaTarget"),
           tone: "rose",
           icon: true,
         },

@@ -204,7 +204,7 @@ function ResultCard({ result, done }: { result: IxsTraceResult; done: boolean })
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.issInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>

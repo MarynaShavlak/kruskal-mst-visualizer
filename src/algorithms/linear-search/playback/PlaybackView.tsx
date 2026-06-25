@@ -168,7 +168,7 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.lsInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
@@ -183,7 +183,7 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
             foundContent={
               result.findAll
                 ? t("play.lsResultMatches", { matches: `[${result.matches.join(", ")}]` })
-                : t("play.lsResultIndex", { i: result.result })
+                : t("play.searchResultIndex", { i: result.result })
             }
             absentText={t("play.lsResultAbsent")}
           />

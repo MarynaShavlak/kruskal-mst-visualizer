@@ -35,7 +35,7 @@ export function EditorView() {
             <Plus /> {t("editor.issValue")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onSort}>
-            <ArrowDownNarrowWide /> {t("editor.issSort")}
+            <ArrowDownNarrowWide /> {t("editor.searchSort")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onClear}>
             <Trash2 /> {t("editor.clear")}
@@ -47,7 +47,7 @@ export function EditorView() {
           items={[
             { action: t("editor.issTargetLabel"), desc: t("editor.helpIssTarget") },
             { action: t("editor.issStepLabel"), desc: t("editor.helpIssStep") },
-            { action: t("editor.issSort"), desc: t("editor.helpIssSort") },
+            { action: t("editor.searchSort"), desc: t("editor.helpIssSort") },
             { action: `+ ${t("editor.issValue")}`, desc: t("editor.helpIssAdd") },
             { action: "✕", desc: t("editor.helpArrRemove") },
           ]}

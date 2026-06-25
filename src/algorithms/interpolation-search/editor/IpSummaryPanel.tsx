@@ -66,7 +66,7 @@ export function IpSummaryPanel({ className }: { className?: string }) {
       <div className="mb-3 rounded-md border bg-muted/30 px-2.5 py-2">
         <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="size-3.5" />
-          {t("editor.ipTargetResult", { target })}
+          {t("editor.searchTargetResult", { target })}
         </div>
         {sorted ? (
           <>
@@ -77,7 +77,7 @@ export function IpSummaryPanel({ className }: { className?: string }) {
               )}
             >
               {found ? <Check className="size-4 shrink-0" /> : <X className="size-4 shrink-0" />}
-              {found ? t("editor.ipFoundAt", { i: result }) : t("editor.ipNotFound")}
+              {found ? t("editor.searchFoundAt", { i: result }) : t("editor.ipNotFound")}
             </div>
             <div className="mt-1 text-xs tabular-nums text-muted-foreground">
               <b>{t("editor.ipProbes")}</b> {probes}

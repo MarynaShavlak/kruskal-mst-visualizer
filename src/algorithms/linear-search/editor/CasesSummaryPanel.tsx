@@ -45,7 +45,7 @@ export function CasesSummaryPanel({ className }: { className?: string }) {
       <div className="mb-3 rounded-md border bg-muted/30 px-2.5 py-2">
         <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="size-3.5" />
-          {t("editor.lsTargetResult", { target })}
+          {t("editor.searchTargetResult", { target })}
         </div>
         <div
           className={cn(
@@ -55,7 +55,7 @@ export function CasesSummaryPanel({ className }: { className?: string }) {
         >
           {found ? <Check className="size-4 shrink-0" /> : <X className="size-4 shrink-0" />}
           {found
-            ? t("editor.lsFoundAt", { i: result })
+            ? t("editor.searchFoundAt", { i: result })
             : t("editor.lsNotFound")}
         </div>
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs tabular-nums text-muted-foreground">

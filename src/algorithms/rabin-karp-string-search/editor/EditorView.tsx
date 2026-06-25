@@ -34,7 +34,7 @@ export function EditorView() {
             <Layers /> {t("editor.rkMulti")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadNotFound}>
-            <X /> {t("editor.rkNotFoundPreset")}
+            <X /> {t("editor.strNotFoundPreset")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}

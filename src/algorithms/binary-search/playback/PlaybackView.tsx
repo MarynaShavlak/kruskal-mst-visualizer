@@ -187,7 +187,7 @@ function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.binInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
@@ -199,7 +199,7 @@ function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
           <ResultVerdict
             done={done}
             found={found}
-            foundContent={t("play.binResultIndex", { i: result.result })}
+            foundContent={t("play.searchResultIndex", { i: result.result })}
             absentText={t("play.binResultAbsent")}
           />
         </div>

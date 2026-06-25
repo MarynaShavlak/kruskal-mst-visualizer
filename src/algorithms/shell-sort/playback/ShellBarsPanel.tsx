@@ -92,7 +92,7 @@ export function ShellBarsPanel({
   const t = useT()
   return (
     <Panel
-      title={t("play.shArrayTitle", { n: bars.array.length })}
+      title={t("play.arrArrayTitle", { n: bars.array.length })}
       className={className}
       bodyClassName="flex flex-col gap-2 p-3"
     >

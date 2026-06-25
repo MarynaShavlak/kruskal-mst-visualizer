@@ -35,7 +35,7 @@ export function EditorView() {
             <Plus /> {t("editor.ipValue")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onSort}>
-            <ArrowDownNarrowWide /> {t("editor.ipSort")}
+            <ArrowDownNarrowWide /> {t("editor.searchSort")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onClear}>
             <Trash2 /> {t("editor.clear")}
@@ -46,7 +46,7 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: t("editor.ipHelpTarget"), desc: t("editor.helpIpTarget") },
-            { action: t("editor.ipSort"), desc: t("editor.helpIpSort") },
+            { action: t("editor.searchSort"), desc: t("editor.helpIpSort") },
             { action: `+ ${t("editor.ipValue")}`, desc: t("editor.helpIpAdd") },
             { action: "✕", desc: t("editor.helpArrRemove") },
           ]}

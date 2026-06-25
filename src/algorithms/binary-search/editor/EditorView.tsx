@@ -23,7 +23,7 @@ export function EditorView() {
             <BookOpen /> {t("editor.binIntro")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.binDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadAbsent}>
             <SearchX /> {t("editor.binAbsent")}
@@ -35,7 +35,7 @@ export function EditorView() {
             <Plus /> {t("editor.binValue")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onSort}>
-            <ArrowDownNarrowWide /> {t("editor.binSort")}
+            <ArrowDownNarrowWide /> {t("editor.searchSort")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onClear}>
             <Trash2 /> {t("editor.clear")}
@@ -46,7 +46,7 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: t("editor.binHelpTarget"), desc: t("editor.helpBinTarget") },
-            { action: t("editor.binSort"), desc: t("editor.helpBinSort") },
+            { action: t("editor.searchSort"), desc: t("editor.helpBinSort") },
             { action: `+ ${t("editor.binValue")}`, desc: t("editor.helpBinAdd") },
             { action: "✕", desc: t("editor.helpArrRemove") },
           ]}

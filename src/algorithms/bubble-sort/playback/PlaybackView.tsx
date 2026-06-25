@@ -44,7 +44,7 @@ export function PlaybackView() {
 
   const switcher = (
     <ModeSwitch
-      label={t("play.bsMethod")}
+      label={t("play.arrMethod")}
       value={mode}
       onChange={setMode}
       options={[
