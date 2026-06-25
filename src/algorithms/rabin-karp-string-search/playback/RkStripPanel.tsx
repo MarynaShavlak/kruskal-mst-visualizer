@@ -1,6 +1,7 @@
-import { ArrowRight, Hash, Search } from "lucide-react"
+import { ArrowRight, Hash } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import {
   StringStrip,
   CHAR_CLASS,
@@ -110,10 +111,7 @@ export function RkStripPanel({ className, ...view }: RkStripProps & { className?
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.rkTargetBadge", { pattern: view.pattern || "∅" })}
-        </span>
+        <SearchTargetBadge>{t("play.rkTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <HashBadges windowHash={view.windowHash} patternHash={view.patternHash} offset={view.offset} />
       </div>
 

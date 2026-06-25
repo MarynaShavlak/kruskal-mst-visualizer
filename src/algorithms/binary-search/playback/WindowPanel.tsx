@@ -1,6 +1,6 @@
-import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import { SortedWindowView } from "@/algorithms/shared/playback/SortedWindow"
 import { cellRole, type CellRole } from "@/algorithms/binary-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
@@ -63,10 +63,7 @@ export function WindowPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div>
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.binTargetBadge", { target })}
-        </span>
+        <SearchTargetBadge>{t("play.binTargetBadge", { target })}</SearchTargetBadge>
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto">
         <WindowView {...view} />

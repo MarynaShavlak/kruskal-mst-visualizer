@@ -1,6 +1,6 @@
-import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import {
   indexRole,
   cellRole,
@@ -228,10 +228,7 @@ export function TwoLevelPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.issTargetBadge", { target: view.target })}
-        </span>
+        <SearchTargetBadge>{t("play.issTargetBadge", { target: view.target })}</SearchTargetBadge>
         <span className="inline-flex items-center gap-1.5 rounded-md border border-violet-400/50 bg-violet-500/10 px-2.5 py-1 text-sm font-medium text-violet-700 dark:text-violet-300">
           {t("play.issStepBadge", { step: view.step })}
         </span>

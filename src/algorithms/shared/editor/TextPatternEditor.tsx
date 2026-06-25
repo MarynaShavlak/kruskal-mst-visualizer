@@ -1,4 +1,5 @@
-import { FileText, Search } from "lucide-react"
+import { FileText } from "lucide-react"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -25,10 +26,7 @@ export function TextPatternEditor({
     <div className={cn("flex flex-col gap-3", className)}>
       {/* Шаблон — те, що шукаємо. */}
       <div className="flex flex-col gap-1">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("editor.strPatternLabel")}
-        </span>
+        <SearchTargetBadge className="w-fit px-2">{t("editor.strPatternLabel")}</SearchTargetBadge>
         <input
           type="text"
           value={pattern}
