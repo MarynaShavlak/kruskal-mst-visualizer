@@ -3,10 +3,40 @@
 // і однаковий набір дій (без передумов, без графа). Пресетні лоадери — у конкретних
 // сторах (приклад / колізія / без збігу / випадковий).
 
+import { mulberry32 } from "@/lib/prng"
+
 /** Документ редактора: текст + шаблон (серіалізовний). */
 export interface StringStoreDoc {
   readonly text: string
   readonly pattern: string
+}
+
+/**
+ * Випадкова пара {text, pattern} для пресетів усіх чотирьох рядкових алгоритмів:
+ * текст із заданого алфавіту (навмисне з повторами → багаті часткові збіги) + шаблон-
+ * підрядок із нього (щоб зазвичай знаходився), детерміновано за `seed`. Спільне тіло
+ * чотирьох `*RandomPreset` — різнилися лише алфавітом, довжинами й запасним шаблоном.
+ */
+export function randomStringCase(
+  seed: number,
+  opts: {
+    readonly alphabet: string
+    readonly textLen: number
+    readonly patLen: number
+    readonly fallback: string
+  },
+): StringStoreDoc {
+  const { alphabet, textLen, patLen, fallback } = opts
+  const rnd = mulberry32(seed)
+  const chars: string[] = []
+  for (let i = 0; i < textLen; i++) {
+    chars.push(alphabet[Math.floor(rnd() * alphabet.length)])
+  }
+  const text = chars.join("")
+  // Шаблон — підрядок тексту (щоб був збіг), якщо текст достатньо довгий.
+  const start = textLen > patLen ? Math.floor(rnd() * (textLen - patLen)) : 0
+  const pattern = text.slice(start, start + patLen) || fallback
+  return { text, pattern }
 }
 
 /** Спільне ядро рядкового стору: пара рядків + дії + doc round-trip. */

@@ -11,7 +11,7 @@ import {
   type StringSearchCase,
 } from "@/lib/exampleNaiveStringSearch"
 import type { NaiveStringSearchDoc } from "@/store/naive-string-search-store"
-import { mulberry32 } from "@/lib/prng"
+import { randomStringCase } from "@/store/create-string-store"
 
 const fromCase = (c: StringSearchCase): NaiveStringSearchDoc => ({
   text: c.text,
@@ -43,15 +43,5 @@ export function nssOverlapPreset(): NaiveStringSearchDoc {
  * + підрядок із нього як шаблон (зазвичай знайдеться), детерміновано за `seed`.
  */
 export function nssRandomPreset(seed: number, textLen = 18, patLen = 4): NaiveStringSearchDoc {
-  const rnd = mulberry32(seed)
-  const alphabet = "ABAB CDABC" // навмисне з повторами та пробілом — багаті часткові збіги
-  const chars: string[] = []
-  for (let i = 0; i < textLen; i++) {
-    chars.push(alphabet[Math.floor(rnd() * alphabet.length)])
-  }
-  const text = chars.join("")
-  // Шаблон — підрядок тексту (щоб був збіг), якщо текст достатньо довгий.
-  const start = textLen > patLen ? Math.floor(rnd() * (textLen - patLen)) : 0
-  const pattern = text.slice(start, start + patLen) || "AB"
-  return { text, pattern }
+  return randomStringCase(seed, { alphabet: "ABAB CDABC", textLen, patLen, fallback: "AB" })
 }
