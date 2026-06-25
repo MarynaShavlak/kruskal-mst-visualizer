@@ -1,5 +1,6 @@
 import { MotionConfig } from "motion/react"
 import { Toaster } from "@/components/ui/toaster"
+import { PwaUpdatePrompt } from "@/components/PwaUpdatePrompt"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { LanguageToggle } from "@/components/language-toggle"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -58,6 +59,7 @@ export default function App() {
         </main>
 
         <Toaster />
+        <PwaUpdatePrompt />
       </div>
     </MotionConfig>
   )

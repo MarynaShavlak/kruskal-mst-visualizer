@@ -2035,6 +2035,14 @@ const ua = {
   "precond.connectedBad":
     "Граф незв'язний ({n} компонент(и)) — вийде остовний ЛІС, по дереву на компоненту.",
   "precond.connectedEmpty": "Граф порожній — додайте вершини й ребра у редакторі.",
+
+  // PWA: банер оновлення service worker'а + офлайн-готовність.
+  "pwa.updateTitle": "Доступне оновлення",
+  "pwa.updateBody":
+    "Готова нова версія застосунку. Оновіть, щоб отримати останні зміни.",
+  "pwa.updateReload": "Оновити",
+  "pwa.updateDismiss": "Пізніше",
+  "pwa.offlineReady": "Застосунок готовий до роботи офлайн.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -4048,6 +4056,13 @@ const en: Record<MessageKey, string> = {
   "precond.connectedBad":
     "The graph is disconnected ({n} component(s)) — you get a spanning FOREST, one tree per component.",
   "precond.connectedEmpty": "The graph is empty — add vertices and edges in the editor.",
+
+  // PWA: service worker update banner + offline readiness.
+  "pwa.updateTitle": "Update available",
+  "pwa.updateBody": "A new version of the app is ready. Reload to get the latest changes.",
+  "pwa.updateReload": "Reload",
+  "pwa.updateDismiss": "Later",
+  "pwa.offlineReady": "The app is ready to work offline.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
