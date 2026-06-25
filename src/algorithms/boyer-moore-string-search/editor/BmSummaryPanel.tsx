@@ -7,6 +7,7 @@ import {
   bmMetrics,
   countNaiveComparisons,
 } from "@/lib/boyerMooreStringSearch"
+import { SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -34,7 +35,7 @@ export function BmSummaryPanel({ className }: { className?: string }) {
   const entries = Object.entries(table)
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.bmLen")}</span>
         <span className="font-medium tabular-nums">{t("editor.bmLenVal", { n: text.length, m })}</span>
@@ -121,6 +122,6 @@ export function BmSummaryPanel({ className }: { className?: string }) {
         </>
       )}
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.bmCasesNote")}</p>
-    </div>
+    </SummaryCard>
   )
 }

@@ -1,6 +1,10 @@
-import { AlertTriangle, Check } from "lucide-react"
 import { useRadixSortStore } from "@/store/radix-sort-store"
 import { isSorted, countOperations, maxDigits } from "@/lib/radixSort"
+import {
+  HeavyWarning,
+  SortedIndicator,
+  SummaryCard,
+} from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +35,7 @@ export function RadixSummaryPanel({ className }: { className?: string }) {
   const rows = BASES.map((b) => ({ ...b, passes: maxDigits(values, b.base) }))
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-1 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.rxSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
@@ -80,22 +84,13 @@ export function RadixSummaryPanel({ className }: { className?: string }) {
 
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.rxBaseNote")}</p>
 
-      <p
-        className={cn(
-          "mt-3 flex items-center gap-1.5 text-xs",
-          sorted ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground",
-        )}
-      >
-        {sorted && <Check className="size-3.5 shrink-0" />}
-        {sorted ? t("editor.rxSortedYes") : t("editor.rxSortedNo")}
-      </p>
+      <SortedIndicator
+        sorted={sorted}
+        yes={t("editor.rxSortedYes")}
+        no={t("editor.rxSortedNo")}
+      />
 
-      {n > HEAVY_SIZE && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-300">
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {t("editor.rxWarnMany")}
-        </p>
-      )}
-    </div>
+      <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.rxWarnMany")} />
+    </SummaryCard>
   )
 }

@@ -1,6 +1,7 @@
 import { AlertTriangle, Check, Search, X } from "lucide-react"
 import { useBinarySearchStore } from "@/store/binary-search-store"
 import { binarySearch, countSteps, isSorted, caseAnalysis } from "@/lib/binarySearch"
+import { HeavyWarning, SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +28,7 @@ export function BinarySummaryPanel({ className }: { className?: string }) {
   const found = result !== -1
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.binSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
@@ -101,12 +102,7 @@ export function BinarySummaryPanel({ className }: { className?: string }) {
       </table>
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.binCasesNote")}</p>
 
-      {n > HEAVY_SIZE && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-300">
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {t("editor.binWarnMany")}
-        </p>
-      )}
-    </div>
+      <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.binWarnMany")} />
+    </SummaryCard>
   )
 }

@@ -1,9 +1,9 @@
 import { AlertTriangle } from "lucide-react"
 import { useKnapsackStore } from "@/store/knapsack-store"
 import { knapsackCells } from "@/lib/knapsack"
+import { SummaryCard, SummaryRow } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
-import { cn } from "@/lib/utils"
 
 // Поріг, за яким таблиця ДП дає забагато кадрів для плавного плеєра (узгоджено з
 // MAX_CELLS у плеєрі). Вище — показуємо попередження в редакторі.
@@ -25,13 +25,13 @@ export function KnapsackSummaryPanel({ className }: { className?: string }) {
     Number.isFinite(x) ? x.toLocaleString(locale) : "∞"
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <Row label={t("editor.knapItems")} value={String(n)} />
-        <Row label={t("editor.knapTotalWeight")} value={String(totalWeight)} />
-        <Row label={t("editor.knapCapacity")} value={String(capacity)} />
-        <Row label={t("editor.knapBruteSubsets")} value={fmt(subsets)} />
-        <Row label={t("editor.knapDpCells")} value={fmt(cells)} mono />
+        <SummaryRow label={t("editor.knapItems")} value={String(n)} />
+        <SummaryRow label={t("editor.knapTotalWeight")} value={String(totalWeight)} />
+        <SummaryRow label={t("editor.knapCapacity")} value={String(capacity)} />
+        <SummaryRow label={t("editor.knapBruteSubsets")} value={fmt(subsets)} />
+        <SummaryRow label={t("editor.knapDpCells")} value={fmt(cells)} mono />
       </dl>
 
       {cells > HEAVY_CELLS && (
@@ -40,25 +40,6 @@ export function KnapsackSummaryPanel({ className }: { className?: string }) {
           {t("editor.knapWarnMany")}
         </p>
       )}
-    </div>
-  )
-}
-
-function Row({
-  label,
-  value,
-  mono,
-}: {
-  label: string
-  value: string
-  mono?: boolean
-}) {
-  return (
-    <>
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className={cn("text-right font-medium tabular-nums", mono && "font-mono")}>
-        {value}
-      </dd>
-    </>
+    </SummaryCard>
   )
 }
