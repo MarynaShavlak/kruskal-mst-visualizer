@@ -7,8 +7,11 @@ import {
   SHELL_DUPLICATES,
 } from "@/lib/exampleShellSort"
 import { shellSort } from "@/lib/shellSort"
+import { describeArrayCore } from "@/store/array-core-contract"
 
 const get = () => useShellSortStore.getState()
+
+describeArrayCore("shell-sort-store", () => get(), () => get().loadIntro())
 
 describe("shell-sort-store", () => {
   beforeEach(() => get().loadIntro())
@@ -17,33 +20,9 @@ describe("shell-sort-store", () => {
     expect(get().values).toEqual([...SHELL_INTRO])
   })
 
-  it("addValue додає одне ціле", () => {
-    const before = get().values.length
-    get().addValue()
-    expect(get().values.length).toBe(before + 1)
-    expect(Number.isInteger(get().values[before])).toBe(true)
-  })
-
-  it("updateValue санітизує до цілого ≥ 0", () => {
-    get().updateValue(0, -5)
-    expect(get().values[0]).toBe(0)
-    get().updateValue(0, 7.9)
-    expect(get().values[0]).toBe(7)
-  })
-
   it("removeValue прибирає елемент за індексом", () => {
     get().removeValue(0)
     expect(get().values).toEqual([5, 3, 7, 6, 1, 4, 2])
-  })
-
-  it("setValues замінює весь масив із санітизацією", () => {
-    get().setValues([3, -1, 2.5])
-    expect(get().values).toEqual([3, 0, 2])
-  })
-
-  it("clear спорожнює масив", () => {
-    get().clear()
-    expect(get().values).toEqual([])
   })
 
   it("пресети завантажуються", () => {
