@@ -86,8 +86,8 @@ export function RadixSummaryPanel({ className }: { className?: string }) {
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.rxSortedYes")}
-        no={t("editor.rxSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.rxWarnMany")} />

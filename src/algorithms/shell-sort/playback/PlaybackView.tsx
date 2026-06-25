@@ -97,7 +97,7 @@ export function PlaybackView() {
             <Stat label={t("play.shStatShifts")} value={String(frame.shifts)} />
             <Stat label={t("play.shStatPhases")} value={String(trace.result.gapPhases)} />
             <Stat label={t("play.shStatGaps")} value={`[${trace.result.gaps.join(", ")}]`} />
-            <Stat label={t("play.shStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}
@@ -175,11 +175,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50", "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.shInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.shSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono text-xs">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div className="tabular-nums text-xs">

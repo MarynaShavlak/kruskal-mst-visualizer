@@ -103,14 +103,14 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.binStatSteps")} value={String(frame.steps)} />
             <Stat
-              label={t("play.binStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             <Stat label={t("play.binStatWindow")} value={windowLabel(frame)} />
             {recursive && (
               <Stat label={t("play.binStatDepth")} value={String(frame.depth)} />
             )}
-            <Stat label={t("play.binStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}
@@ -195,7 +195,7 @@ function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.binResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}

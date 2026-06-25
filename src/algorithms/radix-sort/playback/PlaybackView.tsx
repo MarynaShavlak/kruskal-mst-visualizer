@@ -73,7 +73,7 @@ export function PlaybackView() {
             <Stat label={t("play.rxStatDistributions")} value={String(frame.distributions)} />
             <Stat label={t("play.rxStatComparisons")} value="0" />
             <Stat label={t("play.rxStatDigits")} value={String(trace.result.maxDigits)} />
-            <Stat label={t("play.rxStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}
@@ -148,11 +148,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50", "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.rxInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.rxSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono text-xs">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div className="tabular-nums text-xs">

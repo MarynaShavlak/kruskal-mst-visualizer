@@ -30,8 +30,8 @@ export function InsertionSummaryPanel({ className }: { className?: string }) {
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.isSortedYes")}
-        no={t("editor.isSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.isWarnMany")} />

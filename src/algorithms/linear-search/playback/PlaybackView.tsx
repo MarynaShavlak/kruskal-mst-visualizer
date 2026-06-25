@@ -96,13 +96,13 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.lsStatChecks")} value={String(frame.comparisons)} />
             <Stat
-              label={t("play.lsStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             {findAll && (
               <Stat label={t("play.lsStatMatches")} value={String(frame.matches.length)} />
             )}
-            <Stat label={t("play.lsStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}
@@ -176,7 +176,7 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.lsResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}

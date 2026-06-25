@@ -137,7 +137,7 @@ export function PlaybackView() {
             <Stat label={t("play.issStatTotal")} value={String(frame.indexProbes + frame.seqComparisons)} />
             <Stat label={t("play.issStatBlock")} value={blockLabel(frame)} />
             <Stat
-              label={t("play.issStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             <Stat label={t("play.issStatSize")} value={String(trace.result.size)} />
@@ -212,7 +212,7 @@ function ResultCard({ result, done }: { result: IxsTraceResult; done: boolean })
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.issResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}

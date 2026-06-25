@@ -101,7 +101,7 @@ export function PlaybackView() {
               label={t("play.isStatPass")}
               value={frame.pass !== null ? String(frame.pass) : "—"}
             />
-            <Stat label={t("play.isStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}
@@ -174,11 +174,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50")}>
       <CardContent className="flex flex-wrap items-center gap-x-8 gap-y-2 py-4 text-sm">
         <div>
-          <div className="text-muted-foreground">{t("play.isInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.isSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div>
