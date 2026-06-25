@@ -77,6 +77,19 @@ const ua = {
   "home.complexityTypical": "типова",
   "home.complexityWorst": "найгірша",
 
+  "compare.title": "Матриця складності",
+  "compare.intro":
+    "Усі алгоритми платформи поряд: складність, родина й клас зростання. Клацніть заголовок, щоб відсортувати, або рядок — щоб відкрити розбір.",
+  "compare.back": "До каталогу",
+  "compare.colAlgo": "Алгоритм",
+  "compare.colTypical": "Типова",
+  "compare.colWorst": "Найгірша",
+  "compare.colClass": "Клас зростання",
+  "compare.sortBy": "Сортувати за стовпцем «{col}»",
+  "compare.degradesTitle": "Деградує: {typical} → {worst}",
+  "compare.legendClass": "Клас зростання: швидше → повільніше",
+  "compare.legendDegrades": "найгірший випадок гірший за типовий",
+
   "switcher.aria": "Обрати алгоритм",
   "switcher.placeholder": "Оберіть алгоритм",
   "switcher.label": "Алгоритми",
@@ -1937,6 +1950,19 @@ const en: Record<MessageKey, string> = {
   "home.complexityHint": "Time complexity",
   "home.complexityTypical": "typical",
   "home.complexityWorst": "worst",
+
+  "compare.title": "Complexity matrix",
+  "compare.intro":
+    "Every algorithm side by side: complexity, family and growth class. Click a header to sort, or a row to open the breakdown.",
+  "compare.back": "Back to catalog",
+  "compare.colAlgo": "Algorithm",
+  "compare.colTypical": "Typical",
+  "compare.colWorst": "Worst",
+  "compare.colClass": "Growth class",
+  "compare.sortBy": "Sort by column “{col}”",
+  "compare.degradesTitle": "Degrades: {typical} → {worst}",
+  "compare.legendClass": "Growth class: faster → slower",
+  "compare.legendDegrades": "worst case exceeds typical",
 
   "switcher.aria": "Choose algorithm",
   "switcher.placeholder": "Choose an algorithm",

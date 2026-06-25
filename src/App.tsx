@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { AlgorithmShell } from "@/features/shell/AlgorithmShell"
 import { AlgorithmSwitcher } from "@/features/shell/AlgorithmSwitcher"
 import { HomeView } from "@/features/home/HomeView"
+import { ComplexityMatrix } from "@/features/compare/ComplexityMatrix"
 import { getAlgorithm } from "@/algorithms/registry"
 import { navigateTo, useRoute } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
@@ -29,7 +30,11 @@ export default function App() {
             >
               <h1 className="text-xl font-semibold">{t("app.title")}</h1>
               <p className="text-sm text-muted-foreground">
-                {algorithm ? algorithm.name[lang] : t("app.subtitle")}
+                {algorithm
+                  ? algorithm.name[lang]
+                  : route.page === "compare"
+                    ? t("compare.title")
+                    : t("app.subtitle")}
               </p>
             </button>
             <div className="flex items-center gap-2">
@@ -41,8 +46,10 @@ export default function App() {
         </header>
 
         <main className="mx-auto max-w-6xl px-4 py-6">
-          <ErrorBoundary key={route.algorithmId ?? "home"}>
-            {algorithm ? (
+          <ErrorBoundary key={route.algorithmId ?? route.page ?? "home"}>
+            {route.page === "compare" ? (
+              <ComplexityMatrix />
+            ) : algorithm ? (
               <AlgorithmShell algorithm={algorithm} tab={route.tab} />
             ) : (
               <HomeView />

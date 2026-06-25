@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Table2 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { FilterChip } from "@/components/filter-chip"
 import { COMPLEXITY_CLASSES, algorithmsByFamily } from "@/algorithms/registry"
-import { navigateTo } from "@/hooks/use-route"
+import { navigateTo, navigateToPage } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
-import { cn } from "@/lib/utils"
 import { useLangStore } from "@/store/lang-store"
 import type { Lang } from "@/store/lang-store"
 import type {
@@ -16,59 +16,6 @@ import type {
 /** Активні фасети каталогу: родина та клас складності (або «всі»). */
 type FamilyFilter = AlgorithmFamily | "all"
 type ClassFilter = ComplexityClass | "all"
-
-/** Чип-перемикач у липкій панелі фільтрів (опційно з формулою класу складності). */
-function FilterChip({
-  active,
-  label,
-  formula,
-  count,
-  disabled,
-  onClick,
-}: {
-  active: boolean
-  label: string
-  formula?: string
-  count: number
-  disabled?: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      aria-pressed={active}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active
-          ? "border-foreground bg-foreground text-background"
-          : "border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground",
-        disabled && "pointer-events-none opacity-40",
-      )}
-    >
-      {label}
-      {formula && (
-        <span
-          className={cn(
-            "font-mono text-xs",
-            active ? "text-background/70" : "text-muted-foreground/70",
-          )}
-        >
-          {formula}
-        </span>
-      )}
-      <span
-        className={cn(
-          "text-xs tabular-nums",
-          active ? "text-background/70" : "text-muted-foreground/70",
-        )}
-      >
-        {count}
-      </span>
-    </button>
-  )
-}
 
 /** Картка одного алгоритму в сітці каталогу. */
 function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
@@ -150,9 +97,19 @@ export function HomeView() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-lg font-semibold">{t("home.heading")}</h2>
-        <p className="text-sm text-muted-foreground">{t("home.intro")}</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">{t("home.heading")}</h2>
+          <p className="text-sm text-muted-foreground">{t("home.intro")}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => navigateToPage("compare")}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm font-medium text-foreground transition outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Table2 className="size-4" />
+          {t("compare.title")}
+        </button>
       </div>
 
       {/* Липка панель фасет: родина (зверху) + клас складності (знизу). */}
