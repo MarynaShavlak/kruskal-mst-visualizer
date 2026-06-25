@@ -114,11 +114,11 @@ export function PlaybackView() {
             />
           </StatsBar>
           <LiveComplexity
-            title={t("play.rkLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.rkLcUnit")}
             actual={frame.hashComparisons + frame.charVerifications}
-            actualLabel={t("play.rkLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refOps,
               cls: "O(n+m)",

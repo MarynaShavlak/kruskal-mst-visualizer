@@ -104,11 +104,11 @@ export function PlaybackView() {
             <Stat label={t("play.kmpStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.kmpLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.kmpLcUnit")}
             actual={frame.lpsComparisons + frame.searchComparisons}
-            actualLabel={t("play.kmpLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refOps,
               cls: "O(n+m)",

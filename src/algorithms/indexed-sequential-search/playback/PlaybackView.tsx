@@ -143,11 +143,11 @@ export function PlaybackView() {
             <Stat label={t("play.issStatSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.issLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.issLcUnit")}
             actual={frame.indexProbes + frame.seqComparisons}
-            actualLabel={t("play.issLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refTotal,
               cls: "O(√n)",

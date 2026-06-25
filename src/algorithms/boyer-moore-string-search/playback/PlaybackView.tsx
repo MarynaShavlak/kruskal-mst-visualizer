@@ -119,11 +119,11 @@ export function PlaybackView() {
             <Stat label={t("play.bmStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.bmLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.bmLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.bmLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: n,
               cls: "O(n)",

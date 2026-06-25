@@ -124,11 +124,11 @@ export function PlaybackView() {
             <Stat label={t("play.ipStatSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.ipLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.ipLcUnit")}
             actual={frame.probes}
-            actualLabel={t("play.ipLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: llBound,
               cls: "O(log log n)",

@@ -113,11 +113,11 @@ export function PlaybackView() {
             <Stat label={t("play.binStatSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.binLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.binLcUnit")}
             actual={frame.steps}
-            actualLabel={t("play.binLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: logBound,
               cls: "O(log n)",

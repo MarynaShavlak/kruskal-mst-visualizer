@@ -96,11 +96,11 @@ export function PlaybackView() {
             <Stat label={t("play.qsStatSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.qsLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.qsLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.qsLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refCmp,
               cls: "O(n·log n)",
