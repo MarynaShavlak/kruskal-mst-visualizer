@@ -18,6 +18,7 @@ import {
   incidentEdges,
   type PrimQueueEdge,
 } from "@/lib/prim"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
@@ -113,10 +114,7 @@ export function buildPrimTrace(
   t: Translate = identityTranslate,
 ): PrimRun {
   const n = graph.vertices.length
-  const frames: PrimFrame[] = []
-  const push = (f: Omit<PrimFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<PrimFrame>()
 
   const fmtEdge = (e: PrimQueueEdge): string => `(${e.weight}, ${e.from}, ${e.to})`
   const fmtList = (arr: readonly PrimQueueEdge[]): string =>

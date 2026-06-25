@@ -12,6 +12,7 @@
 // розбіжність + зелений префікс, що ПОВТОРНО матчиться у наступних вирівнюваннях, — і є
 // «марна робота», місток до KMP.
 
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { StringSearchFrameBase } from "@/lib/traceFrame"
 
@@ -137,7 +138,7 @@ export function buildNaiveStringSearchTrace(
   const code = findAll ? ALL_CODE : BASE_CODE
   const LM = findAll ? ALL_LINES : BASE_LINES
 
-  const frames: NaiveFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<NaiveFrame>()
   const matches: number[] = []
   let comparisons = 0
   let alignments = 0
@@ -156,8 +157,7 @@ export function buildNaiveStringSearchTrace(
       caption: string
     },
   ) => {
-    frames.push({
-      i: frames.length,
+    pushFrame({
       phase,
       text,
       pattern,

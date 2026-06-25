@@ -13,6 +13,7 @@
 // (rabin_karp_search_recompute): той самий результат, контрастна ціна (rolling-оновлення
 // проти повного перерахунку хешу кожного вікна). Перемикач міняє лістинг і нарацію фази 2.
 
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { StringSearchFrameBase } from "@/lib/traceFrame"
 import {
@@ -211,7 +212,7 @@ export function buildRabinKarpStringSearchTrace(
   const initEv = searchEvents[0]
   const hMultiplier = initEv.hMultiplier
 
-  const frames: RkFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<RkFrame>()
 
   let hashComparisons = 0
   let charVerifications = 0
@@ -244,8 +245,7 @@ export function buildRabinKarpStringSearchTrace(
       caption: string
     },
   ) => {
-    frames.push({
-      i: frames.length,
+    pushFrame({
       phase,
       text,
       pattern,

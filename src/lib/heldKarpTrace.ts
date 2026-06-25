@@ -17,6 +17,7 @@ import {
   type TspInstance,
   type TspTour,
 } from "@/lib/tsp"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
@@ -204,9 +205,9 @@ export function buildHeldKarpTrace(
   const key = (mask: number, end: number): number => mask * n + end
 
   const cells: HkCell[] = []
-  const frames: HkFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<HkFrame>()
   const push = (f: Omit<HkFrame, "i" | "committedCount">): void => {
-    frames.push({ i: frames.length, committedCount: cells.length, ...f })
+    pushFrame({ committedCount: cells.length, ...f })
   }
   const EMPTY: readonly HkCandidate[] = []
 

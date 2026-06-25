@@ -12,6 +12,7 @@
 // 🟥 половина, яку відкидаємо · 🟢 збіг · 🩶 поза вікном.
 
 import { formatArray as fmt } from "@/lib/arrayUtils"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
@@ -126,7 +127,7 @@ export function buildBinarySearchTrace(
   const code = recursive ? RECURSIVE_CODE : ITERATIVE_CODE
   const LM = recursive ? REC_LINES : ITER_LINES
 
-  const frames: BsFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<BsFrame>()
   let steps = 0
   let result = -1
   let low = 0
@@ -146,8 +147,7 @@ export function buildBinarySearchTrace(
       caption: string
     },
   ) => {
-    frames.push({
-      i: frames.length,
+    pushFrame({
       phase,
       array: arr,
       target,

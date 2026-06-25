@@ -18,6 +18,7 @@
 // (x поза [arr[low]..arr[high]]) — це і є рання відмова інтерполяційного пошуку.
 
 import { formatArray as fmt } from "@/lib/arrayUtils"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
@@ -153,7 +154,7 @@ export function buildInterpolationSearchTrace(
   const code = recursive ? RECURSIVE_CODE : BASE_CODE
   const LM = recursive ? REC_LINES : ITER_LINES
 
-  const frames: IpFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<IpFrame>()
   let probes = 0
   let result = -1
   let low = 0
@@ -180,8 +181,7 @@ export function buildInterpolationSearchTrace(
       caption: string
     },
   ) => {
-    frames.push({
-      i: frames.length,
+    pushFrame({
       phase,
       array: arr,
       target,

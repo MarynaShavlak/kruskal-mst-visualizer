@@ -17,6 +17,7 @@ import {
   type KnapsackInstance,
   type ReadonlyTable,
 } from "@/lib/knapsack"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
@@ -144,10 +145,7 @@ export function buildKnapsackTrace(
   const linear = (i: number, w: number): number => i * cols + w
   const totalCells = (n + 1) * cols
 
-  const frames: KnFrame[] = []
-  const push = (f: Omit<KnFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<KnFrame>()
   const item = (i: number): string => itemNames[i] ?? `#${i}`
 
   // --- ІНІЦІАЛІЗАЦІЯ ---------------------------------------------------------

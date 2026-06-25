@@ -11,6 +11,7 @@
 // індекс (простіша фаза 1). Вибір блоку й фаза 2 — ІДЕНТИЧНІ, тож той самий результат;
 // різниться лише фаза 1 (вікно vs курсор) та її ціна (зондування індексу).
 
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 import {
@@ -206,7 +207,7 @@ export function buildIndexedSequentialSearchTrace(
   const code = linearIndex ? LINEAR_INDEX_CODE : BASE_CODE
   const LM = linearIndex ? LINEAR_LINES : BASE_LINES
 
-  const frames: IxsFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<IxsFrame>()
   let indexProbes = 0
   let seqComparisons = 0
   let result = -1
@@ -231,8 +232,7 @@ export function buildIndexedSequentialSearchTrace(
       caption: string
     },
   ) => {
-    frames.push({
-      i: frames.length,
+    pushFrame({
       phase,
       level,
       array: arr,
