@@ -7,6 +7,8 @@ import {
 } from "@/lib/mergeSortTrace"
 import type { MergeMode } from "@/lib/mergeSort"
 import { useMergeSortStore } from "@/store/merge-sort-store"
+import { mergeSortCodec } from "@/algorithms/merge-sort/editor/merge-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -28,6 +30,8 @@ const MAX_SIZE = 16
 
 export function PlaybackView() {
   const values = useMergeSortStore((s) => s.values)
+  const loadDoc = useMergeSortStore((s) => s.loadDoc)
+  const toDoc = useMergeSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -45,6 +49,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: mergeSortCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["topDown", "bottomUp"] as const,
+    routePath: "merge-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -86,6 +101,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

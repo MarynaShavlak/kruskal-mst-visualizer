@@ -5,6 +5,8 @@ import {
   type RxResult,
 } from "@/lib/radixSortTrace"
 import { useRadixSortStore } from "@/store/radix-sort-store"
+import { radixSortCodec } from "@/algorithms/radix-sort/editor/radix-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -22,6 +24,8 @@ const MAX_SIZE = 12
 
 export function PlaybackView() {
   const values = useRadixSortStore((s) => s.values)
+  const loadDoc = useRadixSortStore((s) => s.loadDoc)
+  const toDoc = useRadixSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -37,6 +41,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: radixSortCodec,
+    loadDoc,
+    toDoc,
+    mode: "",
+    setMode: () => undefined,
+    modeKeys: [] as const,
+    routePath: "radix-sort/playback",
+  })
 
   if (run.kind !== "ok") {
     return (
@@ -64,6 +79,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={

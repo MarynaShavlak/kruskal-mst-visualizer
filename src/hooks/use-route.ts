@@ -143,6 +143,27 @@ export function setHash(raw: string): void {
   emit()
 }
 
+/**
+ * Записати хеш як `path?key=val&…`, зберігаючи path і переписуючи query повністю.
+ * Порожні значення оминаються; порожній набір параметрів → лише path (без `?`).
+ * Для дип-лінків плеєра (`<algoId>/playback?g=…&step=N&mode=X`): `parseHash`
+ * зрізає query, тож роут лишається тим самим, а плеєр читає параметри окремо.
+ */
+export function setHashWithQuery(
+  path: string,
+  params: Record<string, string | null | undefined>,
+): void {
+  const search = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value == null || value === "") continue
+    search.set(key, value)
+  }
+  // toString() кодує значення (зокрема '=' у base64url не чіпається — він URL-safe);
+  // лишаємо як є, щоб round-trip із readGraphParam/readStepParam/readModeParam був стабільним.
+  const qs = search.toString()
+  setHash(qs === "" ? path : `${path}?${qs}`)
+}
+
 /** Перейти до алгоритму (і, за бажанням, вкладки) або на домівку (`null`). */
 export function navigateTo(
   algorithmId: string | null,

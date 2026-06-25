@@ -6,6 +6,8 @@ import {
   type LsResult,
 } from "@/lib/linearSearchTrace"
 import { useLinearSearchStore } from "@/store/linear-search-store"
+import { linearSearchCodec } from "@/algorithms/linear-search/editor/linear-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -32,6 +34,8 @@ const MAX_SIZE = 60
 export function PlaybackView() {
   const values = useLinearSearchStore((s) => s.values)
   const target = useLinearSearchStore((s) => s.target)
+  const loadDoc = useLinearSearchStore((s) => s.loadDoc)
+  const toDoc = useLinearSearchStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -55,6 +59,17 @@ export function PlaybackView() {
   const okFrames = run.kind === "ok" ? run.trace.frames : []
   const predictIndex = Math.min(player.index, Math.max(0, okFrames.length - 1))
   const predict = usePredict(player, linearPredictAdapter(okFrames, predictIndex))
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: linearSearchCodec,
+    loadDoc,
+    toDoc,
+    mode,
+    setMode,
+    modeKeys: ["first", "all"] as const,
+    routePath: "linear-search/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -103,6 +118,7 @@ export function PlaybackView() {
           <PredictToggle />
         </div>
       }
+      onShareStep={shareStep}
       predictSlot={<PredictOverlay controller={predict} />}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

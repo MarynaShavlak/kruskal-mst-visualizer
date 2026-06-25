@@ -2,6 +2,8 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { buildBubbleSortTrace, type BsPhase, type BsResult } from "@/lib/bubbleSortTrace"
 import { useBubbleSortStore } from "@/store/bubble-sort-store"
+import { bubbleSortCodec } from "@/algorithms/bubble-sort/editor/bubble-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -23,6 +25,8 @@ const MAX_SIZE = 80
 
 export function PlaybackView() {
   const values = useBubbleSortStore((s) => s.values)
+  const loadDoc = useBubbleSortStore((s) => s.loadDoc)
+  const toDoc = useBubbleSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -41,6 +45,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: bubbleSortCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["naive", "optimized"] as const,
+    routePath: "bubble-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -78,6 +93,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

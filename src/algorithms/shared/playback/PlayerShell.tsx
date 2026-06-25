@@ -16,6 +16,7 @@ export function PlayerShell({
   captionBadge,
   headerExtra,
   markers,
+  onShareStep,
   diffRow,
   statsBar,
   predictSlot,
@@ -31,6 +32,8 @@ export function PlayerShell({
   headerExtra?: ReactNode
   /** Семантичні засічки фаз поверх слайдера (опц. — без них оверлея немає). */
   markers?: readonly LabeledPhaseMarker[]
+  /** Дип-лінк на поточний крок (опц.) — проксі до кнопки share у контролах. */
+  onShareStep?: () => void
   /** Рядок-діф «фаза→фаза» під нарацією (опц.). */
   diffRow?: ReactNode
   /** Слот рядка-статистики між нарацією і панелями. */
@@ -46,7 +49,7 @@ export function PlayerShell({
   return (
     <div className="flex flex-col gap-3">
       {headerExtra}
-      <PlayerControls player={player} markers={markers} />
+      <PlayerControls player={player} markers={markers} onShareStep={onShareStep} />
 
       <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
         <span className="font-medium">

@@ -6,6 +6,8 @@ import {
   type KmpResult,
 } from "@/lib/kmpStringSearchTrace"
 import { useKmpStringSearchStore } from "@/store/kmp-string-search-store"
+import { kmpStringSearchCodec } from "@/algorithms/kmp-string-search/editor/kmp-string-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -27,6 +29,8 @@ const MAX_TEXT = 80
 
 export function PlaybackView() {
   const text = useKmpStringSearchStore((s) => s.text)
+  const loadDoc = useKmpStringSearchStore((s) => s.loadDoc)
+  const toDoc = useKmpStringSearchStore((s) => s.toDoc)
   const pattern = useKmpStringSearchStore((s) => s.pattern)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
@@ -43,6 +47,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: kmpStringSearchCodec,
+    loadDoc,
+    toDoc,
+    mode: "",
+    setMode: () => undefined,
+    modeKeys: [] as const,
+    routePath: "kmp-string-search/playback",
+  })
 
   // Семантичні засічки фаз + рядок-діф. Hooks викликаємо безумовно (порожні кадри
   // на fallback → засічок немає), щоб не порушити правила хуків перед раннім return.
@@ -102,6 +117,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       markers={markers}

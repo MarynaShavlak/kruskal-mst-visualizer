@@ -7,6 +7,8 @@ import {
 } from "@/lib/shellSortTrace"
 import { type GapSequence } from "@/lib/shellSort"
 import { useShellSortStore } from "@/store/shell-sort-store"
+import { shellSortCodec } from "@/algorithms/shell-sort/editor/shell-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -25,6 +27,8 @@ const MAX_SIZE = 16
 
 export function PlaybackView() {
   const values = useShellSortStore((s) => s.values)
+  const loadDoc = useShellSortStore((s) => s.loadDoc)
+  const toDoc = useShellSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -41,6 +45,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: shellSortCodec,
+    loadDoc,
+    toDoc,
+    mode: sequence,
+    setMode: setSequence,
+    modeKeys: ["shell", "knuth", "ciura"] as const,
+    routePath: "shell-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -87,6 +102,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

@@ -40,12 +40,34 @@ import type { GraphDocCodec } from "@/algorithms/shared/editor/graph-doc"
 /** Тип вузла React Flow, спільний для всіх графів (кругла вершина з підписом). */
 export type EditorVertexNode = Node<{ label: string }, "vertex">
 
-/** Дістає значення параметра `g` із рядка hash (з/без ведучого '#'); null — немає. */
-export function readGraphParam(hash: string): string | null {
+/** Дістає значення параметра query-частини hash (з/без ведучого '#'); null — немає. */
+function readHashParam(hash: string, key: string): string | null {
   const h = hash.replace(/^#/, "")
   const q = h.indexOf("?")
   if (q < 0) return null
-  return new URLSearchParams(h.slice(q + 1)).get("g")
+  return new URLSearchParams(h.slice(q + 1)).get(key)
+}
+
+/** Дістає значення параметра `g` із рядка hash (з/без ведучого '#'); null — немає. */
+export function readGraphParam(hash: string): string | null {
+  return readHashParam(hash, "g")
+}
+
+/**
+ * Дістає `?step=` із рядка hash як невід'ємне ціле; null — немає/невалідне.
+ * Використовується дип-лінком плеєра для стартового індексу кадру.
+ */
+export function readStepParam(hash: string): number | null {
+  const raw = readHashParam(hash, "step")
+  if (raw === null) return null
+  const n = Number(raw)
+  return Number.isInteger(n) && n >= 0 ? n : null
+}
+
+/** Дістає `?mode=` із рядка hash (непорожній рядок); null — немає. */
+export function readModeParam(hash: string): string | null {
+  const raw = readHashParam(hash, "mode")
+  return raw === null || raw === "" ? null : raw
 }
 
 // Спільний граф із URL-хеша вантажимо лише раз за сесію сторінки — окремо на

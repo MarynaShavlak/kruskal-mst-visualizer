@@ -8,6 +8,8 @@ import {
 } from "@/lib/interpolationSearchTrace"
 import { isSorted, countBinaryProbes } from "@/lib/interpolationSearch"
 import { useInterpolationSearchStore } from "@/store/interpolation-search-store"
+import { interpolationSearchCodec } from "@/algorithms/interpolation-search/editor/interpolation-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -30,6 +32,8 @@ const MAX_SIZE = 64
 
 export function PlaybackView() {
   const values = useInterpolationSearchStore((s) => s.values)
+  const loadDoc = useInterpolationSearchStore((s) => s.loadDoc)
+  const toDoc = useInterpolationSearchStore((s) => s.toDoc)
   const target = useInterpolationSearchStore((s) => s.target)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
@@ -49,6 +53,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: interpolationSearchCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["iterative", "recursive"] as const,
+    routePath: "interpolation-search/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -93,6 +108,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={
         <div className="flex flex-col gap-2">
           {switcher}

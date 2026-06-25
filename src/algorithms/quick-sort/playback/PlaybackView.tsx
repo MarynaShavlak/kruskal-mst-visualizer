@@ -7,6 +7,8 @@ import {
 } from "@/lib/quickSortTrace"
 import type { PivotStrategy } from "@/lib/quickSort"
 import { useQuickSortStore } from "@/store/quick-sort-store"
+import { quickSortCodec } from "@/algorithms/quick-sort/editor/quick-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -27,6 +29,8 @@ const MAX_SIZE = 16
 
 export function PlaybackView() {
   const values = useQuickSortStore((s) => s.values)
+  const loadDoc = useQuickSortStore((s) => s.loadDoc)
+  const toDoc = useQuickSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -44,6 +48,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: quickSortCodec,
+    loadDoc,
+    toDoc,
+    mode: strategy,
+    setMode: setStrategy,
+    modeKeys: ["middle", "first", "last", "median3"] as const,
+    routePath: "quick-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -84,6 +99,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

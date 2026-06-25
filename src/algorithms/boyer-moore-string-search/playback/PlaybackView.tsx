@@ -5,6 +5,8 @@ import {
   type BmResult,
 } from "@/lib/boyerMooreStringSearchTrace"
 import { useBoyerMooreStringSearchStore } from "@/store/boyer-moore-string-search-store"
+import { boyerMooreStringSearchCodec } from "@/algorithms/boyer-moore-string-search/editor/boyer-moore-string-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -24,6 +26,8 @@ const MAX_TEXT = 80
 
 export function PlaybackView() {
   const text = useBoyerMooreStringSearchStore((s) => s.text)
+  const loadDoc = useBoyerMooreStringSearchStore((s) => s.loadDoc)
+  const toDoc = useBoyerMooreStringSearchStore((s) => s.toDoc)
   const pattern = useBoyerMooreStringSearchStore((s) => s.pattern)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
@@ -40,6 +44,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: boyerMooreStringSearchCodec,
+    loadDoc,
+    toDoc,
+    mode: "",
+    setMode: () => undefined,
+    modeKeys: [] as const,
+    routePath: "boyer-moore-string-search/playback",
+  })
 
   if (run.kind !== "ok") {
     return (
@@ -106,6 +121,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={

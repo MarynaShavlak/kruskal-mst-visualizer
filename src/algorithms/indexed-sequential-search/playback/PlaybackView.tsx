@@ -9,6 +9,8 @@ import {
 } from "@/lib/indexedSequentialSearchTrace"
 import { isSorted } from "@/lib/indexedSequentialSearch"
 import { useIndexedSequentialSearchStore } from "@/store/indexed-sequential-search-store"
+import { indexedSequentialSearchCodec } from "@/algorithms/indexed-sequential-search/editor/indexed-sequential-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -56,6 +58,8 @@ export function frameView(f: IxsFrame): TwoLevelProps {
 
 export function PlaybackView() {
   const values = useIndexedSequentialSearchStore((s) => s.values)
+  const loadDoc = useIndexedSequentialSearchStore((s) => s.loadDoc)
+  const toDoc = useIndexedSequentialSearchStore((s) => s.toDoc)
   const target = useIndexedSequentialSearchStore((s) => s.target)
   const step = useIndexedSequentialSearchStore((s) => s.step)
   const t = useT()
@@ -80,6 +84,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: indexedSequentialSearchCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["binary", "linear"] as const,
+    routePath: "indexed-sequential-search/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -116,6 +131,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={
         <div className="flex flex-col gap-2">
           {switcher}

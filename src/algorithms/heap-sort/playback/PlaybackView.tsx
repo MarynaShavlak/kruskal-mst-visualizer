@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { buildHeapSortTrace, type HpPhase, type HpFrame, type HpResult } from "@/lib/heapSortTrace"
 import { type HeapOrder } from "@/lib/heapSort"
 import { useHeapSortStore } from "@/store/heap-sort-store"
+import { heapSortCodec } from "@/algorithms/heap-sort/editor/heap-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -36,6 +38,8 @@ function nodeState(frame: HpFrame): HeapNodeState {
 
 export function PlaybackView() {
   const values = useHeapSortStore((s) => s.values)
+  const loadDoc = useHeapSortStore((s) => s.loadDoc)
+  const toDoc = useHeapSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -52,6 +56,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: heapSortCodec,
+    loadDoc,
+    toDoc,
+    mode: order,
+    setMode: setOrder,
+    modeKeys: ["asc", "desc"] as const,
+    routePath: "heap-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -94,6 +109,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

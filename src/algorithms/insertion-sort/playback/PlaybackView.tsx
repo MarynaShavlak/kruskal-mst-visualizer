@@ -6,6 +6,8 @@ import {
   type InsResult,
 } from "@/lib/insertionSortTrace"
 import { useInsertionSortStore } from "@/store/insertion-sort-store"
+import { insertionSortCodec } from "@/algorithms/insertion-sort/editor/insertion-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -27,6 +29,8 @@ const MAX_SIZE = 80
 
 export function PlaybackView() {
   const values = useInsertionSortStore((s) => s.values)
+  const loadDoc = useInsertionSortStore((s) => s.loadDoc)
+  const toDoc = useInsertionSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -45,6 +49,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: insertionSortCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["linear", "binary"] as const,
+    routePath: "insertion-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -89,6 +104,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

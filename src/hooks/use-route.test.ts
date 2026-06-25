@@ -1,9 +1,15 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, beforeEach } from "vitest"
 import {
   parseHash,
   parseCatalogQuery,
   buildCatalogHash,
+  setHashWithQuery,
 } from "@/hooks/use-route"
+import {
+  readGraphParam,
+  readStepParam,
+  readModeParam,
+} from "@/algorithms/shared/editor/use-graph-editor"
 
 const EMPTY_CATALOG = { family: null, cls: null, q: null }
 
@@ -141,6 +147,41 @@ describe("parseCatalogQuery", () => {
 
   it("пробіли в q зберігаються (через URLSearchParams)", () => {
     expect(parseCatalogQuery("#?q=binary+search").q).toBe("binary search")
+  })
+})
+
+describe("setHashWithQuery", () => {
+  beforeEach(() => {
+    window.location.hash = ""
+  })
+
+  it("пише path?g=…&step=N&mode=X, зберігаючи path", () => {
+    setHashWithQuery("linear-search/playback", {
+      g: "AbC",
+      step: "4",
+      mode: "all",
+    })
+    const hash = window.location.hash
+    // parseHash зрізає query — роут лишається плеєром.
+    expect(parseHash(hash)).toEqual({
+      algorithmId: "linear-search",
+      tab: "playback",
+      page: null,
+      catalog: { family: null, cls: null, q: null },
+    })
+    // Параметри читаються окремими ридерами (round-trip).
+    expect(readGraphParam(hash)).toBe("AbC")
+    expect(readStepParam(hash)).toBe(4)
+    expect(readModeParam(hash)).toBe("all")
+  })
+
+  it("оминає null/порожні значення; без параметрів — лише path", () => {
+    setHashWithQuery("x/playback", { g: "z", step: "0", mode: null })
+    expect(readModeParam(window.location.hash)).toBeNull()
+    expect(readStepParam(window.location.hash)).toBe(0)
+
+    setHashWithQuery("x/playback", { g: undefined, step: undefined })
+    expect(window.location.hash).toBe("#x/playback")
   })
 })
 

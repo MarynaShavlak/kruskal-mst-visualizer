@@ -1,4 +1,4 @@
-import { Pause, Play, SkipBack, StepBack, StepForward } from "lucide-react"
+import { Pause, Play, Share2, SkipBack, StepBack, StepForward } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -10,10 +10,13 @@ import type { LabeledPhaseMarker } from "@/algorithms/shared/playback/use-phase-
 export function PlayerControls({
   player,
   markers,
+  onShareStep,
 }: {
   player: Player
   /** Семантичні засічки фаз поверх слайдера (опц. — без них оверлея немає). */
   markers?: readonly LabeledPhaseMarker[]
+  /** Дип-лінк на поточний крок (опц. — без нього кнопки share немає). */
+  onShareStep?: () => void
 }) {
   const { index, isPlaying, speedMs, frameCount, dispatch } = player
   const last = frameCount - 1
@@ -102,6 +105,17 @@ export function PlayerControls({
           </Button>
         ))}
       </div>
+
+      {onShareStep && (
+        <Button
+          size="icon-sm"
+          variant="outline"
+          onClick={onShareStep}
+          title={t("play.shareStep")}
+        >
+          <Share2 />
+        </Button>
+      )}
     </div>
   )
 }

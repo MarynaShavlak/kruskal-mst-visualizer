@@ -8,6 +8,8 @@ import {
 } from "@/lib/binarySearchTrace"
 import { isSorted } from "@/lib/binarySearch"
 import { useBinarySearchStore } from "@/store/binary-search-store"
+import { binarySearchCodec } from "@/algorithms/binary-search/editor/binary-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -33,6 +35,8 @@ const MAX_SIZE = 64
 
 export function PlaybackView() {
   const values = useBinarySearchStore((s) => s.values)
+  const loadDoc = useBinarySearchStore((s) => s.loadDoc)
+  const toDoc = useBinarySearchStore((s) => s.toDoc)
   const target = useBinarySearchStore((s) => s.target)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
@@ -53,6 +57,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: binarySearchCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["iterative", "recursive"] as const,
+    routePath: "binary-search/playback",
+  })
 
   // Питання «Вгадай рішення» поточного кадру (null, якщо кадр — не проба).
   const okFrames = run.kind === "ok" ? run.trace.frames : []
@@ -94,6 +109,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">

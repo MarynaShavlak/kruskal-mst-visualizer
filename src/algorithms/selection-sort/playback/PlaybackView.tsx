@@ -6,6 +6,8 @@ import {
   type SelResult,
 } from "@/lib/selectionSortTrace"
 import { useSelectionSortStore } from "@/store/selection-sort-store"
+import { selectionSortCodec } from "@/algorithms/selection-sort/editor/selection-sort-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -27,6 +29,8 @@ const MAX_SIZE = 80
 
 export function PlaybackView() {
   const values = useSelectionSortStore((s) => s.values)
+  const loadDoc = useSelectionSortStore((s) => s.loadDoc)
+  const toDoc = useSelectionSortStore((s) => s.toDoc)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
   const tr = useTr()
@@ -45,6 +49,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: selectionSortCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["standard", "stable"] as const,
+    routePath: "selection-sort/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -83,6 +98,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}

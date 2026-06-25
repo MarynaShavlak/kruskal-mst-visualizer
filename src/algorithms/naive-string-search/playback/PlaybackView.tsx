@@ -6,6 +6,8 @@ import {
   type NaiveResult,
 } from "@/lib/naiveStringSearchTrace"
 import { useNaiveStringSearchStore } from "@/store/naive-string-search-store"
+import { naiveStringSearchCodec } from "@/algorithms/naive-string-search/editor/naive-string-search-doc"
+import { usePlaybackDeeplink } from "@/algorithms/shared/playback/use-playback-deeplink"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
@@ -27,6 +29,8 @@ const MAX_TEXT = 80
 
 export function PlaybackView() {
   const text = useNaiveStringSearchStore((s) => s.text)
+  const loadDoc = useNaiveStringSearchStore((s) => s.loadDoc)
+  const toDoc = useNaiveStringSearchStore((s) => s.toDoc)
   const pattern = useNaiveStringSearchStore((s) => s.pattern)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
@@ -45,6 +49,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  const { shareStep } = usePlaybackDeeplink({
+    player,
+    codec: naiveStringSearchCodec,
+    loadDoc,
+    toDoc,
+    mode: mode,
+    setMode: setMode,
+    modeKeys: ["first", "all"] as const,
+    routePath: "naive-string-search/playback",
+  })
 
   const switcher = (
     <ModeSwitch
@@ -90,6 +105,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      onShareStep={shareStep}
       headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
