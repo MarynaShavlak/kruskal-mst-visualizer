@@ -7,6 +7,9 @@ import type {
 import { kruskal } from "@/algorithms/kruskal"
 import { prim } from "@/algorithms/prim"
 import { floydWarshall } from "@/algorithms/floyd-warshall"
+import { bfs } from "@/algorithms/bfs"
+import { dfs } from "@/algorithms/dfs"
+import { dijkstra } from "@/algorithms/dijkstra"
 import { heldKarp } from "@/algorithms/held-karp"
 import { knapsack } from "@/algorithms/knapsack"
 import { bubbleSort } from "@/algorithms/bubble-sort"
@@ -35,6 +38,9 @@ export const ALGORITHMS: readonly Algorithm[] = [
   kruskal,
   prim,
   floydWarshall,
+  bfs,
+  dfs,
+  dijkstra,
   heldKarp,
   knapsack,
   bubbleSort,
