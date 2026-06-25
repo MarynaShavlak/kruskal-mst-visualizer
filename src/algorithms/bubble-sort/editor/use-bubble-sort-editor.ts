@@ -17,6 +17,7 @@ export interface BubbleSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useBubbleSortEditor(): BubbleSortEditorController {
@@ -29,7 +30,8 @@ export function useBubbleSortEditor(): BubbleSortEditorController {
   const loadDoc = useBubbleSortStore((s) => s.loadDoc)
   const toDoc = useBubbleSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: bubbleSortCodec,
     toDoc,
     loadDoc,
@@ -48,5 +50,6 @@ export function useBubbleSortEditor(): BubbleSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

@@ -17,6 +17,7 @@ export interface RadixSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useRadixSortEditor(): RadixSortEditorController {
@@ -30,7 +31,8 @@ export function useRadixSortEditor(): RadixSortEditorController {
   const loadDoc = useRadixSortStore((s) => s.loadDoc)
   const toDoc = useRadixSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: radixSortCodec,
     toDoc,
     loadDoc,
@@ -50,5 +52,6 @@ export function useRadixSortEditor(): RadixSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

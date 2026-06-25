@@ -16,6 +16,7 @@ export interface KmpStringSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useKmpStringSearchEditor(): KmpStringSearchEditorController {
@@ -28,7 +29,8 @@ export function useKmpStringSearchEditor(): KmpStringSearchEditorController {
   const loadDoc = useKmpStringSearchStore((s) => s.loadDoc)
   const toDoc = useKmpStringSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: kmpStringSearchCodec,
     toDoc,
     loadDoc,
@@ -47,5 +49,6 @@ export function useKmpStringSearchEditor(): KmpStringSearchEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

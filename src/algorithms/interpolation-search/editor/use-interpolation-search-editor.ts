@@ -18,6 +18,7 @@ export interface InterpolationSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useInterpolationSearchEditor(): InterpolationSearchEditorController {
@@ -31,7 +32,8 @@ export function useInterpolationSearchEditor(): InterpolationSearchEditorControl
   const loadDoc = useInterpolationSearchStore((s) => s.loadDoc)
   const toDoc = useInterpolationSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: interpolationSearchCodec,
     toDoc,
     loadDoc,
@@ -51,5 +53,6 @@ export function useInterpolationSearchEditor(): InterpolationSearchEditorControl
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

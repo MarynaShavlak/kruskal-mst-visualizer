@@ -19,6 +19,7 @@ export interface MergeSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useMergeSortEditor(): MergeSortEditorController {
@@ -32,7 +33,8 @@ export function useMergeSortEditor(): MergeSortEditorController {
   const loadDoc = useMergeSortStore((s) => s.loadDoc)
   const toDoc = useMergeSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: mergeSortCodec,
     toDoc,
     loadDoc,
@@ -52,5 +54,6 @@ export function useMergeSortEditor(): MergeSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

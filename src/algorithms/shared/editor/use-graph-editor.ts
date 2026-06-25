@@ -26,6 +26,7 @@ import {
   type NodeChange,
   type OnNodeDrag,
 } from "@xyflow/react"
+import { useEmbedSnippet } from "@/algorithms/shared/editor/use-embed-snippet"
 import { setHash } from "@/hooks/use-route"
 import { tr } from "@/i18n/use-t"
 import type {
@@ -85,6 +86,8 @@ export interface GraphEditorController<E extends Edge> {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  /** Копіює `<iframe>`-сніпет embed-режиму поточного граф-редактора. */
+  readonly onCopyEmbed: () => void
 }
 
 /**
@@ -236,6 +239,11 @@ export function useGraphEditor<E extends Edge, G extends GraphLike>(
     )
   }, [codec, toDoc, routePath])
 
+  const onCopyEmbed = useEmbedSnippet({
+    route: routePath,
+    title: tr("app.title"),
+  })
+
   return {
     rfNodes,
     rfEdges,
@@ -249,5 +257,6 @@ export function useGraphEditor<E extends Edge, G extends GraphLike>(
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

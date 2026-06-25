@@ -16,6 +16,7 @@ export interface RabinKarpStringSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useRabinKarpStringSearchEditor(): RabinKarpStringSearchEditorController {
@@ -28,7 +29,8 @@ export function useRabinKarpStringSearchEditor(): RabinKarpStringSearchEditorCon
   const loadDoc = useRabinKarpStringSearchStore((s) => s.loadDoc)
   const toDoc = useRabinKarpStringSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: rabinKarpStringSearchCodec,
     toDoc,
     loadDoc,
@@ -47,5 +49,6 @@ export function useRabinKarpStringSearchEditor(): RabinKarpStringSearchEditorCon
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

@@ -13,6 +13,7 @@ import {
 } from "@xyflow/react"
 import {
   BookOpen,
+  Code2,
   Download,
   Minus,
   Plus,
@@ -181,6 +182,9 @@ function EditorCanvas() {
         </Button>
         <Button size="sm" variant="outline" onClick={ctrl.onShare}>
           <Share2 /> {t("editor.share")}
+        </Button>
+        <Button size="sm" variant="outline" onClick={ctrl.onCopyEmbed}>
+          <Code2 /> {t("embed.copyCode")}
         </Button>
         <input
           ref={fileInputRef}

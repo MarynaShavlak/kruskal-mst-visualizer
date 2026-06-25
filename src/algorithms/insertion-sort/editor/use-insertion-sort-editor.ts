@@ -18,6 +18,7 @@ export interface InsertionSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useInsertionSortEditor(): InsertionSortEditorController {
@@ -30,7 +31,8 @@ export function useInsertionSortEditor(): InsertionSortEditorController {
   const loadDoc = useInsertionSortStore((s) => s.loadDoc)
   const toDoc = useInsertionSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: insertionSortCodec,
     toDoc,
     loadDoc,
@@ -49,5 +51,6 @@ export function useInsertionSortEditor(): InsertionSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

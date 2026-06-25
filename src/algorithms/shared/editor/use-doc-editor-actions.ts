@@ -6,6 +6,7 @@
 import { useCallback, useEffect, type ChangeEvent } from "react"
 import type { DocCodec } from "@/algorithms/shared/editor/doc-codec"
 import { readGraphParam } from "@/algorithms/shared/editor/use-graph-editor"
+import { useEmbedSnippet } from "@/algorithms/shared/editor/use-embed-snippet"
 import { setHash } from "@/hooks/use-route"
 import { tr } from "@/i18n/use-t"
 import { toast } from "@/store/toast-store"
@@ -18,6 +19,8 @@ export interface DocEditorActions {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  /** Копіює `<iframe>`-сніпет embed-режиму поточного редактора. */
+  readonly onCopyEmbed: () => void
 }
 
 export interface DocEditorActionsOptions<Doc> {
@@ -92,5 +95,10 @@ export function useDocEditorActions<Doc>({
     )
   }, [codec, toDoc, routePath])
 
-  return { onLoadRandom, onExport, onImportFile, onShare }
+  const onCopyEmbed = useEmbedSnippet({
+    route: routePath,
+    title: tr("app.title"),
+  })
+
+  return { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed }
 }

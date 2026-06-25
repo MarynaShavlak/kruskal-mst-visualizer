@@ -18,6 +18,7 @@ export interface IndexedSequentialSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useIndexedSequentialSearchEditor(): IndexedSequentialSearchEditorController {
@@ -31,7 +32,8 @@ export function useIndexedSequentialSearchEditor(): IndexedSequentialSearchEdito
   const loadDoc = useIndexedSequentialSearchStore((s) => s.loadDoc)
   const toDoc = useIndexedSequentialSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: indexedSequentialSearchCodec,
     toDoc,
     loadDoc,
@@ -51,5 +53,6 @@ export function useIndexedSequentialSearchEditor(): IndexedSequentialSearchEdito
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

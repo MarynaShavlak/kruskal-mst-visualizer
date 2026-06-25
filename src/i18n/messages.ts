@@ -154,6 +154,11 @@ const ua = {
   // Тости.
   "editor.importFailed": "Не вдалося імпортувати",
   "editor.linkCopied": "Посилання скопійовано в буфер обміну.",
+  // Embed-режим (?embed=1): вставка віджета у LMS/блог.
+  "embed.copyCode": "Код вставки",
+  "embed.copied": "Код вставки <iframe> скопійовано в буфер обміну.",
+  "embed.openFull": "Відкрити повну версію",
+  "embed.poweredBy": "Алгоритми: інтерактивні розбори",
   // Помилки кодека (показуються в тості імпорту).
   "editor.errNotObject": "Документ має бути об'єктом",
   "editor.errBadVersion": "Непідтримувана версія документа",
@@ -2193,6 +2198,10 @@ const en: Record<MessageKey, string> = {
   "editor.countEdges": "Edges",
   "editor.importFailed": "Import failed",
   "editor.linkCopied": "Link copied to clipboard.",
+  "embed.copyCode": "Embed code",
+  "embed.copied": "<iframe> embed code copied to clipboard.",
+  "embed.openFull": "Open full version",
+  "embed.poweredBy": "Algorithms: interactive walkthroughs",
   "editor.errNotObject": "The document must be an object",
   "editor.errBadVersion": "Unsupported document version",
   "editor.errBadVertices": "The vertices field is invalid",

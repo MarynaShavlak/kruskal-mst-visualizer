@@ -17,6 +17,7 @@ export function EditorView() {
       onImportFile={ctrl.onImportFile}
       onExport={ctrl.onExport}
       onShare={ctrl.onShare}
+      onCopyEmbed={ctrl.onCopyEmbed}
       toolbar={
         <>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadMain}>

@@ -18,6 +18,7 @@ export interface BinarySearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useBinarySearchEditor(): BinarySearchEditorController {
@@ -31,7 +32,8 @@ export function useBinarySearchEditor(): BinarySearchEditorController {
   const loadDoc = useBinarySearchStore((s) => s.loadDoc)
   const toDoc = useBinarySearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: binarySearchCodec,
     toDoc,
     loadDoc,
@@ -51,5 +53,6 @@ export function useBinarySearchEditor(): BinarySearchEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

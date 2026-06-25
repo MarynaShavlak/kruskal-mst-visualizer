@@ -18,6 +18,7 @@ export interface QuickSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useQuickSortEditor(): QuickSortEditorController {
@@ -30,7 +31,8 @@ export function useQuickSortEditor(): QuickSortEditorController {
   const loadDoc = useQuickSortStore((s) => s.loadDoc)
   const toDoc = useQuickSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: quickSortCodec,
     toDoc,
     loadDoc,
@@ -49,5 +51,6 @@ export function useQuickSortEditor(): QuickSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

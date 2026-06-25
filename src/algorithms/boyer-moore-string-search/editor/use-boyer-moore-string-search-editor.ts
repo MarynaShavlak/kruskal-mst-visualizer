@@ -16,6 +16,7 @@ export interface BoyerMooreStringSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useBoyerMooreStringSearchEditor(): BoyerMooreStringSearchEditorController {
@@ -28,7 +29,8 @@ export function useBoyerMooreStringSearchEditor(): BoyerMooreStringSearchEditorC
   const loadDoc = useBoyerMooreStringSearchStore((s) => s.loadDoc)
   const toDoc = useBoyerMooreStringSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: boyerMooreStringSearchCodec,
     toDoc,
     loadDoc,
@@ -47,5 +49,6 @@ export function useBoyerMooreStringSearchEditor(): BoyerMooreStringSearchEditorC
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

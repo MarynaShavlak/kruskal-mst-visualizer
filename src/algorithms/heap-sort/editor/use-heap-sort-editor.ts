@@ -17,6 +17,7 @@ export interface HeapSortEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useHeapSortEditor(): HeapSortEditorController {
@@ -30,7 +31,8 @@ export function useHeapSortEditor(): HeapSortEditorController {
   const loadDoc = useHeapSortStore((s) => s.loadDoc)
   const toDoc = useHeapSortStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: heapSortCodec,
     toDoc,
     loadDoc,
@@ -50,5 +52,6 @@ export function useHeapSortEditor(): HeapSortEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }

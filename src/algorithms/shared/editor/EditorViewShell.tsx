@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent, type ReactNode } from "react"
-import { Download, Share2, Upload } from "lucide-react"
+import { Code2, Download, Share2, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n/use-t"
 
@@ -14,6 +14,8 @@ export interface EditorViewShellProps {
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onExport: () => void
   readonly onShare: () => void
+  /** Копіює `<iframe>`-сніпет embed-режиму (опц. — лишає старі виклики сумісними). */
+  readonly onCopyEmbed?: () => void
   /** Тіло редактора: бокс вводу + панель-підсумок (зазвичай дві колонки на lg). */
   readonly children: ReactNode
   /** Блок довідки під тілом (зазвичай <EditorHelp />). */
@@ -26,6 +28,7 @@ export function EditorViewShell({
   onImportFile,
   onExport,
   onShare,
+  onCopyEmbed,
   children,
   help,
 }: EditorViewShellProps) {
@@ -50,6 +53,11 @@ export function EditorViewShell({
         <Button size="sm" variant="outline" onClick={onShare}>
           <Share2 /> {t("editor.share")}
         </Button>
+        {onCopyEmbed && (
+          <Button size="sm" variant="outline" onClick={onCopyEmbed}>
+            <Code2 /> {t("embed.copyCode")}
+          </Button>
+        )}
         <input
           ref={fileInputRef}
           type="file"

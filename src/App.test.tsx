@@ -7,6 +7,9 @@ import { useLangStore } from "@/store/lang-store"
 describe("Оболонка платформи", () => {
   beforeEach(() => {
     window.location.hash = ""
+    // Скидаємо search для всіх сьютів: App.useEmbed читає ?embed=1 із search,
+    // інакше embed-тест залишив би його ввімкненим для наступних рендерів.
+    window.history.replaceState(null, "", window.location.pathname)
     useLangStore.getState().setLang("ua")
   })
 
@@ -79,5 +82,22 @@ describe("Оболонка платформи", () => {
     expect(
       await screen.findByText(/DSU проти наївної/, undefined, { timeout: 5000 }),
     ).toBeInTheDocument()
+  })
+
+  it("embed-режим (?embed=1) ховає шапку, але рендерить тіло й атрибуцію", () => {
+    window.history.replaceState(null, "", `${window.location.pathname}?embed=1`)
+    window.location.hash = "#kruskal/playback"
+    render(<App />)
+
+    // Шапка (перемикач алгоритмів) відсутня — chrome-less віджет.
+    expect(
+      screen.queryByRole("heading", {
+        name: "Алгоритми: інтерактивні розбори",
+      }),
+    ).not.toBeInTheDocument()
+    // Тіло рендериться: вкладка плеєра активна.
+    expect(screen.getByRole("tab", { name: "Алгоритм" })).toBeInTheDocument()
+    // Атрибуція-футер із посиланням на повну версію.
+    expect(screen.getByText("Відкрити повну версію")).toBeInTheDocument()
   })
 })

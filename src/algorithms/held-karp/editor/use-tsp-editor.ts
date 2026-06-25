@@ -18,6 +18,7 @@ import {
   type OnNodeDrag,
 } from "@xyflow/react"
 import { readGraphParam } from "@/algorithms/shared/editor/use-graph-editor"
+import { useEmbedSnippet } from "@/algorithms/shared/editor/use-embed-snippet"
 import { toCanvas, toMathSnapped } from "@/algorithms/held-karp/editor/coords"
 import { tspCodec } from "@/algorithms/held-karp/editor/tsp-doc"
 import type { CityNodeType } from "@/algorithms/held-karp/editor/CityNode"
@@ -50,6 +51,8 @@ export interface TspEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  /** Копіює `<iframe>`-сніпет embed-режиму поточного редактора. */
+  readonly onCopyEmbed: () => void
   /** Застосовує цілий документ (з діалогу координат) і центрує вид. */
   readonly onApplyDoc: (doc: TspDoc) => void
 }
@@ -228,6 +231,11 @@ export function useTspEditor(): TspEditorController {
     [loadDoc, scheduleFit],
   )
 
+  const onCopyEmbed = useEmbedSnippet({
+    route: ROUTE_PATH,
+    title: tr("app.title"),
+  })
+
   return {
     cities,
     start,
@@ -243,6 +251,7 @@ export function useTspEditor(): TspEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
     onApplyDoc,
   }
 }

@@ -10,6 +10,7 @@ import { HomeView } from "@/features/home/HomeView"
 import { ComplexityMatrix } from "@/features/compare/ComplexityMatrix"
 import { getAlgorithm } from "@/algorithms/registry"
 import { navigateTo, useRoute } from "@/hooks/use-route"
+import { useEmbed } from "@/hooks/use-embed"
 import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 
@@ -18,6 +19,46 @@ export default function App() {
   const algorithm = getAlgorithm(route.algorithmId) ?? null
   const t = useT()
   const lang = useLangStore((s) => s.lang)
+  const embed = useEmbed()
+
+  const body = (
+    <ErrorBoundary key={route.algorithmId ?? route.page ?? "home"}>
+      {route.page === "compare" ? (
+        <ComplexityMatrix />
+      ) : algorithm ? (
+        <AlgorithmShell algorithm={algorithm} tab={route.tab} />
+      ) : (
+        <HomeView />
+      )}
+    </ErrorBoundary>
+  )
+
+  // Embed-режим (?embed=1): chrome-less віджет для <iframe> у LMS/блозі — без
+  // шапки/перемикачів, тісніший <main>; Toaster/ErrorBoundary/MotionConfig лишаємо.
+  // Знизу — компактна атрибуція + «відкрити повну версію» (target=_top, щоб лінк
+  // вийшов із iframe). Повний URL — поточний без ?embed (origin+pathname+hash).
+  if (embed.embed) {
+    const fullUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`
+    return (
+      <MotionConfig reducedMotion="user">
+        <div className="min-h-screen bg-background text-foreground">
+          <main className="mx-auto max-w-6xl px-3 py-3">{body}</main>
+          <footer className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 pb-3 text-xs text-muted-foreground">
+            <span>{t("embed.poweredBy")}</span>
+            <a
+              href={fullUrl}
+              target="_top"
+              rel="noopener"
+              className="underline hover:text-foreground"
+            >
+              {t("embed.openFull")}
+            </a>
+          </footer>
+          <Toaster />
+        </div>
+      </MotionConfig>
+    )
+  }
 
   return (
     <MotionConfig reducedMotion="user">
@@ -46,17 +87,7 @@ export default function App() {
           </div>
         </header>
 
-        <main className="mx-auto max-w-6xl px-4 py-6">
-          <ErrorBoundary key={route.algorithmId ?? route.page ?? "home"}>
-            {route.page === "compare" ? (
-              <ComplexityMatrix />
-            ) : algorithm ? (
-              <AlgorithmShell algorithm={algorithm} tab={route.tab} />
-            ) : (
-              <HomeView />
-            )}
-          </ErrorBoundary>
-        </main>
+        <main className="mx-auto max-w-6xl px-4 py-6">{body}</main>
 
         <Toaster />
         <PwaUpdatePrompt />

@@ -16,6 +16,7 @@ export interface LinearSearchEditorController {
   readonly onExport: () => void
   readonly onImportFile: (event: ChangeEvent<HTMLInputElement>) => void
   readonly onShare: () => void
+  readonly onCopyEmbed: () => void
 }
 
 export function useLinearSearchEditor(): LinearSearchEditorController {
@@ -28,7 +29,8 @@ export function useLinearSearchEditor(): LinearSearchEditorController {
   const loadDoc = useLinearSearchStore((s) => s.loadDoc)
   const toDoc = useLinearSearchStore((s) => s.toDoc)
 
-  const { onLoadRandom, onExport, onImportFile, onShare } = useDocEditorActions({
+  const { onLoadRandom, onExport, onImportFile, onShare, onCopyEmbed } =
+    useDocEditorActions({
     codec: linearSearchCodec,
     toDoc,
     loadDoc,
@@ -47,5 +49,6 @@ export function useLinearSearchEditor(): LinearSearchEditorController {
     onExport,
     onImportFile,
     onShare,
+    onCopyEmbed,
   }
 }
