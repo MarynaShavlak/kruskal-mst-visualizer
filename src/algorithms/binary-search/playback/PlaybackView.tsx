@@ -18,6 +18,10 @@ import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { WindowPanel } from "@/algorithms/binary-search/playback/WindowPanel"
 import { ResultVerdict, resultBorderClass } from "@/algorithms/shared/playback/ResultVerdict"
+import { PredictToggle } from "@/algorithms/shared/playback/PredictToggle"
+import { PredictOverlay } from "@/algorithms/shared/playback/PredictOverlay"
+import { usePredict } from "@/algorithms/shared/playback/use-predict"
+import { binaryPredictAdapter } from "@/algorithms/shared/playback/predict"
 import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
@@ -49,6 +53,11 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  // Питання «Вгадай рішення» поточного кадру (null, якщо кадр — не проба).
+  const okFrames = run.kind === "ok" ? run.trace.frames : []
+  const predictIndex = Math.min(player.index, Math.max(0, okFrames.length - 1))
+  const predict = usePredict(player, binaryPredictAdapter(okFrames, predictIndex))
 
   const switcher = (
     <ModeSwitch
@@ -87,7 +96,10 @@ export function PlaybackView() {
       player={player}
       headerExtra={
         <div className="flex flex-col gap-2">
-          {switcher}
+          <div className="flex flex-wrap items-center gap-2">
+            {switcher}
+            <PredictToggle />
+          </div>
           {!sorted && (
             <div className="flex items-start gap-1.5 rounded-md bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
               <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
@@ -96,6 +108,7 @@ export function PlaybackView() {
           )}
         </div>
       }
+      predictSlot={<PredictOverlay controller={predict} />}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={

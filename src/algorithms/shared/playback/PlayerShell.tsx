@@ -15,6 +15,7 @@ export function PlayerShell({
   captionBadge,
   headerExtra,
   statsBar,
+  predictSlot,
   panels,
   secondRow,
 }: {
@@ -27,6 +28,8 @@ export function PlayerShell({
   headerExtra?: ReactNode
   /** Слот рядка-статистики між нарацією і панелями. */
   statsBar?: ReactNode
+  /** Слот «Вгадай рішення» між статистикою й панелями (опц. — інші плеєри не ламаються). */
+  predictSlot?: ReactNode
   /** Перша 3-колонкова сітка (граф/код/третя панель). */
   panels: ReactNode
   /** Друга 3-колонкова сітка (таблиця рішень / журнал + підсумок). */
@@ -47,6 +50,8 @@ export function PlayerShell({
       </div>
 
       {statsBar}
+
+      {predictSlot}
 
       <div className="grid gap-3 lg:grid-cols-3">{panels}</div>
 

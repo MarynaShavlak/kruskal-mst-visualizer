@@ -7,6 +7,10 @@ import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
+import { PredictToggle } from "@/algorithms/shared/playback/PredictToggle"
+import { PredictOverlay } from "@/algorithms/shared/playback/PredictOverlay"
+import { usePredict } from "@/algorithms/shared/playback/use-predict"
+import { kruskalPredictAdapter } from "@/algorithms/shared/playback/predict"
 import { DecisionTable } from "@/algorithms/kruskal/playback/DecisionTable"
 import { GraphView } from "@/algorithms/kruskal/playback/GraphView"
 import { useT } from "@/i18n/use-t"
@@ -32,8 +36,13 @@ export function SinglePlayer({
   // resetKey = граф (стабільний при зміні мови) — перебудова trace для іншої
   // мови не скидає курсор; зміна графа — скидає.
   const player = usePlayer(trace.frames.length, graph)
-  const frame = trace.frames[Math.min(player.index, trace.frames.length - 1)]
+  const index = Math.min(player.index, trace.frames.length - 1)
+  const frame = trace.frames[index]
   const t = useT()
+
+  // «Вгадай рішення»: на кадрі-`consider` (decision=null) питаємо «додати/відхилити»;
+  // правильну відповідь адаптер дістає СКАНОМ УПЕРЕД на той самий consideredEdgeId.
+  const predict = usePredict(player, kruskalPredictAdapter(trace.frames, index))
 
   const firstFrameOfEdge = useMemo(() => {
     const map = new Map<string, number>()
@@ -57,7 +66,13 @@ export function SinglePlayer({
     <PlayerShell
       player={player}
       caption={frame.caption}
-      headerExtra={headerExtra}
+      headerExtra={
+        <div className="flex flex-col gap-2">
+          {headerExtra}
+          <PredictToggle />
+        </div>
+      }
+      predictSlot={<PredictOverlay controller={predict} />}
       statsBar={
         frame.dsuStats && (
           <>

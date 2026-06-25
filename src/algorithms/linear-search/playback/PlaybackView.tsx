@@ -16,6 +16,10 @@ import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ScanPanel } from "@/algorithms/linear-search/playback/ScanPanel"
 import { ResultVerdict, resultBorderClass } from "@/algorithms/shared/playback/ResultVerdict"
+import { PredictToggle } from "@/algorithms/shared/playback/PredictToggle"
+import { PredictOverlay } from "@/algorithms/shared/playback/PredictOverlay"
+import { usePredict } from "@/algorithms/shared/playback/use-predict"
+import { linearPredictAdapter } from "@/algorithms/shared/playback/predict"
 import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
@@ -46,6 +50,11 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  // Питання «Вгадай рішення» поточного кадру (null, якщо кадр — не перевірка).
+  const okFrames = run.kind === "ok" ? run.trace.frames : []
+  const predictIndex = Math.min(player.index, Math.max(0, okFrames.length - 1))
+  const predict = usePredict(player, linearPredictAdapter(okFrames, predictIndex))
 
   const switcher = (
     <ModeSwitch
@@ -88,7 +97,13 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
-      headerExtra={switcher}
+      headerExtra={
+        <div className="flex flex-wrap items-center gap-2">
+          {switcher}
+          <PredictToggle />
+        </div>
+      }
+      predictSlot={<PredictOverlay controller={predict} />}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
