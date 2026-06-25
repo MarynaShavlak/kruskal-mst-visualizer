@@ -75,6 +75,10 @@ BFS from start `A`:
 Visit order: **A B C D E F** — first level 0 (`A`), then level 1 (`B, C`), then level 2
 (`D, E, F`).
 
+Press "step" and watch the queue fill and drain while vertices light up level by level:
+
+![Step-by-step BFS on this graph](bfs-walk.svg)
+
 ## 5. BFS and the shortest path
 
 The main strength of BFS: in an **unweighted** graph it finds the shortest path (by number of
@@ -94,3 +98,35 @@ BFS and DFS explore the same graph but in different orders: BFS goes "wide" (lev
 DFS goes "deep" (to the end of a branch, then back). BFS is more economical for the shortest
 path but keeps a whole level in memory; DFS uses less memory but does not guarantee the
 shortest route. The choice depends on the problem.
+
+A step-by-step comparison on the same graph — BFS on the left, DFS on the right. Scrub through
+and see BFS colour vertices in a "bush" (level by level) while DFS stretches into a "long
+branch":
+
+![BFS vs DFS on the same graph](bfs-vs-dfs.svg)
+
+## 8. Different cases
+
+### A chain — the strategies coincide
+
+If the graph is a simple line with no branching, BFS and DFS produce the **same** order: we
+just walk along the chain. This shows that the difference between them only appears where there
+is a choice of neighbours.
+
+![BFS on a chain graph](trav-chain.svg)
+
+### A cyclic graph — the visited set saves us
+
+On a cycle a vertex may enter the frontier twice. The `visited` set prevents reprocessing: when
+we remove an already-visited vertex, we simply skip it. Without this check the traversal would
+loop forever.
+
+![BFS on a cyclic graph](trav-cyclic.svg)
+
+### A disconnected graph — a corner case
+
+A traversal from one vertex reaches only its **connected component**. If not all vertices are
+visited when it finishes, the graph is disconnected (this is exactly how BFS/DFS check
+connectivity).
+
+![BFS on a disconnected graph](trav-disconnected.svg)

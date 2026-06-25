@@ -51,6 +51,11 @@ The result — shortest distances from `A`: `{A: 0, B: 5, C: 10, D: 8, E: 12}`. 
 `A → B → D → E` of length `12`. Note step 3: through `D` to `C` gives `8 + 2 = 10` — no shorter
 than the direct `A–C = 10`, so the distance to `C` does not change.
 
+Scrub step by step: green vertices are already checked, red edges were just examined, and the
+distance table updates exactly as above:
+
+![Step-by-step Dijkstra](dijkstra-walk.svg)
+
 ## 4. Implementation
 
 The simplest variant linearly searches for the minimum-distance unvisited vertex:
@@ -84,3 +89,21 @@ Dijkstra **traverses** the graph, but it is **not a traversal algorithm**: its g
 optimisation, not merely visiting all vertices. It is an extended combination of depth-first
 and breadth-first search ideas. The key restriction: weights must be **non-negative** — for
 negative edges a different algorithm is needed (for example, Bellman–Ford).
+
+## 7. Different cases
+
+### A shorter detour — relaxation in action
+
+The direct edge `A–C` costs `5`, but the path `A → B → C` gives only `1 + 1 = 2`. Dijkstra first
+records `C = 5`, and once it processes `B` it **relaxes** `C` down to `2`. That is the essence of
+the relax step: a shorter path updates the distance. Then `D = 4` (via `C`).
+
+![Dijkstra: a shorter detour through B](dijkstra-shortcut.svg)
+
+### An unreachable vertex — a corner case
+
+If there is no path from the start to a vertex, its distance stays `∞`. The algorithm terminates
+correctly: as soon as the nearest unvisited vertex has distance `∞`, nothing more can be
+improved.
+
+![Dijkstra: unreachable vertex Z](dijkstra-disconnected.svg)
