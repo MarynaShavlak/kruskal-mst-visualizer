@@ -29,6 +29,19 @@ export const rightOf = (i: number): number => 2 * i + 2
 /** Глибина вузла `i` у дереві (корінь — 0): ⌊log₂(i+1)⌋. */
 export const depthOf = (i: number): number => Math.floor(Math.log2(i + 1))
 
+/**
+ * Чи є масив коректною max-купою — кожен батько ≥ обох своїх дітей. Чиста
+ * перевірка інваріанта купи (для навчальних квізів/перевірок), не сортує.
+ */
+export function isMaxHeap(a: readonly number[]): boolean {
+  for (let i = 0; i < a.length; i++) {
+    for (const c of [leftOf(i), rightOf(i)]) {
+      if (c < a.length && a[c] > a[i]) return false
+    }
+  }
+  return true
+}
+
 /** Рівні дерева-купи: масив рядів індексів [[0],[1,2],[3,4,5,6],…] для перших `n`. */
 export function heapLevels(n: number): number[][] {
   const rows: number[][] = []

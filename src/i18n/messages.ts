@@ -99,6 +99,15 @@ const ua = {
 
   "learn.heading": "Навчальний розбір",
   "learn.print": "Друк / PDF",
+  // MCQ-чекпойнти в навчальній вкладці (data-driven квіз). Скелетні мітки —
+  // питання й пояснення варіантів живуть inline у learn-quiz.<id>.tsx.
+  "learn.quizCorrect": "✓ так",
+  "learn.quizWrong": "✗ ні",
+  "learn.quizVerdictRight": "Правильно!",
+  "learn.quizVerdictWrong": "Не зовсім — спробуй ще.",
+  "learn.quizWhy": "Чому:",
+  "learn.quizReset": "Спробувати ще раз",
+  "learn.quizPickHint": "Обери варіант, щоб перевірити себе.",
   "toc.title": "Зміст",
   // Крупний план клітинки ДП (навчальний віджет).
   "learn.knapCellTake": "взяти",
@@ -2096,6 +2105,15 @@ const en: Record<MessageKey, string> = {
 
   "learn.heading": "Learning walkthrough",
   "learn.print": "Print / PDF",
+  // MCQ checkpoints in the Learn tab (data-driven quiz). Skeleton labels —
+  // the question and per-option explanations live inline in learn-quiz.<id>.tsx.
+  "learn.quizCorrect": "✓ yes",
+  "learn.quizWrong": "✗ no",
+  "learn.quizVerdictRight": "Correct!",
+  "learn.quizVerdictWrong": "Not quite — try again.",
+  "learn.quizWhy": "Why:",
+  "learn.quizReset": "Try again",
+  "learn.quizPickHint": "Pick an option to check yourself.",
   "toc.title": "Contents",
   // DP cell close-up (learn widget).
   "learn.knapCellTake": "take",

@@ -8,6 +8,7 @@ import {
   rightOf,
   depthOf,
   heapLevels,
+  isMaxHeap,
   isSorted,
 } from "@/lib/heapSort"
 import {
@@ -74,6 +75,18 @@ describe("індекси купи (масив як двійкове дерево
     expect(heapLevels(6)).toEqual([[0], [1, 2], [3, 4, 5]])
     expect(heapLevels(7)).toEqual([[0], [1, 2], [3, 4, 5, 6]])
     expect(heapLevels(0)).toEqual([])
+  })
+
+  it("isMaxHeap: коректна max-купа й порушення інваріанта", () => {
+    // Кожен батько ≥ обох дітей.
+    expect(isMaxHeap([10, 8, 6, 4, 5, 1, 2])).toBe(true)
+    // Вузол 5 (індекс 1) має дитину 8 (індекс 4): 5 < 8 — порушення.
+    expect(isMaxHeap([10, 5, 6, 4, 8, 2, 1])).toBe(false)
+    // Порушення в корені: 6 < 9.
+    expect(isMaxHeap([6, 9, 8, 2, 3])).toBe(false)
+    // Виродки: порожній і одноелементний — тривіально купа.
+    expect(isMaxHeap([])).toBe(true)
+    expect(isMaxHeap([42])).toBe(true)
   })
 })
 

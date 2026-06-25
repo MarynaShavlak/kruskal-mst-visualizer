@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, type ReactNode } from "react"
 import { buildHeapSortTrace, type HpFrame } from "@/lib/heapSortTrace"
 import { countOperations, leftOf, rightOf, type HeapOrder } from "@/lib/heapSort"
 import { HeapTree } from "@/algorithms/heap-sort/playback/HeapTreePanel"
@@ -6,12 +6,13 @@ import { HeapArrayCells } from "@/algorithms/heap-sort/playback/HeapArrayPanel"
 import type { HeapNodeState } from "@/algorithms/heap-sort/playback/highlight"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
+import { QuizFigure } from "@/algorithms/shared/learn/QuizFigure"
+import { MAX_HEAP_QUIZ } from "@/algorithms/heap-sort/learn/learn-quiz.heap-sort"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
 import type { MessageKey } from "@/i18n/messages"
 import type { Translate } from "@/lib/translate"
 import { useLangStore } from "@/store/lang-store"
-import { cn } from "@/lib/utils"
 
 // Живі навчальні віджети пірамідального сортування на еталонних масивах. Головний
 // образ — масив, прочитаний як ДВІЙКОВЕ ДЕРЕВО (купа): просіювання, побудова max-купи
@@ -354,71 +355,13 @@ export function GrowthFigure({ caption }: { caption?: string }) {
 
 // — Квіз «де коректна max-купа?» (за мотивами конспекту) -----------------------
 
-/** Чи є масив коректною max-купою (кожен батько ≥ своїх дітей)? */
-function isMaxHeap(a: readonly number[]): boolean {
-  for (let i = 0; i < a.length; i++) {
-    for (const c of [leftOf(i), rightOf(i)]) {
-      if (c < a.length && a[c] > a[i]) return false
-    }
-  }
-  return true
-}
-
+/**
+ * MCQ-чекпойнт max-купи. Делегує рендер спільному data-driven `QuizFigure`, а
+ * сам несе лише декларативну спеку `MAX_HEAP_QUIZ` (питання, дерева-варіанти,
+ * предикат `isMaxHeap` + адресні пояснення кожного варіанта).
+ */
 export function MaxHeapQuizFigure({ caption }: { caption?: string }) {
-  const L = useL()
-  const [picked, setPicked] = useState<number | null>(null)
-  const options = [
-    { tag: "A", arr: [10, 8, 6, 4, 5, 1, 2] },
-    { tag: "B", arr: [10, 5, 6, 4, 8, 2, 1] },
-    { tag: "C", arr: [6, 9, 8, 2, 3] },
-  ]
-  return (
-    <Figure caption={caption}>
-      <span className="mb-2 block text-center text-xs font-medium">
-        {L("Натисни на дерево: де КОРЕКТНА max-купа (кожен батько ≥ дітей)?", "Click a tree: which is a VALID max-heap (every parent ≥ its children)?")}
-      </span>
-      <span className="grid gap-3 sm:grid-cols-3">
-        {options.map((o, i) => {
-          const valid = isMaxHeap(o.arr)
-          const isPicked = picked === i
-          return (
-            <button
-              key={o.tag}
-              type="button"
-              onClick={() => setPicked(i)}
-              className={cn(
-                "block rounded-md border p-2 text-left transition-colors",
-                isPicked
-                  ? valid
-                    ? "border-emerald-500 bg-emerald-500/10"
-                    : "border-rose-500 bg-rose-500/10"
-                  : "border-border hover:bg-muted/40",
-              )}
-            >
-              <span className="mb-1 flex items-center justify-between text-xs font-semibold">
-                <span>{o.tag}</span>
-                {isPicked && (
-                  <span className={valid ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}>
-                    {valid ? L("✓ так", "✓ yes") : L("✗ ні", "✗ no")}
-                  </span>
-                )}
-              </span>
-              <HeapTree array={o.arr} state={NEUTRAL(o.arr.length)} scale={0.82} />
-            </button>
-          )
-        })}
-      </span>
-      {picked !== null && (
-        <span className="mt-2 block text-center text-[11px] text-muted-foreground">
-          {picked === 0
-            ? L("A — коректна max-купа: 10 ≥ 8,6; 8 ≥ 4,5; 6 ≥ 1,2.", "A — valid max-heap: 10 ≥ 8,6; 8 ≥ 4,5; 6 ≥ 1,2.")
-            : picked === 1
-              ? L("B — порушено: вузол 5 має дитину 8 (5 < 8).", "B — violated: node 5 has child 8 (5 < 8).")
-              : L("C — порушено в корені: 6 < 9.", "C — violated at the root: 6 < 9.")}
-        </span>
-      )}
-    </Figure>
-  )
+  return <QuizFigure spec={MAX_HEAP_QUIZ} caption={caption} />
 }
 
 /** Допоміжне: відсортований результат (для таблиці порівняння напрямів). */
