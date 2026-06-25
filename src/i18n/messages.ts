@@ -693,6 +693,12 @@ const ua = {
   "bench.colDsuMs": "DSU, мс",
   "bench.colHasPathMs": "has-path, мс",
   "bench.colSpeedup": "Прискорення",
+  // Узагальнений kit (Benchmarkable): спільні chrome-рядки.
+  "bench.metricLabel": "Метрика:",
+  "bench.metricMs": "час (мс)",
+  "bench.metricOps": "операції",
+  "bench.axisOps": "операції",
+  "bench.theoretical": "орієнтир",
 
   // — Бульбашкове сортування —
   // Редактор.
@@ -2744,6 +2750,12 @@ const en: Record<MessageKey, string> = {
   "bench.colDsuMs": "DSU, ms",
   "bench.colHasPathMs": "has-path, ms",
   "bench.colSpeedup": "Speedup",
+  // Generic kit (Benchmarkable): shared chrome strings.
+  "bench.metricLabel": "Metric:",
+  "bench.metricMs": "time (ms)",
+  "bench.metricOps": "operations",
+  "bench.axisOps": "operations",
+  "bench.theoretical": "guide",
 
   // — Bubble Sort —
   // Editor.

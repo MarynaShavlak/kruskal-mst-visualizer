@@ -1,5 +1,6 @@
 import { ArrowDownUp } from "lucide-react"
 import { createAlgorithm } from "@/algorithms/create-algorithm"
+import { sortBenchmark } from "@/lib/benchmarks/sort-benchmark"
 
 export const bubbleSort = createAlgorithm({
   id: "bubble-sort",
@@ -22,4 +23,5 @@ export const bubbleSort = createAlgorithm({
     editor: () => import("@/algorithms/bubble-sort/editor/EditorView"),
     playback: () => import("@/algorithms/bubble-sort/playback/PlaybackView"),
   },
+  benchmark: sortBenchmark,
 })

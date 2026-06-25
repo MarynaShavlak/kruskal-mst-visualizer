@@ -84,6 +84,23 @@ describe("Оболонка платформи", () => {
     ).toBeInTheDocument()
   })
 
+  it("синтезована benchmark-вкладка (Benchmarkable) відкривається дип-лінком", async () => {
+    // bubble-sort несе benchmark-дескриптор → create-algorithm синтезує вкладку
+    // зі спільного GenericBenchmarkView (в обхід власного BenchmarkView-модуля).
+    window.location.hash = "#bubble-sort/benchmark"
+    render(<App />)
+
+    expect(screen.getByRole("tab", { name: "Бенчмарк" })).toHaveAttribute(
+      "data-state",
+      "active",
+    )
+    expect(
+      await screen.findByText(/наївна проти оптимізованої/, undefined, {
+        timeout: 5000,
+      }),
+    ).toBeInTheDocument()
+  })
+
   it("embed-режим (?embed=1) ховає шапку, але рендерить тіло й атрибуцію", () => {
     window.history.replaceState(null, "", `${window.location.pathname}?embed=1`)
     window.location.hash = "#kruskal/playback"

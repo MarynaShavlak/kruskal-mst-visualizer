@@ -1,4 +1,4 @@
-import { lazy, type ComponentType } from "react"
+import { createElement, lazy, type ComponentType } from "react"
 import type {
   Algorithm,
   AlgorithmFamily,
@@ -8,6 +8,7 @@ import type {
   Localized,
   Precondition,
 } from "@/algorithms/types"
+import type { Benchmarkable } from "@/lib/benchmark-descriptor"
 
 // Фабрика опису алгоритму: прибирає повторювану lazy-обгортку екранів із кожного
 // `<id>/index.ts`. Кожна вкладка задається лише лінивим import свого View-модуля —
@@ -46,7 +47,21 @@ export interface AlgorithmConfig {
   readonly planned?: readonly Localized[]
   /** Передумова коректності (опц.) — живить картку передумов і живий детектор у шапці. */
   readonly precondition?: Precondition
+  /**
+   * Дескриптор бенчмарку (опц.). Якщо заданий — синтезуємо benchmark-вкладку зі
+   * спільного `GenericBenchmarkView`, прив'язаного до цього дескриптора. View
+   * інжектиться готовим (в обхід TAB_VIEW name-lookup): generic-View чанк
+   * лінивиться один раз і ділиться між алгоритмами.
+   */
+  readonly benchmark?: Benchmarkable
 }
+
+// Лінивий generic-View чанк (спільний для всіх алгоритмів із дескриптором).
+const LazyGenericBenchmarkView = lazy(() =>
+  import("@/algorithms/shared/benchmark/GenericBenchmarkView").then((m) => ({
+    default: m.GenericBenchmarkView,
+  })),
+)
 
 /** Збирає `Algorithm`: lazy-обгортки екранів + метадані + дефолти (status/defaultTab). */
 export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
@@ -57,6 +72,15 @@ export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
       View: lazy(() => load().then((m) => ({ default: m[name] as ComponentType }))),
     }
   })
+
+  // Синтез benchmark-вкладки з дескриптора: прив'язуємо descriptor до спільного
+  // GenericBenchmarkView (AlgoTab.View — props-less, тож descriptor «зашитий»).
+  if (cfg.benchmark) {
+    const descriptor = cfg.benchmark
+    const BoundBenchmark: ComponentType = () =>
+      createElement(LazyGenericBenchmarkView, { descriptor })
+    tabs.push({ key: "benchmark", View: lazy(async () => ({ default: BoundBenchmark })) })
+  }
   return {
     id: cfg.id,
     name: cfg.name,
