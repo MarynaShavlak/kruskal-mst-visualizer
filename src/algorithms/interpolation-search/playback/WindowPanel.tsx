@@ -1,5 +1,6 @@
 import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { cellRole, type CellRole } from "@/algorithms/interpolation-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -128,21 +129,12 @@ export function WindowPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CellRole; label: string }[] = [
-    { role: "active", label: t("learn.ipLegendActive") },
-    { role: "probe", label: t("learn.ipLegendProbe") },
-    { role: "discarding", label: t("learn.ipLegendDiscard") },
-    { role: "found", label: t("learn.ipLegendFound") },
-    { role: "out", label: t("learn.ipLegendOut") },
+  const entries = [
+    { label: t("learn.ipLegendActive"), cls: CELL_CLASS.active },
+    { label: t("learn.ipLegendProbe"), cls: CELL_CLASS.probe },
+    { label: t("learn.ipLegendDiscard"), cls: CELL_CLASS.discarding },
+    { label: t("learn.ipLegendFound"), cls: CELL_CLASS.found },
+    { label: t("learn.ipLegendOut"), cls: CELL_CLASS.out },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CELL_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

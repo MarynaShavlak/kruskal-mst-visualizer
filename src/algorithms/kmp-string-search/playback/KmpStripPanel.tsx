@@ -1,9 +1,9 @@
 import { ArrowRight, Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -89,21 +89,12 @@ export function KmpStripPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "match", label: t("play.kmpLegendMatched") },
-    { role: "active", label: t("play.kmpLegendActive") },
-    { role: "mismatch", label: t("play.kmpLegendMismatch") },
-    { role: "window", label: t("play.kmpLegendWindow") },
-    { role: "idle", label: t("play.kmpLegendOut") },
+  const entries = [
+    { label: t("play.kmpLegendMatched"), cls: CHAR_CLASS.match },
+    { label: t("play.kmpLegendActive"), cls: CHAR_CLASS.active },
+    { label: t("play.kmpLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("play.kmpLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("play.kmpLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

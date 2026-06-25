@@ -1,5 +1,6 @@
 import { ArrowDown } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { barRole, barHeightPct, type BarRole } from "@/algorithms/insertion-sort/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -127,24 +128,18 @@ export function InsertionBarsPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: BarRole; label: string }[] = [
-    { role: "prefix", label: t("learn.isLegendPrefix") },
-    { role: "compare", label: t("learn.isLegendCompare") },
-    { role: "shift", label: t("learn.isLegendShift") },
-    { role: "idle", label: t("learn.isLegendUnsorted") },
+  const entries = [
+    { label: t("learn.isLegendPrefix"), cls: BAR_CLASS.prefix },
+    { label: t("learn.isLegendCompare"), cls: BAR_CLASS.compare },
+    { label: t("learn.isLegendShift"), cls: BAR_CLASS.shift },
+    { label: t("learn.isLegendUnsorted"), cls: BAR_CLASS.idle },
   ]
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
+    <LegendRow entries={entries} border={false}>
       <span className="inline-flex items-center gap-1">
         <span className="inline-block size-2.5 rounded-sm bg-amber-400/80" />
         {t("learn.isLegendKey")}
       </span>
-    </div>
+    </LegendRow>
   )
 }

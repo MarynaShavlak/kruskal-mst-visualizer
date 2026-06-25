@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowLeftRight } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   barRole,
   barHeightPct,
@@ -157,25 +158,19 @@ export function SelectionBarsPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: BarRole; label: string }[] = [
-    { role: "prefix", label: t("learn.ssLegendPrefix") },
-    { role: "min", label: t("learn.ssLegendMin") },
-    { role: "swap", label: t("learn.ssLegendSwap") },
-    { role: "placed", label: t("learn.ssLegendPlaced") },
-    { role: "idle", label: t("learn.ssLegendUnsorted") },
+  const entries = [
+    { label: t("learn.ssLegendPrefix"), cls: BAR_CLASS.prefix },
+    { label: t("learn.ssLegendMin"), cls: BAR_CLASS.min },
+    { label: t("learn.ssLegendSwap"), cls: BAR_CLASS.swap },
+    { label: t("learn.ssLegendPlaced"), cls: BAR_CLASS.placed },
+    { label: t("learn.ssLegendUnsorted"), cls: BAR_CLASS.idle },
   ]
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
+    <LegendRow entries={entries} border={false}>
       <span className="inline-flex items-center gap-1">
         <span className="text-violet-600 dark:text-violet-400">▲</span>
         {t("learn.ssLegendCursor")}
       </span>
-    </div>
+    </LegendRow>
   )
 }

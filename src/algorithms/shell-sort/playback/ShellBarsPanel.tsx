@@ -1,5 +1,6 @@
 import { ArrowDown } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   shellBarRole,
   inCurrentGroup,
@@ -162,20 +163,14 @@ export function ShellBarsPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: ShellBarRole; label: string }[] = [
-    { role: "sorted", label: t("learn.shLegendSorted") },
-    { role: "compare", label: t("learn.shLegendCompare") },
-    { role: "shift", label: t("learn.shLegendShift") },
-    { role: "idle", label: t("learn.shLegendIdle") },
+  const entries = [
+    { label: t("learn.shLegendSorted"), cls: BAR_CLASS.sorted },
+    { label: t("learn.shLegendCompare"), cls: BAR_CLASS.compare },
+    { label: t("learn.shLegendShift"), cls: BAR_CLASS.shift },
+    { label: t("learn.shLegendIdle"), cls: BAR_CLASS.idle },
   ]
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
+    <LegendRow entries={entries} border={false}>
       <span className="inline-flex items-center gap-1">
         <span className="inline-block size-2.5 rounded-sm bg-amber-400/80" />
         {t("learn.shLegendTemp")}
@@ -184,6 +179,6 @@ function Legend() {
         <span className="inline-block size-2.5 rounded-sm bg-violet-500/30 ring-1 ring-violet-400/50" />
         {t("learn.shLegendGroup")}
       </span>
-    </div>
+    </LegendRow>
   )
 }

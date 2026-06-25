@@ -1,4 +1,5 @@
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { barRole, barHeightPct, type BarRole } from "@/algorithms/bubble-sort/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -87,20 +88,11 @@ export function ArrayBarsPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: BarRole; label: string }[] = [
-    { role: "comparing", label: t("learn.bsLegendComparing") },
-    { role: "swapped", label: t("learn.bsLegendSwapped") },
-    { role: "sorted", label: t("learn.bsLegendSorted") },
-    { role: "idle", label: t("learn.bsLegendUnsorted") },
+  const entries = [
+    { label: t("learn.bsLegendComparing"), cls: BAR_CLASS.comparing },
+    { label: t("learn.bsLegendSwapped"), cls: BAR_CLASS.swapped },
+    { label: t("learn.bsLegendSorted"), cls: BAR_CLASS.sorted },
+    { label: t("learn.bsLegendUnsorted"), cls: BAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} border={false} />
 }

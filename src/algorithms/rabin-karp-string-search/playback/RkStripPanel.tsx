@@ -1,9 +1,9 @@
 import { ArrowRight, Hash, Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -151,20 +151,11 @@ export function RkStripPanel({ className, ...view }: RkStripProps & { className?
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "window", label: t("learn.rkLegendWindow") },
-    { role: "match", label: t("learn.rkLegendMatch") },
-    { role: "mismatch", label: t("learn.rkLegendMismatch") },
-    { role: "idle", label: t("learn.rkLegendOut") },
+  const entries = [
+    { label: t("learn.rkLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("learn.rkLegendMatch"), cls: CHAR_CLASS.match },
+    { label: t("learn.rkLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("learn.rkLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

@@ -1,5 +1,6 @@
 import { ArrowDown, Check, Search, X } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { cellRole, type CellRole } from "@/algorithms/linear-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -106,20 +107,11 @@ export function ScanPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CellRole; label: string }[] = [
-    { role: "checking", label: t("learn.lsLegendChecking") },
-    { role: "match", label: t("learn.lsLegendMatch") },
-    { role: "rejected", label: t("learn.lsLegendRejected") },
-    { role: "pending", label: t("learn.lsLegendPending") },
+  const entries = [
+    { label: t("learn.lsLegendChecking"), cls: CELL_CLASS.checking },
+    { label: t("learn.lsLegendMatch"), cls: CELL_CLASS.match },
+    { label: t("learn.lsLegendRejected"), cls: CELL_CLASS.rejected },
+    { label: t("learn.lsLegendPending"), cls: CELL_CLASS.pending },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CELL_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

@@ -1,9 +1,9 @@
 import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -12,7 +12,6 @@ import {
   type BmCellState,
 } from "@/algorithms/boyer-moore-string-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
-import { cn } from "@/lib/utils"
 
 export interface StripProps {
   readonly text: string
@@ -86,21 +85,12 @@ export function BmStripPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "match", label: t("learn.bmLegendMatch") },
-    { role: "mismatch", label: t("learn.bmLegendMismatch") },
-    { role: "window", label: t("learn.bmLegendWindow") },
-    { role: "skipped", label: t("learn.bmLegendSkipped") },
-    { role: "idle", label: t("learn.bmLegendOut") },
+  const entries = [
+    { label: t("learn.bmLegendMatch"), cls: CHAR_CLASS.match },
+    { label: t("learn.bmLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("learn.bmLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("learn.bmLegendSkipped"), cls: CHAR_CLASS.skipped },
+    { label: t("learn.bmLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

@@ -1,5 +1,6 @@
 import { ArrowDown } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { chipRole, digitParts, type ChipRole } from "@/algorithms/radix-sort/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
@@ -195,23 +196,17 @@ function placeFor(position: number, t: ReturnType<typeof useT>): string {
 
 function Legend() {
   const t = useT()
-  const items: { variant: keyof typeof CHIP_CLASS; label: string }[] = [
-    { variant: "falling", label: t("learn.rxLegendFalling") },
-    { variant: "gathered", label: t("learn.rxLegendGathered") },
-    { variant: "idle", label: t("learn.rxLegendIdle") },
+  const entries = [
+    { label: t("learn.rxLegendFalling"), cls: CHIP_CLASS.falling },
+    { label: t("learn.rxLegendGathered"), cls: CHIP_CLASS.gathered },
+    { label: t("learn.rxLegendIdle"), cls: CHIP_CLASS.idle },
   ]
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.variant} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHIP_CLASS[it.variant])} />
-          {it.label}
-        </span>
-      ))}
+    <LegendRow entries={entries}>
       <span className="inline-flex items-center gap-1">
         <span className="inline-block size-2.5 rounded-sm bg-amber-400/70" />
         {t("learn.rxLegendDigit")}
       </span>
-    </div>
+    </LegendRow>
   )
 }

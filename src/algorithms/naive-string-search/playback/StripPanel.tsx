@@ -1,9 +1,9 @@
 import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -12,7 +12,6 @@ import {
   type NssCellState,
 } from "@/algorithms/naive-string-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
-import { cn } from "@/lib/utils"
 
 export interface StripProps {
   readonly text: string
@@ -70,20 +69,11 @@ export function StripPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "match", label: t("learn.nssLegendMatch") },
-    { role: "mismatch", label: t("learn.nssLegendMismatch") },
-    { role: "window", label: t("learn.nssLegendWindow") },
-    { role: "idle", label: t("learn.nssLegendOut") },
+  const entries = [
+    { label: t("learn.nssLegendMatch"), cls: CHAR_CLASS.match },
+    { label: t("learn.nssLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("learn.nssLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("learn.nssLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

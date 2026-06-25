@@ -1,5 +1,6 @@
 import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import {
   indexRole,
   cellRole,
@@ -245,7 +246,7 @@ export function TwoLevelPanel({
 
 function Legend() {
   const t = useT()
-  const items: { cls: string; label: string }[] = [
+  const entries: { cls: string; label: string }[] = [
     { cls: "bg-violet-500/70 border-violet-500/70", label: t("learn.issLegPillar") },
     { cls: INDEX_CLASS.window, label: t("learn.issLegWindow") },
     { cls: INDEX_CLASS.probe, label: t("learn.issLegProbe") },
@@ -255,14 +256,5 @@ function Legend() {
     { cls: CELL_CLASS.found, label: t("learn.issLegFound") },
     { cls: CELL_CLASS.out, label: t("learn.issLegOut") },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.label} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", it.cls)} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }
