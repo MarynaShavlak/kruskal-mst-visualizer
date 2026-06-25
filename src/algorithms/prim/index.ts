@@ -14,6 +14,7 @@ export const prim = createAlgorithm({
   complexityClass: "linearithmic",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Sprout,
+  precondition: { kind: "connected-graph" },
   views: {
     learn: () => import("@/algorithms/prim/learn/LearnView"),
     editor: () => import("@/algorithms/prim/editor/EditorView"),

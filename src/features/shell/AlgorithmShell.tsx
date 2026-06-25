@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { ComingSoon } from "@/features/shell/ComingSoon"
+import { PreconditionBanner } from "@/features/shell/PreconditionBanner"
 import { bridgeFrom, bridgeTo, getAlgorithm } from "@/algorithms/registry"
 import { navigateTo } from "@/hooks/use-route"
 import { useT } from "@/i18n/use-t"
@@ -60,6 +61,10 @@ export function AlgorithmShell({
             </TabsTrigger>
           ))}
         </TabsList>
+        {/* Картка передумов і складності + живий детектор — у шапці, видна під час
+            навчання/програвання. На вкладці редактора ховаємо, бо там уже є summary.
+            Сам банер сам по собі дає mb-4; коли передумови немає — рендерить null. */}
+        {active !== "editor" && <PreconditionBanner algorithm={algorithm} />}
         {algorithm.tabs.map((tb) => (
           <TabsContent key={tb.key} value={tb.key} className="mt-4">
             <ErrorBoundary>

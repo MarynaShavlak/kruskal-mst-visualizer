@@ -17,6 +17,7 @@ export const indexedSequentialSearch = createAlgorithm({
     en: "Search · hybrid (index + block)",
   },
   icon: BookMarked,
+  precondition: { kind: "sorted-array" },
   views: {
     learn: () => import("@/algorithms/indexed-sequential-search/learn/LearnView"),
     editor: () => import("@/algorithms/indexed-sequential-search/editor/EditorView"),

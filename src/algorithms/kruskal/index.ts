@@ -14,6 +14,7 @@ export const kruskal = createAlgorithm({
   complexityClass: "linearithmic",
   category: { ua: "Графи · Остовні дерева", en: "Graphs · Spanning trees" },
   icon: Waypoints,
+  precondition: { kind: "connected-graph" },
   views: {
     learn: () => import("@/algorithms/kruskal/learn/LearnView"),
     editor: () => import("@/algorithms/kruskal/editor/EditorView"),

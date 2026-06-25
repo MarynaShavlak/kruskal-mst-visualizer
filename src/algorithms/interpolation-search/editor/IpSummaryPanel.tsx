@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Search, X } from "lucide-react"
+import { Check, Search, X } from "lucide-react"
 import { useInterpolationSearchStore } from "@/store/interpolation-search-store"
 import {
   interpolationSearch,
@@ -8,6 +8,7 @@ import {
   caseAnalysis,
 } from "@/lib/interpolationSearch"
 import { HeavyWarning, SummaryCard } from "@/algorithms/shared/editor/summary"
+import { PreconditionStrip } from "@/algorithms/shared/editor/precondition"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -46,21 +47,12 @@ export function IpSummaryPanel({ className }: { className?: string }) {
       </div>
 
       {/* Передумова: відсортованість. */}
-      <p
-        className={cn(
-          "mb-3 flex items-start gap-1.5 rounded-md px-2 py-1.5 text-xs",
-          sorted
-            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-            : "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-        )}
-      >
-        {sorted ? (
-          <Check className="mt-0.5 size-3.5 shrink-0" />
-        ) : (
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-        )}
-        {sorted ? t("editor.ipSortedYes") : t("editor.ipSortedNo")}
-      </p>
+      <PreconditionStrip
+        ok={sorted}
+        okText={t("editor.ipSortedYes")}
+        badText={t("editor.ipSortedNo")}
+        className="mb-3"
+      />
 
       {/* Фактичний результат для поточної цілі (лише якщо відсортовано). */}
       <div className="mb-3 rounded-md border bg-muted/30 px-2.5 py-2">

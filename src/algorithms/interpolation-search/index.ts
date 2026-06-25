@@ -17,6 +17,7 @@ export const interpolationSearch = createAlgorithm({
     en: "Search · interpolation",
   },
   icon: TrendingUp,
+  precondition: { kind: "sorted-array" },
   views: {
     learn: () => import("@/algorithms/interpolation-search/learn/LearnView"),
     editor: () => import("@/algorithms/interpolation-search/editor/EditorView"),

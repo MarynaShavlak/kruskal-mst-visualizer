@@ -6,6 +6,7 @@ import type {
   Complexity,
   ComplexityClass,
   Localized,
+  Precondition,
 } from "@/algorithms/types"
 
 // Фабрика опису алгоритму: прибирає повторювану lazy-обгортку екранів із кожного
@@ -43,6 +44,8 @@ export interface AlgorithmConfig {
   readonly defaultTab?: string
   /** Заплановані (ще не готові) розділи — для екрана «Незабаром». */
   readonly planned?: readonly Localized[]
+  /** Передумова коректності (опц.) — живить картку передумов і живий детектор у шапці. */
+  readonly precondition?: Precondition
 }
 
 /** Збирає `Algorithm`: lazy-обгортки екранів + метадані + дефолти (status/defaultTab). */
@@ -68,5 +71,6 @@ export function createAlgorithm(cfg: AlgorithmConfig): Algorithm {
     defaultTab: cfg.defaultTab ?? Object.keys(cfg.views)[0],
     tabs,
     ...(cfg.planned ? { planned: cfg.planned } : {}),
+    ...(cfg.precondition ? { precondition: cfg.precondition } : {}),
   }
 }

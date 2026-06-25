@@ -17,6 +17,7 @@ export const binarySearch = createAlgorithm({
     en: "Search · halving",
   },
   icon: SearchCheck,
+  precondition: { kind: "sorted-array" },
   views: {
     learn: () => import("@/algorithms/binary-search/learn/LearnView"),
     editor: () => import("@/algorithms/binary-search/editor/EditorView"),

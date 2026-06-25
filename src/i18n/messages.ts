@@ -2022,6 +2022,19 @@ const ua = {
   "learn.rkCostRolling": "ковзний: {v}",
   "learn.rkCostRecompute": "перерахунок: {v}",
   "learn.rkComplexityNote": "Ковзний хеш росте лінійно за n (O(1) на зсув), перерахунок з нуля — як n·m. Це й економить rolling hash.",
+
+  // Картка передумов і складності + живий детектор (шапка розділу).
+  "precond.title": "Передумова й складність",
+  "precond.typical": "типова:",
+  "precond.worst": "найгірша:",
+  "precond.note": "Детектор лише інформує — він не блокує запуск.",
+  "precond.sortedOk": "Масив відсортований — передумова виконана ✓",
+  "precond.sortedBad":
+    "Масив НЕ відсортований — результат може бути хибним. Відсортуйте його у редакторі.",
+  "precond.connectedOk": "Граф зв'язний — буде повне остовне дерево ✓",
+  "precond.connectedBad":
+    "Граф незв'язний ({n} компонент(и)) — вийде остовний ЛІС, по дереву на компоненту.",
+  "precond.connectedEmpty": "Граф порожній — додайте вершини й ребра у редакторі.",
 }
 
 export type MessageKey = keyof typeof ua
@@ -4022,6 +4035,19 @@ const en: Record<MessageKey, string> = {
   "learn.rkCostRolling": "rolling: {v}",
   "learn.rkCostRecompute": "recompute: {v}",
   "learn.rkComplexityNote": "The rolling hash grows linearly with n (O(1) per shift), recomputing from scratch grows like n·m. That is what the rolling hash saves.",
+
+  // Preconditions & complexity card + live detector (section header).
+  "precond.title": "Precondition & complexity",
+  "precond.typical": "typical:",
+  "precond.worst": "worst:",
+  "precond.note": "The detector only informs — it does not block running.",
+  "precond.sortedOk": "The array is sorted — precondition satisfied ✓",
+  "precond.sortedBad":
+    "The array is NOT sorted — the result may be wrong. Sort it in the editor.",
+  "precond.connectedOk": "The graph is connected — a full spanning tree results ✓",
+  "precond.connectedBad":
+    "The graph is disconnected ({n} component(s)) — you get a spanning FOREST, one tree per component.",
+  "precond.connectedEmpty": "The graph is empty — add vertices and edges in the editor.",
 }
 
 export const messages: Record<Lang, Record<MessageKey, string>> = { ua, en }
