@@ -24,8 +24,8 @@ export function ArrayEditor({ className }: { className?: string }) {
       updateValue={updateValue}
       removeValue={removeValue}
       emptyText={t("editor.issNoValues")}
-      ariaValue={(i) => t("editor.issAriaValue", { i })}
-      deleteAt={(i) => t("editor.issDeleteAt", { i })}
+      ariaValue={(i) => t("editor.arrAriaValue", { i })}
+      deleteAt={(i) => t("editor.arrDeleteAt", { i })}
       cellWidthClass="w-16"
       fields={[
         {

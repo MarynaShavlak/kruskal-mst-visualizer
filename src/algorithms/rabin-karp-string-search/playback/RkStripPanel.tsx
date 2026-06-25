@@ -58,8 +58,8 @@ export function StripView({
       textRole={(idx) => textRole(idx, state)}
       patternRole={(j) => patternRole(j, state)}
       pointer={pointerIndex(state)}
-      textLabel={t("play.rkText")}
-      patternLabel={t("play.rkPattern")}
+      textLabel={t("play.strText")}
+      patternLabel={t("play.strPattern")}
       size={size}
     />
   )
@@ -111,7 +111,7 @@ export function RkStripPanel({ className, ...view }: RkStripProps & { className?
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <SearchTargetBadge>{t("play.rkTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
+        <SearchTargetBadge>{t("play.strTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <HashBadges windowHash={view.windowHash} patternHash={view.patternHash} offset={view.offset} />
       </div>
 

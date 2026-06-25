@@ -98,23 +98,23 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.nssStatComparisons")} value={String(frame.comparisons)} />
             <Stat label={t("play.nssStatAlignments")} value={String(frame.alignments)} />
-            <Stat label={t("play.nssStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.statShifts")} value={String(frame.shifts)} />
             {findAll ? (
               <Stat label={t("play.nssStatMatches")} value={String(frame.matches.length)} />
             ) : (
               <Stat
-                label={t("play.nssStatResult")}
+                label={t("play.statResult")}
                 value={frame.result >= 0 ? String(frame.result) : "−1"}
               />
             )}
-            <Stat label={t("play.nssStatLen")} value={`${text.length}/${pattern.length}`} />
+            <Stat label={t("play.strStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.nssLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.nssLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.nssLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: bestC,
               cls: "O(n)",
@@ -172,7 +172,7 @@ function ResultCard({ result, done }: { result: NaiveResult; done: boolean }) {
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <div>
-            <div className="text-muted-foreground">{t("play.nssResultLabel")}</div>
+            <div className="text-muted-foreground">{t("play.resultLabel")}</div>
             <ResultVerdict
               done={done}
               found={found}

@@ -109,16 +109,16 @@ export function PlaybackView() {
               value={String(rolling ? frame.rolls : frame.recomputes)}
             />
             <Stat
-              label={t("play.rkStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
           </StatsBar>
           <LiveComplexity
-            title={t("play.rkLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.rkLcUnit")}
             actual={frame.hashComparisons + frame.charVerifications}
-            actualLabel={t("play.rkLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refOps,
               cls: "O(n+m)",
@@ -208,7 +208,7 @@ function ResultCard({ result, done }: { result: RkResult; done: boolean }) {
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <div>
-            <div className="text-muted-foreground">{t("play.rkResultLabel")}</div>
+            <div className="text-muted-foreground">{t("play.resultLabel")}</div>
             <ResultVerdict
               done={done}
               found={found}

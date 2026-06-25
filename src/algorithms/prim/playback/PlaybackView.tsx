@@ -71,11 +71,11 @@ export function PlaybackView() {
             </span>
           </div>
           <LiveComplexity
-            title={t("play.primLcTitle")}
+            title={t("play.lcTitle")}
             n={vCount}
             unit={t("play.primLcUnit")}
             actual={frame.step}
-            actualLabel={t("play.primLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refPops,
               cls: "O(V)",

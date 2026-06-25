@@ -29,7 +29,7 @@ export function EditorView() {
             <ArrowDownWideNarrow /> {t("editor.msReversed")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.msDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}
@@ -46,8 +46,8 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.msValue")}`, desc: t("editor.helpMsAdd") },
-            { action: t("editor.msHelpCell"), desc: t("editor.helpMsEdit") },
-            { action: "✕", desc: t("editor.helpMsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpArrEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpMsNote")}
         />
@@ -55,7 +55,7 @@ export function EditorView() {
     >
       <div className="flex-1 space-y-3 rounded-lg border bg-muted/20 p-3">
         <h3 className="text-sm font-medium text-muted-foreground">
-          {t("editor.msArrayTitle")}
+          {t("editor.arrArrayTitle")}
         </h3>
         <ArrayEditor />
       </div>

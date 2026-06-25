@@ -137,17 +137,17 @@ export function PlaybackView() {
             <Stat label={t("play.issStatTotal")} value={String(frame.indexProbes + frame.seqComparisons)} />
             <Stat label={t("play.issStatBlock")} value={blockLabel(frame)} />
             <Stat
-              label={t("play.issStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             <Stat label={t("play.issStatSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.issLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.issLcUnit")}
             actual={frame.indexProbes + frame.seqComparisons}
-            actualLabel={t("play.issLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refTotal,
               cls: "O(√n)",
@@ -204,7 +204,7 @@ function ResultCard({ result, done }: { result: IxsTraceResult; done: boolean })
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.issInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
@@ -212,7 +212,7 @@ function ResultCard({ result, done }: { result: IxsTraceResult; done: boolean })
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.issResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}

@@ -502,7 +502,7 @@ export function StabilityFigure({ caption }: { caption?: string }) {
       <div className="flex flex-col gap-3">
         <div>
           <span className="mb-1 block text-xs font-medium text-muted-foreground">
-            {t("learn.qsStableInput")}
+            {t("learn.stableInput")}
           </span>
           <TaggedRow items={STABILITY_INPUT} />
         </div>

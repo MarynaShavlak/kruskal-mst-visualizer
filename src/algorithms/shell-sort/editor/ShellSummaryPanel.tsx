@@ -35,7 +35,7 @@ export function ShellSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-muted-foreground">{t("editor.shSize")}</span>
+        <span className="text-muted-foreground">{t("editor.arrSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
       </div>
 
@@ -64,8 +64,8 @@ export function ShellSummaryPanel({ className }: { className?: string }) {
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.shSortedYes")}
-        no={t("editor.shSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.shWarnMany")} />

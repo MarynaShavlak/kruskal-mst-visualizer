@@ -107,11 +107,11 @@ export function PlaybackView() {
               <Stat label={t("play.knapStatCapacity")} value={String(run.result.capacity)} />
             </StatsBar>
             <LiveComplexity
-              title={t("play.knapLcTitle")}
+              title={t("play.lcTitle")}
               n={n}
               unit={t("play.knapLcUnit")}
               actual={Math.min(frame.filled, dpOps)}
-              actualLabel={t("play.knapLcActual")}
+              actualLabel={t("play.lcActual")}
               reference={refBound}
               worst={worstBound}
               verdict={done ? t("play.knapLcVerdictDp") : undefined}
@@ -151,11 +151,11 @@ export function PlaybackView() {
         caption={frame.caption}
         statsBar={
           <LiveComplexity
-            title={t("play.knapLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.knapLcUnit")}
             actual={frame.step !== null ? Math.min(frame.step + 1, n) : n}
-            actualLabel={t("play.knapLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={refBound}
             worst={worstBound}
             verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictGreedy") : undefined}
@@ -195,7 +195,7 @@ export function PlaybackView() {
             <Stat label={t("play.knapStatBest")} value={String(frame.bestValue)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.knapLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.knapLcUnit")}
             actual={
@@ -205,7 +205,7 @@ export function PlaybackView() {
                   ? run.result.subsets.length
                   : 0
             }
-            actualLabel={t("play.knapLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={refBound}
             worst={worstBound}
             verdict={frame.sub.kind === "done" ? t("play.knapLcVerdictBrute") : undefined}

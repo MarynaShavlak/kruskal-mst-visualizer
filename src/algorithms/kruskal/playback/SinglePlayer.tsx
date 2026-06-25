@@ -76,11 +76,11 @@ export function SinglePlayer({
               </span>
             </div>
             <LiveComplexity
-              title={t("play.krLcTitle")}
+              title={t("play.lcTitle")}
               n={vCount}
               unit={t("play.krLcUnit")}
               actual={frame.dsuStats.findSteps}
-              actualLabel={t("play.krLcActual")}
+              actualLabel={t("play.lcActual")}
               reference={{
                 value: refSteps,
                 cls: "O(E·α)",

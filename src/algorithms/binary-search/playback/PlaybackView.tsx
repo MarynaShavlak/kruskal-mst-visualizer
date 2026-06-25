@@ -103,21 +103,21 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.binStatSteps")} value={String(frame.steps)} />
             <Stat
-              label={t("play.binStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             <Stat label={t("play.binStatWindow")} value={windowLabel(frame)} />
             {recursive && (
               <Stat label={t("play.binStatDepth")} value={String(frame.depth)} />
             )}
-            <Stat label={t("play.binStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.binLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.binLcUnit")}
             actual={frame.steps}
-            actualLabel={t("play.binLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: logBound,
               cls: "O(log n)",
@@ -187,7 +187,7 @@ function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.binInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
@@ -195,11 +195,11 @@ function ResultCard({ result, done }: { result: BsResult; done: boolean }) {
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.binResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}
-            foundContent={t("play.binResultIndex", { i: result.result })}
+            foundContent={t("play.searchResultIndex", { i: result.result })}
             absentText={t("play.binResultAbsent")}
           />
         </div>

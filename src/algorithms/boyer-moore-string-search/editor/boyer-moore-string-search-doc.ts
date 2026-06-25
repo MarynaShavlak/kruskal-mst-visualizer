@@ -6,6 +6,6 @@ import type { BoyerMooreStringSearchDoc } from "@/store/boyer-moore-string-searc
 import { createTextPatternCodec } from "@/algorithms/shared/editor/doc-codec"
 
 export const boyerMooreStringSearchCodec = createTextPatternCodec<BoyerMooreStringSearchDoc>({
-  badTextKey: "editor.bmErrBadText",
-  badPatternKey: "editor.bmErrBadPattern",
+  badTextKey: "editor.strErrBadText",
+  badPatternKey: "editor.strErrBadPattern",
 })

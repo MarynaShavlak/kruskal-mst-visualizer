@@ -23,10 +23,10 @@ export function EditorView() {
             <BookOpen /> {t("editor.bsIntro")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadBest}>
-            <ArrowDownAZ /> {t("editor.bsBest")}
+            <ArrowDownAZ /> {t("editor.arrBest")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadWorst}>
-            <ArrowUpZA /> {t("editor.bsWorst")}
+            <ArrowUpZA /> {t("editor.arrWorst")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
             <Shuffle /> {t("editor.random")}
@@ -43,8 +43,8 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.bsValue")}`, desc: t("editor.helpBsAdd") },
-            { action: t("editor.bsHelpCell"), desc: t("editor.helpBsEdit") },
-            { action: "✕", desc: t("editor.helpBsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpArrEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpBsNote")}
         />
@@ -52,7 +52,7 @@ export function EditorView() {
     >
       <div className="flex-1 space-y-3 rounded-lg border bg-muted/20 p-3">
         <h3 className="text-sm font-medium text-muted-foreground">
-          {t("editor.bsArrayTitle")}
+          {t("editor.arrArrayTitle")}
         </h3>
         <ArrayEditor />
       </div>

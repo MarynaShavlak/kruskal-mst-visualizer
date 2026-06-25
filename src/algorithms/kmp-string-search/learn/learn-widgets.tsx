@@ -51,7 +51,7 @@ function SearchBadge({ pattern, monotonic, i }: { pattern: string; monotonic: bo
   const t = useT()
   return (
     <span className="mb-2 flex flex-wrap items-center gap-2">
-      <SearchTargetBadge>{t("play.kmpTargetBadge", { pattern: pattern || "∅" })}</SearchTargetBadge>
+      <SearchTargetBadge>{t("play.strTargetBadge", { pattern: pattern || "∅" })}</SearchTargetBadge>
       <span
         className={cn(
           "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium",

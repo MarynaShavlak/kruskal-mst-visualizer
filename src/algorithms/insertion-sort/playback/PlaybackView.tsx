@@ -48,7 +48,7 @@ export function PlaybackView() {
 
   const switcher = (
     <ModeSwitch
-      label={t("play.isMethod")}
+      label={t("play.arrMethod")}
       value={mode}
       onChange={setMode}
       options={[
@@ -96,19 +96,19 @@ export function PlaybackView() {
         <>
           <StatsBar>
             <Stat label={t("play.isStatComparisons")} value={String(frame.comparisons)} />
-            <Stat label={t("play.isStatShifts")} value={String(frame.shifts)} />
+            <Stat label={t("play.statShifts")} value={String(frame.shifts)} />
             <Stat
               label={t("play.isStatPass")}
               value={frame.pass !== null ? String(frame.pass) : "—"}
             />
-            <Stat label={t("play.isStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.isLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.isLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.isLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: bestCmp,
               cls: "O(n)",
@@ -174,11 +174,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50")}>
       <CardContent className="flex flex-wrap items-center gap-x-8 gap-y-2 py-4 text-sm">
         <div>
-          <div className="text-muted-foreground">{t("play.isInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.isSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div>

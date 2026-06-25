@@ -92,11 +92,11 @@ export function PlaybackView() {
             </span>
           </div>
           <LiveComplexity
-            title={t("play.fwLcTitle")}
+            title={t("play.lcTitle")}
             n={vCount}
             unit={t("play.fwLcUnit")}
             actual={attemptsSoFar}
-            actualLabel={t("play.fwLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: layerCost,
               cls: "O(V²)",

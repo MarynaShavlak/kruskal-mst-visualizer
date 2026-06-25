@@ -91,11 +91,11 @@ export function PlaybackView() {
         <>
           <StatsBar frame={frame} result={result} />
           <LiveComplexity
-            title={t("play.hkLcTitle")}
+            title={t("play.lcTitle")}
             n={nCities}
             unit={t("play.hkLcUnit")}
             actual={frame.committedCount}
-            actualLabel={t("play.hkLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: polyRef,
               cls: "O(n²)",

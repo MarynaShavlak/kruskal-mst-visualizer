@@ -23,7 +23,7 @@ export function EditorView() {
             <BookOpen /> {t("editor.lsMain")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.lsDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadSorted}>
             <ListOrdered /> {t("editor.lsSorted")}
@@ -44,8 +44,8 @@ export function EditorView() {
           items={[
             { action: t("editor.lsHelpTarget"), desc: t("editor.helpLsTarget") },
             { action: `+ ${t("editor.lsValue")}`, desc: t("editor.helpLsAdd") },
-            { action: t("editor.lsHelpCell"), desc: t("editor.helpLsEdit") },
-            { action: "✕", desc: t("editor.helpLsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpLsEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpLsNote")}
         />

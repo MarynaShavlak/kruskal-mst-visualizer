@@ -23,15 +23,15 @@ export function BubbleSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <SummaryRow label={t("editor.bsSize")} value={String(n)} />
+        <SummaryRow label={t("editor.arrSize")} value={String(n)} />
         <SummaryRow label={t("editor.bsMaxComparisons")} value={String(maxComparisons(n))} mono />
         <SummaryRow label={t("editor.bsMaxPasses")} value={String(Math.max(0, n - 1))} />
       </dl>
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.bsSortedYes")}
-        no={t("editor.bsSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.bsWarnMany")} />

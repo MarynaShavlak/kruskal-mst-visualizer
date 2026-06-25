@@ -20,16 +20,16 @@ export function ArrayEditor({ className }: { className?: string }) {
       values={values}
       updateValue={updateValue}
       removeValue={removeValue}
-      emptyText={t("editor.ipNoValues")}
-      ariaValue={(i) => t("editor.ipAriaValue", { i })}
-      deleteAt={(i) => t("editor.ipDeleteAt", { i })}
+      emptyText={t("editor.arrNoValues")}
+      ariaValue={(i) => t("editor.arrAriaValue", { i })}
+      deleteAt={(i) => t("editor.arrDeleteAt", { i })}
       cellWidthClass="w-16"
       fields={[
         {
           value: target,
           onCommit: setTarget,
           label: t("editor.ipTargetLabel"),
-          aria: t("editor.ipAriaTarget"),
+          aria: t("editor.searchAriaTarget"),
           tone: "rose",
           icon: true,
         },

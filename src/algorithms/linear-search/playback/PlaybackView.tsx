@@ -96,20 +96,20 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.lsStatChecks")} value={String(frame.comparisons)} />
             <Stat
-              label={t("play.lsStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             {findAll && (
               <Stat label={t("play.lsStatMatches")} value={String(frame.matches.length)} />
             )}
-            <Stat label={t("play.lsStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.lsLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.lsLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.lsLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: 1,
               cls: "O(1)",
@@ -168,7 +168,7 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
     <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
-          <div className="text-muted-foreground">{t("play.lsInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.searchInputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
@@ -176,14 +176,14 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
           <div className="font-mono text-xs tabular-nums">{result.target}</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.lsResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}
             foundContent={
               result.findAll
                 ? t("play.lsResultMatches", { matches: `[${result.matches.join(", ")}]` })
-                : t("play.lsResultIndex", { i: result.result })
+                : t("play.searchResultIndex", { i: result.result })
             }
             absentText={t("play.lsResultAbsent")}
           />

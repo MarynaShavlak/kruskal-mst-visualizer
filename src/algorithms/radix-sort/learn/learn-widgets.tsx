@@ -366,7 +366,7 @@ export function StabilityFigure({ caption }: { caption?: string }) {
     <Figure caption={caption}>
       <span className="flex flex-col gap-3">
         <span className="block">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">{t("learn.rxStableInput")}</span>
+          <span className="mb-1 block text-xs font-medium text-muted-foreground">{t("learn.stableInput")}</span>
           <TaggedRow items={STABILITY_INPUT} />
         </span>
         <span className="block">

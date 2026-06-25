@@ -77,7 +77,7 @@ export function ArrayBarsPanel({
 }: ArrayBarsProps & { className?: string }) {
   const t = useT()
   return (
-    <Panel title={t("play.bsArrayTitle", { n: array.length })} className={className} bodyClassName="flex flex-col gap-2 p-3">
+    <Panel title={t("play.arrArrayTitle", { n: array.length })} className={className} bodyClassName="flex flex-col gap-2 p-3">
       <div className="min-h-0 flex-1">
         <ArrayBars array={array} pair={pair} swapped={swapped} sortedFrom={sortedFrom} height={260} />
       </div>

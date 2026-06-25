@@ -85,7 +85,7 @@ export function IxsSummaryPanel({ className }: { className?: string }) {
       <div className="mb-3 rounded-md border bg-muted/30 px-2.5 py-2">
         <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="size-3.5" />
-          {t("editor.issTargetResult", { target })}
+          {t("editor.searchTargetResult", { target })}
         </div>
         {sorted ? (
           <>

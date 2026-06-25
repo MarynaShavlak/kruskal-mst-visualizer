@@ -37,7 +37,7 @@ export function RadixSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <div className="mb-1 flex items-baseline justify-between">
-        <span className="text-muted-foreground">{t("editor.rxSize")}</span>
+        <span className="text-muted-foreground">{t("editor.arrSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
       </div>
       <div className="mb-2 flex items-baseline justify-between">
@@ -86,8 +86,8 @@ export function RadixSummaryPanel({ className }: { className?: string }) {
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.rxSortedYes")}
-        no={t("editor.rxSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.rxWarnMany")} />

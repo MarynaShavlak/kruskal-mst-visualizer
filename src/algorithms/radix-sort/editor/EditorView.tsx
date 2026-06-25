@@ -26,7 +26,7 @@ export function EditorView() {
             <Equal /> {t("editor.rxEqual")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadDuplicates}>
-            <Copy /> {t("editor.rxDuplicates")}
+            <Copy /> {t("editor.arrDuplicates")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadBig}>
             <Maximize2 /> {t("editor.rxBig")}
@@ -46,8 +46,8 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.rxValue")}`, desc: t("editor.helpRxAdd") },
-            { action: t("editor.rxHelpCell"), desc: t("editor.helpRxEdit") },
-            { action: "✕", desc: t("editor.helpRxRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpRxEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpRxNote")}
         />

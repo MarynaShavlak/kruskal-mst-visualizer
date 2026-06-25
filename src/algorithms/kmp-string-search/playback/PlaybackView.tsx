@@ -98,17 +98,17 @@ export function PlaybackView() {
             <Stat label={t("play.kmpStatTotal")} value={String(frame.lpsComparisons + frame.searchComparisons)} />
             <Stat label={t("play.kmpStatMonotonic")} value={frame.iMonotonic ? t("play.kmpMonoNo") : t("play.kmpMonoYes")} />
             <Stat
-              label={t("play.kmpStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
-            <Stat label={t("play.kmpStatLen")} value={`${text.length}/${pattern.length}`} />
+            <Stat label={t("play.strStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.kmpLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.kmpLcUnit")}
             actual={frame.lpsComparisons + frame.searchComparisons}
-            actualLabel={t("play.kmpLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refOps,
               cls: "O(n+m)",
@@ -175,7 +175,7 @@ function ResultCard({ result, done }: { result: KmpResult; done: boolean }) {
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <div>
-            <div className="text-muted-foreground">{t("play.kmpResultLabel")}</div>
+            <div className="text-muted-foreground">{t("play.resultLabel")}</div>
             <ResultVerdict
               done={done}
               found={found}

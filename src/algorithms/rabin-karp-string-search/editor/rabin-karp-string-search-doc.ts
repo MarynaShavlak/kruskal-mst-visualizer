@@ -6,6 +6,6 @@ import type { RabinKarpStringSearchDoc } from "@/store/rabin-karp-string-search-
 import { createTextPatternCodec } from "@/algorithms/shared/editor/doc-codec"
 
 export const rabinKarpStringSearchCodec = createTextPatternCodec<RabinKarpStringSearchDoc>({
-  badTextKey: "editor.rkErrBadText",
-  badPatternKey: "editor.rkErrBadPattern",
+  badTextKey: "editor.strErrBadText",
+  badPatternKey: "editor.strErrBadPattern",
 })

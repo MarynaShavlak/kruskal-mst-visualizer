@@ -29,7 +29,7 @@ export function MergeSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <SummaryRow label={t("editor.msSize")} value={String(n)} />
+        <SummaryRow label={t("editor.arrSize")} value={String(n)} />
         <SummaryRow label={t("editor.msDepth")} value={String(td.depth)} />
         <SummaryRow label={t("editor.msComparisonsTd")} value={String(td.comparisons)} mono />
         <SummaryRow label={t("editor.msComparisonsBu")} value={String(bu.comparisons)} mono />
@@ -41,8 +41,8 @@ export function MergeSummaryPanel({ className }: { className?: string }) {
 
       <SortedIndicator
         sorted={sorted}
-        yes={t("editor.msSortedYes")}
-        no={t("editor.msSortedNo")}
+        yes={t("editor.arrSortedYes")}
+        no={t("editor.arrSortedNo")}
       />
 
       <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.msWarnMany")} />

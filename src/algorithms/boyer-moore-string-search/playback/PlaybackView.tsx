@@ -115,15 +115,15 @@ export function PlaybackView() {
             <Stat label={t("play.bmStatComparisons")} value={String(frame.comparisons)} />
             <Stat label={t("play.bmStatJumps")} value={String(frame.jumps)} />
             <Stat label={t("play.bmStatSkipped")} value={String(frame.skipped)} />
-            <Stat label={t("play.bmStatResult")} value={frame.result >= 0 ? String(frame.result) : "−1"} />
-            <Stat label={t("play.bmStatLen")} value={`${text.length}/${pattern.length}`} />
+            <Stat label={t("play.statResult")} value={frame.result >= 0 ? String(frame.result) : "−1"} />
+            <Stat label={t("play.strStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.bmLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.bmLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.bmLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: n,
               cls: "O(n)",
@@ -166,7 +166,7 @@ function ResultCard({ result, done }: { result: BmResult; done: boolean }) {
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <div>
-            <div className="text-muted-foreground">{t("play.bmResultLabel")}</div>
+            <div className="text-muted-foreground">{t("play.resultLabel")}</div>
             <ResultVerdict
               done={done}
               found={found}

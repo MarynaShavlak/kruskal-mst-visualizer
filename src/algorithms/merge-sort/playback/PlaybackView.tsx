@@ -96,14 +96,14 @@ export function PlaybackView() {
             <Stat label={t("play.msStatAppends")} value={String(frame.appends)} />
             <Stat label={t("play.msStatMerges")} value={String(frame.merges)} />
             <Stat label={t("play.msStatDepth")} value={String(trace.result.depth)} />
-            <Stat label={t("play.msStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.msLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.msLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.msLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: refCmp,
               cls: "O(n·log n)",
@@ -192,11 +192,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div>
-          <div className="text-muted-foreground">{t("play.msInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono text-xs">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.msSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono text-xs">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div className="tabular-nums text-xs">

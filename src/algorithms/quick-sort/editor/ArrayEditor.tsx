@@ -15,9 +15,9 @@ export function ArrayEditor({ className }: { className?: string }) {
       values={values}
       updateValue={updateValue}
       removeValue={removeValue}
-      emptyText={t("editor.qsNoValues")}
-      ariaValue={(i) => t("editor.qsAriaValue", { i })}
-      deleteAt={(i) => t("editor.qsDeleteAt", { i })}
+      emptyText={t("editor.arrNoValues")}
+      ariaValue={(i) => t("editor.arrAriaValue", { i })}
+      deleteAt={(i) => t("editor.arrDeleteAt", { i })}
       cellMin={0}
     />
   )

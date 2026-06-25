@@ -49,8 +49,8 @@ export function StripView(props: StripProps) {
       textRole={(idx) => textRole(idx, state)}
       patternRole={(j) => patternRole(j, state)}
       pointer={pointerIndex(state)}
-      textLabel={t("play.bmText")}
-      patternLabel={t("play.bmPattern")}
+      textLabel={t("play.strText")}
+      patternLabel={t("play.strPattern")}
       size={props.size ?? "md"}
     />
   )
@@ -69,7 +69,7 @@ export function BmStripPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <SearchTargetBadge>{t("play.bmTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
+        <SearchTargetBadge>{t("play.strTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <span className="text-xs text-muted-foreground">{t("play.bmScanHint")}</span>
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto">

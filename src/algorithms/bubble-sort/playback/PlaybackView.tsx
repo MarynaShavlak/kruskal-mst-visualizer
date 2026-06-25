@@ -44,7 +44,7 @@ export function PlaybackView() {
 
   const switcher = (
     <ModeSwitch
-      label={t("play.bsMethod")}
+      label={t("play.arrMethod")}
       value={mode}
       onChange={setMode}
       options={[
@@ -90,14 +90,14 @@ export function PlaybackView() {
               label={t("play.bsStatPass")}
               value={frame.pass !== null ? String(frame.pass) : "—"}
             />
-            <Stat label={t("play.bsStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.bsLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.bsLcUnit")}
             actual={frame.comparisons}
-            actualLabel={t("play.bsLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: bestCmp,
               cls: "O(n)",
@@ -188,11 +188,11 @@ function ResultCard({
     <Card className={cn(className, done && "border-emerald-500/50")}>
       <CardContent className="flex flex-wrap items-center gap-x-8 gap-y-2 py-4 text-sm">
         <div>
-          <div className="text-muted-foreground">{t("play.bsInputLabel")}</div>
+          <div className="text-muted-foreground">{t("play.inputLabel")}</div>
           <div className="font-mono">[{result.input.join(", ")}]</div>
         </div>
         <div>
-          <div className="text-muted-foreground">{t("play.bsSortedLabel")}</div>
+          <div className="text-muted-foreground">{t("play.sortedLabel")}</div>
           <div className="font-mono">{done ? `[${result.sorted.join(", ")}]` : "…"}</div>
         </div>
         <div>

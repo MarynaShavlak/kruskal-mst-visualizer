@@ -111,7 +111,7 @@ export function PlaybackView() {
           <StatsBar>
             <Stat label={t("play.ipStatProbes")} value={String(frame.probes)} />
             <Stat
-              label={t("play.ipStatResult")}
+              label={t("play.statResult")}
               value={frame.result >= 0 ? String(frame.result) : "−1"}
             />
             <Stat label={t("play.ipStatWindow")} value={windowLabel(frame)} />
@@ -121,14 +121,14 @@ export function PlaybackView() {
             {recursive && (
               <Stat label={t("play.ipStatDepth")} value={String(frame.depth)} />
             )}
-            <Stat label={t("play.ipStatSize")} value={String(trace.result.size)} />
+            <Stat label={t("play.statSize")} value={String(trace.result.size)} />
           </StatsBar>
           <LiveComplexity
-            title={t("play.ipLcTitle")}
+            title={t("play.lcTitle")}
             n={n}
             unit={t("play.ipLcUnit")}
             actual={frame.probes}
-            actualLabel={t("play.ipLcActual")}
+            actualLabel={t("play.lcActual")}
             reference={{
               value: llBound,
               cls: "O(log log n)",
@@ -212,11 +212,11 @@ function ResultCard({ result, done }: { result: IpResult; done: boolean }) {
     <Card className={cn(resultBorderClass(done, found))}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div>
-          <div className="text-muted-foreground">{t("play.ipResultLabel")}</div>
+          <div className="text-muted-foreground">{t("play.resultLabel")}</div>
           <ResultVerdict
             done={done}
             found={found}
-            foundContent={t("play.ipResultIndex", { i: result.result })}
+            foundContent={t("play.searchResultIndex", { i: result.result })}
             absentText={t("play.ipResultAbsent")}
           />
         </div>

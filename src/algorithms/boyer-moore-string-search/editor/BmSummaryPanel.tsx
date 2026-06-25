@@ -37,8 +37,8 @@ export function BmSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-muted-foreground">{t("editor.bmLen")}</span>
-        <span className="font-medium tabular-nums">{t("editor.bmLenVal", { n: text.length, m })}</span>
+        <span className="text-muted-foreground">{t("editor.strLen")}</span>
+        <span className="font-medium tabular-nums">{t("editor.strLenVal", { n: text.length, m })}</span>
       </div>
 
       {/* Таблиця поганого символу. */}
@@ -72,12 +72,12 @@ export function BmSummaryPanel({ className }: { className?: string }) {
       <div className="mb-3 rounded-md border bg-muted/30 px-2.5 py-2">
         <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="size-3.5" />
-          {t("editor.bmTargetResult")}
+          {t("editor.strTargetResult")}
         </div>
         {empty ? (
           <div className="text-xs text-amber-700 dark:text-amber-300">{t("editor.bmEmptyPattern")}</div>
         ) : tooLong ? (
-          <div className="text-xs text-amber-700 dark:text-amber-300">{t("editor.bmTooLong")}</div>
+          <div className="text-xs text-amber-700 dark:text-amber-300">{t("editor.strTooLong")}</div>
         ) : (
           <>
             <div

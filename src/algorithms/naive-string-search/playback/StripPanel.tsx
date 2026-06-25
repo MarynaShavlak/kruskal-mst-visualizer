@@ -34,8 +34,8 @@ export function StripView({ text, pattern, offset, matched, mismatchJ, size = "m
       textRole={(idx) => textRole(idx, state)}
       patternRole={(j) => patternRole(j, state)}
       pointer={pointerIndex(state)}
-      textLabel={t("play.nssText")}
-      patternLabel={t("play.nssPattern")}
+      textLabel={t("play.strText")}
+      patternLabel={t("play.strPattern")}
       size={size}
     />
   )
@@ -54,7 +54,7 @@ export function StripPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div>
-        <SearchTargetBadge>{t("play.nssTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
+        <SearchTargetBadge>{t("play.strTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto">
         <StripView {...view} />
