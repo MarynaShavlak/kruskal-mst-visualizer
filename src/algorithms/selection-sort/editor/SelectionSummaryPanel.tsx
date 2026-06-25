@@ -23,7 +23,7 @@ export function SelectionSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <SummaryRow label={t("editor.ssSize")} value={String(n)} />
+        <SummaryRow label={t("editor.arrSize")} value={String(n)} />
         <SummaryRow label={t("editor.ssComparisons")} value={String(maxComparisons(n))} mono />
         <SummaryRow label={t("editor.ssMaxSwaps")} value={String(Math.max(0, n - 1))} />
       </dl>

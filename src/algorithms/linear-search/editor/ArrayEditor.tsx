@@ -20,9 +20,9 @@ export function ArrayEditor({ className }: { className?: string }) {
       values={values}
       updateValue={updateValue}
       removeValue={removeValue}
-      emptyText={t("editor.lsNoValues")}
-      ariaValue={(i) => t("editor.lsAriaValue", { i })}
-      deleteAt={(i) => t("editor.lsDeleteAt", { i })}
+      emptyText={t("editor.arrNoValues")}
+      ariaValue={(i) => t("editor.arrAriaValue", { i })}
+      deleteAt={(i) => t("editor.arrDeleteAt", { i })}
       cellWidthClass="w-16"
       fields={[
         {

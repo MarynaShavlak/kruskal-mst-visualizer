@@ -49,7 +49,7 @@ export function EditorView() {
             { action: t("editor.issStepLabel"), desc: t("editor.helpIssStep") },
             { action: t("editor.issSort"), desc: t("editor.helpIssSort") },
             { action: `+ ${t("editor.issValue")}`, desc: t("editor.helpIssAdd") },
-            { action: "✕", desc: t("editor.helpIssRemove") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpIssNote")}
         />

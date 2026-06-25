@@ -27,7 +27,7 @@ export function QuickSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <SummaryRow label={t("editor.qsSize")} value={String(n)} />
+        <SummaryRow label={t("editor.arrSize")} value={String(n)} />
         <SummaryRow label={t("editor.qsComparisons")} value={String(stats.comparisons)} mono />
         <SummaryRow label={t("editor.qsCalls")} value={String(stats.calls)} />
         <SummaryRow label={t("editor.qsDepth")} value={String(stats.depth)} />

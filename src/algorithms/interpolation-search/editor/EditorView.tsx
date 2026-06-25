@@ -48,7 +48,7 @@ export function EditorView() {
             { action: t("editor.ipHelpTarget"), desc: t("editor.helpIpTarget") },
             { action: t("editor.ipSort"), desc: t("editor.helpIpSort") },
             { action: `+ ${t("editor.ipValue")}`, desc: t("editor.helpIpAdd") },
-            { action: "✕", desc: t("editor.helpIpRemove") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpIpNote")}
         />

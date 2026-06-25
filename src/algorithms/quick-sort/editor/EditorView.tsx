@@ -43,8 +43,8 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.qsValue")}`, desc: t("editor.helpQsAdd") },
-            { action: t("editor.qsHelpCell"), desc: t("editor.helpQsEdit") },
-            { action: "✕", desc: t("editor.helpQsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpQsEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpQsNote")}
         />

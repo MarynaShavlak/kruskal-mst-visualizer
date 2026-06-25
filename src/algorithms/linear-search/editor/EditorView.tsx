@@ -44,8 +44,8 @@ export function EditorView() {
           items={[
             { action: t("editor.lsHelpTarget"), desc: t("editor.helpLsTarget") },
             { action: `+ ${t("editor.lsValue")}`, desc: t("editor.helpLsAdd") },
-            { action: t("editor.lsHelpCell"), desc: t("editor.helpLsEdit") },
-            { action: "✕", desc: t("editor.helpLsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpLsEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpLsNote")}
         />

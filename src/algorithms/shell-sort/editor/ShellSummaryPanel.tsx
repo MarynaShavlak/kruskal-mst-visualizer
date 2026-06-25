@@ -35,7 +35,7 @@ export function ShellSummaryPanel({ className }: { className?: string }) {
   return (
     <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-muted-foreground">{t("editor.shSize")}</span>
+        <span className="text-muted-foreground">{t("editor.arrSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
       </div>
 

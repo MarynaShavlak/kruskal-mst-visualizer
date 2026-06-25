@@ -48,7 +48,7 @@ export function EditorView() {
             { action: t("editor.binHelpTarget"), desc: t("editor.helpBinTarget") },
             { action: t("editor.binSort"), desc: t("editor.helpBinSort") },
             { action: `+ ${t("editor.binValue")}`, desc: t("editor.helpBinAdd") },
-            { action: "✕", desc: t("editor.helpBinRemove") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpBinNote")}
         />

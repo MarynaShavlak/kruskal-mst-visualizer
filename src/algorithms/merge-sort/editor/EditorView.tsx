@@ -46,8 +46,8 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.msValue")}`, desc: t("editor.helpMsAdd") },
-            { action: t("editor.msHelpCell"), desc: t("editor.helpMsEdit") },
-            { action: "✕", desc: t("editor.helpMsRemove") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpMsEdit") },
+            { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpMsNote")}
         />
