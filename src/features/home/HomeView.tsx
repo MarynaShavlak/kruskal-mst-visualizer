@@ -1,25 +1,31 @@
-import { useState } from "react"
-import { ArrowRight, Table2 } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ArrowRight, Search, Table2, X } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FilterChip } from "@/components/filter-chip"
+import { Input } from "@/components/ui/input"
 import {
   COMPLEXITY_CLASSES,
+  FAMILIES,
   algorithmsByFamily,
   bridgeTo,
 } from "@/algorithms/registry"
-import { navigateTo, navigateToPage } from "@/hooks/use-route"
+import {
+  navigateTo,
+  navigateToCatalog,
+  navigateToPage,
+  parseCatalogQuery,
+} from "@/hooks/use-route"
+import {
+  applyCatalogFilters,
+  countForClass,
+  countForFamily,
+  type ClassFilter,
+  type FamilyFilter,
+} from "@/features/home/catalog-filter"
 import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import type { Lang } from "@/store/lang-store"
-import type {
-  Algorithm,
-  AlgorithmFamily,
-  ComplexityClass,
-} from "@/algorithms/types"
-
-/** Активні фасети каталогу: родина та клас складності (або «всі»). */
-type FamilyFilter = AlgorithmFamily | "all"
-type ClassFilter = ComplexityClass | "all"
+import type { Algorithm } from "@/algorithms/types"
 
 /** Картка одного алгоритму в сітці каталогу. */
 function AlgoCard({ algo, lang }: { algo: Algorithm; lang: Lang }) {
@@ -147,24 +153,65 @@ function PathsRail({ lang }: { lang: Lang }) {
   )
 }
 
-/** Каталог: картки за родиною + дві фасети-фільтри (родина / клас складності). */
+/** Валідне значення фасети родини з рядка хеша (інакше «усі»). */
+function seedFamily(raw: string | null): FamilyFilter {
+  if (raw != null && FAMILIES.some((f) => f.id === raw)) {
+    return raw as FamilyFilter
+  }
+  return "all"
+}
+
+/** Валідне значення фасети класу складності з рядка хеша (інакше «усі»). */
+function seedClass(raw: string | null): ClassFilter {
+  if (raw != null && COMPLEXITY_CLASSES.some((c) => c.id === raw)) {
+    return raw as ClassFilter
+  }
+  return "all"
+}
+
+/** Каталог: картки за родиною + дві фасети-фільтри + текстовий пошук. */
 export function HomeView() {
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const [family, setFamily] = useState<FamilyFilter>("all")
-  const [cls, setCls] = useState<ClassFilter>("all")
+
+  // Сід фасет із хеша на ПЕРШИЙ рендер (deep-link `#?family=…&class=…&q=…`);
+  // далі стан — джерело правди, що дзеркалиться назад у хеш (debounced).
+  const [family, setFamily] = useState<FamilyFilter>(() =>
+    seedFamily(parseCatalogQuery(window.location.hash).family),
+  )
+  const [cls, setCls] = useState<ClassFilter>(() =>
+    seedClass(parseCatalogQuery(window.location.hash).cls),
+  )
+  const [q, setQ] = useState<string>(
+    () => parseCatalogQuery(window.location.hash).q ?? "",
+  )
+
+  // Дзеркалимо фасети у хеш через replaceState (без history-спаму). Перший
+  // рендер пропускаємо — інакше mount-запис клобернув би сід і дав feedback-loop.
+  const isFirstWrite = useRef(true)
+  useEffect(() => {
+    if (isFirstWrite.current) {
+      isFirstWrite.current = false
+      return
+    }
+    const id = window.setTimeout(() => {
+      navigateToCatalog({ family, cls, q })
+    }, 250)
+    return () => window.clearTimeout(id)
+  }, [family, cls, q])
 
   const groups = algorithmsByFamily()
-  const all = groups.flatMap((g) => g.items)
 
-  const matchesClass = (a: Algorithm) => cls === "all" || a.complexityClass === cls
-  const matchesFamily = (a: Algorithm) => family === "all" || a.family === family
+  const { groups: visible, total } = useMemo(
+    () => applyCatalogFilters(groups, { family, cls, q, lang }),
+    [groups, family, cls, q, lang],
+  )
 
-  // Секції — родини, що проходять фільтр родини; всередині лишаємо лише той клас.
-  const visible = groups
-    .filter((g) => family === "all" || g.family.id === family)
-    .map((g) => ({ family: g.family, items: g.items.filter(matchesClass) }))
-    .filter((g) => g.items.length > 0)
+  const resetFilters = () => {
+    setFamily("all")
+    setCls("all")
+    setQ("")
+  }
 
   return (
     <div className="space-y-6">
@@ -185,8 +232,33 @@ export function HomeView() {
 
       <PathsRail lang={lang} />
 
-      {/* Липка панель фасет: родина (зверху) + клас складності (знизу). */}
+      {/* Липка панель: пошук (зверху) + фасета родини + клас складності. */}
       <div className="sticky top-0 z-20 -mx-4 space-y-2 border-b bg-background/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+        <div className="relative">
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
+          <Input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("home.searchPlaceholder")}
+            aria-label={t("home.searchAria")}
+            className="pr-9 pl-9"
+          />
+          {q !== "" && (
+            <button
+              type="button"
+              onClick={() => setQ("")}
+              aria-label={t("home.searchClear")}
+              className="absolute top-1/2 right-2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+
         <div
           className="flex flex-wrap items-center gap-2"
           role="group"
@@ -198,11 +270,11 @@ export function HomeView() {
           <FilterChip
             active={family === "all"}
             label={t("home.filterAll")}
-            count={all.filter(matchesClass).length}
+            count={countForFamily(groups, "all", cls, q, lang)}
             onClick={() => setFamily("all")}
           />
           {groups.map((g) => {
-            const count = g.items.filter(matchesClass).length
+            const count = countForFamily(groups, g.family.id, cls, q, lang)
             return (
               <FilterChip
                 key={g.family.id}
@@ -227,13 +299,11 @@ export function HomeView() {
           <FilterChip
             active={cls === "all"}
             label={t("home.filterAll")}
-            count={all.filter(matchesFamily).length}
+            count={countForClass(groups, "all", family, q, lang)}
             onClick={() => setCls("all")}
           />
           {COMPLEXITY_CLASSES.map((c) => {
-            const count = all.filter(
-              (a) => a.complexityClass === c.id && matchesFamily(a),
-            ).length
+            const count = countForClass(groups, c.id, family, q, lang)
             return (
               <FilterChip
                 key={c.id}
@@ -248,6 +318,21 @@ export function HomeView() {
           })}
         </div>
       </div>
+
+      {total === 0 && (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed py-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            {t("home.emptyResults")}
+          </p>
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm font-medium transition outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {t("home.emptyResultsReset")}
+          </button>
+        </div>
+      )}
 
       <div className="space-y-10">
         {visible.map((g) => (

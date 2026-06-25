@@ -79,6 +79,11 @@ const ua = {
   "home.pathsHeading": "Навчальні шляхи",
   "home.pathsIntro":
     "Рекомендована послідовність: кожен алгоритм природно веде до наступного.",
+  "home.searchPlaceholder": "Пошук алгоритму…",
+  "home.searchAria": "Пошук у каталозі за назвою чи описом",
+  "home.searchClear": "Очистити пошук",
+  "home.emptyResults": "Нічого не знайдено за цими фільтрами.",
+  "home.emptyResultsReset": "Скинути фільтри",
 
   "shell.prevAlgo": "Попередній",
   "shell.nextAlgo": "Наступний",
@@ -2095,6 +2100,11 @@ const en: Record<MessageKey, string> = {
   "home.pathsHeading": "Learning paths",
   "home.pathsIntro":
     "A recommended sequence: each algorithm naturally leads to the next.",
+  "home.searchPlaceholder": "Search algorithms…",
+  "home.searchAria": "Search the catalog by name or description",
+  "home.searchClear": "Clear search",
+  "home.emptyResults": "Nothing matches these filters.",
+  "home.emptyResultsReset": "Reset filters",
 
   "shell.prevAlgo": "Previous",
   "shell.nextAlgo": "Next",
