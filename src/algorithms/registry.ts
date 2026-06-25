@@ -17,6 +17,7 @@ import { insertionSort } from "@/algorithms/insertion-sort"
 import { selectionSort } from "@/algorithms/selection-sort"
 import { quickSort } from "@/algorithms/quick-sort"
 import { mergeSort } from "@/algorithms/merge-sort"
+import { heapSort } from "@/algorithms/heap-sort"
 import { shellSort } from "@/algorithms/shell-sort"
 import { radixSort } from "@/algorithms/radix-sort"
 import { linearSearch } from "@/algorithms/linear-search"
@@ -48,6 +49,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   selectionSort,
   quickSort,
   mergeSort,
+  heapSort,
   shellSort,
   radixSort,
   linearSearch,
