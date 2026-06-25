@@ -17,10 +17,9 @@ import {
   type MergeTreeNode,
   type BottomUpPass,
 } from "@/lib/mergeSort"
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
-
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 // ---------------------------------------------------------------------------
 // Лістинги коду + підсвітка рядків (1-based) під кожну фазу

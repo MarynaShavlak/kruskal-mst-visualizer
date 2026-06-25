@@ -12,3 +12,9 @@ export function isSorted(seq: readonly number[]): boolean {
   }
   return true
 }
+
+/**
+ * Канонічне рядкове представлення масиву чисел `[a, b, c]` — спільне для нарації
+ * trace-білдерів (раніше дублювалося як локальні `fmt`/`fmtArray` у 10 файлах).
+ */
+export const formatArray = (a: readonly number[]): string => `[${a.join(", ")}]`

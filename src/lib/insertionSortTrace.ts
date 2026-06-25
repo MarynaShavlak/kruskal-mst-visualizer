@@ -11,6 +11,7 @@ import {
   maxComparisons,
   type InsertionEvent,
 } from "@/lib/insertionSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -104,8 +105,6 @@ export interface InsTrace {
   readonly result: InsResult
   readonly binary: boolean
 }
-
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /**
  * Проганяє сортування вставками на масиві й збирає trace для плеєра. Результат

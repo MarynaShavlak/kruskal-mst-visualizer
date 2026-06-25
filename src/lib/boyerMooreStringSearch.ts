@@ -360,78 +360,12 @@ export function bmMetrics(text: string, pattern: string): BmMetrics {
   return { comparisons: r.comparisons, jumps: r.jumps, skipped: r.skipped }
 }
 
-/**
- * Кількість посимвольних порівнянь НАЇВНОГО методу на тому самому вході (зліва направо,
- * зсув на 1). Лише для контрастного графіка «Боєра-Мура проти наївного й KMP». У найгіршому
- * (AAAA…/…B) дає ≈ (N-M+1)·M.
- */
-export function countNaiveComparisons(text: string, pattern: string): number {
-  const m = pattern.length
-  const n = text.length
-  if (m === 0) return 0
-  let comparisons = 0
-  for (let i = 0; i <= n - m; i++) {
-    let j = 0
-    while (j < m) {
-      comparisons += 1
-      if (text[i + j] !== pattern[j]) break
-      j += 1
-    }
-  }
-  return comparisons
-}
-
-/** Розклад порівнянь KMP: передобробка lps + пошук + сума. */
-export interface KmpComparisons {
-  readonly lps: number
-  readonly search: number
-  readonly total: number
-}
-
-/**
- * Кількість посимвольних порівнянь KMP (передобробка lps + пошук) до першого входження.
- * Лише для контрастного графіка. KMP лінійний O(n+m): текст читає зліва направо, не
- * відкочується, але — на відміну від Боєра-Мура — НЕ пропускає символів.
- */
-export function countKmpComparisons(text: string, pattern: string): KmpComparisons {
-  const m = pattern.length
-  const n = text.length
-  if (m === 0) return { lps: 0, search: 0, total: 0 }
-
-  // передобробка: побудова таблиці lps (одне порівняння на ітерацію while)
-  const lps = new Array<number>(m).fill(0)
-  let length = 0
-  let i = 1
-  let lpsC = 0
-  while (i < m) {
-    lpsC += 1
-    if (pattern[i] === pattern[length]) {
-      length += 1
-      lps[i] = length
-      i += 1
-    } else if (length !== 0) {
-      length = lps[length - 1]
-    } else {
-      lps[i] = 0
-      i += 1
-    }
-  }
-
-  // пошук: один прохід тексту до першого входження
-  let searchC = 0
-  i = 0
-  let j = 0
-  while (i < n) {
-    searchC += 1
-    if (pattern[j] === text[i]) {
-      i += 1
-      j += 1
-    } else if (j !== 0) {
-      j = lps[j - 1]
-    } else {
-      i += 1
-    }
-    if (j === m) break
-  }
-  return { lps: lpsC, search: searchC, total: lpsC + searchC }
-}
+// Контрастні лічильники «Боєра-Мура проти наївного й KMP» — це НЕ серце алгоритму,
+// а лише дані для графіка в навчанні/редакторі. Підрахунок ідентичний до KMP (там і
+// «канонічна» наївна вартість повного сканування всіх вирівнювань), тож реекспортуємо
+// замість копії — обидва контрастні графіки рахують з одного джерела (без дрейфу).
+export {
+  countNaiveComparisons,
+  countKmpComparisons,
+  type KmpComparisons,
+} from "@/lib/kmpStringSearch"

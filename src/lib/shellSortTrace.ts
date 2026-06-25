@@ -13,6 +13,7 @@ import {
   type GapSequence,
   type ShellEvent,
 } from "@/lib/shellSort"
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -82,8 +83,6 @@ export interface ShTrace {
   readonly result: ShResult
   readonly sequence: GapSequence
 }
-
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 const SEQ_LABEL: Record<GapSequence, string> = {
   shell: "n//2",

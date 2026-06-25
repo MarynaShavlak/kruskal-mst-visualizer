@@ -12,6 +12,7 @@ import {
   maxComparisons,
   type SelectionEvent,
 } from "@/lib/selectionSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -112,8 +113,6 @@ export interface SelTrace {
   readonly result: SelResult
   readonly stable: boolean
 }
-
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /**
  * Проганяє сортування прямим вибором на масиві й збирає trace для плеєра.

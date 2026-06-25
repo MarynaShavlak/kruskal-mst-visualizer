@@ -11,6 +11,7 @@
 // ряд комірок із курсором-бігунцем (🌸 перевіряємо · 🟢 знайдено · 🩶 відкинуто ·
 // ⬜ ще не перевіряли), а не стовпчики/кошики, як у сортуваннях.
 
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
@@ -73,8 +74,6 @@ export interface LsTrace {
   readonly frames: readonly LsFrame[]
   readonly result: LsResult
 }
-
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /**
  * Проганяє лінійний пошук на масиві + цілі й збирає trace для плеєра/віджетів:

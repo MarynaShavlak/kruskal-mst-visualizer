@@ -11,6 +11,7 @@
 // ВІКНО [low..high], що звужується вдвічі: 🟦 активне вікно · 🌸 mid (проба) ·
 // 🟥 половина, яку відкидаємо · 🟢 збіг · 🩶 поза вікном.
 
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
@@ -108,8 +109,6 @@ export interface BsTrace {
   readonly frames: readonly BsFrame[]
   readonly result: BsResult
 }
-
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /**
  * Проганяє двійковий пошук на відсортованому масиві + цілі й збирає trace для

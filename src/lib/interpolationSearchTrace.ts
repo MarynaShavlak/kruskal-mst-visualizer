@@ -17,6 +17,7 @@
 // На відміну від двійкового, цикл може вийти РАНО за «охоронцем діапазону значень»
 // (x поза [arr[low]..arr[high]]) — це і є рання відмова інтерполяційного пошуку.
 
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { ArraySearchFrameBase } from "@/lib/traceFrame"
 
@@ -134,7 +135,6 @@ export interface IpTrace {
   readonly result: IpResult
 }
 
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 const pct = (f: number): string => `${Math.round(f * 100)}%`
 
 /**

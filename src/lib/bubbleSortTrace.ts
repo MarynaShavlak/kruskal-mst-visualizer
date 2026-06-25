@@ -10,6 +10,7 @@ import {
   maxComparisons,
   type BubbleEvent,
 } from "@/lib/bubbleSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -91,8 +92,6 @@ export interface BsTrace {
   readonly result: BsResult
   readonly optimized: boolean
 }
-
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /**
  * Проганяє бульбашку на масиві й збирає trace для плеєра. Результат
