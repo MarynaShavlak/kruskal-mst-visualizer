@@ -1,11 +1,13 @@
-import { describe, it, expect, beforeEach } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { describe, it, expect, beforeEach, vi } from "vitest"
+import { render, screen, fireEvent } from "@testing-library/react"
 import { LearnView } from "@/algorithms/shared/learn/LearnView"
 import { useLangStore } from "@/store/lang-store"
 
 describe("спільний LearnView", () => {
   beforeEach(() => {
     useLangStore.getState().setLang("ua")
+    // jsdom не реалізує window.print → стабуємо, інакше клік кинув би помилку.
+    vi.stubGlobal("print", vi.fn())
   })
 
   it("рендерить заголовок і нумеровану секцію зі спільного контенту", () => {
@@ -37,5 +39,13 @@ describe("спільний LearnView", () => {
       />,
     )
     expect(screen.getByText("фігура:graph.png")).toBeInTheDocument()
+  })
+
+  it("кнопка «Друк / PDF» викликає window.print", () => {
+    const content = { ua: "## 1. Розділ\n\nтекст", en: "## 1. Section\n\ntext" }
+    render(<LearnView content={content} figureForSrc={() => null} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Друк / PDF" }))
+    expect(window.print).toHaveBeenCalledTimes(1)
   })
 })

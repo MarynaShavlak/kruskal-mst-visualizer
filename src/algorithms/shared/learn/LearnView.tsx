@@ -1,10 +1,12 @@
 import "katex/dist/katex.min.css"
 import { useMemo, type ReactNode } from "react"
+import { Printer } from "lucide-react"
 import Markdown, { type Components } from "react-markdown"
 import rehypeKatex from "rehype-katex"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 import { parseToc, type Lang } from "@/algorithms/shared/learn/learn-content"
+import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { MarkdownCode } from "@/algorithms/shared/learn/MarkdownCode"
@@ -123,7 +125,22 @@ export function LearnView({
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">{t("learn.heading")}</h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">{t("learn.heading")}</h2>
+        {/* Друк/PDF: ховаємо саму кнопку у роздруку (no-print), щоб не лишати
+            «мертвий» контрол на сторінці. window.print викликає системний діалог,
+            звідки можна зберегти у PDF. */}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="no-print"
+          onClick={() => window.print()}
+        >
+          <Printer />
+          {t("learn.print")}
+        </Button>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)]">
         <TableOfContents toc={toc} />

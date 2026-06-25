@@ -98,6 +98,7 @@ const ua = {
   "comingSoon.plannedTitle": "Що буде в цьому розділі:",
 
   "learn.heading": "Навчальний розбір",
+  "learn.print": "Друк / PDF",
   "toc.title": "Зміст",
   // Крупний план клітинки ДП (навчальний віджет).
   "learn.knapCellTake": "взяти",
@@ -2094,6 +2095,7 @@ const en: Record<MessageKey, string> = {
   "comingSoon.plannedTitle": "What this section will include:",
 
   "learn.heading": "Learning walkthrough",
+  "learn.print": "Print / PDF",
   "toc.title": "Contents",
   // DP cell close-up (learn widget).
   "learn.knapCellTake": "take",

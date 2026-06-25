@@ -43,7 +43,7 @@ export function AlgorithmShell({
       value={active}
       onValueChange={(value) => navigateTo(algorithm.id, value)}
     >
-      <TabsList>
+      <TabsList className="no-print">
         {algorithm.tabs.map((tb) => (
           <TabsTrigger key={tb.key} value={tb.key}>
             {/* Підписи вкладок спільні для всіх алгоритмів — з i18n за ключем. */}

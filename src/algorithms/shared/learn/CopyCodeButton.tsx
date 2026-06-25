@@ -42,7 +42,7 @@ export function CopyCodeButton({ code }: { code: string }) {
       aria-label={copied ? "Скопійовано" : "Копіювати код"}
       title={copied ? "Скопійовано" : "Копіювати код"}
       className={cn(
-        "absolute right-2 top-2 z-10 opacity-50 backdrop-blur transition-opacity",
+        "no-print absolute right-2 top-2 z-10 opacity-50 backdrop-blur transition-opacity",
         "hover:opacity-100 focus-visible:opacity-100",
         copied && "opacity-100",
       )}

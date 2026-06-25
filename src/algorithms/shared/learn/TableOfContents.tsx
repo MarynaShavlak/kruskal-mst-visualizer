@@ -78,8 +78,9 @@ export function TableOfContents({ toc }: { toc: TocEntry[] }) {
 
   // Один grid-елемент (інакше зламає 2-колонкову сітку LearnView): мобільний
   // disclosure + десктопний липкий сайдбар, видимі взаємовиключно за брейкпоінтом.
+  // У роздруку (no-print) зміст ховаємо — він навігаційний, не контентний.
   return (
-    <div>
+    <div className="no-print">
       <details className="rounded-lg border bg-card lg:hidden">
         <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium">
           {t("toc.title")}
