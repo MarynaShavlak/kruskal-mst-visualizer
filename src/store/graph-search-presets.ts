@@ -18,13 +18,15 @@ const TRAVERSAL_GRAPH: Graph = buildGraph([
   ["E", "F", 1],
 ])
 
+// Розкладка — правильний п'ятикутник за циклом A-B-E-F-C-A (усі ребра — його
+// сторони) + висяча вершина D від B. Так жодне ребро не перетинається.
 const TRAVERSAL_POSITIONS: Record<Vertex, XY> = {
-  A: { x: 150, y: 360 },
-  B: { x: 400, y: 320 },
-  C: { x: 110, y: 170 },
-  D: { x: 540, y: 430 },
-  E: { x: 350, y: 130 },
-  F: { x: 170, y: 30 },
+  A: { x: 300, y: 450 },
+  B: { x: 510, y: 320 },
+  C: { x: 90, y: 320 },
+  D: { x: 690, y: 420 },
+  E: { x: 440, y: 90 },
+  F: { x: 160, y: 90 },
 }
 
 export function traversalExamplePreset(): GraphStoreDoc<Graph> {
@@ -40,12 +42,14 @@ const DIJKSTRA_GRAPH: Graph = buildGraph([
   ["D", "E", 4],
 ])
 
+// Симетричний ромб A-B-D-C (A знизу, D зверху, B/C по боках) + висяча E над D —
+// як на схемі в PDF, без перетину ребер.
 const DIJKSTRA_POSITIONS: Record<Vertex, XY> = {
-  E: { x: 360, y: 20 },
-  D: { x: 380, y: 210 },
-  C: { x: 110, y: 350 },
-  A: { x: 360, y: 450 },
-  B: { x: 620, y: 320 },
+  E: { x: 340, y: 40 },
+  D: { x: 340, y: 220 },
+  B: { x: 560, y: 360 },
+  C: { x: 120, y: 360 },
+  A: { x: 340, y: 490 },
 }
 
 export function dijkstraExamplePreset(): GraphStoreDoc<Graph> {
