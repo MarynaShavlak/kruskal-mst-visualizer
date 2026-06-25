@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import {
   buildKmpStringSearchTrace,
+  type KmpFrame,
   type KmpPhase,
   type KmpResult,
 } from "@/lib/kmpStringSearchTrace"
@@ -8,6 +9,8 @@ import { useKmpStringSearchStore } from "@/store/kmp-string-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
 import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
+import { PhaseDiffRow } from "@/algorithms/shared/playback/PhaseDiffRow"
+import { usePhaseMarkers, usePhaseDiff } from "@/algorithms/shared/playback/use-phase-markers"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -40,6 +43,17 @@ export function PlaybackView() {
 
   const frameCount = run.kind === "ok" ? run.trace.frames.length : 1
   const player = usePlayer(frameCount, sig)
+
+  // Семантичні засічки фаз + рядок-діф. Hooks викликаємо безумовно (порожні кадри
+  // на fallback → засічок немає), щоб не порушити правила хуків перед раннім return.
+  const phaseFrames = run.kind === "ok" ? run.trace.frames : EMPTY_FRAMES
+  const markers = usePhaseMarkers(phaseFrames, getKmpPhase, PHASE_STYLES)
+  const phaseDiff = usePhaseDiff(
+    phaseFrames,
+    Math.min(player.index, Math.max(0, phaseFrames.length - 1)),
+    getKmpPhase,
+    PHASE_STYLES,
+  )
 
   if (run.kind !== "ok") {
     return (
@@ -90,6 +104,8 @@ export function PlaybackView() {
       player={player}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
+      markers={markers}
+      diffRow={<PhaseDiffRow diff={phaseDiff} />}
       statsBar={
         <>
           <StatsBar>
@@ -159,6 +175,11 @@ function lastSearchState(trace: ReturnType<typeof buildKmpStringSearchTrace>) {
 }
 
 // — дрібні презентаційні шматки ----------------------------------------------
+
+// Стабільні module-level хелпери для phase-маркерів. KMP має ЄДИНУ чисту межу
+// lps→search (init/done на краях) — ідеальний пілот семантичного скрабера.
+const EMPTY_FRAMES: readonly KmpFrame[] = []
+const getKmpPhase = (f: KmpFrame): KmpPhase => f.phase
 
 const PHASE_STYLES: Record<KmpPhase, PhaseStyle> = {
     init: { labelKey: "play.kmpPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },

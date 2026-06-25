@@ -1,11 +1,20 @@
 import { Pause, Play, SkipBack, StepBack, StepForward } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n/use-t"
+import { cn } from "@/lib/utils"
 import type { Player } from "@/algorithms/shared/playback/use-player"
 import { usePlayerHotkeys } from "@/algorithms/shared/playback/use-player-hotkeys"
 import { SPEEDS } from "@/algorithms/shared/playback/speeds"
+import type { LabeledPhaseMarker } from "@/algorithms/shared/playback/use-phase-markers"
 
-export function PlayerControls({ player }: { player: Player }) {
+export function PlayerControls({
+  player,
+  markers,
+}: {
+  player: Player
+  /** Семантичні засічки фаз поверх слайдера (опц. — без них оверлея немає). */
+  markers?: readonly LabeledPhaseMarker[]
+}) {
   const { index, isPlaying, speedMs, frameCount, dispatch } = player
   const last = frameCount - 1
   const t = useT()
@@ -47,15 +56,36 @@ export function PlayerControls({ player }: { player: Player }) {
         <StepForward />
       </Button>
 
-      <input
-        type="range"
-        min={0}
-        max={Math.max(0, last)}
-        value={index}
-        onChange={(e) => dispatch({ type: "seek", index: Number(e.target.value) })}
-        className="mx-2 h-1.5 min-w-[140px] flex-1 cursor-pointer accent-primary"
-        aria-label={t("play.timeline")}
-      />
+      <div className="relative mx-2 flex min-w-[140px] flex-1 items-center">
+        <input
+          type="range"
+          min={0}
+          max={Math.max(0, last)}
+          value={index}
+          onChange={(e) => dispatch({ type: "seek", index: Number(e.target.value) })}
+          className="h-1.5 w-full cursor-pointer accent-primary"
+          aria-label={t("play.timeline")}
+        />
+        {markers && markers.length > 0 && last > 0 && (
+          // Шар засічок: контейнер НЕ перехоплює кліки (слайдер лишається тягучим),
+          // лише самі кнопки-засічки клікабельні (pointer-events:auto).
+          <div className="pointer-events-none absolute inset-0">
+            {markers.map((m) => (
+              <button
+                key={m.index}
+                type="button"
+                title={t("play.jumpToPhase", { phase: m.label })}
+                onClick={() => dispatch({ type: "seek", index: m.index })}
+                style={{ left: `${m.leftPct}%` }}
+                className={cn(
+                  "pointer-events-auto absolute top-1/2 h-3 w-1 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-sm border border-background",
+                  m.cls ?? "bg-primary/70",
+                )}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       <span className="tabular-nums text-sm text-muted-foreground">
         {index + 1} / {frameCount}
       </span>

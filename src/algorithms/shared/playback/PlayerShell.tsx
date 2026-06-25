@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { PlayerControls } from "@/algorithms/shared/playback/PlayerControls"
 import type { Player } from "@/algorithms/shared/playback/use-player"
+import type { LabeledPhaseMarker } from "@/algorithms/shared/playback/use-phase-markers"
 import { useT } from "@/i18n/use-t"
 
 /**
@@ -14,6 +15,8 @@ export function PlayerShell({
   caption,
   captionBadge,
   headerExtra,
+  markers,
+  diffRow,
   statsBar,
   predictSlot,
   panels,
@@ -26,6 +29,10 @@ export function PlayerShell({
   captionBadge?: ReactNode
   /** Слот над контролами (напр. тумблери оптимізацій DSU). */
   headerExtra?: ReactNode
+  /** Семантичні засічки фаз поверх слайдера (опц. — без них оверлея немає). */
+  markers?: readonly LabeledPhaseMarker[]
+  /** Рядок-діф «фаза→фаза» під нарацією (опц.). */
+  diffRow?: ReactNode
   /** Слот рядка-статистики між нарацією і панелями. */
   statsBar?: ReactNode
   /** Слот «Вгадай рішення» між статистикою й панелями (опц. — інші плеєри не ламаються). */
@@ -39,7 +46,7 @@ export function PlayerShell({
   return (
     <div className="flex flex-col gap-3">
       {headerExtra}
-      <PlayerControls player={player} />
+      <PlayerControls player={player} markers={markers} />
 
       <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">
         <span className="font-medium">
@@ -48,6 +55,8 @@ export function PlayerShell({
         {caption}
         {captionBadge}
       </div>
+
+      {diffRow}
 
       {statsBar}
 
