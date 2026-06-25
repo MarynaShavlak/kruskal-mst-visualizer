@@ -2,17 +2,14 @@ import { Pause, Play, SkipBack, StepBack, StepForward } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n/use-t"
 import type { Player } from "@/algorithms/shared/playback/use-player"
-
-const SPEEDS = [
-  { label: "0.5×", ms: 1500 },
-  { label: "1×", ms: 800 },
-  { label: "2×", ms: 380 },
-]
+import { usePlayerHotkeys } from "@/algorithms/shared/playback/use-player-hotkeys"
+import { SPEEDS } from "@/algorithms/shared/playback/speeds"
 
 export function PlayerControls({ player }: { player: Player }) {
   const { index, isPlaying, speedMs, frameCount, dispatch } = player
   const last = frameCount - 1
   const t = useT()
+  usePlayerHotkeys(player)
 
   return (
     <div className="flex flex-wrap items-center gap-2">
