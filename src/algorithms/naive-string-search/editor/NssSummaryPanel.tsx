@@ -6,6 +6,7 @@ import {
   countComparisons,
   caseAnalysis,
 } from "@/lib/naiveStringSearch"
+import { SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -29,7 +30,7 @@ export function NssSummaryPanel({ className }: { className?: string }) {
   const tooLong = m > text.length
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.nssLen")}</span>
         <span className="font-medium tabular-nums">{t("editor.nssLenVal", { n: text.length, m })}</span>
@@ -90,6 +91,6 @@ export function NssSummaryPanel({ className }: { className?: string }) {
         </tbody>
       </table>
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.nssCasesNote")}</p>
-    </div>
+    </SummaryCard>
   )
 }

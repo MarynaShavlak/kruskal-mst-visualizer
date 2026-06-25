@@ -14,6 +14,7 @@ import {
   BASE,
   type RadixEvent,
 } from "@/lib/radixSort"
+import { formatArray as fmt } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -74,8 +75,6 @@ export interface RxTrace {
   readonly frames: readonly RxFrame[]
   readonly result: RxResult
 }
-
-const fmt = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /** Назва розряду українською мовою для нарації (одиниці / десятки / …). */
 const placeName = (digitIndex: number, t: Translate): string =>

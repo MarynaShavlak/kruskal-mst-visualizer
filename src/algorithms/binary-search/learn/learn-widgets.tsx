@@ -1,9 +1,9 @@
 import { useMemo, type ReactNode } from "react"
-import { Search } from "lucide-react"
 import { buildBinarySearchTrace } from "@/lib/binarySearchTrace"
 import { binarySearch, lowerBound, upperBound, caseAnalysis } from "@/lib/binarySearch"
 import { WindowView } from "@/algorithms/binary-search/playback/WindowPanel"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
@@ -34,10 +34,7 @@ function Figure({ caption, children }: { caption?: string; children: ReactNode }
 function TargetBadge({ target }: { target: number }) {
   const t = useT()
   return (
-    <span className="mb-2 inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-      <Search className="size-3.5" />
-      {t("play.binTargetBadge", { target })}
-    </span>
+    <SearchTargetBadge className="mb-2">{t("play.binTargetBadge", { target })}</SearchTargetBadge>
   )
 }
 

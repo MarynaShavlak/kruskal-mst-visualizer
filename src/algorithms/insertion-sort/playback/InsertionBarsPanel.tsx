@@ -1,6 +1,7 @@
-import { ArrowDown } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
-import { barRole, barHeightPct, type BarRole } from "@/algorithms/insertion-sort/playback/highlight"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { KeyedBars } from "@/algorithms/shared/playback/KeyedBars"
+import { barRole, type BarRole } from "@/algorithms/insertion-sort/playback/highlight"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -47,61 +48,20 @@ export function InsertionBars({
   height = 220,
   size = "md",
 }: InsertionBarsProps) {
-  const max = Math.max(1, ...array, keyValue ?? 0)
-  const valueText = size === "lg" ? "text-sm" : "text-[11px]"
-  const idxText = size === "lg" ? "text-xs" : "text-[10px]"
-  // Зарезервована зона зверху під плаваючий key (≈ 40% висоти стовпчиків).
-  const keyZone = Math.round(height * 0.4)
   return (
-    <div className="flex items-end justify-center gap-1.5" style={{ height: height + keyZone }}>
-      {array.map((v, i) => {
-        const role = barRole(i, prefixLen, hole, compareAt, shiftAt)
-        const isHole = role === "hole"
-        const active = role === "compare" || role === "shift"
-        const showKey = hole !== null && i === hole && keyValue !== null
-        return (
-          <div
-            key={i}
-            className="flex min-w-[1.5rem] flex-1 flex-col items-center justify-end gap-1"
-            style={{ height: height + keyZone }}
-          >
-            {/* Зона під key «у руці» (висить над «діркою»). */}
-            <div className="flex w-full flex-col items-center justify-end gap-0.5" style={{ height: keyZone }}>
-              {showKey && (
-                <>
-                  <span className={cn("font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300", valueText)}>
-                    {keyValue}
-                  </span>
-                  <div
-                    className="w-full rounded-t bg-amber-400/80 dark:bg-amber-400/70"
-                    style={{ height: `${Math.max(8, ((keyValue ?? 0) / max) * (keyZone - 28))}px` }}
-                  />
-                  <ArrowDown className="size-3 text-amber-600 dark:text-amber-400" />
-                </>
-              )}
-            </div>
-            {/* Сам стовпчик / порожня «дірка». */}
-            <div className="flex w-full flex-col items-center justify-end gap-1" style={{ height }}>
-              <span
-                className={cn(
-                  "font-medium tabular-nums leading-none",
-                  valueText,
-                  isHole && "opacity-0",
-                  active ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                {v}
-              </span>
-              <div
-                className={cn("w-full rounded-t transition-all", BAR_CLASS[role])}
-                style={{ height: isHole ? "100%" : `${barHeightPct(v, max)}%` }}
-              />
-            </div>
-            <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
-          </div>
-        )
-      })}
-    </div>
+    <KeyedBars
+      array={array}
+      roleAt={(i) => barRole(i, prefixLen, hole, compareAt, shiftAt)}
+      classMap={BAR_CLASS}
+      hole={hole}
+      keyValue={keyValue}
+      isActive={(role) => role === "compare" || role === "shift"}
+      height={height}
+      size={size}
+      renderIndex={(i, idxText) => (
+        <span className={cn("tabular-nums text-muted-foreground/70", idxText)}>{i}</span>
+      )}
+    />
   )
 }
 
@@ -127,24 +87,18 @@ export function InsertionBarsPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: BarRole; label: string }[] = [
-    { role: "prefix", label: t("learn.isLegendPrefix") },
-    { role: "compare", label: t("learn.isLegendCompare") },
-    { role: "shift", label: t("learn.isLegendShift") },
-    { role: "idle", label: t("learn.isLegendUnsorted") },
+  const entries = [
+    { label: t("learn.isLegendPrefix"), cls: BAR_CLASS.prefix },
+    { label: t("learn.isLegendCompare"), cls: BAR_CLASS.compare },
+    { label: t("learn.isLegendShift"), cls: BAR_CLASS.shift },
+    { label: t("learn.isLegendUnsorted"), cls: BAR_CLASS.idle },
   ]
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm", BAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
+    <LegendRow entries={entries} border={false}>
       <span className="inline-flex items-center gap-1">
         <span className="inline-block size-2.5 rounded-sm bg-amber-400/80" />
         {t("learn.isLegendKey")}
       </span>
-    </div>
+    </LegendRow>
   )
 }

@@ -7,6 +7,7 @@ import {
   countKmpComparisons,
   countNaiveComparisons,
 } from "@/lib/kmpStringSearch"
+import { SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +32,7 @@ export function KmpSummaryPanel({ className }: { className?: string }) {
   const naive = countNaiveComparisons(text, pattern)
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.kmpLen")}</span>
         <span className="font-medium tabular-nums">{t("editor.kmpLenVal", { n: text.length, m })}</span>
@@ -127,6 +128,6 @@ export function KmpSummaryPanel({ className }: { className?: string }) {
         </tbody>
       </table>
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.kmpCostNote")}</p>
-    </div>
+    </SummaryCard>
   )
 }

@@ -1,5 +1,4 @@
 import { useMemo, type ReactNode } from "react"
-import { Search } from "lucide-react"
 import {
   buildIndexedSequentialSearchTrace,
   type IxsFrame,
@@ -13,6 +12,7 @@ import {
 } from "@/lib/indexedSequentialSearch"
 import { TwoLevelView, type TwoLevelProps } from "@/algorithms/indexed-sequential-search/playback/TwoLevelPanel"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { useT } from "@/i18n/use-t"
@@ -43,10 +43,7 @@ function Badges({ target, step }: { target: number; step: number }) {
   const t = useT()
   return (
     <span className="mb-2 flex flex-wrap justify-center gap-2">
-      <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-        <Search className="size-3.5" />
-        {t("play.issTargetBadge", { target })}
-      </span>
+      <SearchTargetBadge>{t("play.issTargetBadge", { target })}</SearchTargetBadge>
       <span className="inline-flex items-center gap-1.5 rounded-md border border-violet-400/50 bg-violet-500/10 px-2.5 py-1 text-sm font-medium text-violet-700 dark:text-violet-300">
         {t("play.issStepBadge", { step })}
       </span>

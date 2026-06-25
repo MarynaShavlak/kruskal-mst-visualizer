@@ -1,6 +1,7 @@
 import { Check, Search, X } from "lucide-react"
 import { useLinearSearchStore } from "@/store/linear-search-store"
 import { linearSearch, findAll, countComparisons, caseAnalysis } from "@/lib/linearSearch"
+import { SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -34,7 +35,7 @@ export function CasesSummaryPanel({ className }: { className?: string }) {
   ]
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.lsSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
@@ -95,6 +96,6 @@ export function CasesSummaryPanel({ className }: { className?: string }) {
           {t("editor.lsWarnMany")}
         </p>
       )}
-    </div>
+    </SummaryCard>
   )
 }

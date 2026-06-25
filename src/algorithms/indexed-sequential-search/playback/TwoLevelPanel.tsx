@@ -1,5 +1,6 @@
-import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import {
   indexRole,
   cellRole,
@@ -227,10 +228,7 @@ export function TwoLevelPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.issTargetBadge", { target: view.target })}
-        </span>
+        <SearchTargetBadge>{t("play.issTargetBadge", { target: view.target })}</SearchTargetBadge>
         <span className="inline-flex items-center gap-1.5 rounded-md border border-violet-400/50 bg-violet-500/10 px-2.5 py-1 text-sm font-medium text-violet-700 dark:text-violet-300">
           {t("play.issStepBadge", { step: view.step })}
         </span>
@@ -245,7 +243,7 @@ export function TwoLevelPanel({
 
 function Legend() {
   const t = useT()
-  const items: { cls: string; label: string }[] = [
+  const entries: { cls: string; label: string }[] = [
     { cls: "bg-violet-500/70 border-violet-500/70", label: t("learn.issLegPillar") },
     { cls: INDEX_CLASS.window, label: t("learn.issLegWindow") },
     { cls: INDEX_CLASS.probe, label: t("learn.issLegProbe") },
@@ -255,14 +253,5 @@ function Legend() {
     { cls: CELL_CLASS.found, label: t("learn.issLegFound") },
     { cls: CELL_CLASS.out, label: t("learn.issLegOut") },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.label} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", it.cls)} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

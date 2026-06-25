@@ -11,6 +11,8 @@ import {
   maxComparisons,
   type InsertionEvent,
 } from "@/lib/insertionSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -105,8 +107,6 @@ export interface InsTrace {
   readonly binary: boolean
 }
 
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
-
 /**
  * Проганяє сортування вставками на масиві й збирає trace для плеєра. Результат
  * (sorted/comparisons/shifts/insertions) збігається з чистим insertionSort(Binary).
@@ -120,9 +120,9 @@ export function buildInsertionSortTrace(
   const code = binary ? BINARY_CODE : LINEAR_CODE
   const n = input.length
 
-  const frames: InsFrame[] = []
+  const { frames, push } = createFrameList<InsFrame>()
   for (const ev of events) {
-    frames.push({ i: frames.length, ...frameFor(ev, binary, n, t) })
+    push(frameFor(ev, binary, n, t))
   }
 
   const last = events[events.length - 1]

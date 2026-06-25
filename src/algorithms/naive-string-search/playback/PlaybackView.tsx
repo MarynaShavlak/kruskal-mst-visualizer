@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { Check, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   buildNaiveStringSearchTrace,
@@ -16,6 +15,7 @@ import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { StripPanel } from "@/algorithms/naive-string-search/playback/StripPanel"
+import { ResultVerdict, resultBorderClass } from "@/algorithms/shared/playback/ResultVerdict"
 import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
@@ -168,33 +168,21 @@ function ResultCard({ result, done }: { result: NaiveResult; done: boolean }) {
   const t = useT()
   const found = result.found
   return (
-    <Card className={cn("lg:col-span-3", done && (found ? "border-emerald-500/50" : "border-rose-500/40"))}>
+    <Card className={cn("lg:col-span-3", resultBorderClass(done, found))}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <div>
             <div className="text-muted-foreground">{t("play.nssResultLabel")}</div>
-            <div
-              className={cn(
-                "flex items-center gap-1 font-medium",
-                done && (found ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"),
-              )}
-            >
-              {!done ? (
-                "…"
-              ) : found ? (
-                <>
-                  <Check className="size-4" />
-                  {result.findAll
-                    ? t("play.nssResultAll", { list: result.matches.join(", "), count: result.matches.length })
-                    : t("play.nssResultIndex", { i: result.result })}
-                </>
-              ) : (
-                <>
-                  <X className="size-4" />
-                  {t("play.nssResultAbsent")}
-                </>
-              )}
-            </div>
+            <ResultVerdict
+              done={done}
+              found={found}
+              foundContent={
+                result.findAll
+                  ? t("play.nssResultAll", { list: result.matches.join(", "), count: result.matches.length })
+                  : t("play.nssResultIndex", { i: result.result })
+              }
+              absentText={t("play.nssResultAbsent")}
+            />
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 tabular-nums text-muted-foreground">
             <span>{t("play.nssResultComparisons", { comparisons: result.comparisons })}</span>

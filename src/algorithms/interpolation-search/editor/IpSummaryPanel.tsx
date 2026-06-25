@@ -7,6 +7,7 @@ import {
   isSorted,
   caseAnalysis,
 } from "@/lib/interpolationSearch"
+import { HeavyWarning, SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -38,7 +39,7 @@ export function IpSummaryPanel({ className }: { className?: string }) {
   const tie = probes === binProbes
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.ipSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
@@ -148,12 +149,7 @@ export function IpSummaryPanel({ className }: { className?: string }) {
       </table>
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.ipCasesNote")}</p>
 
-      {n > HEAVY_SIZE && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-300">
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {t("editor.ipWarnMany")}
-        </p>
-      )}
-    </div>
+      <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.ipWarnMany")} />
+    </SummaryCard>
   )
 }

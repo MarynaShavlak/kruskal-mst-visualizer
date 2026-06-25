@@ -1,9 +1,10 @@
-import { ArrowRight, Search } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -63,10 +64,7 @@ export function KmpStripPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.kmpTargetBadge", { pattern: view.pattern || "∅" })}
-        </span>
+        <SearchTargetBadge>{t("play.kmpTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium",
@@ -89,21 +87,12 @@ export function KmpStripPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "match", label: t("play.kmpLegendMatched") },
-    { role: "active", label: t("play.kmpLegendActive") },
-    { role: "mismatch", label: t("play.kmpLegendMismatch") },
-    { role: "window", label: t("play.kmpLegendWindow") },
-    { role: "idle", label: t("play.kmpLegendOut") },
+  const entries = [
+    { label: t("play.kmpLegendMatched"), cls: CHAR_CLASS.match },
+    { label: t("play.kmpLegendActive"), cls: CHAR_CLASS.active },
+    { label: t("play.kmpLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("play.kmpLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("play.kmpLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

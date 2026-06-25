@@ -12,7 +12,7 @@ import {
   type StringSearchCase,
 } from "@/lib/exampleBoyerMooreStringSearch"
 import type { BoyerMooreStringSearchDoc } from "@/store/boyer-moore-string-search-store"
-import { mulberry32 } from "@/lib/prng"
+import { randomStringCase } from "@/store/create-string-store"
 
 const fromCase = (c: StringSearchCase): BoyerMooreStringSearchDoc => ({
   text: c.text,
@@ -44,15 +44,5 @@ export function bmMultiPreset(): BoyerMooreStringSearchDoc {
  * показ сильної сторони Боєра-Мура) + підрядок із нього як шаблон, детерміновано за `seed`.
  */
 export function bmRandomPreset(seed: number, textLen = 24, patLen = 4): BoyerMooreStringSearchDoc {
-  const rnd = mulberry32(seed)
-  const alphabet = "ABCDEFGH IJKLMNOP" // ширший алфавіт + пробіл → рідкісніші символи, великі стрибки
-  const chars: string[] = []
-  for (let i = 0; i < textLen; i++) {
-    chars.push(alphabet[Math.floor(rnd() * alphabet.length)])
-  }
-  const text = chars.join("")
-  // Шаблон — підрядок тексту (щоб був збіг), якщо текст достатньо довгий.
-  const start = textLen > patLen ? Math.floor(rnd() * (textLen - patLen)) : 0
-  const pattern = text.slice(start, start + patLen) || "AB"
-  return { text, pattern }
+  return randomStringCase(seed, { alphabet: "ABCDEFGH IJKLMNOP", textLen, patLen, fallback: "AB" })
 }

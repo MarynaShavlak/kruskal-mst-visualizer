@@ -12,6 +12,7 @@ import {
   type GreedyStep,
   type KnapsackInstance,
 } from "@/lib/knapsack"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 
 // ---------------------------------------------------------------------------
@@ -85,10 +86,7 @@ export function buildGreedyTrace(
   const optimal = knapsackDp(weights, values, W)
   const num = (x: number): string => (Number.isInteger(x) ? String(x) : x.toFixed(2))
 
-  const frames: GreedyFrame[] = []
-  const push = (f: Omit<GreedyFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<GreedyFrame>()
   const item = (idx: number): string => itemNames[idx] ?? `#${idx}`
 
   push({
@@ -278,10 +276,7 @@ export function buildBruteTrace(
   const setLabel = (combo: readonly number[]): string =>
     combo.length === 0 ? "∅" : `{${combo.map((idx) => itemNames[idx] ?? `#${idx}`).join(", ")}}`
 
-  const frames: BruteFrame[] = []
-  const push = (f: Omit<BruteFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<BruteFrame>()
 
   push({
     sub: { kind: "init" },

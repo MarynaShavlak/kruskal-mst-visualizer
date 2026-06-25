@@ -1,8 +1,11 @@
-import { AlertTriangle, Check } from "lucide-react"
 import { useShellSortStore } from "@/store/shell-sort-store"
 import { isSorted, countOperations, gapsFor, type GapSequence } from "@/lib/shellSort"
+import {
+  HeavyWarning,
+  SortedIndicator,
+  SummaryCard,
+} from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
-import { cn } from "@/lib/utils"
 
 // Поріг, за яким масив завеликий для плавного плеєра (узгоджено з MAX_SIZE).
 const HEAVY_SIZE = 16
@@ -30,7 +33,7 @@ export function ShellSummaryPanel({ className }: { className?: string }) {
   }))
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.shSize")}</span>
         <span className="font-medium tabular-nums">{n}</span>
@@ -59,22 +62,13 @@ export function ShellSummaryPanel({ className }: { className?: string }) {
 
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.shSeqNote")}</p>
 
-      <p
-        className={cn(
-          "mt-3 flex items-center gap-1.5 text-xs",
-          sorted ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground",
-        )}
-      >
-        {sorted && <Check className="size-3.5 shrink-0" />}
-        {sorted ? t("editor.shSortedYes") : t("editor.shSortedNo")}
-      </p>
+      <SortedIndicator
+        sorted={sorted}
+        yes={t("editor.shSortedYes")}
+        no={t("editor.shSortedNo")}
+      />
 
-      {n > HEAVY_SIZE && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-300">
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {t("editor.shWarnMany")}
-        </p>
-      )}
-    </div>
+      <HeavyWarning show={n > HEAVY_SIZE} text={t("editor.shWarnMany")} />
+    </SummaryCard>
   )
 }

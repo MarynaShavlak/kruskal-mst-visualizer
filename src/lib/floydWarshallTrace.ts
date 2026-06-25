@@ -9,6 +9,7 @@ import {
   type Vertex,
 } from "@/lib/directedGraph"
 import { INF, type NextMatrix, type ReadonlyMatrix } from "@/lib/floydWarshall"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 
 /** Лістинг коду для панелі підсвітки (рядок = елемент, 1-based індекси). */
@@ -117,10 +118,7 @@ export function buildFloydWarshallTrace(
   let negativeCycle = false
   let improvedCount = 0
 
-  const frames: FwFrame[] = []
-  const push = (f: Omit<FwFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<FwFrame>()
 
   push({
     sub: { kind: "init" },

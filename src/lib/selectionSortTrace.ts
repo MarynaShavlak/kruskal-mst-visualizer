@@ -12,6 +12,8 @@ import {
   maxComparisons,
   type SelectionEvent,
 } from "@/lib/selectionSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -113,8 +115,6 @@ export interface SelTrace {
   readonly stable: boolean
 }
 
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
-
 /**
  * Проганяє сортування прямим вибором на масиві й збирає trace для плеєра.
  * Результат (sorted/comparisons/swaps/writes) збігається з чистим
@@ -129,9 +129,9 @@ export function buildSelectionSortTrace(
   const code = stable ? STABLE_CODE : STANDARD_CODE
   const n = input.length
 
-  const frames: SelFrame[] = []
+  const { frames, push } = createFrameList<SelFrame>()
   for (const ev of events) {
-    frames.push({ i: frames.length, ...frameFor(ev, stable, n, t) })
+    push(frameFor(ev, stable, n, t))
   }
 
   const last = events[events.length - 1]

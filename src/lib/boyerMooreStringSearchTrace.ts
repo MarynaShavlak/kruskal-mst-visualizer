@@ -17,6 +17,7 @@
 // що будується (з акцентом на перезаписі); фази 2 — СТРІЧКА «текст / шаблон» зі скануванням
 // справа наліво, зеленим суфіксом і ВЕЛИКИМИ стрибками з пропущеними (🩶) символами.
 
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { StringSearchFrameBase } from "@/lib/traceFrame"
 import {
@@ -171,7 +172,7 @@ export function buildBoyerMooreStringSearchTrace(
   t: Translate = identityTranslate,
 ): BmTrace {
   const m = pattern.length
-  const frames: BmFrame[] = []
+  const { frames, push: pushFrame } = createFrameList<BmFrame>()
 
   // Спільні «нейтральні» значення полів — кожен push перевизначає потрібні.
   const base = {
@@ -197,12 +198,11 @@ export function buildBoyerMooreStringSearchTrace(
   }
 
   const push = (f: Partial<BmFrame> & { step: BmStep; phase: BmPhase; lines: readonly number[]; caption: string }) => {
-    frames.push({
+    pushFrame({
       ...base,
       ...f,
-      i: frames.length,
       contextLines: f.contextLines ?? [],
-    } as BmFrame)
+    } as Omit<BmFrame, "i">)
   }
 
   // ─── ФАЗА 1: побудова таблиці поганого символу ──────────────────────────

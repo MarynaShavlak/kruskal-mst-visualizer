@@ -1,9 +1,9 @@
-import { Search } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
+import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import {
   StringStrip,
   CHAR_CLASS,
-  type CharRole,
 } from "@/algorithms/shared/playback/StringStrip"
 import {
   textRole,
@@ -12,7 +12,6 @@ import {
   type BmCellState,
 } from "@/algorithms/boyer-moore-string-search/playback/highlight"
 import { useT } from "@/i18n/use-t"
-import { cn } from "@/lib/utils"
 
 export interface StripProps {
   readonly text: string
@@ -70,10 +69,7 @@ export function BmStripPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-          <Search className="size-3.5" />
-          {t("play.bmTargetBadge", { pattern: view.pattern || "∅" })}
-        </span>
+        <SearchTargetBadge>{t("play.bmTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <span className="text-xs text-muted-foreground">{t("play.bmScanHint")}</span>
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto">
@@ -86,21 +82,12 @@ export function BmStripPanel({
 
 function Legend() {
   const t = useT()
-  const items: { role: CharRole; label: string }[] = [
-    { role: "match", label: t("learn.bmLegendMatch") },
-    { role: "mismatch", label: t("learn.bmLegendMismatch") },
-    { role: "window", label: t("learn.bmLegendWindow") },
-    { role: "skipped", label: t("learn.bmLegendSkipped") },
-    { role: "idle", label: t("learn.bmLegendOut") },
+  const entries = [
+    { label: t("learn.bmLegendMatch"), cls: CHAR_CLASS.match },
+    { label: t("learn.bmLegendMismatch"), cls: CHAR_CLASS.mismatch },
+    { label: t("learn.bmLegendWindow"), cls: CHAR_CLASS.window },
+    { label: t("learn.bmLegendSkipped"), cls: CHAR_CLASS.skipped },
+    { label: t("learn.bmLegendOut"), cls: CHAR_CLASS.idle },
   ]
-  return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-      {items.map((it) => (
-        <span key={it.role} className="inline-flex items-center gap-1">
-          <span className={cn("inline-block size-2.5 rounded-sm border", CHAR_CLASS[it.role])} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  )
+  return <LegendRow entries={entries} />
 }

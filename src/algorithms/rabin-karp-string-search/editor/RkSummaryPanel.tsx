@@ -7,6 +7,7 @@ import {
   rabinKarpMetrics,
   countHashCharOps,
 } from "@/lib/rabinKarpStringSearch"
+import { SummaryCard } from "@/algorithms/shared/editor/summary"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 
@@ -32,7 +33,7 @@ export function RkSummaryPanel({ className }: { className?: string }) {
   const recomputeOps = countHashCharOps(text, pattern, false)
 
   return (
-    <div className={cn("rounded-lg border bg-card p-3 text-sm", className)}>
+    <SummaryCard className={className}>
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-muted-foreground">{t("editor.rkLen")}</span>
         <span className="font-medium tabular-nums">{t("editor.rkLenVal", { n: text.length, m })}</span>
@@ -122,6 +123,6 @@ export function RkSummaryPanel({ className }: { className?: string }) {
         </div>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">{t("editor.rkMetricsNote")}</p>
-    </div>
+    </SummaryCard>
   )
 }

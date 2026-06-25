@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from "react"
-import { ArrowRight, Search, Table2 } from "lucide-react"
+import { ArrowRight, Table2 } from "lucide-react"
 import {
   buildKmpStringSearchTrace,
   type KmpFrame,
@@ -7,6 +7,7 @@ import {
 import { LpsTable } from "@/algorithms/kmp-string-search/playback/LpsTablePanel"
 import { StripView } from "@/algorithms/kmp-string-search/playback/KmpStripPanel"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
+import { SearchTargetBadge } from "@/algorithms/shared/playback/SearchTargetBadge"
 import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import {
@@ -50,10 +51,7 @@ function SearchBadge({ pattern, monotonic, i }: { pattern: string; monotonic: bo
   const t = useT()
   return (
     <span className="mb-2 flex flex-wrap items-center gap-2">
-      <span className="inline-flex items-center gap-1.5 rounded-md border border-rose-400/50 bg-rose-500/10 px-2.5 py-1 text-sm font-medium text-rose-700 dark:text-rose-300">
-        <Search className="size-3.5" />
-        {t("play.kmpTargetBadge", { pattern: pattern || "∅" })}
-      </span>
+      <SearchTargetBadge>{t("play.kmpTargetBadge", { pattern: pattern || "∅" })}</SearchTargetBadge>
       <span
         className={cn(
           "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium",

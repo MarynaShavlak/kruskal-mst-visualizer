@@ -11,7 +11,7 @@ import {
   type StringSearchCase,
 } from "@/lib/exampleRabinKarpStringSearch"
 import type { RabinKarpStringSearchDoc } from "@/store/rabin-karp-string-search-store"
-import { mulberry32 } from "@/lib/prng"
+import { randomStringCase } from "@/store/create-string-store"
 
 const fromCase = (c: StringSearchCase): RabinKarpStringSearchDoc => ({
   text: c.text,
@@ -43,14 +43,5 @@ export function rkNotFoundPreset(): RabinKarpStringSearchDoc {
  * кандидати) + підрядок із нього як шаблон (зазвичай знайдеться), детерміновано за `seed`.
  */
 export function rkRandomPreset(seed: number, textLen = 20, patLen = 4): RabinKarpStringSearchDoc {
-  const rnd = mulberry32(seed)
-  const alphabet = "abracadabra " // навмисне з повторами та пробілом — багаті часткові хеші
-  const chars: string[] = []
-  for (let i = 0; i < textLen; i++) {
-    chars.push(alphabet[Math.floor(rnd() * alphabet.length)])
-  }
-  const text = chars.join("")
-  const start = textLen > patLen ? Math.floor(rnd() * (textLen - patLen)) : 0
-  const pattern = text.slice(start, start + patLen) || "ab"
-  return { text, pattern }
+  return randomStringCase(seed, { alphabet: "abracadabra ", textLen, patLen, fallback: "ab" })
 }

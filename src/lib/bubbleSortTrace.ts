@@ -10,6 +10,8 @@ import {
   maxComparisons,
   type BubbleEvent,
 } from "@/lib/bubbleSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
+import { createFrameList } from "@/lib/frameList"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -92,8 +94,6 @@ export interface BsTrace {
   readonly optimized: boolean
 }
 
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
-
 /**
  * Проганяє бульбашку на масиві й збирає trace для плеєра. Результат
  * (sorted/comparisons/swaps/passes) збігається з чистим bubbleSort(Optimized).
@@ -107,10 +107,7 @@ export function buildBubbleSortTrace(
   const code = optimized ? OPTIMIZED_CODE : NAIVE_CODE
   const n = input.length
 
-  const frames: BsFrame[] = []
-  const push = (f: Omit<BsFrame, "i">): void => {
-    frames.push({ i: frames.length, ...f })
-  }
+  const { frames, push } = createFrameList<BsFrame>()
 
   for (const ev of events) {
     push(frameFor(ev, optimized, n, t))

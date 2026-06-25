@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { Check, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   buildLinearSearchTrace,
@@ -16,6 +15,7 @@ import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ScanPanel } from "@/algorithms/linear-search/playback/ScanPanel"
+import { ResultVerdict, resultBorderClass } from "@/algorithms/shared/playback/ResultVerdict"
 import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
@@ -165,7 +165,7 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
   const t = useT()
   const found = result.found
   return (
-    <Card className={cn(done && (found ? "border-emerald-500/50" : "border-rose-500/40"), "lg:col-span-3")}>
+    <Card className={cn(resultBorderClass(done, found), "lg:col-span-3")}>
       <CardContent className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
         <div>
           <div className="text-muted-foreground">{t("play.lsInputLabel")}</div>
@@ -177,28 +177,16 @@ function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
         </div>
         <div>
           <div className="text-muted-foreground">{t("play.lsResultLabel")}</div>
-          <div
-            className={cn(
-              "flex items-center gap-1 font-medium",
-              done && (found ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"),
-            )}
-          >
-            {!done ? (
-              "…"
-            ) : found ? (
-              <>
-                <Check className="size-4" />
-                {result.findAll
-                  ? t("play.lsResultMatches", { matches: `[${result.matches.join(", ")}]` })
-                  : t("play.lsResultIndex", { i: result.result })}
-              </>
-            ) : (
-              <>
-                <X className="size-4" />
-                {t("play.lsResultAbsent")}
-              </>
-            )}
-          </div>
+          <ResultVerdict
+            done={done}
+            found={found}
+            foundContent={
+              result.findAll
+                ? t("play.lsResultMatches", { matches: `[${result.matches.join(", ")}]` })
+                : t("play.lsResultIndex", { i: result.result })
+            }
+            absentText={t("play.lsResultAbsent")}
+          />
         </div>
         <div className="tabular-nums text-xs">
           {t("play.lsResultChecks", { comparisons: result.comparisons })}

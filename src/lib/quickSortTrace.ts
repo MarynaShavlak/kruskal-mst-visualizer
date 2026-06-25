@@ -10,6 +10,7 @@ import {
   type PivotStrategy,
   type QuickEvent,
 } from "@/lib/quickSort"
+import { formatArray as fmtArray } from "@/lib/arrayUtils"
 import { identityTranslate, type Translate } from "@/lib/translate"
 import type { SortFrameBase } from "@/lib/traceFrame"
 
@@ -100,8 +101,6 @@ export interface QsTrace {
   readonly result: QsResult
   readonly strategy: PivotStrategy
 }
-
-const fmtArray = (a: readonly number[]): string => `[${a.join(", ")}]`
 
 /** Назва виклику для нарації (код-ідіома, не перекладається). */
 function callName(branch: "root" | "left" | "right"): string {
