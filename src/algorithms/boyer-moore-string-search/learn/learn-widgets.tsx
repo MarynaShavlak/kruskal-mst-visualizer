@@ -41,7 +41,7 @@ function Figure({ caption, children }: { caption?: string; children: ReactNode }
 function PatternBadge({ pattern }: { pattern: string }) {
   const t = useT()
   return (
-    <SearchTargetBadge className="mb-2">{t("play.bmTargetBadge", { pattern: pattern || "∅" })}</SearchTargetBadge>
+    <SearchTargetBadge className="mb-2">{t("play.strTargetBadge", { pattern: pattern || "∅" })}</SearchTargetBadge>
   )
 }
 

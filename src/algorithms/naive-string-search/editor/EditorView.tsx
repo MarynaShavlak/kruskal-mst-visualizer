@@ -25,7 +25,7 @@ export function EditorView() {
       toolbar={
         <>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadMain}>
-            <BookOpen /> {t("editor.nssMain")}
+            <BookOpen /> {t("editor.strMain")}
           </Button>
           <Button size="sm" variant="outline" onClick={ctrl.onLoadWorst}>
             <Flame /> {t("editor.nssWorst")}
@@ -58,7 +58,7 @@ export function EditorView() {
     >
       <div className="flex-1 space-y-3 rounded-lg border bg-muted/20 p-3">
         <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-          <Copy className="size-3.5" /> {t("editor.nssEditorTitle")}
+          <Copy className="size-3.5" /> {t("editor.strEditorTitle")}
         </h3>
         <TextPatternEditor
           text={text}

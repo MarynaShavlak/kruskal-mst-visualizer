@@ -107,7 +107,7 @@ export function PlaybackView() {
                 value={frame.result >= 0 ? String(frame.result) : "−1"}
               />
             )}
-            <Stat label={t("play.nssStatLen")} value={`${text.length}/${pattern.length}`} />
+            <Stat label={t("play.strStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}

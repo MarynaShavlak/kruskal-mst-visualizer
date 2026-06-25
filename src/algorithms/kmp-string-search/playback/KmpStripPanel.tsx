@@ -43,8 +43,8 @@ export function StripView({ text, pattern, state, size = "md" }: Omit<StripProps
       textRole={(idx) => textRole(idx, cell)}
       patternRole={(j) => patternRole(j, cell)}
       pointer={pointerIndex(cell)}
-      textLabel={t("play.kmpText")}
-      patternLabel={t("play.kmpPattern")}
+      textLabel={t("play.strText")}
+      patternLabel={t("play.strPattern")}
       size={size}
     />
   )
@@ -64,7 +64,7 @@ export function KmpStripPanel({
       bodyClassName="flex flex-col gap-3 p-3"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <SearchTargetBadge>{t("play.kmpTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
+        <SearchTargetBadge>{t("play.strTargetBadge", { pattern: view.pattern || "∅" })}</SearchTargetBadge>
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium",

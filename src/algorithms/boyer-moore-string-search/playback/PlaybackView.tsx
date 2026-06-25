@@ -116,7 +116,7 @@ export function PlaybackView() {
             <Stat label={t("play.bmStatJumps")} value={String(frame.jumps)} />
             <Stat label={t("play.bmStatSkipped")} value={String(frame.skipped)} />
             <Stat label={t("play.statResult")} value={frame.result >= 0 ? String(frame.result) : "−1"} />
-            <Stat label={t("play.bmStatLen")} value={`${text.length}/${pattern.length}`} />
+            <Stat label={t("play.strStatLen")} value={`${text.length}/${pattern.length}`} />
           </StatsBar>
           <LiveComplexity
             title={t("play.lcTitle")}

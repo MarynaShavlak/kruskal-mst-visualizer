@@ -46,7 +46,7 @@ export function EditorView() {
         <EditorHelp
           items={[
             { action: `+ ${t("editor.msValue")}`, desc: t("editor.helpMsAdd") },
-            { action: t("editor.arrHelpCell"), desc: t("editor.helpMsEdit") },
+            { action: t("editor.arrHelpCell"), desc: t("editor.helpArrEdit") },
             { action: "✕", desc: t("editor.helpArrRemove") },
           ]}
           note={t("editor.helpMsNote")}
@@ -55,7 +55,7 @@ export function EditorView() {
     >
       <div className="flex-1 space-y-3 rounded-lg border bg-muted/20 p-3">
         <h3 className="text-sm font-medium text-muted-foreground">
-          {t("editor.msArrayTitle")}
+          {t("editor.arrArrayTitle")}
         </h3>
         <ArrayEditor />
       </div>

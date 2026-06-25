@@ -6,6 +6,6 @@ import type { NaiveStringSearchDoc } from "@/store/naive-string-search-store"
 import { createTextPatternCodec } from "@/algorithms/shared/editor/doc-codec"
 
 export const naiveStringSearchCodec = createTextPatternCodec<NaiveStringSearchDoc>({
-  badTextKey: "editor.nssErrBadText",
-  badPatternKey: "editor.nssErrBadPattern",
+  badTextKey: "editor.strErrBadText",
+  badPatternKey: "editor.strErrBadPattern",
 })
