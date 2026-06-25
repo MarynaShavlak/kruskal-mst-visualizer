@@ -10,6 +10,7 @@ import { isSorted, countBinaryProbes } from "@/lib/interpolationSearch"
 import { useInterpolationSearchStore } from "@/store/interpolation-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
@@ -17,9 +18,7 @@ import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { WindowPanel } from "@/algorithms/interpolation-search/playback/WindowPanel"
 import { LineModelPanel } from "@/algorithms/interpolation-search/playback/LineModelPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -33,7 +32,7 @@ export function PlaybackView() {
   const target = useInterpolationSearchStore((s) => s.target)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const [mode, setMode] = useState<Mode>("iterative")
   const recursive = mode === "recursive"
 
@@ -105,7 +104,7 @@ export function PlaybackView() {
         </div>
       }
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -196,22 +195,13 @@ const windowLabel = (f: { low: number; high: number }): string =>
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: IpPhase }) {
-  const t = useT()
-  const map: Record<IpPhase, { text: string; cls: string }> = {
-    init: { text: t("play.ipPhaseInit"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    probe: { text: t("play.ipPhaseProbe"), cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
-    discard: { text: t("play.ipPhaseDiscard"), cls: "bg-red-500/15 text-red-700 dark:text-red-300" },
-    found: { text: t("play.ipPhaseFound"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.ipPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<IpPhase, PhaseStyle> = {
+    init: { labelKey: "play.ipPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    probe: { labelKey: "play.ipPhaseProbe", cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+    discard: { labelKey: "play.ipPhaseDiscard", cls: "bg-red-500/15 text-red-700 dark:text-red-300" },
+    found: { labelKey: "play.ipPhaseFound", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.ipPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({ result, done }: { result: IpResult; done: boolean }) {
   const t = useT()

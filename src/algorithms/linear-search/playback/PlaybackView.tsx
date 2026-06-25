@@ -9,15 +9,14 @@ import {
 import { useLinearSearchStore } from "@/store/linear-search-store"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { PlayerShell } from "@/algorithms/shared/playback/PlayerShell"
+import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseBadge"
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
 import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { ScanPanel } from "@/algorithms/linear-search/playback/ScanPanel"
-import type { Translate } from "@/lib/translate"
-import { useT } from "@/i18n/use-t"
-import type { MessageKey } from "@/i18n/messages"
+import { useT, useTr } from "@/i18n/use-t"
 import { useLangStore } from "@/store/lang-store"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +30,7 @@ export function PlaybackView() {
   const target = useLinearSearchStore((s) => s.target)
   const t = useT()
   const lang = useLangStore((s) => s.lang)
-  const tr: Translate = (k, v) => t(k as MessageKey, v)
+  const tr = useTr()
   const [mode, setMode] = useState<Mode>("first")
   const findAll = mode === "all"
 
@@ -91,7 +90,7 @@ export function PlaybackView() {
       player={player}
       headerExtra={switcher}
       caption={frame.caption}
-      captionBadge={<PhaseBadge phase={frame.phase} />}
+      captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={
         <>
           <StatsBar>
@@ -154,22 +153,13 @@ export function PlaybackView() {
 
 // — дрібні презентаційні шматки ----------------------------------------------
 
-function PhaseBadge({ phase }: { phase: LsPhase }) {
-  const t = useT()
-  const map: Record<LsPhase, { text: string; cls: string }> = {
-    init: { text: t("play.lsPhaseInit"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    check: { text: t("play.lsPhaseCheck"), cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
-    reject: { text: t("play.lsPhaseReject"), cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
-    match: { text: t("play.lsPhaseMatch"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
-    done: { text: t("play.lsPhaseDone"), cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+const PHASE_STYLES: Record<LsPhase, PhaseStyle> = {
+    init: { labelKey: "play.lsPhaseInit", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    check: { labelKey: "play.lsPhaseCheck", cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+    reject: { labelKey: "play.lsPhaseReject", cls: "bg-slate-500/15 text-slate-700 dark:text-slate-300" },
+    match: { labelKey: "play.lsPhaseMatch", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+    done: { labelKey: "play.lsPhaseDone", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   }
-  const b = map[phase]
-  return (
-    <span className={cn("ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium", b.cls)}>
-      {b.text}
-    </span>
-  )
-}
 
 function ResultCard({ result, done }: { result: LsResult; done: boolean }) {
   const t = useT()

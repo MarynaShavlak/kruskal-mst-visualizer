@@ -1,5 +1,6 @@
 import { messages, type MessageKey } from "@/i18n/messages"
 import { useLangStore, type Lang } from "@/store/lang-store"
+import type { Translate } from "@/lib/translate"
 
 function format(
   lang: Lang,
@@ -24,6 +25,15 @@ export function useT() {
   const lang = useLangStore((s) => s.lang)
   return (key: MessageKey, vars?: Record<string, string | number>): string =>
     format(lang, key, vars)
+}
+
+/**
+ * Адаптер `useT` під тип `Translate` (рядковий ключ) для інжекції в lib-білдери
+ * trace: `const tr = useTr()` замість `const tr: Translate = (k, v) => t(k as MessageKey, v)`.
+ */
+export function useTr(): Translate {
+  const t = useT()
+  return (key, vars) => t(key as MessageKey, vars)
 }
 
 /**
