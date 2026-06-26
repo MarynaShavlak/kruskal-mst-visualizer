@@ -85,7 +85,9 @@ describe("useEmbedSnippet (через DOM-виклик)", () => {
     const { useToastStore } = await import("@/store/toast-store")
     useToastStore.setState({ toasts: [] })
 
-    const writeText = vi.fn((_text: string) => Promise.resolve())
+    const writeText = vi.fn<(text: string) => Promise<void>>(() =>
+      Promise.resolve(),
+    )
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
       configurable: true,
