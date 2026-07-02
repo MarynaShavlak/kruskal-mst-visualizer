@@ -11,14 +11,14 @@ describe("BridgeNav — місточки навчального шляху", () 
   })
 
   it("середній алгоритм показує обидва містки (Звідки + Куди далі)", () => {
-    // binary-search має вхідний (linear) і вихідний (indexed-sequential) містки.
+    // binary-search має вхідний (linear) і вихідний (interpolation) містки.
     render(<BridgeNav bridgeAlgoId="binary-search" />)
 
     expect(screen.getByText("Звідки")).toBeInTheDocument()
     expect(screen.getByText("Куди далі")).toBeInTheDocument()
 
     const prev = getAlgorithm("linear-search")!
-    const next = getAlgorithm("indexed-sequential-search")!
+    const next = getAlgorithm("interpolation-search")!
     expect(screen.getByText(prev.shortName.ua)).toBeInTheDocument()
     expect(screen.getByText(next.shortName.ua)).toBeInTheDocument()
   })
@@ -32,7 +32,7 @@ describe("BridgeNav — місточки навчального шляху", () 
   })
 
   it("фінальний алгоритм ланцюга має лише вхідний місток", () => {
-    render(<BridgeNav bridgeAlgoId="rabin-karp-string-search" />)
+    render(<BridgeNav bridgeAlgoId="held-karp" />)
 
     expect(screen.getByText("Звідки")).toBeInTheDocument()
     expect(screen.queryByText("Куди далі")).not.toBeInTheDocument()

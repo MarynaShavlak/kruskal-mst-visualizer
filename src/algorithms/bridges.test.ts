@@ -71,4 +71,20 @@ describe("BRIDGES — навчальні містки між алгоритма�
     expect(bridgeFrom("__nope__")).toBeUndefined()
     expect(bridgeTo("__nope__")).toBeUndefined()
   })
+
+  it("жодна нотатка не містить застарілих «вибачливих» фраз (після реордера)", () => {
+    const removed = [
+      "Повертаємось до вставок",
+      "простіша за станом",
+      "Перш ніж зважувати ребра",
+    ]
+    for (const b of BRIDGES) {
+      for (const phrase of removed) {
+        expect(
+          b.note.ua.includes(phrase),
+          `${b.from}→${b.to} містить застарілу фразу «${phrase}»`,
+        ).toBe(false)
+      }
+    }
+  })
 })

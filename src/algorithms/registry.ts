@@ -6,28 +6,28 @@ import type {
 } from "@/algorithms/types"
 import { kruskal } from "@/algorithms/kruskal"
 import { prim } from "@/algorithms/prim"
-import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { bfs } from "@/algorithms/bfs"
 import { dfs } from "@/algorithms/dfs"
 import { dijkstra } from "@/algorithms/dijkstra"
-import { heldKarp } from "@/algorithms/held-karp"
-import { knapsack } from "@/algorithms/knapsack"
+import { floydWarshall } from "@/algorithms/floyd-warshall"
 import { bubbleSort } from "@/algorithms/bubble-sort"
 import { insertionSort } from "@/algorithms/insertion-sort"
 import { selectionSort } from "@/algorithms/selection-sort"
+import { shellSort } from "@/algorithms/shell-sort"
 import { quickSort } from "@/algorithms/quick-sort"
 import { mergeSort } from "@/algorithms/merge-sort"
 import { heapSort } from "@/algorithms/heap-sort"
-import { shellSort } from "@/algorithms/shell-sort"
 import { radixSort } from "@/algorithms/radix-sort"
 import { linearSearch } from "@/algorithms/linear-search"
 import { binarySearch } from "@/algorithms/binary-search"
-import { indexedSequentialSearch } from "@/algorithms/indexed-sequential-search"
 import { interpolationSearch } from "@/algorithms/interpolation-search"
+import { indexedSequentialSearch } from "@/algorithms/indexed-sequential-search"
 import { naiveStringSearch } from "@/algorithms/naive-string-search"
 import { kmpStringSearch } from "@/algorithms/kmp-string-search"
 import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
 import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
+import { knapsack } from "@/algorithms/knapsack"
+import { heldKarp } from "@/algorithms/held-karp"
 
 /**
  * Єдиний реєстр алгоритмів платформи. Щоб додати новий:
@@ -38,28 +38,28 @@ import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
 export const ALGORITHMS: readonly Algorithm[] = [
   kruskal,
   prim,
-  floydWarshall,
   bfs,
   dfs,
   dijkstra,
-  heldKarp,
-  knapsack,
+  floydWarshall,
   bubbleSort,
   insertionSort,
   selectionSort,
+  shellSort,
   quickSort,
   mergeSort,
   heapSort,
-  shellSort,
   radixSort,
   linearSearch,
   binarySearch,
-  indexedSequentialSearch,
   interpolationSearch,
+  indexedSequentialSearch,
   naiveStringSearch,
   kmpStringSearch,
   boyerMooreStringSearch,
   rabinKarpStringSearch,
+  knapsack,
+  heldKarp,
 ]
 
 /** Опис родини для каталогу: підпис + один рядок «про що вона». */
@@ -80,14 +80,6 @@ export const FAMILIES: readonly AlgorithmFamilyInfo[] = [
     blurb: {
       ua: "Остовні дерева й найкоротші шляхи на зважених графах.",
       en: "Spanning trees and shortest paths on weighted graphs.",
-    },
-  },
-  {
-    id: "dp",
-    label: { ua: "Динамічне програмування", en: "Dynamic programming" },
-    blurb: {
-      ua: "Оптимум через підзадачі: рюкзак і комівояжер.",
-      en: "Optimum via subproblems: knapsack and the travelling salesman.",
     },
   },
   {
@@ -112,6 +104,14 @@ export const FAMILIES: readonly AlgorithmFamilyInfo[] = [
     blurb: {
       ua: "Знайти шаблон у тексті: від наївного до Рабіна–Карпа.",
       en: "Find a pattern in text: from naive to Rabin–Karp.",
+    },
+  },
+  {
+    id: "dp",
+    label: { ua: "Динамічне програмування", en: "Dynamic programming" },
+    blurb: {
+      ua: "Оптимум через підзадачі: рюкзак і комівояжер.",
+      en: "Optimum via subproblems: knapsack and the travelling salesman.",
     },
   },
 ]
@@ -188,7 +188,7 @@ export interface Bridge {
  * — простий і покриває послідовність, у якій родини вивчаються на платформі.
  */
 export const BRIDGES: readonly Bridge[] = [
-  // Графи: остовні дерева → найкоротші шляхи.
+  // Графи: остовні дерева → обхід → найкоротші шляхи.
   {
     from: "kruskal",
     to: "prim",
@@ -199,18 +199,10 @@ export const BRIDGES: readonly Bridge[] = [
   },
   {
     from: "prim",
-    to: "floyd-warshall",
-    note: {
-      ua: "Від остовного дерева — до найкоротших шляхів: Флойд–Воршал рахує відстані між УСІМА парами вершин.",
-      en: "From spanning trees to shortest paths: Floyd–Warshall computes distances between ALL pairs of vertices.",
-    },
-  },
-  {
-    from: "floyd-warshall",
     to: "bfs",
     note: {
-      ua: "Перш ніж зважувати ребра — навчись просто обходити граф: BFS відвідує вершини шарами завширшки.",
-      en: "Before weighting edges, learn to traverse a graph: BFS visits vertices in breadth-first layers.",
+      ua: "Дві стратегії МОД позаду — тепер крок до голого, незваженого кістяка обходу, на якому тримається кожен графовий алгоритм, ще ДО того, як зважувати ребра для найкоротших шляхів: BFS відвідує вершини шарами завширшки.",
+      en: "Two MST strategies behind us — now step to the bare, unweighted traversal skeleton every graph algorithm rests on, before weighting edges for shortest paths: BFS visits vertices in breadth-first layers.",
     },
   },
   {
@@ -229,32 +221,24 @@ export const BRIDGES: readonly Bridge[] = [
       en: "Add weights to traversal and you get Dijkstra: single-source shortest paths via a priority queue.",
     },
   },
-  // Графи → динамічне програмування.
   {
     from: "dijkstra",
-    to: "held-karp",
+    to: "floyd-warshall",
     note: {
-      ua: "Коли треба обійти ВСІ вершини й повернутися — це вже комівояжер: Хелд–Карп розв'язує його динамічним програмуванням по бітмасках.",
-      en: "When you must visit ALL vertices and return, it becomes the TSP: Held–Karp solves it with bitmask dynamic programming.",
+      ua: "Від найкоротших шляхів з однієї вершини — до УСІХ пар: Флойд–Воршал рахує найкоротшу відстань між КОЖНОЮ парою вершин динамічним програмуванням по проміжних вершинах.",
+      en: "From single-source shortest paths to ALL pairs: Floyd–Warshall computes the shortest distance between EVERY pair of vertices by dynamic programming over intermediate vertices.",
     },
   },
+  // Графи → сортування.
   {
-    from: "held-karp",
-    to: "knapsack",
-    note: {
-      ua: "Ще одна класична ДП-задача, але простіша за станом: рюкзак 0/1 максимізує вартість за обмеженням ваги.",
-      en: "Another classic DP problem with a simpler state: the 0/1 knapsack maximises value under a weight limit.",
-    },
-  },
-  // ДП → сортування.
-  {
-    from: "knapsack",
+    from: "floyd-warshall",
     to: "bubble-sort",
     note: {
       ua: "Тепер — фундамент: упорядкування масиву. Бульбашка найпростіша — сусідні обміни, доки масив не впорядкується.",
       en: "Now the fundamentals: ordering an array. Bubble sort is the simplest — adjacent swaps until the array is sorted.",
     },
   },
+  // Сортування: елементарні → субквадратичне → «розділяй і володарюй» → непорівняльне.
   {
     from: "bubble-sort",
     to: "insertion-sort",
@@ -273,10 +257,18 @@ export const BRIDGES: readonly Bridge[] = [
   },
   {
     from: "selection-sort",
+    to: "shell-sort",
+    note: {
+      ua: "Перша субквадратична ідея: сортування вставками «через крок» gap, що коротшає, приборкує далекі зсуви — близько O(n^1.5).",
+      en: "The first sub-quadratic idea: insertion sort across a shrinking gap, which tames long-distance shifts — about O(n^1.5).",
+    },
+  },
+  {
+    from: "shell-sort",
     to: "quick-sort",
     note: {
-      ua: "Перший крок за межі O(n²): «розділяй і володарюй» навколо опорного елемента.",
-      en: "The first step beyond O(n²): divide and conquer around a pivot element.",
+      ua: "Перше сортування «розділяй і володарюй»: розбиваємо масив навколо опорного елемента — у середньому O(n·log n) (у найгіршому все ще O(n²) на невдалому опорному).",
+      en: "The first divide-and-conquer sort: partition the array around a pivot — O(n·log n) on average (still O(n²) in the worst case on a bad pivot).",
     },
   },
   {
@@ -297,29 +289,22 @@ export const BRIDGES: readonly Bridge[] = [
   },
   {
     from: "heap-sort",
-    to: "shell-sort",
-    note: {
-      ua: "Повертаємось до вставок, але «через крок» gap — субквадратичне узагальнення, що зменшує далекі зсуви.",
-      en: "Back to insertion, but across a gap — a sub-quadratic generalisation that cuts down long-distance shifts.",
-    },
-  },
-  {
-    from: "shell-sort",
     to: "radix-sort",
     note: {
       ua: "А якщо взагалі не порівнювати? Порозрядне сортування розкладає числа по кошиках за цифрами — лінійний час.",
       en: "What if we never compare at all? Radix sort buckets numbers by their digits — linear time.",
     },
   },
-  // Сортування → пошук («винагорода за сортування»).
+  // Сортування → пошук.
   {
     from: "radix-sort",
     to: "linear-search",
     note: {
-      ua: "Масив упорядковано — час шукати в ньому. Найпростіше: лінійний скан зліва направо.",
-      en: "The array is ordered — now search it. The simplest way: a linear scan from left to right.",
+      ua: "Масиви є — час шукати в них. Найпростіший спосіб, якому не потрібен жоден порядок, — лінійний скан зліва направо.",
+      en: "You have arrays — now find things in them. The simplest way, needing no order at all, is a linear scan from left to right.",
     },
   },
+  // Пошук: лінійний → двійковий → інтерполяційний → гібрид-фінал.
   {
     from: "linear-search",
     to: "binary-search",
@@ -330,29 +315,30 @@ export const BRIDGES: readonly Bridge[] = [
   },
   {
     from: "binary-search",
-    to: "indexed-sequential-search",
+    to: "interpolation-search",
     note: {
-      ua: "Гібрид двох попередніх: двійковий пошук по розрідженому індексу → потрібний блок → лінійний скан усередині.",
-      en: "A hybrid of the previous two: binary search over a sparse index → the right block → a linear scan inside it.",
+      ua: "Той самий кістяк «звузити вікно», що й у двійкового, але замість СЕРЕДИНИ пробу вгадуємо формулою інтерполяції — як шукають слово у словнику.",
+      en: "The same window-narrowing skeleton as binary, but instead of the MIDDLE the probe is guessed by an interpolation formula — like finding a word in a dictionary.",
     },
   },
   {
-    from: "indexed-sequential-search",
-    to: "interpolation-search",
+    from: "interpolation-search",
+    to: "indexed-sequential-search",
     note: {
-      ua: "Та сама ідея «звузити вікно», але пробу обчислюємо формулою інтерполяції — як шукають слово у словнику.",
-      en: "Same window-narrowing idea, but the probe is computed by an interpolation formula — like finding a word in a dictionary.",
+      ua: "Синтез серії й фінал пошуку — гібрид двох ідей: ДВІЙКОВИЙ пошук по розрідженому індексу обирає блок, а далі ЛІНІЙНИЙ скан усередині; його O(√n) — не про швидкість, а про поєднання обох підходів.",
+      en: "The synthesis and finale of the search series — a hybrid of two ideas: BINARY search over a sparse index picks the block, then a LINEAR scan inside it; its O(√n) is not about raw speed but about combining both approaches.",
     },
   },
   // Пошук → пошук у рядку.
   {
-    from: "interpolation-search",
+    from: "indexed-sequential-search",
     to: "naive-string-search",
     note: {
       ua: "Від числа у масиві — до шаблону в тексті: наївний пошук ставить шаблон на кожне вирівнювання й звіряє посимвольно.",
       en: "From a number in an array to a pattern in text: naive search slides the pattern over every alignment, comparing char by char.",
     },
   },
+  // Пошук у рядку: наївний → KMP → Боєра–Мура → Рабіна–Карпа.
   {
     from: "naive-string-search",
     to: "kmp-string-search",
@@ -365,8 +351,8 @@ export const BRIDGES: readonly Bridge[] = [
     from: "kmp-string-search",
     to: "boyer-moore-string-search",
     note: {
-      ua: "Інший трюк проти повторів: звіряй СПРАВА НАЛІВО й стрибай уперед за таблицею поганого символу.",
-      en: "A different trick against repeats: compare RIGHT to LEFT and jump ahead via the bad-character table.",
+      ua: "Інший спосіб пропускати роботу: звіряй з КІНЦЯ, а при розбіжності стрибай уперед за таблицею поганого символу.",
+      en: "Another way to skip work: compare from the END, and on a mismatch jump ahead via the bad-character table.",
     },
   },
   {
@@ -375,6 +361,24 @@ export const BRIDGES: readonly Bridge[] = [
     note: {
       ua: "Замість символів — числа: порівнюй поліноміальні хеші вікон (ковзний хеш за O(1)), а збіг хешів доперевіряй.",
       en: "Numbers instead of characters: compare polynomial hashes of windows (rolling hash in O(1)), verifying on a hash match.",
+    },
+  },
+  // Пошук у рядку → динамічне програмування.
+  {
+    from: "rabin-karp-string-search",
+    to: "knapsack",
+    note: {
+      ua: "Останній поворот — до окремої, завершальної парадигми: динамічного програмування, де оптимум складають із підзадач. Найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",
+      en: "The final turn — to a distinct, closing paradigm: dynamic programming, where the optimum is built from subproblems. The cleanest first DP is the 0/1 knapsack: a simple 2-D table maximising value under a weight limit.",
+    },
+  },
+  // ДП: від найпростішого рюкзака до вибуху станів (комівояжер).
+  {
+    from: "knapsack",
+    to: "held-karp",
+    note: {
+      ua: "Від найпростішого ДП — до вибуху станів: коли треба обійти ВСІ вершини й повернутися, це вже комівояжер, і Хелд–Карп розв'язує його динамічним програмуванням по бітмасках.",
+      en: "From the simplest DP to a state explosion: when you must visit ALL vertices and return, it becomes the TSP, and Held–Karp solves it with bitmask dynamic programming.",
     },
   },
 ]

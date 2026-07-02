@@ -52,6 +52,26 @@ describe("stripReadmeChrome (GitHub-хром README)", () => {
   })
 })
 
+describe("примітка «сортування — відкладена чорна скринька» (крок 1)", () => {
+  it("вставлена в обидві мови й не додає нової секції (TOC лишається 18)", () => {
+    expect(LEARN_CONTENT.ua).toContain("«чорна скринька»")
+    expect(LEARN_CONTENT.ua).toContain("родина «Сортування»")
+    expect(LEARN_CONTENT.en).toContain('a "black box"')
+    expect(LEARN_CONTENT.en).toContain("the Sorting family")
+    expect(parseToc(LEARN_CONTENT.ua)).toHaveLength(18)
+    expect(parseToc(LEARN_CONTENT.en)).toHaveLength(18)
+  })
+
+  it("стоїть у секції 3 — перед абзацом «Ключове спостереження»", () => {
+    expect(LEARN_CONTENT.ua.indexOf("«чорна скринька»")).toBeLessThan(
+      LEARN_CONTENT.ua.indexOf("Ключове спостереження"),
+    )
+    expect(LEARN_CONTENT.en.indexOf('a "black box"')).toBeLessThan(
+      LEARN_CONTENT.en.indexOf("Key observation"),
+    )
+  })
+})
+
 describe("figureForSrc: мапінг фігур на живі віджети", () => {
   const isFallback = (node: unknown): boolean =>
     isValidElement(node) && node.type === FigureCard

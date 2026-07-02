@@ -78,6 +78,8 @@ for k in range(n):                      # "open" the intermediate vertices one b
 
 The outer loop over `k` is exactly the successive "opening" of vertices; the two inner loops scan all pairs `(i, j)`. Hence $O(n^3)$ time and $O(n^2)$ memory.
 
+> **Why this is "dynamic programming".** Everything above is the canonical DP recipe: there is a **table** $D^{(k)}$ that we fill layer by layer (one intermediate vertex per step), and a **recurrence** where each entry rests on already-computed ones — that is **optimal substructure** (the "Key observation" above). Here the paradigm is only named; it is developed in full later, in the **dynamic-programming family** (0/1 knapsack, Held–Karp) — Floyd–Warshall is your first encounter with it on graphs.
+
 ## 4. Relaxation: the core operation
 
 **Relaxation** is the name of the single operation the whole algorithm rests on (and Dijkstra and Bellman–Ford too). It is an **attempt to improve the current distance estimate** by routing through an intermediate vertex.

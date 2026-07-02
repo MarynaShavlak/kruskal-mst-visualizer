@@ -54,6 +54,16 @@ Taking "the cheapest edge across the cut" naively means scanning all edges at ev
 - when vertex $v$ joins the tree, **all** edges from $v$ to not-yet-visited vertices go into the queue (`heappush`);
 - the queue hands out the edge with the **smallest weight** in $O(\log E)$ (`heappop`).
 
+### What a heap (min-heap) is, in brief
+
+A **min-heap** is the structure behind a priority queue: a binary tree laid out as an array where every parent is no larger than its children, so the smallest element always sits at the root. Hence the three operations we need:
+
+- **peek** — look at the minimum (the root) in $O(1)$;
+- **heappush** — add an element and "sift" it up in $O(\log n)$;
+- **heappop** — remove the minimum, move the last element into its place and "sift" it down in $O(\log n)$.
+
+A heap does not keep the elements fully sorted — it only guarantees cheap access to the smallest, and that is exactly enough to take the cheapest edge at every step. The full treatment of the heap (how it is built, why its height is $\log n$, heapify) lives in the **heap-sort** chapter; here it is enough to treat it as a "black box" with the three operations above.
+
 A queue element is the tuple **`(weight, from, to)`**. Python compares tuples lexicographically: weight first, then the vertex names on ties. So the pop order is fully deterministic and ties are broken alphabetically.
 
 **The subtlety:** a queue cannot "forget" an edge that nobody needs anymore. While the edge $(w, u, v)$ was waiting its turn, vertex $v$ may have joined the tree **via another, cheaper edge**. Such an edge is called **stale**. Prim handles this with **lazy deletion**: do not search for or delete anything ahead of time — just check after popping:

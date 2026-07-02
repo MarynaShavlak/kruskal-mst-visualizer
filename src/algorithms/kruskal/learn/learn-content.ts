@@ -23,9 +23,43 @@ function stripReadmeChrome(md: string): string {
     .replace(/^[^\n]*🇺🇦[^\n]*🇬🇧[^\n]*\r?\n/m, "")
 }
 
+/**
+ * «Відкладена чорна скринька» для кроку 1 (сортування ребер): у Краскалі ребра
+ * обходяться від найлегшого до найважчого, але саме ефективне сортування — це вже
+ * родина «Сортування», яку платформа викладає пізніше. Тож у секції 3 додаємо
+ * коротку примітку-міст уперед: тут сортування вважаємо даністю, деталі — далі.
+ *
+ * Вставка — БЛОКОМ-ЦИТАТОЮ перед абзацом «Ключове спостереження»/«Key observation»
+ * (унікальний якір у обох README). Не заголовок → TOC (sec1..sec18) не міняється;
+ * без стрипнутого «хрому» (🌳/прапорці/PROJECT.md). Якщо якір колись зникне,
+ * `.replace` поверне текст без змін — деградуємо тихо, без збою.
+ */
+const SORT_BLACKBOX = {
+  ua: {
+    anchor: "**Ключове спостереження.**",
+    note:
+      "> **Крок 1 — «чорна скринька».** Тут ми просто розкладаємо ребра від " +
+      "найлегшого до найважчого й вважаємо це даністю; як саме сортувати " +
+      "ефективно — окрема велика тема (родина «Сортування»), до якої ми " +
+      "повернемось далі.",
+  },
+  en: {
+    anchor: "**Key observation.**",
+    note:
+      '> **Step 1 — a "black box".** Here we simply arrange the edges from ' +
+      "lightest to heaviest and take that as given; how to sort efficiently is " +
+      "a big topic of its own (the Sorting family) that we'll return to later.",
+  },
+} as const
+
+function injectSortBlackBox(md: string, lang: "ua" | "en"): string {
+  const { anchor, note } = SORT_BLACKBOX[lang]
+  return md.replace(anchor, `${note}\n\n${anchor}`)
+}
+
 export const LEARN_CONTENT = makeLearnContent(
-  stripReadmeChrome(uaRaw),
-  stripReadmeChrome(enRaw),
+  injectSortBlackBox(stripReadmeChrome(uaRaw), "ua"),
+  injectSortBlackBox(stripReadmeChrome(enRaw), "en"),
 )
 export {
   parseToc,
