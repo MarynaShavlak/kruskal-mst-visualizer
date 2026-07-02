@@ -1,0 +1,71 @@
+// Канонічний приклад хеш-таблиці — ЄДИНЕ джерело правди для тестів lib/, прев'ю
+// редактора й живих навчальних віджетів (щоб числа НЕ дрейфували між екранами).
+// Побудований на конспекті edu.goit (HashTable(5) + apple/orange/banana), але
+// доповнений навмисною КОЛІЗІЄЮ (lemon у ту саму комірку, що й banana) і серією
+// get, щоб показати влучення, скан ланцюга й промах. Хеш — «сума кодів % 5»
+// (усно перевірний). Без React.
+
+import type { HtOp } from "@/lib/hashTable"
+
+/**
+ * Головний навчальний скрипт. Місткість 5, хеш «сума кодів символів % 5».
+ * Розклад комірок (перевірено вручну):
+ *   apple  = 530 % 5 = 0
+ *   orange = 636 % 5 = 1
+ *   banana = 609 % 5 = 4
+ *   lemon  = 539 % 5 = 4  ← КОЛІЗІЯ з banana (той самий слот)
+ *   grape  = 527 % 5 = 2  ← порожня комірка → get дає промах одразу
+ * Операції: три чисті вставки, вставка-колізія, влучення прямо, влучення через
+ * скан ланцюга (2 порівняння) і промах у порожню комірку.
+ */
+export const HT_INTRO_OPS: readonly HtOp[] = [
+  { kind: "insert", key: "apple", value: 10 },
+  { kind: "insert", key: "orange", value: 20 },
+  { kind: "insert", key: "banana", value: 30 },
+  { kind: "insert", key: "lemon", value: 40 }, // колізія з banana у комірці 4
+  { kind: "get", key: "orange" }, // влучення прямо (ланцюг з 1 пари)
+  { kind: "get", key: "lemon" }, // влучення через скан ланцюга [banana, lemon]
+  { kind: "get", key: "grape" }, // промах: комірка 2 порожня
+]
+
+/** Місткість таблиці головного прикладу. */
+export const HT_INTRO_CAPACITY = 5
+
+/**
+ * Відомі підсумки головного прикладу (звіряють тести й підписи).
+ * size=4 (apple/orange/banana/lemon), α=0.8; одна колізія (lemon), чотири
+ * порівняння ключів (lemon-скан 1 + orange 1 + lemon-get 2 + grape 0);
+ * 35 кадрів trace.
+ */
+export const HT_INTRO_STATS = {
+  size: 4,
+  capacity: 5,
+  comparisons: 4,
+  collisions: 1,
+  loadFactor: 0.8,
+  frames: 35,
+} as const
+
+/** Домашні індекси ключів прикладу (для наочних перевірок і прев'ю). */
+export const HT_INTRO_SLOTS: Readonly<Record<string, number>> = {
+  apple: 0,
+  orange: 1,
+  banana: 4,
+  lemon: 4,
+  grape: 2,
+}
+
+/**
+ * Демонстрація АНАГРАМ — слабкості «суми кодів»: ate/eat/tea мають однакову суму
+ * кодів (97+116+101 = 314), тож усі йдуть у ту саму комірку 314 % 5 = 4 →
+ * найгірший випадок O(n): один довгий ланцюг. Підкреслює вимогу РІВНОМІРНОСТІ.
+ */
+export const HT_ANAGRAMS_OPS: readonly HtOp[] = [
+  { kind: "insert", key: "ate", value: 1 },
+  { kind: "insert", key: "eat", value: 2 },
+  { kind: "insert", key: "tea", value: 3 },
+  { kind: "get", key: "tea" }, // влучення аж у кінці ланцюга з трьох
+]
+
+/** Місткість прикладу-анаграм. */
+export const HT_ANAGRAMS_CAPACITY = 5
