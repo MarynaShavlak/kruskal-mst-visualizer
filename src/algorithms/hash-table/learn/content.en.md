@@ -52,6 +52,12 @@ A good hash function has three properties:
 The player defaults to a teaching function, "sum of character codes", easy to check by
 hand: `hash("apple") = 97+112+112+108+101 = 530`, and `530 % 5 = 0`.
 
+![Hash pipeline: key → sum of codes → % m → slot](docs/images/en/ht_pipeline.png)
+
+Now test yourself — compute the slot on your own:
+
+![Compute which cell “lemon” goes to](docs/images/en/ht_slot_quiz.png)
+
 ## 4. Collisions — why they're inevitable
 
 A **collision** is when two different keys map to the same index. It's not a bug but a
@@ -81,6 +87,8 @@ def insert(key, value):
 
 Note: re-inserting the same key is an **update**, not a duplicate.
 
+![Step-by-step: inserts, a collision and a chain scan](docs/images/en/ht_walk.png)
+
 ## 6. Load factor α and rehashing
 
 The **load factor** $\alpha = n / m$ tells how full the table is ($n$ pairs, $m$
@@ -101,6 +109,8 @@ the $\alpha$ gauge in the player shows when it would kick in.
 Try the "Anagrams" script in the editor: `ate`, `eat`, `tea` share the same code sum
 (314), so they all go into one cell — the worst case made visible.
 
+![Chaining vs linear probing on the same data](docs/images/en/ht_compare.png)
+
 ## 8. When a hash table isn't best
 
 A hash table loses **order**: data sits "wherever the hash put it". So if you need an
@@ -114,3 +124,7 @@ A hash table trades **order** for **speed**: by computing an index instead of
 scanning, it gives $O(1)$ average access. The key ideas are the hash function
 (deterministic, fast, uniform), inevitable collisions and a way to resolve them (here,
 chaining), plus the load factor $\alpha$ that governs the speed.
+
+And finally — a quick comprehension check:
+
+![Which operation is NOT characteristic of a hash table?](docs/images/en/ht_quiz.png)
