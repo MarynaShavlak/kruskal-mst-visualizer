@@ -11,6 +11,7 @@ import {
   HT_INTRO_OPS,
   HT_INTRO_CAPACITY,
   HT_INTRO_STATS,
+  HT_INTRO_LINEAR_STATS,
   HT_INTRO_SLOTS,
   HT_ANAGRAMS_OPS,
   HT_ANAGRAMS_CAPACITY,
@@ -136,6 +137,63 @@ describe("runHashTable — семантика операцій", () => {
     expect(run.collisions).toBe(0)
     expect(run.buckets).toHaveLength(5)
     expect(run.buckets.every((b) => b.length === 0)).toBe(true)
+  })
+})
+
+describe("runHashTable — лінійне зондування (відкрите адресування)", () => {
+  const run = runHashTable(HT_INTRO_OPS, HT_INTRO_CAPACITY, { strategy: "linear" })
+
+  it("lemon «прогулюється» 4→0→1→2 і сідає у комірку 2 (кластер)", () => {
+    // одна пара на комірку
+    expect(run.buckets[0]).toEqual([{ key: "apple", value: 10 }])
+    expect(run.buckets[1]).toEqual([{ key: "orange", value: 20 }])
+    expect(run.buckets[2]).toEqual([{ key: "lemon", value: 40 }]) // зондування посадило сюди
+    expect(run.buckets[3]).toEqual([])
+    expect(run.buckets[4]).toEqual([{ key: "banana", value: 30 }])
+  })
+
+  it("дорожче за ланцюжки: 9 порівнянь проти 4 (кластеризація)", () => {
+    expect(run.comparisons).toBe(HT_INTRO_LINEAR_STATS.comparisons)
+    expect(run.collisions).toBe(HT_INTRO_LINEAR_STATS.collisions)
+    expect(run.size).toBe(HT_INTRO_LINEAR_STATS.size)
+    expect(run.strategy).toBe("linear")
+  })
+
+  it("get проходить кластер і влучає; get grape — промах", () => {
+    expect(run.perOp.map((p) => p.result)).toEqual([
+      "stored", "stored", "stored", "stored", "hit", "hit", "miss",
+    ])
+    expect(run.perOp[5].value).toBe(40) // get lemon
+  })
+})
+
+describe("runHashTable — надгробки (tombstones) у відкритому адресуванні", () => {
+  it("delete лишає надгробок, крізь який get ПРОДОВЖУЄ пошук (інакше був би промах)", () => {
+    const ops: HtOp[] = [
+      { kind: "insert", key: "banana", value: 30 }, // комірка 4
+      { kind: "insert", key: "lemon", value: 40 }, // домашня 4 зайнята → зондує в 0
+      { kind: "delete", key: "banana" }, // комірка 4 → надгробок (НЕ порожня)
+      { kind: "get", key: "lemon" }, // мусить пройти надгробок у 4 і знайти lemon у 0
+    ]
+    const run = runHashTable(ops, 5, { strategy: "linear" })
+    expect(run.perOp.map((p) => p.result)).toEqual(["stored", "stored", "deleted", "hit"])
+    expect(run.perOp[3].value).toBe(40) // lemon знайдено попри надгробок
+    expect(run.tombstones[4]).toBe(true) // комірка 4 — надгробок, не порожня
+    expect(run.buckets[0]).toEqual([{ key: "lemon", value: 40 }])
+    expect(run.buckets[4]).toEqual([])
+    expect(run.size).toBe(1)
+  })
+
+  it("insert повторно використовує надгробок як вільне місце", () => {
+    const ops: HtOp[] = [
+      { kind: "insert", key: "banana", value: 30 }, // 4
+      { kind: "delete", key: "banana" }, // 4 → надгробок
+      { kind: "insert", key: "lemon", value: 40 }, // домашня 4 (надгробок) → займає її
+    ]
+    const run = runHashTable(ops, 5, { strategy: "linear" })
+    expect(run.buckets[4]).toEqual([{ key: "lemon", value: 40 }])
+    expect(run.tombstones[4]).toBe(false) // надгробок перезаписано
+    expect(run.size).toBe(1)
   })
 })
 

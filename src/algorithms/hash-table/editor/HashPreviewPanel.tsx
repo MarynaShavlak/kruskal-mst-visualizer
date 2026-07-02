@@ -19,9 +19,10 @@ export function HashPreviewPanel({ className }: { className?: string }) {
   const ops = useHashTableStore((s) => s.ops)
   const capacity = useHashTableStore((s) => s.capacity)
   const hashFn = useHashTableStore((s) => s.hashFn)
+  const strategy = useHashTableStore((s) => s.strategy)
   const t = useT()
 
-  const p = hashTablePreview(ops, capacity, { hashFn })
+  const p = hashTablePreview(ops, capacity, { hashFn, strategy })
 
   return (
     <SummaryCard className={className}>

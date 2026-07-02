@@ -46,6 +46,21 @@ export const HT_INTRO_STATS = {
   frames: 35,
 } as const
 
+/**
+ * Той самий скрипт під ЛІНІЙНИМ ЗОНДУВАННЯМ (відкрите адресування): банан у комірці 4,
+ * а lemon (домашня теж 4) «прогулюється» 4→0→1→2 крізь зайняті apple/orange і сідає в
+ * комірку 2. Кластеризація дорожча: 9 порівнянь проти 4 у ланцюжків. Фінал:
+ * [apple, orange, lemon, —, banana]; size=4, α=0.8, 1 колізія, 40 кадрів.
+ */
+export const HT_INTRO_LINEAR_STATS = {
+  size: 4,
+  capacity: 5,
+  comparisons: 9,
+  collisions: 1,
+  loadFactor: 0.8,
+  frames: 40,
+} as const
+
 /** Домашні індекси ключів прикладу (для наочних перевірок і прев'ю). */
 export const HT_INTRO_SLOTS: Readonly<Record<string, number>> = {
   apple: 0,

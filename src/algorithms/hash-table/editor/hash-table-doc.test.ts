@@ -11,6 +11,7 @@ const CLASSIC: HashTableDoc = {
   ],
   capacity: 5,
   hashFn: "sum",
+  strategy: "linear",
 }
 
 describe("hashTableCodec: round-trip", () => {
@@ -57,12 +58,19 @@ describe("hashTableCodec: валідація та санітизація", () =>
         JSON.stringify({ version: 1, ops: [], capacity: 5, hashFn: "md5" }),
       ),
     ).toThrow()
+    // невідома стратегія
+    expect(() =>
+      hashTableCodec.fromJSON(
+        JSON.stringify({ version: 1, ops: [], capacity: 5, hashFn: "sum", strategy: "cuckoo" }),
+      ),
+    ).toThrow()
   })
 
-  it("санітизує місткість до цілого ≥ 1", () => {
+  it("санітизує місткість до цілого ≥ 1; відсутня стратегія → chaining", () => {
     const doc = hashTableCodec.fromJSON(
       JSON.stringify({ version: 1, ops: [], capacity: 5, hashFn: "sum" }),
     )
     expect(doc.capacity).toBe(5)
+    expect(doc.strategy).toBe("chaining") // зворотна сумісність зі старими посиланнями
   })
 })

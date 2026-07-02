@@ -24,6 +24,7 @@ export function hashClassicPreset(): HashTableDoc {
     ops: cloneOps(HT_INTRO_OPS),
     capacity: HT_INTRO_CAPACITY,
     hashFn: "sum",
+    strategy: "chaining",
   }
 }
 
@@ -36,11 +37,12 @@ export function hashAnagramsPreset(): HashTableDoc {
     ops: cloneOps(HT_ANAGRAMS_OPS),
     capacity: HT_ANAGRAMS_CAPACITY,
     hashFn: "sum",
+    strategy: "chaining",
   }
 }
 
 /** Випадковий скрипт: `count` вставок + влучення + промах; місткість ≈ 0.7·count. */
 export function hashRandomPreset(seed: number, count = 6): HashTableDoc {
   const { ops, capacity } = randomHashTable({ seed, count })
-  return { ops: cloneOps(ops), capacity, hashFn: "sum" }
+  return { ops: cloneOps(ops), capacity, hashFn: "sum", strategy: "chaining" }
 }

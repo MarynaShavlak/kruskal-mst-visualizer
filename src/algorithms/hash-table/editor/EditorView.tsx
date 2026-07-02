@@ -9,7 +9,7 @@ import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
 import { useT } from "@/i18n/use-t"
 import { cn } from "@/lib/utils"
 import { useHashTableStore } from "@/store/hash-table-store"
-import type { HashFnId } from "@/lib/hashTable"
+import type { CollisionStrategy, HashFnId } from "@/lib/hashTable"
 import { OpsTable } from "@/algorithms/hash-table/editor/OpsTable"
 import { HashPreviewPanel } from "@/algorithms/hash-table/editor/HashPreviewPanel"
 import { useHashTableEditor } from "@/algorithms/hash-table/editor/use-hash-table-editor"
@@ -63,6 +63,27 @@ function HashFnSelect() {
   )
 }
 
+/** Перемикач стратегії колізій: ланцюжки / лінійне зондування. */
+function StrategySelect() {
+  const strategy = useHashTableStore((s) => s.strategy)
+  const setStrategy = useHashTableStore((s) => s.setStrategy)
+  const t = useT()
+  return (
+    <label className="flex items-center gap-2 text-sm">
+      <span className="text-muted-foreground">{t("editor.htStrategy")}</span>
+      <select
+        aria-label={t("editor.htStrategy")}
+        value={strategy}
+        onChange={(e) => setStrategy(e.target.value as CollisionStrategy)}
+        className={CONTROL_CLASS}
+      >
+        <option value="chaining">{t("play.htStratChaining")}</option>
+        <option value="linear">{t("play.htStratLinear")}</option>
+      </select>
+    </label>
+  )
+}
+
 export function EditorView() {
   const ctrl = useHashTableEditor()
   const t = useT()
@@ -111,6 +132,7 @@ export function EditorView() {
         <div className="flex flex-wrap items-center gap-4">
           <CapacityField />
           <HashFnSelect />
+          <StrategySelect />
         </div>
         <OpsTable />
       </div>

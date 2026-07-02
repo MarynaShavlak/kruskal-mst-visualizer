@@ -42,20 +42,25 @@ describe("hash-table-store", () => {
     expect(get().ops[0].key).toBe("orange")
   })
 
-  it("setCapacity тримає ціле ≥ 1; setHashFn перемикає функцію", () => {
+  it("setCapacity тримає ціле ≥ 1; setHashFn/setStrategy перемикають", () => {
     get().setCapacity(0)
     expect(get().capacity).toBe(1)
     get().setCapacity(12.7)
     expect(get().capacity).toBe(12)
     get().setHashFn("poly")
     expect(get().hashFn).toBe("poly")
+    expect(get().strategy).toBe("chaining") // стартова стратегія
+    get().setStrategy("linear")
+    expect(get().strategy).toBe("linear")
   })
 
-  it("clear лишає порожній скрипт і безпечну місткість", () => {
+  it("clear лишає порожній скрипт, безпечну місткість і стратегію chaining", () => {
+    get().setStrategy("linear")
     get().clear()
     expect(get().ops).toEqual([])
     expect(get().capacity).toBe(5)
     expect(get().hashFn).toBe("sum")
+    expect(get().strategy).toBe("chaining")
   })
 
   it("пресети завантажуються (анаграми + випадковий детермінований)", () => {

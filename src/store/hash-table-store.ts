@@ -5,24 +5,26 @@
 // ціле), щоб інваріанти ядра не порушувалися.
 
 import { create } from "zustand"
-import type { HashFnId, HtOp } from "@/lib/hashTable"
+import type { CollisionStrategy, HashFnId, HtOp } from "@/lib/hashTable"
 import {
   hashClassicPreset,
   hashAnagramsPreset,
   hashRandomPreset,
 } from "@/store/hash-table-presets"
 
-/** Документ редактора хеш-таблиці: скрипт операцій + місткість + хеш-функція. */
+/** Документ редактора хеш-таблиці: скрипт операцій + місткість + хеш-функція + стратегія. */
 export interface HashTableDoc {
   readonly ops: readonly HtOp[]
   readonly capacity: number
   readonly hashFn: HashFnId
+  readonly strategy: CollisionStrategy
 }
 
 interface HashTableState {
   readonly ops: readonly HtOp[]
   readonly capacity: number
   readonly hashFn: HashFnId
+  readonly strategy: CollisionStrategy
 
   /** Додає операцію (за замовч. insert канонічного ключа). */
   addOp: (kind?: HtOp["kind"]) => void
@@ -33,6 +35,8 @@ interface HashTableState {
   setCapacity: (capacity: number) => void
   /** Перемикає хеш-функцію (навчальна сума / поліноміальна). */
   setHashFn: (hashFn: HashFnId) => void
+  /** Перемикає стратегію колізій (ланцюжки / лінійне зондування). */
+  setStrategy: (strategy: CollisionStrategy) => void
   clear: () => void
   loadDoc: (doc: HashTableDoc) => void
   toDoc: () => HashTableDoc
@@ -97,16 +101,25 @@ export const useHashTableStore = create<HashTableState>()((set, get) => ({
 
   setHashFn: (hashFn) => set({ hashFn }),
 
-  clear: () => set({ ops: [], capacity: 5, hashFn: DEFAULT_HASH_FN }),
+  setStrategy: (strategy) => set({ strategy }),
+
+  clear: () =>
+    set({ ops: [], capacity: 5, hashFn: DEFAULT_HASH_FN, strategy: "chaining" }),
 
   loadDoc: (doc) =>
     set({
       ops: doc.ops.map(sanitizeOp),
       capacity: clampInt(doc.capacity, 1),
       hashFn: doc.hashFn === "poly" ? "poly" : "sum",
+      strategy: doc.strategy === "linear" ? "linear" : "chaining",
     }),
 
-  toDoc: () => ({ ops: get().ops, capacity: get().capacity, hashFn: get().hashFn }),
+  toDoc: () => ({
+    ops: get().ops,
+    capacity: get().capacity,
+    hashFn: get().hashFn,
+    strategy: get().strategy,
+  }),
 
   loadClassic: () => set(hashClassicPreset()),
   loadAnagrams: () => set(hashAnagramsPreset()),

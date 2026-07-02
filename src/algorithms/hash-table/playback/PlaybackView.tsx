@@ -16,6 +16,7 @@ import { PhaseBadge, type PhaseStyle } from "@/algorithms/shared/playback/PhaseB
 import { usePlayer } from "@/algorithms/shared/playback/use-player"
 import { StatsBar, Stat } from "@/algorithms/shared/playback/Stats"
 import { LiveComplexity } from "@/algorithms/shared/playback/LiveComplexity"
+import { ModeSwitch } from "@/algorithms/shared/playback/ModeSwitch"
 import { useTraceRun, TraceFallback } from "@/algorithms/shared/playback/use-trace-run"
 import { HashTablePanel } from "@/algorithms/hash-table/playback/HashTablePanel"
 import { OpsLogPanel } from "@/algorithms/hash-table/playback/OpsLogPanel"
@@ -31,6 +32,7 @@ const PHASE_STYLES: Record<HtPhase, PhaseStyle> = {
   hash: { labelKey: "play.htPhaseHash", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
   collision: { labelKey: "play.htPhaseCollision", cls: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
   compare: { labelKey: "play.htPhaseCompare", cls: "bg-sky-500/15 text-sky-700 dark:text-sky-300" },
+  probe: { labelKey: "play.htPhaseProbe", cls: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
   insert: { labelKey: "play.htPhaseInsert", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   update: { labelKey: "play.htPhaseUpdate", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
   found: { labelKey: "play.htPhaseFound", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
@@ -43,16 +45,18 @@ export function PlaybackView() {
   const ops = useHashTableStore((s) => s.ops)
   const capacity = useHashTableStore((s) => s.capacity)
   const hashFn = useHashTableStore((s) => s.hashFn)
+  const strategy = useHashTableStore((s) => s.strategy)
+  const setStrategy = useHashTableStore((s) => s.setStrategy)
   const loadDoc = useHashTableStore((s) => s.loadDoc)
   const toDoc = useHashTableStore((s) => s.toDoc)
   const t = useT()
   const tr = useTr()
   const lang = useLangStore((s) => s.lang)
 
-  const sig = `${capacity}|${hashFn}|${ops.map((o) => `${o.kind}:${o.key}:${o.value ?? ""}`).join(";")}`
+  const sig = `${strategy}|${capacity}|${hashFn}|${ops.map((o) => `${o.kind}:${o.key}:${o.value ?? ""}`).join(";")}`
 
   const run = useTraceRun(
-    () => buildHashTableTrace(ops, capacity, { hashFn, strategy: "chaining" }, tr),
+    () => buildHashTableTrace(ops, capacity, { hashFn, strategy }, tr),
     { empty: ops.length === 0, tooBig: ops.length > MAX_OPS, sig, lang },
   )
 
@@ -70,9 +74,23 @@ export function PlaybackView() {
     routePath: "hash-table/playback",
   })
 
+  const switcher = (
+    <ModeSwitch
+      label={t("play.htStrategy")}
+      value={strategy}
+      onChange={setStrategy}
+      options={[
+        { key: "chaining", label: t("play.htStratChaining") },
+        { key: "linear", label: t("play.htStratLinear") },
+      ]}
+      wrapButtons
+    />
+  )
+
   if (run.kind !== "ok") {
     return (
       <TraceFallback
+        headerExtra={switcher}
         message={run.kind === "empty" ? t("play.htEmpty") : t("play.htTooBig", { max: MAX_OPS })}
       />
     )
@@ -94,6 +112,7 @@ export function PlaybackView() {
   return (
     <PlayerShell
       player={player}
+      headerExtra={switcher}
       caption={frame.caption}
       captionBadge={<PhaseBadge phase={frame.phase} styles={PHASE_STYLES} />}
       statsBar={

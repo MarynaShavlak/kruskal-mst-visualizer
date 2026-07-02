@@ -4,21 +4,22 @@
 // прямий, без перебору: у середньому O(1). Порт ідеї класу HashTable з конспекту
 // edu.goit. Фреймворк-незалежне ядро, без React.
 //
-// MVP-релиз: розв'язання колізій лише МЕТОДОМ ЛАНЦЮЖКІВ (chaining) — у комірці
-// лежить список пар (ключ, значення). Відкрите адресування (лінійне зондування),
-// рехешування й «надгробки» — наступні фази. Хеш за замовчуванням — «сума кодів
-// символів % size» (її можна перевірити руками; саме на ній тримається еталон і
-// навчальний текст); поліноміальний хеш — opt-in місток до Рабіна–Карпа.
+// ДВІ стратегії розв'язання колізій (перемикач):
+//   chaining — у комірці лежить СПИСОК пар; колізії ростуть як ланцюг;
+//   linear   — ВІДКРИТЕ АДРЕСУВАННЯ (лінійне зондування): один слот = одна пара,
+//              при зайнятості йдемо праворуч до вільного (з переходом через край);
+//              видалення лишає «надгробок» (tombstone), щоб не рвати ланцюг проб.
+// Хеш за замовчуванням — «сума кодів символів % size» (перевірна руками; на ній
+// тримається еталон і навчання); поліноміальний — opt-in місток до Рабіна–Карпа.
 //
-// Модуль містить три рівні (як radixSort):
-//   sumCodesHash / slotOf   — самі хеш-функції (детермінований сурогат);
-//   runHashTable            — базовий прогін (фінальний стан + результат кожної операції);
-//   hashTableSteps          — інструментований журнал подій зі знімками для візуалізацій.
+// Рівні (як radixSort): sumCodesHash / slotOf — хеш-функції; runHashTable — базовий
+// прогін (фінальний стан + результат кожної операції); hashTableSteps —
+// інструментований журнал подій зі знімками для візуалізацій.
 
 import { polynomialHashRaw } from "@/lib/rabinKarpStringSearch"
 
-/** Стратегія розв'язання колізій. MVP — лише ланцюжки; "linear" додамо у фазі 5. */
-export type CollisionStrategy = "chaining"
+/** Стратегія розв'язання колізій: ланцюжки або лінійне зондування (відкрите адресування). */
+export type CollisionStrategy = "chaining" | "linear"
 
 /**
  * Ідентифікатор хеш-функції. `sum` — навчальна «сума кодів символів» (перевірна
@@ -43,7 +44,7 @@ export interface HtOp {
 /** Наслідок операції: що саме сталося (для вердикту в UI). */
 export type HtOpResult = "stored" | "updated" | "hit" | "miss" | "deleted"
 
-/** Знімок таблиці — масив комірок, кожна комірка це ланцюг пар. */
+/** Знімок таблиці — масив комірок, кожна комірка це ланцюг пар (для linear — 0 або 1 пара). */
 export type HtBuckets = readonly (readonly HtEntry[])[]
 
 // ---------------------------------------------------------------------------
@@ -110,22 +111,24 @@ export interface HtPerOp {
 /** Підсумок прогону: фінальний стан таблиці + лічильники. */
 export interface HtRunResult {
   readonly buckets: HtBuckets
+  /** Надгробки (лише для linear): комірка була очищена delete. Для chaining — усі false. */
+  readonly tombstones: readonly boolean[]
   readonly perOp: readonly HtPerOp[]
   readonly capacity: number
   /** Кількість збережених пар (n) → навантаження α = size/capacity. */
   readonly size: number
-  /** Порівнянь ключів під час сканування ланцюгів (сумарно). */
+  /** Порівнянь ключів (сумарно). */
   readonly comparisons: number
-  /** Скільки разів insert влучив у НЕпорожню комірку (колізія). */
+  /** Скільки вставок влучили в НЕпорожню домашню комірку (колізія). */
   readonly collisions: number
   readonly hashFn: HashFnId
   readonly strategy: CollisionStrategy
 }
 
 /**
- * Проганяє послідовність операцій над хеш-таблицею фіксованої місткості
- * `capacity` (ланцюжки). Повертає фінальний стан, результат кожної операції й
- * лічильники. Мутує лише власні внутрішні масиви; вхід не чіпає.
+ * Проганяє послідовність операцій над хеш-таблицею фіксованої місткості `capacity`.
+ * Повертає фінальний стан, результат кожної операції й лічильники. Мутує лише власні
+ * внутрішні масиви; вхід не чіпає.
  */
 export function runHashTable(
   ops: readonly HtOp[],
@@ -134,6 +137,17 @@ export function runHashTable(
 ): HtRunResult {
   const hashFn = opts.hashFn ?? "sum"
   const strategy = opts.strategy ?? "chaining"
+  const r =
+    strategy === "linear"
+      ? runLinear(ops, capacity, hashFn)
+      : runChaining(ops, capacity, hashFn)
+  return { ...r, capacity, hashFn, strategy }
+}
+
+type RunCore = Omit<HtRunResult, "capacity" | "hashFn" | "strategy">
+
+/** Прогін методом ланцюжків. */
+function runChaining(ops: readonly HtOp[], capacity: number, hashFn: HashFnId): RunCore {
   const buckets: HtEntry[][] = Array.from({ length: capacity }, () => [])
   const perOp: HtPerOp[] = []
   let comparisons = 0
@@ -143,16 +157,12 @@ export function runHashTable(
   for (const op of ops) {
     const home = slotOf(op.key, capacity, hashFn)
     const chain = buckets[home]
-
     if (op.kind === "insert") {
       if (chain.length > 0) collisions += 1
       let found = -1
       for (let j = 0; j < chain.length; j++) {
         comparisons += 1
-        if (chain[j].key === op.key) {
-          found = j
-          break
-        }
+        if (chain[j].key === op.key) { found = j; break }
       }
       const value = op.value ?? 0
       if (found >= 0) {
@@ -167,25 +177,15 @@ export function runHashTable(
       let found = -1
       for (let j = 0; j < chain.length; j++) {
         comparisons += 1
-        if (chain[j].key === op.key) {
-          found = j
-          break
-        }
+        if (chain[j].key === op.key) { found = j; break }
       }
-      if (found >= 0) {
-        perOp.push({ op, result: "hit", value: chain[found].value, homeIndex: home })
-      } else {
-        perOp.push({ op, result: "miss", value: null, homeIndex: home })
-      }
+      if (found >= 0) perOp.push({ op, result: "hit", value: chain[found].value, homeIndex: home })
+      else perOp.push({ op, result: "miss", value: null, homeIndex: home })
     } else {
-      // delete (ланцюжки: просто вирізаємо ноду — безпечно)
       let found = -1
       for (let j = 0; j < chain.length; j++) {
         comparisons += 1
-        if (chain[j].key === op.key) {
-          found = j
-          break
-        }
+        if (chain[j].key === op.key) { found = j; break }
       }
       if (found >= 0) {
         chain.splice(found, 1)
@@ -199,14 +199,97 @@ export function runHashTable(
 
   return {
     buckets: snapshot(buckets),
-    perOp,
-    capacity,
-    size,
-    comparisons,
-    collisions,
-    hashFn,
-    strategy,
+    tombstones: new Array<boolean>(capacity).fill(false),
+    perOp, size, comparisons, collisions,
   }
+}
+
+/** Прогін лінійним зондуванням (відкрите адресування) з надгробками. */
+function runLinear(ops: readonly HtOp[], capacity: number, hashFn: HashFnId): RunCore {
+  const slots: (HtEntry | null)[] = new Array<HtEntry | null>(capacity).fill(null)
+  const tomb: boolean[] = new Array<boolean>(capacity).fill(false)
+  const perOp: HtPerOp[] = []
+  let comparisons = 0
+  let collisions = 0
+  let size = 0
+
+  for (const op of ops) {
+    const home = slotOf(op.key, capacity, hashFn)
+    if (op.kind === "insert") {
+      if (slots[home] !== null) collisions += 1
+      let firstFree = -1
+      let done = false
+      const value = op.value ?? 0
+      for (let step = 0; step < capacity; step++) {
+        const idx = (home + step) % capacity
+        const cell = slots[idx]
+        if (cell === null && !tomb[idx]) {
+          const at = firstFree >= 0 ? firstFree : idx
+          slots[at] = { key: op.key, value }
+          tomb[at] = false
+          size += 1
+          perOp.push({ op, result: "stored", value, homeIndex: home })
+          done = true
+          break
+        }
+        if (cell === null) {
+          if (firstFree < 0) firstFree = idx
+          continue
+        }
+        comparisons += 1
+        if (cell.key === op.key) {
+          slots[idx] = { key: op.key, value }
+          perOp.push({ op, result: "updated", value, homeIndex: home })
+          done = true
+          break
+        }
+      }
+      if (!done) {
+        if (firstFree >= 0) {
+          slots[firstFree] = { key: op.key, value }
+          tomb[firstFree] = false
+          size += 1
+          perOp.push({ op, result: "stored", value, homeIndex: home })
+        } else {
+          perOp.push({ op, result: "miss", value: null, homeIndex: home })
+        }
+      }
+    } else if (op.kind === "get") {
+      let res: HtPerOp | null = null
+      for (let step = 0; step < capacity; step++) {
+        const idx = (home + step) % capacity
+        const cell = slots[idx]
+        if (cell === null && !tomb[idx]) break
+        if (cell === null) continue // надгробок — крокуємо далі
+        comparisons += 1
+        if (cell.key === op.key) {
+          res = { op, result: "hit", value: cell.value, homeIndex: home }
+          break
+        }
+      }
+      perOp.push(res ?? { op, result: "miss", value: null, homeIndex: home })
+    } else {
+      let res: HtPerOp | null = null
+      for (let step = 0; step < capacity; step++) {
+        const idx = (home + step) % capacity
+        const cell = slots[idx]
+        if (cell === null && !tomb[idx]) break
+        if (cell === null) continue
+        comparisons += 1
+        if (cell.key === op.key) {
+          slots[idx] = null
+          tomb[idx] = true
+          size -= 1
+          res = { op, result: "deleted", value: null, homeIndex: home }
+          break
+        }
+      }
+      perOp.push(res ?? { op, result: "miss", value: null, homeIndex: home })
+    }
+  }
+
+  const buckets: HtEntry[][] = slots.map((c) => (c ? [{ key: c.key, value: c.value }] : []))
+  return { buckets, tombstones: [...tomb], perOp, size, comparisons, collisions }
 }
 
 // ---------------------------------------------------------------------------
@@ -220,6 +303,7 @@ export type HtEventKind =
   | "hash"
   | "collision"
   | "compare"
+  | "probe"
   | "insert"
   | "update"
   | "found"
@@ -233,26 +317,28 @@ export interface HtEvent {
   readonly kind: HtEventKind
   /** Повний знімок таблиці на цей момент (глибока копія — scrubbing назад чесний). */
   readonly buckets: HtBuckets
+  /** Надгробки на цей момент (linear); для chaining — усі false. */
+  readonly tombstones: readonly boolean[]
   readonly capacity: number
+  readonly strategy: CollisionStrategy
   /** Кількість збережених пар (n). */
   readonly size: number
-  /** Індекс поточної операції (0-based) або null для init/done. */
   readonly opIndex: number | null
-  /** Поточна операція або null. */
   readonly op: HtOp | null
-  /** Домашній індекс `hash%capacity` (з кадру hash і далі) або null. */
   readonly homeIndex: number | null
-  /** «Сире» число хеша (для конвеєра) або null. */
   readonly rawHash: number | null
-  /** Позиція в ланцюзі, яку ЗАРАЗ порівнюємо (compare) або null. */
+  /** Позиція в ланцюзі, яку ЗАРАЗ порівнюємо (chaining), або null. */
   readonly scanPos: number | null
-  /** Куди сіла/оновилась пара в ланцюзі (insert/update/found) або null. */
+  /** Слот, на якому ЗАРАЗ курсор-зонд (linear), або null. */
+  readonly probeIndex: number | null
+  /** Відвідані слоти поточної операції (linear-кластер), або []. */
+  readonly probeTrail: readonly number[]
+  /** Позиція в ланцюзі, куди сіла/оновилась/знайшлась пара (chaining), або null. */
   readonly landedChainPos: number | null
-  /** Наслідок операції — лише на op_done; інакше null. */
+  /** Комірка терміналу операції (insert/update/found/delete), або null. */
+  readonly landedIndex: number | null
   readonly opResult: HtOpResult | null
-  /** Значення для вердикту (stored/updated/hit) або null. */
   readonly resultValue: number | null
-  // Лічильники (МОНОТОННІ, копіюються в КОЖЕН запис — як radix passes/distributions):
   readonly comparisons: number
   readonly collisions: number
 }
@@ -261,6 +347,7 @@ export interface HtEvent {
 export interface HtStepsResult {
   readonly events: HtEvent[]
   readonly buckets: HtBuckets
+  readonly tombstones: readonly boolean[]
   readonly perOp: readonly HtPerOp[]
   readonly capacity: number
   readonly size: number
@@ -287,41 +374,40 @@ export function hashTableSteps(
 ): HtStepsResult {
   const hashFn = opts.hashFn ?? "sum"
   const strategy = opts.strategy ?? "chaining"
+
+  // Спільний стан для обох стратегій. Chaining тримає ланцюги в buckets; linear —
+  // одну пару на комірку (chain довжини ≤ 1) + окремий масив надгробків.
   const buckets: HtEntry[][] = Array.from({ length: capacity }, () => [])
+  const tomb: boolean[] = new Array<boolean>(capacity).fill(false)
   const events: HtEvent[] = []
   const perOp: HtPerOp[] = []
   let comparisons = 0
   let collisions = 0
   let size = 0
-
-  const base = (): Omit<
-    HtEvent,
-    "kind" | "opIndex" | "op" | "homeIndex" | "rawHash" | "scanPos"
-    | "landedChainPos" | "opResult" | "resultValue"
-  > => ({
-    buckets: snapshot(buckets),
-    capacity,
-    size,
-    comparisons,
-    collisions,
-  })
+  let trail: number[] = []
 
   const push = (
     kind: HtEventKind,
-    fields: Partial<HtEvent> & {
-      opIndex: number | null
-      op: HtOp | null
-    },
+    fields: Partial<HtEvent> & { opIndex: number | null; op: HtOp | null },
   ): void => {
     events.push({
-      ...base(),
-      kind,
+      buckets: snapshot(buckets),
+      tombstones: [...tomb],
+      capacity,
+      strategy,
+      size,
+      comparisons,
+      collisions,
       homeIndex: null,
       rawHash: null,
       scanPos: null,
+      probeIndex: null,
+      probeTrail: [...trail],
       landedChainPos: null,
+      landedIndex: null,
       opResult: null,
       resultValue: null,
+      kind,
       ...fields,
     })
   }
@@ -331,81 +417,197 @@ export function hashTableSteps(
   ops.forEach((op, opIndex) => {
     const home = slotOf(op.key, capacity, hashFn)
     const raw = rawHashNumber(op.key, hashFn)
-    const chain = buckets[home]
+    trail = []
 
     push("op_start", { opIndex, op })
     push("hash", { opIndex, op, homeIndex: home, rawHash: raw })
 
-    if (op.kind === "insert") {
-      if (chain.length > 0) {
-        collisions += 1
-        push("collision", { opIndex, op, homeIndex: home })
-      }
-      let found = -1
-      for (let j = 0; j < chain.length; j++) {
-        comparisons += 1
-        push("compare", { opIndex, op, homeIndex: home, scanPos: j })
-        if (chain[j].key === op.key) {
-          found = j
-          break
-        }
-      }
-      const value = op.value ?? 0
-      if (found >= 0) {
-        chain[found] = { key: op.key, value }
-        push("update", { opIndex, op, homeIndex: home, landedChainPos: found, resultValue: value })
-        perOp.push({ op, result: "updated", value, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "updated", resultValue: value })
-      } else {
-        chain.push({ key: op.key, value })
-        size += 1
-        push("insert", {
-          opIndex, op, homeIndex: home,
-          landedChainPos: chain.length - 1, resultValue: value,
-        })
-        perOp.push({ op, result: "stored", value, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "stored", resultValue: value })
-      }
-    } else if (op.kind === "get") {
-      let found = -1
-      for (let j = 0; j < chain.length; j++) {
-        comparisons += 1
-        push("compare", { opIndex, op, homeIndex: home, scanPos: j })
-        if (chain[j].key === op.key) {
-          found = j
-          break
-        }
-      }
-      if (found >= 0) {
-        const value = chain[found].value
-        push("found", { opIndex, op, homeIndex: home, landedChainPos: found, resultValue: value })
-        perOp.push({ op, result: "hit", value, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "hit", resultValue: value })
-      } else {
-        push("miss", { opIndex, op, homeIndex: home })
-        perOp.push({ op, result: "miss", value: null, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "miss" })
-      }
+    if (strategy === "linear") {
+      stepLinear()
     } else {
-      let found = -1
-      for (let j = 0; j < chain.length; j++) {
-        comparisons += 1
-        push("compare", { opIndex, op, homeIndex: home, scanPos: j })
-        if (chain[j].key === op.key) {
-          found = j
-          break
+      stepChaining()
+    }
+
+    function stepChaining(): void {
+      const chain = buckets[home]
+      const commonHome = { opIndex, op, homeIndex: home }
+      if (op.kind === "insert") {
+        if (chain.length > 0) {
+          collisions += 1
+          push("collision", commonHome)
+        }
+        let found = -1
+        for (let j = 0; j < chain.length; j++) {
+          comparisons += 1
+          push("compare", { ...commonHome, scanPos: j })
+          if (chain[j].key === op.key) { found = j; break }
+        }
+        const value = op.value ?? 0
+        if (found >= 0) {
+          chain[found] = { key: op.key, value }
+          push("update", { ...commonHome, landedChainPos: found, landedIndex: home, resultValue: value })
+          perOp.push({ op, result: "updated", value, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "updated", resultValue: value })
+        } else {
+          chain.push({ key: op.key, value })
+          size += 1
+          push("insert", { ...commonHome, landedChainPos: chain.length - 1, landedIndex: home, resultValue: value })
+          perOp.push({ op, result: "stored", value, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "stored", resultValue: value })
+        }
+      } else if (op.kind === "get") {
+        let found = -1
+        for (let j = 0; j < chain.length; j++) {
+          comparisons += 1
+          push("compare", { ...commonHome, scanPos: j })
+          if (chain[j].key === op.key) { found = j; break }
+        }
+        if (found >= 0) {
+          const value = chain[found].value
+          push("found", { ...commonHome, landedChainPos: found, landedIndex: home, resultValue: value })
+          perOp.push({ op, result: "hit", value, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "hit", resultValue: value })
+        } else {
+          push("miss", commonHome)
+          perOp.push({ op, result: "miss", value: null, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "miss" })
+        }
+      } else {
+        let found = -1
+        for (let j = 0; j < chain.length; j++) {
+          comparisons += 1
+          push("compare", { ...commonHome, scanPos: j })
+          if (chain[j].key === op.key) { found = j; break }
+        }
+        if (found >= 0) {
+          chain.splice(found, 1)
+          size -= 1
+          push("delete", { ...commonHome, landedIndex: home })
+          perOp.push({ op, result: "deleted", value: null, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "deleted" })
+        } else {
+          push("miss", commonHome)
+          perOp.push({ op, result: "miss", value: null, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "miss" })
         }
       }
-      if (found >= 0) {
-        chain.splice(found, 1)
-        size -= 1
-        push("delete", { opIndex, op, homeIndex: home, landedChainPos: found })
-        perOp.push({ op, result: "deleted", value: null, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "deleted" })
+    }
+
+    function slotEntry(idx: number): HtEntry | null {
+      const c = buckets[idx]
+      return c.length > 0 ? c[0] : null
+    }
+
+    function stepLinear(): void {
+      const commonHome = { opIndex, op, homeIndex: home }
+      if (op.kind === "insert") {
+        const value = op.value ?? 0
+        if (slotEntry(home) !== null) {
+          collisions += 1
+          push("collision", commonHome)
+        }
+        let firstFree = -1
+        let done = false
+        for (let step = 0; step < capacity; step++) {
+          const idx = (home + step) % capacity
+          const cell = slotEntry(idx)
+          if (cell === null && !tomb[idx]) {
+            const at = firstFree >= 0 ? firstFree : idx
+            buckets[at] = [{ key: op.key, value }]
+            tomb[at] = false
+            size += 1
+            push("insert", { ...commonHome, probeIndex: at, landedIndex: at, resultValue: value })
+            perOp.push({ op, result: "stored", value, homeIndex: home })
+            done = true
+            break
+          }
+          if (cell === null) {
+            if (firstFree < 0) firstFree = idx
+            trail.push(idx)
+            push("probe", { ...commonHome, probeIndex: idx })
+            continue
+          }
+          comparisons += 1
+          trail.push(idx)
+          push("compare", { ...commonHome, probeIndex: idx })
+          if (cell.key === op.key) {
+            buckets[idx] = [{ key: op.key, value }]
+            push("update", { ...commonHome, probeIndex: idx, landedIndex: idx, resultValue: value })
+            perOp.push({ op, result: "updated", value, homeIndex: home })
+            done = true
+            break
+          }
+        }
+        if (!done) {
+          if (firstFree >= 0) {
+            buckets[firstFree] = [{ key: op.key, value }]
+            tomb[firstFree] = false
+            size += 1
+            push("insert", { ...commonHome, probeIndex: firstFree, landedIndex: firstFree, resultValue: value })
+            perOp.push({ op, result: "stored", value, homeIndex: home })
+          } else {
+            push("miss", commonHome)
+            perOp.push({ op, result: "miss", value: null, homeIndex: home })
+          }
+        }
+        push("op_done", { ...commonHome, opResult: perOp[perOp.length - 1].result, resultValue: value })
+      } else if (op.kind === "get") {
+        let hit = false
+        for (let step = 0; step < capacity; step++) {
+          const idx = (home + step) % capacity
+          const cell = slotEntry(idx)
+          if (cell === null && !tomb[idx]) break
+          if (cell === null) {
+            trail.push(idx)
+            push("probe", { ...commonHome, probeIndex: idx })
+            continue
+          }
+          comparisons += 1
+          trail.push(idx)
+          push("compare", { ...commonHome, probeIndex: idx })
+          if (cell.key === op.key) {
+            push("found", { ...commonHome, probeIndex: idx, landedIndex: idx, resultValue: cell.value })
+            perOp.push({ op, result: "hit", value: cell.value, homeIndex: home })
+            push("op_done", { ...commonHome, opResult: "hit", resultValue: cell.value })
+            hit = true
+            break
+          }
+        }
+        if (!hit) {
+          push("miss", commonHome)
+          perOp.push({ op, result: "miss", value: null, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "miss" })
+        }
       } else {
-        push("miss", { opIndex, op, homeIndex: home })
-        perOp.push({ op, result: "miss", value: null, homeIndex: home })
-        push("op_done", { opIndex, op, homeIndex: home, opResult: "miss" })
+        let removed = false
+        for (let step = 0; step < capacity; step++) {
+          const idx = (home + step) % capacity
+          const cell = slotEntry(idx)
+          if (cell === null && !tomb[idx]) break
+          if (cell === null) {
+            trail.push(idx)
+            push("probe", { ...commonHome, probeIndex: idx })
+            continue
+          }
+          comparisons += 1
+          trail.push(idx)
+          push("compare", { ...commonHome, probeIndex: idx })
+          if (cell.key === op.key) {
+            buckets[idx] = []
+            tomb[idx] = true
+            size -= 1
+            push("delete", { ...commonHome, probeIndex: idx, landedIndex: idx })
+            perOp.push({ op, result: "deleted", value: null, homeIndex: home })
+            push("op_done", { ...commonHome, opResult: "deleted" })
+            removed = true
+            break
+          }
+        }
+        if (!removed) {
+          push("miss", commonHome)
+          perOp.push({ op, result: "miss", value: null, homeIndex: home })
+          push("op_done", { ...commonHome, opResult: "miss" })
+        }
       }
     }
   })
@@ -415,6 +617,7 @@ export function hashTableSteps(
   return {
     events,
     buckets: snapshot(buckets),
+    tombstones: [...tomb],
     perOp,
     capacity,
     size,

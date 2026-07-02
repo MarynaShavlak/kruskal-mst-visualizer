@@ -7,7 +7,7 @@
 // Чисто, без React.
 
 import { tr } from "@/i18n/use-t"
-import type { HashFnId, HtOp } from "@/lib/hashTable"
+import type { CollisionStrategy, HashFnId, HtOp } from "@/lib/hashTable"
 import type { HashTableDoc } from "@/store/hash-table-store"
 import { createDocCodec } from "@/algorithms/shared/editor/doc-codec"
 
@@ -19,6 +19,8 @@ interface HashTableWire {
   readonly ops: readonly WireOp[]
   readonly capacity: number
   readonly hashFn: HashFnId
+  /** Опційне для зворотної сумісності зі старими посиланнями (за замовч. chaining). */
+  readonly strategy?: CollisionStrategy
 }
 
 const OP_KINDS = ["insert", "get", "delete"] as const
@@ -49,6 +51,9 @@ function parseWire(raw: unknown): HashTableWire {
   if (o.hashFn !== "sum" && o.hashFn !== "poly") {
     throw new Error(tr("editor.errBadHashFn"))
   }
+  if (o.strategy !== undefined && o.strategy !== "chaining" && o.strategy !== "linear") {
+    throw new Error(tr("editor.errBadStrategy"))
+  }
   return o as unknown as HashTableWire
 }
 
@@ -59,6 +64,7 @@ const docToWire = (doc: HashTableDoc): HashTableWire => ({
   ),
   capacity: Math.round(doc.capacity),
   hashFn: doc.hashFn,
+  strategy: doc.strategy,
 })
 
 const wireToDoc = (wire: HashTableWire): HashTableDoc => {
@@ -71,6 +77,7 @@ const wireToDoc = (wire: HashTableWire): HashTableDoc => {
     ops,
     capacity: Math.max(1, Math.trunc(wire.capacity)),
     hashFn: wire.hashFn === "poly" ? "poly" : "sum",
+    strategy: wire.strategy === "linear" ? "linear" : "chaining",
   }
 }
 

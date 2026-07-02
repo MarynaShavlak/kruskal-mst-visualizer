@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest"
 import { buildHashTableTrace, HT_CODE } from "@/lib/hashTableTrace"
+import type { HtOp } from "@/lib/hashTable"
 import {
   HT_INTRO_OPS,
   HT_INTRO_CAPACITY,
   HT_INTRO_STATS,
+  HT_INTRO_LINEAR_STATS,
 } from "@/lib/exampleHashTable"
 
 describe("buildHashTableTrace (головний приклад)", () => {
@@ -98,6 +100,50 @@ describe("buildHashTableTrace (головний приклад)", () => {
     expect(insertApple.buckets[4]).toHaveLength(0)
     const done = trace.frames[trace.frames.length - 1]
     expect(done.buckets[4]).toHaveLength(2)
+  })
+})
+
+describe("buildHashTableTrace — лінійне зондування", () => {
+  const trace = buildHashTableTrace(HT_INTRO_OPS, HT_INTRO_CAPACITY, { strategy: "linear" })
+
+  it("40 кадрів; лістинг «відкрите адресування» (while table[i])", () => {
+    expect(trace.frames.length).toBe(HT_INTRO_LINEAR_STATS.frames)
+    expect(trace.code.some((l) => l.includes("while table[i]"))).toBe(true)
+    expect(trace.frames.every((f) => f.strategy === "linear")).toBe(true)
+  })
+
+  it("підсумок — лінійний еталон (9 порівнянь / 1 колізія)", () => {
+    expect(trace.result.comparisons).toBe(HT_INTRO_LINEAR_STATS.comparisons)
+    expect(trace.result.collisions).toBe(HT_INTRO_LINEAR_STATS.collisions)
+    expect(trace.result.strategy).toBe("linear")
+  })
+
+  it("insert lemon: колізія + курсор-зонд крокує кластером 4→0→1→2", () => {
+    const lemonInsert = trace.frames.filter(
+      (f) => f.op?.key === "lemon" && f.op?.kind === "insert",
+    )
+    expect(lemonInsert.some((f) => f.phase === "collision")).toBe(true)
+    const compares = lemonInsert.filter((f) => f.phase === "compare")
+    expect(compares.map((f) => f.probeIndex)).toEqual([4, 0, 1])
+    const insert = lemonInsert.find((f) => f.phase === "insert")!
+    expect(insert.landedIndex).toBe(2) // сів у комірку 2 після зондування
+  })
+
+  it("надгробки: get проходить крізь надгробок (кадр probe) і влучає далі", () => {
+    const ops: HtOp[] = [
+      { kind: "insert", key: "banana", value: 30 },
+      { kind: "insert", key: "lemon", value: 40 },
+      { kind: "delete", key: "banana" }, // комірка 4 → надгробок
+      { kind: "get", key: "lemon" },
+    ]
+    const t = buildHashTableTrace(ops, 5, { strategy: "linear" })
+    // під час get lemon є кадр probe над надгробком у комірці 4
+    const getLemonProbe = t.frames.find(
+      (f) => f.op?.key === "lemon" && f.op?.kind === "get" && f.phase === "probe",
+    )!
+    expect(getLemonProbe.probeIndex).toBe(4)
+    expect(getLemonProbe.tombstones[4]).toBe(true)
+    expect(t.result.perOp[3].result).toBe("hit")
   })
 })
 

@@ -1,9 +1,10 @@
 // Сигнатурний візуал хеш-таблиці: (1) «хеш-конвеєр» ключ → hash() → % m → слот;
-// (2) масив КОМІРОК, у кожній — ланцюг пар (flex-col-reverse), з підсвіткою домашньої
-// комірки / колізії / сканування / влучення; (3) датчик навантаження α із порогом
-// рехешу; (4) легенда. Суто презентаційний — усе бере з кадру (highlight.ts).
+// (2) масив КОМІРОК. Ланцюжки: у комірці ланцюг пар. Лінійне зондування: одна пара
+// на комірку + курсор-зонд ▼ (probeIndex) крокує кластером, видалені комірки —
+// надгробки 🪦 (пунктир). (3) датчик α із порогом рехешу; (4) легенда. Суто
+// презентаційний — усе бере з кадру (highlight.ts).
 
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ArrowDown } from "lucide-react"
 import { Panel } from "@/algorithms/shared/playback/Panel"
 import { LegendRow } from "@/algorithms/shared/playback/LegendRow"
 import { HT_LOAD_THRESHOLD } from "@/lib/hashTablePreview"
@@ -22,6 +23,8 @@ const CELL_CLASS: Record<HtCellRole, string> = {
   filled: "border-border bg-card",
   home: "border-amber-500/70 bg-amber-500/5 ring-2 ring-amber-400/50",
   collision: "border-rose-500 bg-rose-500/5 ring-2 ring-rose-400/60",
+  probe: "border-violet-500/70 bg-violet-500/5 ring-2 ring-violet-400/50",
+  cluster: "border-violet-400/40 bg-violet-400/5",
 }
 
 const ENTRY_CLASS: Record<HtEntryRole, string> = {
@@ -38,6 +41,7 @@ function pipeTone(phase: HtFrame["phase"]): string {
   if (phase === "found" || phase === "insert" || phase === "update")
     return "border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
   if (phase === "miss") return "border-slate-400/60 bg-slate-400/10 text-muted-foreground"
+  if (phase === "probe") return "border-violet-500/60 bg-violet-500/10 text-violet-700 dark:text-violet-300"
   return "border-amber-500/60 bg-amber-500/10 text-amber-700 dark:text-amber-300"
 }
 
@@ -59,13 +63,21 @@ export function HashTablePanel({ frame, className }: { frame: HtFrame; className
   const t = useT()
   const { op, homeIndex, rawHash, capacity, keyCodes, loadFactor } = frame
   const alphaPct = Math.min(1, loadFactor) * 100
+  const isLinear = frame.strategy === "linear"
 
-  const legend = [
-    { label: t("play.htLegendHome"), cls: CELL_CLASS.home },
-    { label: t("play.htLegendCollision"), cls: CELL_CLASS.collision },
-    { label: t("play.htLegendScan"), cls: ENTRY_CLASS.scanning },
-    { label: t("play.htLegendFound"), cls: ENTRY_CLASS.found },
-  ]
+  const legend = isLinear
+    ? [
+        { label: t("play.htLegendHome"), cls: CELL_CLASS.home },
+        { label: t("play.htLegendProbe"), cls: CELL_CLASS.probe },
+        { label: t("play.htLegendFound"), cls: ENTRY_CLASS.found },
+        { label: t("play.htLegendTomb"), cls: "border-dashed border-border bg-muted/40" },
+      ]
+    : [
+        { label: t("play.htLegendHome"), cls: CELL_CLASS.home },
+        { label: t("play.htLegendCollision"), cls: CELL_CLASS.collision },
+        { label: t("play.htLegendScan"), cls: ENTRY_CLASS.scanning },
+        { label: t("play.htLegendFound"), cls: ENTRY_CLASS.found },
+      ]
 
   return (
     <Panel title={t("play.htTableTitle")} className={className} bodyClassName="flex flex-col gap-3 p-3">
@@ -107,29 +119,48 @@ export function HashTablePanel({ frame, className }: { frame: HtFrame; className
         )}
       </div>
 
-      {/* (2) Масив комірок із ланцюгами */}
+      {/* (2) Масив комірок */}
       <div className="flex items-start gap-1.5 overflow-x-auto">
-        {frame.buckets.map((chain, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex min-w-[3.2rem] flex-1 flex-col items-center gap-1 rounded-md border-2 px-1 pb-1.5 pt-1 transition-colors",
-              CELL_CLASS[cellRole(i, frame)],
-            )}
-          >
-            <span className="text-xs font-bold leading-none text-muted-foreground">{i}</span>
-            <div className="flex min-h-[1.5rem] flex-col-reverse items-stretch gap-1">
-              {chain.map((entry, j) => (
-                <EntryChip
-                  key={j}
-                  label={entry.key}
-                  value={entry.value}
-                  role={entryRole(i, j, frame)}
-                />
-              ))}
+        {frame.buckets.map((chain, i) => {
+          const role = cellRole(i, frame)
+          const isTomb = isLinear && chain.length === 0 && frame.tombstones[i]
+          const cursorHere = frame.probeIndex === i && frame.op != null
+          return (
+            <div key={i} className="flex min-w-[3.2rem] flex-1 flex-col items-center gap-0.5">
+              {/* курсор-зонд ▼ (лінійне зондування) */}
+              <ArrowDown
+                className={cn(
+                  "size-3.5 text-violet-500 transition-opacity",
+                  cursorHere ? "opacity-100" : "opacity-0",
+                )}
+              />
+              <div
+                className={cn(
+                  "flex w-full flex-col items-center gap-1 rounded-md border-2 px-1 pb-1.5 pt-1 transition-colors",
+                  CELL_CLASS[role],
+                  isTomb && "border-dashed",
+                )}
+              >
+                <span className="text-xs font-bold leading-none text-muted-foreground">{i}</span>
+                <div className="flex min-h-[1.5rem] flex-col-reverse items-stretch gap-1">
+                  {chain.map((entry, j) => (
+                    <EntryChip
+                      key={j}
+                      label={entry.key}
+                      value={entry.value}
+                      role={entryRole(i, j, frame)}
+                    />
+                  ))}
+                  {isTomb && (
+                    <span className="text-sm leading-none text-muted-foreground/50" title={t("play.htLegendTomb")}>
+                      🪦
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* (3) Датчик навантаження α */}
@@ -143,7 +174,6 @@ export function HashTablePanel({ frame, className }: { frame: HtFrame; className
             )}
             style={{ width: `${alphaPct}%` }}
           />
-          {/* Пунктирна позначка порогу рехешу */}
           <div
             className="absolute top-0 h-full border-l border-dashed border-foreground/40"
             style={{ left: `${HT_LOAD_THRESHOLD * 100}%` }}
