@@ -223,6 +223,9 @@ const ua = {
   // Рюкзак.
   "editor.errBadItems": "Поле items невалідне",
   "editor.errBadCapacity": "Поле capacity невалідне",
+  // Хеш-таблиця.
+  "editor.errBadOps": "Поле ops невалідне",
+  "editor.errBadHashFn": "Поле hashFn невалідне",
   "editor.knapClassic": "Класичний (W=50)",
   "editor.knapSmall": "Малий (W=4)",
   "editor.knapItem": "Предмет",
@@ -2288,6 +2291,9 @@ const en: Record<MessageKey, string> = {
   // Knapsack.
   "editor.errBadItems": "The items field is invalid",
   "editor.errBadCapacity": "The capacity field is invalid",
+  // Hash table.
+  "editor.errBadOps": "The ops field is invalid",
+  "editor.errBadHashFn": "The hashFn field is invalid",
   "editor.knapClassic": "Classic (W=50)",
   "editor.knapSmall": "Small (W=4)",
   "editor.knapItem": "Item",
