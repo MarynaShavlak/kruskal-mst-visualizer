@@ -141,9 +141,11 @@ export function countLeaves(tree: BinaryTree): number {
  */
 export function treeHeight(tree: BinaryTree): number {
   if (tree.root === null) return -1
+  const byId = new Map(tree.nodes.map((n) => [n.id, n]))
   const heightOf = (id: number | null): number => {
     if (id === null) return -1
-    const n = tree.nodes[id]
+    const n = byId.get(id)
+    if (!n) return -1
     return 1 + Math.max(heightOf(n.left), heightOf(n.right))
   }
   return heightOf(tree.root)
@@ -154,10 +156,13 @@ export function treeHeight(tree: BinaryTree): number {
 // ---------------------------------------------------------------------------
 
 function traverseValues(tree: BinaryTree, order: TraversalOrder): number[] {
+  // Індексуємо за id через Map — знімки можуть мати НЕщільні id (BST зі стабільними id).
+  const byId = new Map(tree.nodes.map((n) => [n.id, n]))
   const out: number[] = []
   const walk = (id: number | null): void => {
     if (id === null) return
-    const n = tree.nodes[id]
+    const n = byId.get(id)
+    if (!n) return
     if (order === "preorder") out.push(n.value)
     walk(n.left)
     if (order === "inorder") out.push(n.value)
@@ -216,13 +221,17 @@ export interface BtLayout {
  */
 export function layoutTree(tree: BinaryTree): BtLayout {
   if (tree.root === null) return { nodes: [], cols: 0, rows: 0 }
-  const gridX = new Array<number>(tree.nodes.length).fill(0)
+  // Індексуємо за `id` через Map (а не масив-за-позицією): id можуть бути НЕщільними
+  // — двійкове дерево пошуку тримає стабільні id вузлів попри видалення.
+  const byId = new Map(tree.nodes.map((n) => [n.id, n]))
+  const gridX = new Map<number, number>()
   let col = 0
   const assign = (id: number | null): void => {
     if (id === null) return
-    const n = tree.nodes[id]
+    const n = byId.get(id)
+    if (!n) return
     assign(n.left)
-    gridX[id] = col
+    gridX.set(id, col)
     col += 1
     assign(n.right)
   }
@@ -231,7 +240,7 @@ export function layoutTree(tree: BinaryTree): BtLayout {
   let maxDepth = 0
   for (const n of tree.nodes) maxDepth = Math.max(maxDepth, n.depth)
 
-  const nodes = tree.nodes.map((n) => ({ ...n, gridX: gridX[n.id], gridY: n.depth }))
+  const nodes = tree.nodes.map((n) => ({ ...n, gridX: gridX.get(n.id) ?? 0, gridY: n.depth }))
   return { nodes, cols: tree.nodes.length, rows: maxDepth + 1 }
 }
 

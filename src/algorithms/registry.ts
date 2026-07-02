@@ -28,6 +28,7 @@ import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
 import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
 import { hashTable } from "@/algorithms/hash-table"
 import { treeTraversal } from "@/algorithms/tree-traversal"
+import { binarySearchTree } from "@/algorithms/bst"
 import { knapsack } from "@/algorithms/knapsack"
 import { heldKarp } from "@/algorithms/held-karp"
 
@@ -62,6 +63,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   rabinKarpStringSearch,
   hashTable,
   treeTraversal,
+  binarySearchTree,
   knapsack,
   heldKarp,
 ]
@@ -402,13 +404,22 @@ export const BRIDGES: readonly Bridge[] = [
       en: "The hash table gave us O(1) but at the COST of order: keys sit chaotically and collisions waste memory. A tree is a different data structure: a hierarchy with explicit links, where traversal visits nodes IN ORDER (an in-order walk of a search tree yields a sorted sequence). First we study the tree itself and its three traversals.",
     },
   },
-  // Дерева → динамічне програмування.
+  // Дерева: обхід → дерево ПОШУКУ.
   {
     from: "tree-traversal",
+    to: "bst",
+    note: {
+      ua: "Ти вмієш обходити дерево — тепер надай йому ПРАВИЛО порядку: у лівому піддереві ключі менші, у правому більші. Це дерево двійкового ПОШУКУ: вставка/пошук/видалення за O(log n) на збалансованому дереві. Невипадково саме центровий обхід BST, який ти вже бачив, видає відсортовану послідовність.",
+      en: "You can traverse a tree — now give it an ORDER rule: smaller keys in the left subtree, larger in the right. That is a binary SEARCH tree: insert/search/delete in O(log n) on a balanced tree. It is no accident that the in-order traversal of a BST, which you have already seen, yields a sorted sequence.",
+    },
+  },
+  // Дерева → динамічне програмування.
+  {
+    from: "bst",
     to: "knapsack",
     note: {
-      ua: "Зворотний (постфіксний) обхід рахує відповідь для піддерев ПЕРШ ніж для батька — а це вже сама думка динамічного програмування: складай ціле з готових розв'язків менших частин. Останній поворот курсу — до цієї завершальної парадигми; найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",
-      en: "A post-order traversal computes each subtree's answer BEFORE its parent — which is the very idea of dynamic programming: build the whole from ready answers to smaller parts. The course's final turn is to that closing paradigm; the cleanest first DP is the 0/1 knapsack: a simple 2-D table maximising value under a weight limit.",
+      ua: "Дерево пошуку будувало відповідь із піддерев — те саме «знизу вгору», що й постфіксний обхід. Це вже думка динамічного програмування: оптимум складають із готових розв'язків менших підзадач. Останній поворот курсу — до цієї завершальної парадигми; найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",
+      en: "The search tree built its answer from subtrees — the same bottom-up idea as a post-order traversal. That is already the essence of dynamic programming: the optimum is assembled from ready answers to smaller subproblems. The course's final turn is to that closing paradigm; the cleanest first DP is the 0/1 knapsack: a simple 2-D table maximising value under a weight limit.",
     },
   },
   // ДП: від найпростішого рюкзака до вибуху станів (комівояжер).
