@@ -99,6 +99,7 @@ export interface HtFrame extends FrameNarration {
   readonly i: number
   readonly phase: HtPhase
   readonly strategy: CollisionStrategy
+  readonly hashFn: HashFnId
   /** Повний знімок таблиці на цьому кадрі (незмінний). */
   readonly buckets: HtBuckets
   /** Надгробки (linear) — очищені видаленням комірки; для chaining усі false. */
@@ -266,6 +267,7 @@ function frameFor(ev: HtEvent, t: Translate): Omit<HtFrame, "i"> {
   return {
     phase: PHASE_OF[ev.kind],
     strategy: ev.strategy,
+    hashFn: ev.hashFn,
     buckets: ev.buckets,
     tombstones: ev.tombstones,
     capacity: ev.capacity,

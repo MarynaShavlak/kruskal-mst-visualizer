@@ -27,7 +27,7 @@ describe("parseToc (хеш-таблиця)", () => {
   })
 
   it("живі фігури присутні (UA docs/images/, EN docs/images/en/)", () => {
-    const figures = ["ht_pipeline.png", "ht_walk.png", "ht_compare.png", "ht_slot_quiz.png", "ht_quiz.png"]
+    const figures = ["ht_pipeline.png", "ht_walk.png", "ht_compare.png", "ht_bad_hash.png", "ht_slot_quiz.png", "ht_quiz.png"]
     for (const fig of figures) {
       expect(LEARN_CONTENT.ua).toContain(`docs/images/${fig}`)
       expect(LEARN_CONTENT.en).toContain(`docs/images/en/${fig}`)
@@ -44,6 +44,7 @@ describe("figureForSrc: мапінг фігур на живі віджети", (
       "docs/images/ht_pipeline.png",
       "docs/images/ht_walk.png",
       "docs/images/ht_compare.png",
+      "docs/images/ht_bad_hash.png",
       "docs/images/en/ht_slot_quiz.png",
       "docs/images/en/ht_quiz.png",
     ]

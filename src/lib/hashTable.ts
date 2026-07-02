@@ -22,11 +22,15 @@ import { polynomialHashRaw } from "@/lib/rabinKarpStringSearch"
 export type CollisionStrategy = "chaining" | "linear"
 
 /**
- * Ідентифікатор хеш-функції. `sum` — навчальна «сума кодів символів» (перевірна
- * усно, дефолт). `poly` — поліноміальний хеш рядка (Σ ord·base^k) — той самий, що
- * в Рабіні–Карпі; «справжній», але усно не порахувати, тому opt-in.
+ * Ідентифікатор хеш-функції.
+ * `sum` — навчальна «сума кодів символів» (перевірна усно, дефолт);
+ * `poly` — поліноміальний хеш рядка (той самий, що в Рабіні–Карпі); «справжній»,
+ *   але усно не порахувати, тому opt-in;
+ * `zero` — НАВМИСНО ПОГАНА: завжди 0, усе валиться в одну комірку (демо найгіршого);
+ * `firstChar` — НАВМИСНО СЛАБКА: лише перша літера, тож ключі з однією літерою
+ *   колізують (наочно для «зловмисних» ключів і історії DoS hash-flooding).
  */
-export type HashFnId = "sum" | "poly"
+export type HashFnId = "sum" | "poly" | "zero" | "firstChar"
 
 /** Пара «ключ → значення» в комірці таблиці. */
 export interface HtEntry {
@@ -69,7 +73,16 @@ export function sumCodesHash(key: string): number {
  * показуємо лише кінцевий слот, а не проміжне число.
  */
 export function rawHashNumber(key: string, fn: HashFnId = "sum"): number | null {
-  return fn === "sum" ? sumCodesHash(key) : null
+  switch (fn) {
+    case "sum":
+      return sumCodesHash(key)
+    case "zero":
+      return 0
+    case "firstChar":
+      return key.length > 0 ? key.charCodeAt(0) : 0
+    default:
+      return null // poly — велике число, усно не показуємо
+  }
 }
 
 /**
@@ -82,10 +95,16 @@ export function slotOf(
   fn: HashFnId = "sum",
 ): number {
   if (capacity <= 0) return 0
-  if (fn === "poly") {
-    return Number(polynomialHashRaw(key) % BigInt(capacity))
+  switch (fn) {
+    case "poly":
+      return Number(polynomialHashRaw(key) % BigInt(capacity))
+    case "zero":
+      return 0
+    case "firstChar":
+      return (key.length > 0 ? key.charCodeAt(0) : 0) % capacity
+    default:
+      return sumCodesHash(key) % capacity
   }
-  return sumCodesHash(key) % capacity
 }
 
 // ---------------------------------------------------------------------------
@@ -321,6 +340,7 @@ export interface HtEvent {
   readonly tombstones: readonly boolean[]
   readonly capacity: number
   readonly strategy: CollisionStrategy
+  readonly hashFn: HashFnId
   /** Кількість збережених пар (n). */
   readonly size: number
   readonly opIndex: number | null
@@ -395,6 +415,7 @@ export function hashTableSteps(
       tombstones: [...tomb],
       capacity,
       strategy,
+      hashFn,
       size,
       comparisons,
       collisions,

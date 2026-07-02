@@ -111,6 +111,16 @@ Try the "Anagrams" script in the editor: `ate`, `eat`, `tea` share the same code
 
 ![Chaining vs linear probing on the same data](docs/images/en/ht_compare.png)
 
+A **bad hash function** also produces the worst case. If it's non-uniform (say, it
+only looks at the key's first letter), "adversarial" keys are easy to craft so they
+all land in one cell — and $O(1)$ degenerates into $O(n)$. This is what
+**hash-flooding** attacks exploit; that's why real languages add a random "salt" to
+the hash (remember that Python `hash()` gives different values between sessions? —
+that's why). Try the "Adversarial" preset in the editor, or switch the hash function
+to "first letter".
+
+![A uniform hash vs a bad one on the same keys](docs/images/en/ht_bad_hash.png)
+
 ## 8. When a hash table isn't best
 
 A hash table loses **order**: data sits "wherever the hash put it". So if you need an

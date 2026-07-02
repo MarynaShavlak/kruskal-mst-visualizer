@@ -84,3 +84,23 @@ export const HT_ANAGRAMS_OPS: readonly HtOp[] = [
 
 /** Місткість прикладу-анаграм. */
 export const HT_ANAGRAMS_CAPACITY = 5
+
+/**
+ * «Зловмисний» скрипт для ПОГАНОЇ хеш-функції `firstChar` (лише перша літера):
+ * п'ять РІЗНИХ ключів, що всі починаються на «a», тож усі падають в одну комірку
+ * (97 % 5 = 2) → один довгий ланцюг, найгірший випадок O(n). get «acorn» аж у кінці
+ * ланцюга дає 5 порівнянь. Демонструє, чому рівномірність критична й звідки береться
+ * атака hash-flooding (тому реальні мови «солять» хеш — Python hash() різний між сесіями).
+ */
+export const HT_ADVERSARIAL_OPS: readonly HtOp[] = [
+  { kind: "insert", key: "apple", value: 1 },
+  { kind: "insert", key: "avocado", value: 2 },
+  { kind: "insert", key: "apricot", value: 3 },
+  { kind: "insert", key: "almond", value: 4 },
+  { kind: "insert", key: "acorn", value: 5 },
+  { kind: "get", key: "acorn" }, // аж у кінці ланцюга → O(n)
+  { kind: "get", key: "apple" },
+]
+
+/** Місткість «зловмисного» прикладу. */
+export const HT_ADVERSARIAL_CAPACITY = 5

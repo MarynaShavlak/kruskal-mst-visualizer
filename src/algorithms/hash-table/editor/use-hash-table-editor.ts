@@ -12,6 +12,7 @@ import { useHashTableStore } from "@/store/hash-table-store"
 export interface HashTableEditorController {
   readonly onLoadClassic: () => void
   readonly onLoadAnagrams: () => void
+  readonly onLoadAdversarial: () => void
   readonly onLoadRandom: () => void
   readonly onAddOp: (kind?: HtOp["kind"]) => void
   readonly onClear: () => void
@@ -26,6 +27,7 @@ export function useHashTableEditor(): HashTableEditorController {
   const clear = useHashTableStore((s) => s.clear)
   const loadClassic = useHashTableStore((s) => s.loadClassic)
   const loadAnagrams = useHashTableStore((s) => s.loadAnagrams)
+  const loadAdversarial = useHashTableStore((s) => s.loadAdversarial)
   const loadRandom = useHashTableStore((s) => s.loadRandom)
   const loadDoc = useHashTableStore((s) => s.loadDoc)
   const toDoc = useHashTableStore((s) => s.toDoc)
@@ -43,6 +45,7 @@ export function useHashTableEditor(): HashTableEditorController {
   return {
     onLoadClassic: loadClassic,
     onLoadAnagrams: loadAnagrams,
+    onLoadAdversarial: loadAdversarial,
     onLoadRandom,
     onAddOp: addOp,
     onClear: clear,

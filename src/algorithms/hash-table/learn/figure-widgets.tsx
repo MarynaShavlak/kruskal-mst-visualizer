@@ -8,6 +8,7 @@ import {
   HtPipelineFigure,
   HtWalkthrough,
   HtChainVsProbeFigure,
+  HtBadHashFigure,
   HtOpQuizFigure,
   HtSlotQuizFigure,
 } from "@/algorithms/hash-table/learn/learn-widgets"
@@ -27,6 +28,8 @@ export function figureForSrc(
       return <HtWalkthrough caption={caption} />
     case "ht_compare":
       return <HtChainVsProbeFigure caption={caption} />
+    case "ht_bad_hash":
+      return <HtBadHashFigure caption={caption} />
     case "ht_slot_quiz":
       return <HtSlotQuizFigure caption={caption} />
     case "ht_quiz":

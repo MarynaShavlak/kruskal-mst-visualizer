@@ -65,6 +65,13 @@ export function HashTablePanel({ frame, className }: { frame: HtFrame; className
   const alphaPct = Math.min(1, loadFactor) * 100
   const isLinear = frame.strategy === "linear"
 
+  const pipeLabel =
+    rawHash == null
+      ? t("play.htPipePoly", { m: capacity })
+      : frame.hashFn === "sum"
+        ? t("play.htPipeSum", { raw: rawHash, m: capacity })
+        : t("play.htPipeRaw", { raw: rawHash, m: capacity })
+
   const legend = isLinear
     ? [
         { label: t("play.htLegendHome"), cls: CELL_CLASS.home },
@@ -101,9 +108,7 @@ export function HashTablePanel({ frame, className }: { frame: HtFrame; className
             </span>
             <ArrowRight className="size-4 text-muted-foreground" />
             <span className={cn("rounded border px-2 py-0.5 font-mono text-xs", pipeTone(frame.phase))}>
-              {rawHash != null
-                ? t("play.htPipeSum", { raw: rawHash, m: capacity })
-                : t("play.htPipePoly", { m: capacity })}
+              {pipeLabel}
             </span>
             {homeIndex != null && (
               <>

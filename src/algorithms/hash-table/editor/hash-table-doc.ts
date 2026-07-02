@@ -24,6 +24,7 @@ interface HashTableWire {
 }
 
 const OP_KINDS = ["insert", "get", "delete"] as const
+const HASH_FNS = ["sum", "poly", "zero", "firstChar"] as const
 
 function isWireOp(op: unknown): op is [string, string, number] {
   return (
@@ -48,7 +49,7 @@ function parseWire(raw: unknown): HashTableWire {
   if (typeof o.capacity !== "number" || !Number.isInteger(o.capacity)) {
     throw new Error(tr("editor.errBadCapacity"))
   }
-  if (o.hashFn !== "sum" && o.hashFn !== "poly") {
+  if (!(HASH_FNS as readonly unknown[]).includes(o.hashFn)) {
     throw new Error(tr("editor.errBadHashFn"))
   }
   if (o.strategy !== undefined && o.strategy !== "chaining" && o.strategy !== "linear") {
@@ -76,7 +77,7 @@ const wireToDoc = (wire: HashTableWire): HashTableDoc => {
   return {
     ops,
     capacity: Math.max(1, Math.trunc(wire.capacity)),
-    hashFn: wire.hashFn === "poly" ? "poly" : "sum",
+    hashFn: (HASH_FNS as readonly string[]).includes(wire.hashFn) ? wire.hashFn : "sum",
     strategy: wire.strategy === "linear" ? "linear" : "chaining",
   }
 }

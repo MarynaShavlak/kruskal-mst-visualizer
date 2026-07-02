@@ -66,6 +66,13 @@ describe("hashTableCodec: валідація та санітизація", () =>
     ).toThrow()
   })
 
+  it("погані хеш-функції (firstChar/zero) серіалізуються без втрат", () => {
+    for (const fn of ["firstChar", "zero"] as const) {
+      const doc = { ...CLASSIC, hashFn: fn }
+      expect(hashTableCodec.fromJSON(hashTableCodec.toJSON(doc)).hashFn).toBe(fn)
+    }
+  })
+
   it("санітизує місткість до цілого ≥ 1; відсутня стратегія → chaining", () => {
     const doc = hashTableCodec.fromJSON(
       JSON.stringify({ version: 1, ops: [], capacity: 5, hashFn: "sum" }),

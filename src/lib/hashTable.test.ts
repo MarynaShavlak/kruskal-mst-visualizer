@@ -15,6 +15,8 @@ import {
   HT_INTRO_SLOTS,
   HT_ANAGRAMS_OPS,
   HT_ANAGRAMS_CAPACITY,
+  HT_ADVERSARIAL_OPS,
+  HT_ADVERSARIAL_CAPACITY,
 } from "@/lib/exampleHashTable"
 
 describe("sumCodesHash / slotOf — навчальна хеш-функція", () => {
@@ -44,6 +46,42 @@ describe("sumCodesHash / slotOf — навчальна хеш-функція", (
     expect(a).toBe(slotOf("apple", 5, "poly"))
     expect(a).toBeGreaterThanOrEqual(0)
     expect(a).toBeLessThan(5)
+  })
+
+  it("погані хеш-функції: zero → завжди 0; firstChar → лише перша літера", () => {
+    expect(slotOf("apple", 5, "zero")).toBe(0)
+    expect(slotOf("banana", 5, "zero")).toBe(0)
+    // усі на «a» → 97 % 5 = 2, незалежно від решти слова
+    expect(slotOf("apple", 5, "firstChar")).toBe(2)
+    expect(slotOf("acorn", 5, "firstChar")).toBe(2)
+    expect(slotOf("banana", 5, "firstChar")).toBe(98 % 5)
+  })
+})
+
+describe("runHashTable — погана хеш-функція + зловмисні ключі", () => {
+  it("firstChar: 5 ключів на «a» валяться в одну комірку → ланцюг 5, O(n)", () => {
+    const run = runHashTable(HT_ADVERSARIAL_OPS, HT_ADVERSARIAL_CAPACITY, {
+      hashFn: "firstChar",
+    })
+    expect(run.buckets[2].map((e) => e.key)).toEqual([
+      "apple", "avocado", "apricot", "almond", "acorn",
+    ])
+    expect(run.buckets.filter((b) => b.length > 0)).toHaveLength(1) // усе в одній комірці
+    // get acorn — аж у кінці ланцюга (5 порівнянь) + get apple (1)
+    expect(run.perOp[5].result).toBe("hit")
+    expect(run.perOp[5].value).toBe(5)
+  })
+
+  it("zero: усе валиться в комірку 0 незалежно від ключа", () => {
+    const run = runHashTable(HT_INTRO_OPS, HT_INTRO_CAPACITY, { hashFn: "zero" })
+    expect(run.buckets[0].length).toBe(4) // apple/orange/banana/lemon усі в 0
+    expect(run.buckets.slice(1).every((b) => b.length === 0)).toBe(true)
+  })
+
+  it("рівномірний хеш дешевший за поганий на тих самих ключах", () => {
+    const good = runHashTable(HT_ADVERSARIAL_OPS, HT_ADVERSARIAL_CAPACITY, { hashFn: "sum" })
+    const bad = runHashTable(HT_ADVERSARIAL_OPS, HT_ADVERSARIAL_CAPACITY, { hashFn: "firstChar" })
+    expect(bad.comparisons).toBeGreaterThan(good.comparisons)
   })
 })
 

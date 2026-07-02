@@ -2,7 +2,7 @@
 // над спільним EditorViewShell (import/export/share/embed), тіло — місткість +
 // вибір хеш-функції + таблиця операцій, збоку — живе прев'ю розкладки.
 
-import { Plus, Trash2, Shuffle, BookOpen, Sparkles } from "lucide-react"
+import { Plus, Trash2, Shuffle, BookOpen, Sparkles, Bug } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { EditorViewShell } from "@/algorithms/shared/editor/EditorViewShell"
 import { EditorHelp } from "@/algorithms/shared/editor/EditorHelp"
@@ -58,6 +58,8 @@ function HashFnSelect() {
       >
         <option value="sum">{t("editor.htHashSum")}</option>
         <option value="poly">{t("editor.htHashPoly")}</option>
+        <option value="firstChar">{t("editor.htHashFirst")}</option>
+        <option value="zero">{t("editor.htHashZero")}</option>
       </select>
     </label>
   )
@@ -95,6 +97,9 @@ export function EditorView() {
       </Button>
       <Button size="sm" variant="outline" onClick={ctrl.onLoadAnagrams}>
         <Sparkles /> {t("editor.htAnagrams")}
+      </Button>
+      <Button size="sm" variant="outline" onClick={ctrl.onLoadAdversarial}>
+        <Bug /> {t("editor.htAdversarial")}
       </Button>
       <Button size="sm" variant="outline" onClick={ctrl.onLoadRandom}>
         <Shuffle /> {t("editor.random")}

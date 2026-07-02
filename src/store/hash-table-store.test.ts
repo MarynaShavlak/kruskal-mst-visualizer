@@ -4,6 +4,7 @@ import {
   HT_INTRO_OPS,
   HT_INTRO_CAPACITY,
   HT_ANAGRAMS_OPS,
+  HT_ADVERSARIAL_OPS,
 } from "@/lib/exampleHashTable"
 
 const get = () => useHashTableStore.getState()
@@ -61,6 +62,19 @@ describe("hash-table-store", () => {
     expect(get().capacity).toBe(5)
     expect(get().hashFn).toBe("sum")
     expect(get().strategy).toBe("chaining")
+  })
+
+  it("пресет «Зловмисний» вмикає погану хеш-функцію firstChar", () => {
+    get().loadAdversarial()
+    expect(get().ops).toEqual(HT_ADVERSARIAL_OPS)
+    expect(get().hashFn).toBe("firstChar")
+  })
+
+  it("setHashFn приймає погані функції (firstChar/zero)", () => {
+    get().setHashFn("firstChar")
+    expect(get().hashFn).toBe("firstChar")
+    get().setHashFn("zero")
+    expect(get().hashFn).toBe("zero")
   })
 
   it("пресети завантажуються (анаграми + випадковий детермінований)", () => {

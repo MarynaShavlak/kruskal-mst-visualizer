@@ -8,6 +8,8 @@ import {
   HT_INTRO_CAPACITY,
   HT_ANAGRAMS_OPS,
   HT_ANAGRAMS_CAPACITY,
+  HT_ADVERSARIAL_OPS,
+  HT_ADVERSARIAL_CAPACITY,
 } from "@/lib/exampleHashTable"
 import { randomHashTable } from "@/lib/randomHashTable"
 import type { HtOp } from "@/lib/hashTable"
@@ -37,6 +39,19 @@ export function hashAnagramsPreset(): HashTableDoc {
     ops: cloneOps(HT_ANAGRAMS_OPS),
     capacity: HT_ANAGRAMS_CAPACITY,
     hashFn: "sum",
+    strategy: "chaining",
+  }
+}
+
+/**
+ * «Зловмисний» скрипт із ПОГАНОЮ хеш-функцією `firstChar`: п'ять різних ключів на
+ * «a» падають в одну комірку → найгірший випадок O(n). Демонструє DoS hash-flooding.
+ */
+export function hashAdversarialPreset(): HashTableDoc {
+  return {
+    ops: cloneOps(HT_ADVERSARIAL_OPS),
+    capacity: HT_ADVERSARIAL_CAPACITY,
+    hashFn: "firstChar",
     strategy: "chaining",
   }
 }

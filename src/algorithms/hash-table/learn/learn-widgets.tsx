@@ -12,7 +12,12 @@ import {
   type CollisionStrategy,
   type HtBuckets,
 } from "@/lib/hashTable"
-import { HT_INTRO_OPS, HT_INTRO_CAPACITY } from "@/lib/exampleHashTable"
+import {
+  HT_INTRO_OPS,
+  HT_INTRO_CAPACITY,
+  HT_ADVERSARIAL_OPS,
+  HT_ADVERSARIAL_CAPACITY,
+} from "@/lib/exampleHashTable"
 import { HashTablePanel } from "@/algorithms/hash-table/playback/HashTablePanel"
 import { CodePanel } from "@/algorithms/shared/playback/CodePanel"
 import { MiniPlayerShell } from "@/algorithms/shared/learn/MiniPlayerShell"
@@ -181,6 +186,41 @@ export function HtChainVsProbeFigure({ caption }: { caption?: string }) {
         {L(
           "Ті самі операції: у ланцюжках lemon стає в ланцюг комірки 4; у зондуванні «прогулюється» 4→0→1→2 і кластеризація коштує дорожче.",
           "The same operations: with chaining lemon joins cell 4's chain; with probing it walks 4→0→1→2 and clustering costs more.",
+        )}
+      </span>
+    </Figure>
+  )
+}
+
+// — Погана хеш-функція + зловмисні ключі --------------------------------------
+
+export function HtBadHashFigure({ caption }: { caption?: string }) {
+  const L = useL()
+  const good = runHashTable(HT_ADVERSARIAL_OPS, HT_ADVERSARIAL_CAPACITY, { hashFn: "sum" })
+  const bad = runHashTable(HT_ADVERSARIAL_OPS, HT_ADVERSARIAL_CAPACITY, { hashFn: "firstChar" })
+  return (
+    <Figure caption={caption}>
+      <span className="grid gap-3 lg:grid-cols-2">
+        {[
+          { title: L("Рівномірна (сума кодів)", "Uniform (sum of codes)"), run: good, good: true },
+          { title: L("Погана (лише перша літера)", "Bad (first letter only)"), run: bad, good: false },
+        ].map((col) => (
+          <span key={col.title} className="block rounded-lg border bg-muted/10 p-2">
+            <span className="mb-1.5 block text-center text-xs font-semibold">{col.title}</span>
+            <CellsMini buckets={col.run.buckets} />
+            <span className="mt-2 block text-center text-xs text-muted-foreground">
+              {L("порівнянь", "comparisons")}:{" "}
+              <span className={cn("font-mono font-bold", col.good ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
+                {col.run.comparisons}
+              </span>
+            </span>
+          </span>
+        ))}
+      </span>
+      <span className="mt-2 block text-center text-xs text-muted-foreground">
+        {L(
+          "Ті самі 5 ключів на «a». Рівномірний хеш розкидає їх по комірках; погана «перша літера» валить усі в одну комірку → ланцюг завдовжки 5, пошук вироджується в O(n). Саме на цьому будуються атаки hash-flooding — тому реальні мови «солять» хеш.",
+          "The same 5 keys starting with “a”. A uniform hash spreads them across cells; a bad “first letter” piles them all into one cell → a chain of 5, and lookup degenerates to O(n). This is what hash-flooding attacks exploit — which is why real languages salt the hash.",
         )}
       </span>
     </Figure>

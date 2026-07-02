@@ -9,6 +9,7 @@ import type { CollisionStrategy, HashFnId, HtOp } from "@/lib/hashTable"
 import {
   hashClassicPreset,
   hashAnagramsPreset,
+  hashAdversarialPreset,
   hashRandomPreset,
 } from "@/store/hash-table-presets"
 
@@ -43,10 +44,16 @@ interface HashTableState {
 
   loadClassic: () => void
   loadAnagrams: () => void
+  loadAdversarial: () => void
   loadRandom: (seed: number) => void
 }
 
 const OP_KINDS: readonly HtOp["kind"][] = ["insert", "get", "delete"]
+const HASH_FNS: readonly HashFnId[] = ["sum", "poly", "zero", "firstChar"]
+
+/** Дозволений ідентифікатор хеш-функції (інакше — навчальна сума кодів). */
+const sanitizeHashFn = (fn: unknown): HashFnId =>
+  HASH_FNS.includes(fn as HashFnId) ? (fn as HashFnId) : "sum"
 
 /** Ціле ≥ min (відкидає дробову частину; нечисло → min). */
 const clampInt = (value: number, min: number): number =>
@@ -110,7 +117,7 @@ export const useHashTableStore = create<HashTableState>()((set, get) => ({
     set({
       ops: doc.ops.map(sanitizeOp),
       capacity: clampInt(doc.capacity, 1),
-      hashFn: doc.hashFn === "poly" ? "poly" : "sum",
+      hashFn: sanitizeHashFn(doc.hashFn),
       strategy: doc.strategy === "linear" ? "linear" : "chaining",
     }),
 
@@ -123,5 +130,6 @@ export const useHashTableStore = create<HashTableState>()((set, get) => ({
 
   loadClassic: () => set(hashClassicPreset()),
   loadAnagrams: () => set(hashAnagramsPreset()),
+  loadAdversarial: () => set(hashAdversarialPreset()),
   loadRandom: (seed) => set(hashRandomPreset(seed)),
 }))
