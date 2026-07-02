@@ -14,6 +14,7 @@ export type AlgorithmFamily =
   | "search"
   | "string-search"
   | "hashing"
+  | "trees"
 
 /**
  * Часова складність алгоритму: типова (характеристична) і найгірша.

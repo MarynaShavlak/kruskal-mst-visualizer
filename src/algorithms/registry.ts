@@ -27,6 +27,7 @@ import { kmpStringSearch } from "@/algorithms/kmp-string-search"
 import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
 import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
 import { hashTable } from "@/algorithms/hash-table"
+import { treeTraversal } from "@/algorithms/tree-traversal"
 import { knapsack } from "@/algorithms/knapsack"
 import { heldKarp } from "@/algorithms/held-karp"
 
@@ -60,6 +61,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   boyerMooreStringSearch,
   rabinKarpStringSearch,
   hashTable,
+  treeTraversal,
   knapsack,
   heldKarp,
 ]
@@ -114,6 +116,14 @@ export const FAMILIES: readonly AlgorithmFamilyInfo[] = [
     blurb: {
       ua: "Прямий доступ за ключем через хеш-функцію: у середньому O(1).",
       en: "Direct key access via a hash function: O(1) on average.",
+    },
+  },
+  {
+    id: "trees",
+    label: { ua: "Дерева", en: "Trees" },
+    blurb: {
+      ua: "Ієрархічна структура й обходи: відвідати кожен вузол у своєму порядку.",
+      en: "A hierarchical structure and its traversals: visit every node in order.",
     },
   },
   {
@@ -383,13 +393,22 @@ export const BRIDGES: readonly Bridge[] = [
       en: "From hashing as a trick to hashing as a structure: the same polynomial hash we used to compare strings now becomes an ADDRESS. A hash table places a key straight into a slot by its hash value, so lookup is O(1) on average — the climax of the search story.",
     },
   },
-  // Хешування → динамічне програмування.
+  // Хешування → дерева.
   {
     from: "hash-table",
+    to: "tree-traversal",
+    note: {
+      ua: "Хеш-таблиця дала O(1), але ЦІНОЮ порядку: ключі лежать хаотично, а на колізії витрачається пам'ять. Дерево — інша структура даних: ієрархія, де зв'язки явні, а обхід відвідує вузли ВПОРЯДКОВАНО (центровий обхід дерева пошуку видає відсортовану послідовність). Спершу розберемо саме дерево та три його обходи.",
+      en: "The hash table gave us O(1) but at the COST of order: keys sit chaotically and collisions waste memory. A tree is a different data structure: a hierarchy with explicit links, where traversal visits nodes IN ORDER (an in-order walk of a search tree yields a sorted sequence). First we study the tree itself and its three traversals.",
+    },
+  },
+  // Дерева → динамічне програмування.
+  {
+    from: "tree-traversal",
     to: "knapsack",
     note: {
-      ua: "Останній поворот — до окремої, завершальної парадигми: динамічного програмування, де оптимум складають із підзадач. Найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",
-      en: "The final turn — to a distinct, closing paradigm: dynamic programming, where the optimum is built from subproblems. The cleanest first DP is the 0/1 knapsack: a simple 2-D table maximising value under a weight limit.",
+      ua: "Зворотний (постфіксний) обхід рахує відповідь для піддерев ПЕРШ ніж для батька — а це вже сама думка динамічного програмування: складай ціле з готових розв'язків менших частин. Останній поворот курсу — до цієї завершальної парадигми; найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",
+      en: "A post-order traversal computes each subtree's answer BEFORE its parent — which is the very idea of dynamic programming: build the whole from ready answers to smaller parts. The course's final turn is to that closing paradigm; the cleanest first DP is the 0/1 knapsack: a simple 2-D table maximising value under a weight limit.",
     },
   },
   // ДП: від найпростішого рюкзака до вибуху станів (комівояжер).
