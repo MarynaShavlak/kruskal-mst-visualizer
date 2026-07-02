@@ -192,6 +192,7 @@ function frameFor(ev: HtEvent, t: Translate): Omit<HtFrame, "i"> {
 
   const vars: Record<string, string | number> = {
     key,
+    kind: ev.op?.kind ?? "",
     value: ev.op?.value ?? 0,
     home: ev.homeIndex ?? 0,
     raw: ev.rawHash ?? 0,

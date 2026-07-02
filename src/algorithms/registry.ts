@@ -26,6 +26,7 @@ import { naiveStringSearch } from "@/algorithms/naive-string-search"
 import { kmpStringSearch } from "@/algorithms/kmp-string-search"
 import { boyerMooreStringSearch } from "@/algorithms/boyer-moore-string-search"
 import { rabinKarpStringSearch } from "@/algorithms/rabin-karp-string-search"
+import { hashTable } from "@/algorithms/hash-table"
 import { knapsack } from "@/algorithms/knapsack"
 import { heldKarp } from "@/algorithms/held-karp"
 
@@ -58,6 +59,7 @@ export const ALGORITHMS: readonly Algorithm[] = [
   kmpStringSearch,
   boyerMooreStringSearch,
   rabinKarpStringSearch,
+  hashTable,
   knapsack,
   heldKarp,
 ]
@@ -107,6 +109,14 @@ export const FAMILIES: readonly AlgorithmFamilyInfo[] = [
     },
   },
   {
+    id: "hashing",
+    label: { ua: "Хешування", en: "Hashing" },
+    blurb: {
+      ua: "Прямий доступ за ключем через хеш-функцію: у середньому O(1).",
+      en: "Direct key access via a hash function: O(1) on average.",
+    },
+  },
+  {
     id: "dp",
     label: { ua: "Динамічне програмування", en: "Dynamic programming" },
     blurb: {
@@ -145,6 +155,7 @@ export interface ComplexityClassInfo {
  * Кожен алгоритм оголошує свій `complexityClass` (за ТИПОВОЮ складністю).
  */
 export const COMPLEXITY_CLASSES: readonly ComplexityClassInfo[] = [
+  { id: "constant", label: { ua: "Стала", en: "Constant" }, formula: "O(1)" },
   { id: "logarithmic", label: { ua: "Логарифмічна", en: "Logarithmic" }, formula: "O(log n)" },
   { id: "sublinear", label: { ua: "Сублінійна", en: "Sublinear" }, formula: "O(√n)" },
   { id: "linear", label: { ua: "Лінійна", en: "Linear" }, formula: "O(n)" },
@@ -363,9 +374,18 @@ export const BRIDGES: readonly Bridge[] = [
       en: "Numbers instead of characters: compare polynomial hashes of windows (rolling hash in O(1)), verifying on a hash match.",
     },
   },
-  // Пошук у рядку → динамічне програмування.
+  // Пошук у рядку → хешування.
   {
     from: "rabin-karp-string-search",
+    to: "hash-table",
+    note: {
+      ua: "Від хешу як прийому — до хешу як структури: той самий поліноміальний хеш, яким ми порівнювали рядки, тепер стає АДРЕСОЮ. Хеш-таблиця кладе ключ одразу в комірку за значенням хеш-функції, тож пошук у середньому O(1) — кульмінація історії пошуку.",
+      en: "From hashing as a trick to hashing as a structure: the same polynomial hash we used to compare strings now becomes an ADDRESS. A hash table places a key straight into a slot by its hash value, so lookup is O(1) on average — the climax of the search story.",
+    },
+  },
+  // Хешування → динамічне програмування.
+  {
+    from: "hash-table",
     to: "knapsack",
     note: {
       ua: "Останній поворот — до окремої, завершальної парадигми: динамічного програмування, де оптимум складають із підзадач. Найчистіший перший приклад — рюкзак 0/1: проста двовимірна таблиця максимізує вартість за обмеженням ваги.",

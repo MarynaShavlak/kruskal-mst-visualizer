@@ -13,6 +13,7 @@ export type AlgorithmFamily =
   | "sorting"
   | "search"
   | "string-search"
+  | "hashing"
 
 /**
  * Часова складність алгоритму: типова (характеристична) і найгірша.
@@ -29,6 +30,7 @@ export interface Complexity {
  * `COMPLEXITY_CLASSES` у `registry.ts`.
  */
 export type ComplexityClass =
+  | "constant"
   | "logarithmic"
   | "sublinear"
   | "linear"

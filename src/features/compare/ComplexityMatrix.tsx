@@ -29,6 +29,7 @@ type FamilyFilter = AlgorithmFamily | "all"
  * падає в кінець. Якщо додається алгоритм із новою формулою — допиши її сюди.
  */
 const GROWTH_ORDER: readonly string[] = [
+  "O(1)",
   "O(log log n)",
   "O(log n)",
   "O(√n)",
@@ -68,6 +69,7 @@ function classRank(cls: ComplexityClass): number {
  * Порядок збігається з `COMPLEXITY_CLASSES`.
  */
 const CLASS_TONE: Record<ComplexityClass, string> = {
+  constant: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300",
   logarithmic:
     "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
   sublinear: "bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300",
